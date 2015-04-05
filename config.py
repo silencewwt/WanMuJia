@@ -11,6 +11,8 @@ class Config(object):
     local_redis = redis.StrictRedis(host='localhost', port=6379, db=0)
     DEBUG = True
     CSRF_ENABLED = True
+    SECURITY_PASSWORD_HASH = 'sha512_crypt'
+    SECURITY_PASSWORD_SALT = 'password_salt'
 
 
 class DevelopmentConfig(Config):
