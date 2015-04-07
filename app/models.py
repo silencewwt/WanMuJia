@@ -7,6 +7,17 @@ from app import db
 
 
 class BaseUser(UserMixin):
+    # id
+    id = db.Column(db.Integer, primary_key=True)
+    # 哈希后的密码
+    password_hash = db.Column('password', db.String(120), nullable=False)
+    # 手机号码
+    mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
+    # 邮箱
+    email = db.Column(db.String(64), nullable=False)
+    # 注册时间
+    created = db.Column(db.Integer, nullable=False)
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -21,32 +32,11 @@ class BaseUser(UserMixin):
 
 class User(BaseUser, db.Model):
     __tablename__ = 'users'
-    # 用户id
-    id = db.Column(db.Integer, primary_key=True)
-    # 用户名
     username = db.Column(db.Unicode(20), unique=True, nullable=False)
-    # 哈希后的密码
-    password_hash = db.Column('password', db.String(120), nullable=False)
-    # 手机号码
-    mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
-    # 邮箱
-    email = db.Column(db.String(64), nullable=False)
-    # 注册时间
-    created = db.Column(db.Integer, nullable=False)
 
 
 class Producer(BaseUser, db.Model):
     __tablename__ = 'producers'
-    # 厂家id
-    id = db.Column(db.Integer, primary_key=True)
-    # 哈希后的密码
-    password_hash = db.Column('password', db.String(120), nullable=False)
-    # 用于登录的手机号码
-    mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
-    # 邮箱
-    email = db.Column(db.String(64), nullable=False)
-    # 注册时间
-    created = db.Column(db.Integer, nullable=False)
     # logo图片
     logo = db.Column(db.String(255), default='', nullable=False)
     # 法人真实姓名
@@ -75,21 +65,11 @@ class Producer(BaseUser, db.Model):
 
 class Dealer(BaseUser, db.Model):
     __tablename__ = 'dealers'
-    # 商家id
-    id = db.Column(db.Integer, primary_key=True)
-    # 哈希后的密码
-    password_hash = db.Column('password', db.String(120), nullable=False)
-    # 用于登录的手机号码
-    mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
-    # 邮箱
-    email = db.Column(db.String(64), nullable=False)
-    # 注册时间
-    created = db.Column(db.Integer, nullable=False)
     # 法人真实姓名
     legal_person_name = db.Column(db.Unicode(10), nullable=False)
     # 法人身份证号码
     legal_person_identity = db.Column(db.CHAR(18), nullable=False)
-    # 品牌厂家名称
+    # 商家名称
     name = db.Column(db.Unicode(30), unique=True, nullable=False)
     # 营业执照注册号
     license_identity = db.Column(db.String(20), nullable=False)
@@ -111,9 +91,7 @@ class Dealer(BaseUser, db.Model):
 
 class Privilege(BaseUser, db.Model):
     __tablename__ = 'privileges'
-    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(12), nullable=False, unique=True)
-    password_hash = db.Column('password', db.String(120), nullable=False)
 
 
 class Province(db.Model):
