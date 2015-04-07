@@ -32,7 +32,42 @@ class BaseUser(UserMixin):
 
 class User(BaseUser, db.Model):
     __tablename__ = 'users'
+    # 用户名
     username = db.Column(db.Unicode(20), unique=True, nullable=False)
+
+
+class Collection(db.Model):
+    __tablename__ = 'collections'
+    # id
+    id = db.Column(db.Integer, primary_key=True)
+    # 用户id
+    user_id = db.Column(db.Integer, nullable=False)
+    # 商品id
+    goods_id = db.Column(db.Integer, nullable=False)
+    # 创建时间
+    created = db.Column(db.Integer, nullable=False)
+
+
+class Order(db.Model):
+    __tablename__ = 'orders'
+    # id
+    id = db.Column(db.Integer, primary_key=True)
+    # 用户id
+    user_id = db.Column(db.Integer, nullable=False)
+    # 商家id
+    dealer_id = db.Column(db.Integer, nullable=False)
+    # 商品id
+    goods_id = db.Column(db.Integer, nullable=False)
+    # 创建时间
+    created = db.Column(db.Integer, nullable=False)
+    # 定金
+    deposit = db.Column(db.Integer, nullable=False)
+    # 定金已支付
+    deposit_payed = db.Column(db.Boolean, default=False, nullable=False)
+    # 价格
+    price = db.Column(db.Integer, nullable=False)
+    # 钱款已支付
+    price_payed = db.Column(db.Boolean, default=False, nullable=False)
 
 
 class Producer(BaseUser, db.Model):
@@ -91,6 +126,7 @@ class Dealer(BaseUser, db.Model):
 
 class Privilege(BaseUser, db.Model):
     __tablename__ = 'privileges'
+    # 用户名
     username = db.Column(db.String(12), nullable=False, unique=True)
 
 
