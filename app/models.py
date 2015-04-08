@@ -124,6 +124,57 @@ class Dealer(BaseUser, db.Model):
     contact_telephone = db.Column(db.CHAR(15), nullable=False)
 
 
+class ProducerAuthorization(db.Model):
+    __tablename__ = 'producer_authorizations'
+    # id
+    id = db.Column(db.Integer, primary_key=True)
+    # 商家id
+    dealer_id = db.Column(db.Integer, nullable=False)
+    # 厂家id
+    producer_id = db.Column(db.Integer, nullable=False)
+    # 授权时间
+    created = db.Column(db.Integer, nullable=False)
+    # 确认授权
+    confirmed = db.Column(db.Boolean, default=False, nullable=False)
+
+
+class Goods(db.Model):
+    # TODO: 单个商品多个分类，多种材料?
+    __tablename__ = 'goods'
+    # 商品id
+    id = db.Column(db.Integer, primary_key=True)
+    # 厂家id
+    producer_id = db.Column(db.Integer, nullable=False)
+    # 商品名称
+    goods = db.Column(db.Unicode(20), nullable=False)
+
+
+class GoodsCategory(db.Model):
+    __tablename__ = 'goods_categories'
+    id = db.Column(db.Integer, primary_key=True)
+    goods_id = db.Column(db.Integer, nullable=False)
+    category_id = db.Column(db.Integer, nullable=False)
+
+
+class Category(db.Model):
+    __tablename__ = 'categories'
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.Unicode(10), nullable=False)
+
+
+class Material(db.Model):
+    __tablename__ = 'materials'
+    id = db.Column(db.Integer, primary_key=True)
+    material = db.Column(db.Unicode(10), nullable=False)
+
+
+class GoodsAuthorization(db.Model):
+    __tablename__ = 'goods_authorizations'
+    id = db.Column(db.Integer, primary_key=True)
+    goods_id = db.Column(db.Integer, nullable=False)
+    dealer_id = db.Column(db.Integer, nullable=False)
+
+
 class Privilege(BaseUser, db.Model):
     __tablename__ = 'privileges'
     # 用户名
