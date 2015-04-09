@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 import redis
+from datetime import timedelta
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -13,6 +16,7 @@ class Config(object):
     CSRF_ENABLED = True
     SECURITY_PASSWORD_HASH = 'sha512_crypt'
     SECURITY_PASSWORD_SALT = 'password_salt'
+    REMEMBER_COOKIE_DURATION = timedelta(7)
 
 
 class DevelopmentConfig(Config):
