@@ -2,22 +2,29 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
+from flask.ext.principal import Principal
 from flask_security import Security
 
 from config import config
+from permission import identity_config
 
-app = None
+
+app = Flask(__name__)
 db = SQLAlchemy()
 login_manager = LoginManager()
-login_manager.session_protection = 'strong'
+principal = Principal()
 security = Security()
 
 
 def create_app(config_name):
-    global app
-    app = Flask(__name__, static_folder='static', template_folder='templates')
+    app.static_folder = 'static'
+    app.template_folder = 'templates'
     app.config.from_object(config[config_name])
     db.init_app(app)
+    login_manager.init_app(app)
+    login_manager.session_protection = 'strong'
+    login_manager.login_view = 'user.login'
+    principal.init_app(app)
     security.init_app(app)
 
     from .main import main as main_blueprint

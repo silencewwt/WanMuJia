@@ -3,7 +3,8 @@ from flask import current_app
 from flask.ext.login import UserMixin
 from flask_security.utils import encrypt_password, verify_password
 
-from app import db
+from app import db, login_manager
+from permission import admin_id_prefix, producer_id_prefix, dealer_id_prefix, user_id_prefix
 
 
 class BaseUser(UserMixin):
@@ -34,6 +35,9 @@ class User(BaseUser, db.Model):
     __tablename__ = 'users'
     # 用户名
     username = db.Column(db.Unicode(20), unique=True, nullable=False)
+
+    def get_id(self):
+        return user_id_prefix + unicode(self.id)
 
 
 class Collection(db.Model):
@@ -96,6 +100,9 @@ class Producer(BaseUser, db.Model):
     contact_mobile = db.Column(db.CHAR(11), nullable=False)
     # 联系电话
     contact_telephone = db.Column(db.CHAR(15), nullable=False)
+
+    def get_id(self):
+        return producer_id_prefix + unicode(self.id)
     
 
 class Dealer(BaseUser, db.Model):
@@ -122,6 +129,9 @@ class Dealer(BaseUser, db.Model):
     contact_mobile = db.Column(db.CHAR(11), nullable=False)
     # 联系电话
     contact_telephone = db.Column(db.CHAR(15), nullable=False)
+
+    def get_id(self):
+        return dealer_id_prefix + unicode(self.id)
 
 
 class ProducerAuthorization(db.Model):
@@ -180,6 +190,9 @@ class Privilege(BaseUser, db.Model):
     # 用户名
     username = db.Column(db.String(12), nullable=False, unique=True)
 
+    def get_id(self):
+        return admin_id_prefix + unicode(self.id)
+
 
 class Province(db.Model):
     __tablename__ = 'provinces'
@@ -229,3 +242,15 @@ class DealerAddress(db.Model):
     city_id = db.Column(db.Integer, nullable=False)
     district_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    id_ = int(user_id[1:])
+    if user_id.starswith(admin_id_prefix):
+        return Privilege.query.get(id_)
+    elif user_id.starswith(producer_id_prefix):
+        return Producer.query.get(id_)
+    elif user_id.starswith(dealer_id_prefix):
+        return Dealer.query.get(id_)
+    return User.query.get(id_)
