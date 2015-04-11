@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>木一家</title>
+    <link rel="stylesheet" href="css/main.css"/>
+</head>
+<body>
+    <header>
+        <div class="user_nav">
+            <h1>{{title}}</h1>
+        </div>
+        <div class="brand"></div>
+        <nav></nav>
+    </header>
+
+    <div class="main_wrapper">
+        <div class="slide_wrapper">轮播</div>
+
+        <div class="new">
+            <div class="item"></div>
+        </div>
+
+        <div class="classic">
+            <div class="item"></div>
+        </div>
+
+        <div class="master">
+            <div class="item"></div>
+        </div>
+    </div>
+
+    <footer></footer>
+</body>
+</html>
