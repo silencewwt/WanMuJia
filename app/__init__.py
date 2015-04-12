@@ -34,3 +34,4 @@ def create_app(config_name):
     app.register_blueprint(user_blueprint, url_prefix='/user')
 
     return app
+# just keep signed in on github
