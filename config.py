@@ -11,19 +11,21 @@ class Config(object):
     # TODO: add a random string as the default SECRET_KEY.
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
-    local_redis = redis.StrictRedis(host='localhost', port=6379, db=0)
     DEBUG = True
     CSRF_ENABLED = True
     SECURITY_PASSWORD_HASH = 'sha512_crypt'
     SECURITY_PASSWORD_SALT = 'password_salt'
+    MD5_SALT = 'md5_salt'
     REMEMBER_COOKIE_DURATION = timedelta(7)
+    CONFIRM_EMAIL_DURATION = 86400  # seconds
+    SMS_CAPTCHA_DURATION = 600  # seconds
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    IMAGE_DIR = os.path.join(basedir, 'app/static/images')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'mysql+pymysql://dev:devpassword@localhost/myj?charset=utf8'
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
 
 class TestingConfig(Config):
