@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+import random
 
 from flask import current_app
 from flask.ext.login import UserMixin
@@ -21,6 +22,11 @@ class BaseUser(UserMixin):
     # 注册时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
+    def __init__(self, password, mobile, email):
+        self.password = password
+        self.mobile = mobile
+        self.email = email
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -37,9 +43,21 @@ class User(BaseUser, db.Model):
     __tablename__ = 'users'
     # 用户名
     username = db.Column(db.Unicode(20), unique=True, nullable=False)
-    
+
+    def __init__(self, password, mobile, email, username=u''):
+        super(User, self).__init__(password, mobile, email)
+        self.username = username if username else self.generate_username()
+
     def get_id(self):
         return user_id_prefix + unicode(self.id)
+
+    @staticmethod
+    def generate_username():
+        prefix = u'用户'
+        while 1:
+            username = u'%s%s' % (prefix, random.randint(100000, 999999))
+            if not User.query.filter_by(username=username).first():
+                return username
 
 
 class Collection(db.Model):
@@ -105,9 +123,12 @@ class Producer(BaseUser, db.Model):
     # 联系电话
     contact_telephone = db.Column(db.CHAR(15), nullable=False)
 
+    def __init__(self, password, mobile, email):
+        super(Producer, self).__init__(password, mobile, email)
+
     def get_id(self):
         return producer_id_prefix + unicode(self.id)
-    
+
 
 class Dealer(BaseUser, db.Model):
     __tablename__ = 'dealers'
@@ -133,6 +154,9 @@ class Dealer(BaseUser, db.Model):
     contact_mobile = db.Column(db.CHAR(11), nullable=False)
     # 联系电话
     contact_telephone = db.Column(db.CHAR(15), nullable=False)
+
+    def __init__(self, password, mobile, email):
+        super(Dealer, self).__init__(password, mobile, email)
 
     def get_id(self):
         return dealer_id_prefix + unicode(self.id)
@@ -195,6 +219,9 @@ class Privilege(BaseUser, db.Model):
     __tablename__ = 'privileges'
     # 用户名
     username = db.Column(db.String(12), nullable=False, unique=True)
+
+    def __init__(self, password, mobile, email):
+        super(Privilege, self).__init__(password, mobile, email)
 
     def get_id(self):
         return admin_id_prefix + unicode(self.id)
