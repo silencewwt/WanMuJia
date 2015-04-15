@@ -14,12 +14,12 @@ class LoginForm(Form):
 
 class RegistrationForm(Form):
     mobile = StringField(validators=[Mobile(u'手机号码不正确哦!'), Length(11, 11)])
-    password = PasswordField(validators=[DataRequired(), Length(6, 20), EqualTo('confirm_password', u'前后密码不一致哦!')])
-    confirm_password = PasswordField(validators=[DataRequired(), Length(6, 20)])
+    password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
+    confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
     email = StringField(validators=[Email(required=False, message=u'邮箱不符合规范')])
 
 
 class EmailRegistrationForm(Form):
     email = StringField(validators=[Email(required=True, message=u'邮箱不符合规范')])
-    password = PasswordField(validators=[DataRequired(), Length(6, 20), EqualTo('confirm_password', u'前后密码不一致哦!')])
-    confirm_password = PasswordField(validators=[DataRequired(), Length(6, 20)])
+    password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
+    confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
