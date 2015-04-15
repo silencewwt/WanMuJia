@@ -137,7 +137,7 @@ class Dealer(BaseUser, db.Model):
     # 法人身份证号码
     legal_person_identity = db.Column(db.CHAR(18), nullable=False)
     # 商家名称
-    name = db.Column(db.Unicode(30), unique=True, nullable=False)
+    name = db.Column(db.Unicode(30), nullable=False)
     # 营业执照注册号
     license_identity = db.Column(db.String(20), nullable=False)
     # 营业执照所在地
