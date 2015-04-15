@@ -4,10 +4,14 @@ from flask_security import login_user, logout_user, login_required
 from flask_security.utils import identity_changed, Identity
 
 from . import user as user_blueprint
-from . forms import LoginForm
-from .. import db
-from ..models import User
-from ..permission import user_permission
+from . forms import *
+from app import db
+from app.models import User
+from app.permission import user_permission
+from app.utils.captcha import send_captcha
+from app.utils.validator import available_mobile
+from app.utils.utils import md5_with_salt
+from app.utils.redis import redis_set, redis_get
 
 
 @user_blueprint.route('/login', methods=['GET', 'POST'])
@@ -27,4 +31,58 @@ def login():
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
-    pass
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(
+            mobile=form.mobile.data,
+            password=form.password.data,
+            email=form.email.data
+        )
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
+        flash(u'注册成功!')
+        return redirect('/')
+    return render_template('user/register.html', register_form=form)
+
+
+@user_blueprint.route('/send_sms', methods=['POST'])
+def send_sms():
+    # TODO: CSRF Token
+    # TODO: verify image captcha
+    mobile = request.values.get('mobile', '', type=str)
+    if available_mobile(mobile):
+        send_captcha('user', mobile)
+        return 'ok', 200
+    return 'false', 401
+
+
+@user_blueprint.route('/reg_email', methods=['POST'])
+def send_register_email():
+    # TODO: CSRF Token
+    form = EmailRegistrationForm()
+    if form.validate_on_submit():
+        token = md5_with_salt(form.email.data)
+        redis_set('REG_TOKEN', token, email=form.email.data, password=form.password.data)
+        return 'ok', 200
+    return 'false', 401
+
+
+@user_blueprint.route('/verify')
+def verify_email():
+    token = request.args.get('token', '', type=str)
+    user_info = redis_get('REG_TOKEN', token)
+    if user_info:
+        user = User(
+            password=user_info['password'],
+            mobile='',
+            email=user_info['email'],
+        )
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
+        return u'已激活'
+    else:
+        return u'激活链接已失效'
