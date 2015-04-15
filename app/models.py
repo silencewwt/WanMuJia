@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import time
+
 from flask import current_app
 from flask.ext.login import UserMixin
 from flask_security.utils import encrypt_password, verify_password
@@ -17,7 +19,7 @@ class BaseUser(UserMixin):
     # 邮箱
     email = db.Column(db.String(64), nullable=False)
     # 注册时间
-    created = db.Column(db.Integer, nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
 
     @property
     def password(self):
@@ -49,7 +51,7 @@ class Collection(db.Model):
     # 商品id
     goods_id = db.Column(db.Integer, nullable=False)
     # 创建时间
-    created = db.Column(db.Integer, nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
 
 
 class Order(db.Model):
@@ -58,12 +60,14 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     # 用户id
     user_id = db.Column(db.Integer, nullable=False)
+    # 用户收货地址id
+    user_address_id = db.Column(db.Integer, nullable=False)
     # 商家id
     dealer_id = db.Column(db.Integer, nullable=False)
     # 商品id
     goods_id = db.Column(db.Integer, nullable=False)
     # 创建时间
-    created = db.Column(db.Integer, nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
     # 定金
     deposit = db.Column(db.Integer, nullable=False)
     # 定金已支付
@@ -143,7 +147,7 @@ class ProducerAuthorization(db.Model):
     # 厂家id
     producer_id = db.Column(db.Integer, nullable=False)
     # 授权时间
-    created = db.Column(db.Integer, nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
     # 确认授权
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
 
@@ -182,7 +186,9 @@ class GoodsAuthorization(db.Model):
     __tablename__ = 'goods_authorizations'
     id = db.Column(db.Integer, primary_key=True)
     goods_id = db.Column(db.Integer, nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
     dealer_id = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
 
 
 class Privilege(BaseUser, db.Model):
@@ -221,7 +227,9 @@ class UserAddress(db.Model):
     province_id = db.Column(db.Integer, nullable=False)
     city_id = db.Column(db.Integer, nullable=False)
     district_id = db.Column(db.Integer, nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
+    mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
 
 
 class ProducerAddress(db.Model):
@@ -232,6 +240,7 @@ class ProducerAddress(db.Model):
     city_id = db.Column(db.Integer, nullable=False)
     district_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
 
 
 class DealerAddress(db.Model):
@@ -242,6 +251,7 @@ class DealerAddress(db.Model):
     city_id = db.Column(db.Integer, nullable=False)
     district_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
+    created = db.Column(db.Integer, default=time.time(), nullable=False)
 
 
 @login_manager.user_loader
