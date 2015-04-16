@@ -14,8 +14,10 @@ class Email(BaseEmail):
         if self.required or field.data:
             super(Email, self).__call__(form, field)
             if self.available:
-                if User.query.filter_by(email=field.data).first() or Producer.query.filter_by(email=field.data).first() or \
-                        Dealer.query.filter_by(email=field.data).first() or Privilege.query.filter_by(email=field.data).first():
+                if User.query.filter_by(email=field.data).first() or \
+                        Producer.query.filter_by(email=field.data).first() or \
+                        Dealer.query.filter_by(email=field.data).first() or \
+                        Privilege.query.filter_by(email=field.data).first():
                     raise ValidationError(self.message)
 
 
@@ -34,7 +36,8 @@ class Mobile(Regexp):
 
 
 def available_mobile(mobile):
-    if User.query.filter_by(mobile=mobile).first() or Producer.query.filter_by(mobile=mobile).first() or \
+    if User.query.filter_by(mobile=mobile).first() or \
+            Producer.query.filter_by(mobile=mobile).first() or \
             Dealer.query.filter_by(mobile=mobile).first():
         return False
     return True
