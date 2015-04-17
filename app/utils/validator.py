@@ -6,9 +6,10 @@ from app.utils.redis import redis_verify
 
 
 class Email(BaseEmail):
-    def __init__(self, required=True, available=True, message=None):
+    def __init__(self, required=True, available=True, message=u'邮箱不符合规范!'):
         self.required = required
         self.available = available
+        self.message = message
         super(Email, self).__init__(message)
 
     def __call__(self, form, field):
@@ -23,24 +24,23 @@ class Email(BaseEmail):
 
 
 class Mobile(Regexp):
-    def __init__(self, available=True, message=None):
+    def __init__(self, available=True, message=u'邮箱不符合规范!'):
         self.available = available
-        super(Mobile, self).__init__(r'^1[3-8]\d{9}$', message=message)
+        self.message = message
+        super(Mobile, self).__init__(r'^1[3-8]\d{9}$', message=self.message)
 
     def __call__(self, form, field, message=None):
-        if message is None:
-            message = field.gettext('Invalid mobile.')
-        super(Mobile, self).__call__(form, field, message)
+        super(Mobile, self).__call__(form, field, self.message)
         if self.available:
             if not available_mobile(field.data):
                 raise ValidationError(u'手机号已经被绑定')
 
 
 class Captcha(object):
-    def __init__(self, captcha_type, key_field, message=None):
+    def __init__(self, captcha_type, key_field, message=u'验证码错误'):
         self.captcha_type = captcha_type
         self.key_field = key_field
-        self.message = message if message else u'验证码错误'
+        self.message = message
 
     def __call__(self, form, field):
         if not redis_verify(self.captcha_type, form[self.key_field], field.data):
