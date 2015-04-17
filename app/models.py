@@ -67,7 +67,7 @@ class Collection(db.Model):
     # 用户id
     user_id = db.Column(db.Integer, nullable=False)
     # 商品id
-    goods_id = db.Column(db.Integer, nullable=False)
+    item_id = db.Column(db.Integer, nullable=False)
     # 创建时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
@@ -83,7 +83,7 @@ class Order(db.Model):
     # 商家id
     dealer_id = db.Column(db.Integer, nullable=False)
     # 商品id
-    goods_id = db.Column(db.Integer, nullable=False)
+    item_id = db.Column(db.Integer, nullable=False)
     # 创建时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
     # 定金
@@ -176,21 +176,21 @@ class ProducerAuthorization(db.Model):
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
 
 
-class Goods(db.Model):
+class BaseItem(db.Model):
     # TODO: 单个商品多个分类，多种材料?
-    __tablename__ = 'goods'
+    __tablename__ = 'items'
     # 商品id
     id = db.Column(db.Integer, primary_key=True)
     # 厂家id
     producer_id = db.Column(db.Integer, nullable=False)
     # 商品名称
-    goods = db.Column(db.Unicode(20), nullable=False)
+    item = db.Column(db.Unicode(20), nullable=False)
 
 
-class GoodsCategory(db.Model):
-    __tablename__ = 'goods_categories'
+class ItemCategory(db.Model):
+    __tablename__ = 'item_categories'
     id = db.Column(db.Integer, primary_key=True)
-    goods_id = db.Column(db.Integer, nullable=False)
+    item_id = db.Column(db.Integer, nullable=False)
     category_id = db.Column(db.Integer, nullable=False)
 
 
@@ -206,10 +206,10 @@ class Material(db.Model):
     material = db.Column(db.Unicode(10), nullable=False)
 
 
-class GoodsAuthorization(db.Model):
-    __tablename__ = 'goods_authorizations'
+class Item(db.Model):
+    __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key=True)
-    goods_id = db.Column(db.Integer, nullable=False)
+    item_id = db.Column(db.Integer, nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
     dealer_id = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Integer, nullable=False)
