@@ -2,6 +2,7 @@
 from wtforms.validators import Regexp, Email as BaseEmail, ValidationError
 
 from app.models import User, Producer, Dealer, Privilege
+from app.utils.redis import redis_verify
 
 
 class Email(BaseEmail):
@@ -33,6 +34,17 @@ class Mobile(Regexp):
         if self.available:
             if not available_mobile(field.data):
                 raise ValidationError(u'手机号已经被绑定')
+
+
+class Captcha(object):
+    def __init__(self, captcha_type, key_field, message=None):
+        self.captcha_type = captcha_type
+        self.key_field = key_field
+        self.message = message if message else u'验证码错误'
+
+    def __call__(self, form, field):
+        if not redis_verify(self.captcha_type, form[self.key_field], field.data):
+            raise ValidationError(self.message)
 
 
 def available_mobile(mobile):

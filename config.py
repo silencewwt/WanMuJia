@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import redis
 from datetime import timedelta
 
 
@@ -19,6 +18,7 @@ class Config(object):
     REMEMBER_COOKIE_DURATION = timedelta(7)
     CONFIRM_EMAIL_DURATION = 86400  # seconds
     SMS_CAPTCHA_DURATION = 600  # seconds
+    IMAGE_CAPTCHA_DURATION = 600  # seconds
 
 
 class DevelopmentConfig(Config):
