@@ -13,8 +13,8 @@ class LoginForm(Form):
 
 
 class RegistrationForm(Form):
-    email = StringField(validators=[Email(message=u'邮箱不符合规范!')])
-    mobile = StringField(validators=[Mobile(message=u'手机号码不符合规范!')])
+    email = StringField(validators=[Email()])
+    mobile = StringField(validators=[Mobile()])
     password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password')])
     confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
     legal_person_name = StringField(validators=[DataRequired(u'必填')])
@@ -29,7 +29,7 @@ class ProducerDetailForm(Form):
     license_limit = StringField(validators=[Length(8, 8)])
     license_long_time_limit = BooleanField()
     license_image = FileField(validators=[FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False, message=u'手机号码不符合规范')])
+    contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
     contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
     # TODO: add address select

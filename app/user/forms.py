@@ -3,7 +3,7 @@ from flask.ext.wtf import Form
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length, EqualTo
 
-from app.utils.validator import Email, Mobile
+from app.utils.validator import Email, Mobile, Captcha
 
 
 class LoginForm(Form):
@@ -13,13 +13,15 @@ class LoginForm(Form):
 
 
 class RegistrationForm(Form):
-    mobile = StringField(validators=[Mobile(u'手机号码不正确哦!'), Length(11, 11)])
+    mobile = StringField(validators=[Mobile(), Length(11, 11)])
     password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
     confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
-    email = StringField(validators=[Email(required=False, message=u'邮箱不符合规范')])
+    email = StringField(validators=[Email(required=False)])
+    captcha = StringField(validators=[Captcha('IMAGE_CAPTCHA', 'mobile')])
 
 
 class EmailRegistrationForm(Form):
-    email = StringField(validators=[Email(required=True, message=u'邮箱不符合规范')])
+    email = StringField(validators=[Email()])
     password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
     confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
+    captcha = StringField(validators=[Captcha('IMAGE_CAPTCHA', 'email')])
