@@ -3,6 +3,7 @@ from flask.ext.wtf import Form
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length, EqualTo
 
+from app.constants import *
 from app.utils.validator import Email, Mobile, Captcha
 
 
@@ -17,11 +18,11 @@ class RegistrationForm(Form):
     password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
     confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
     email = StringField(validators=[Email(required=False)])
-    captcha = StringField(validators=[Captcha('IMAGE_CAPTCHA', 'mobile')])
+    captcha = StringField(validators=[Captcha(IMAGE_CAPTCHA, 'mobile')])
 
 
 class EmailRegistrationForm(Form):
     email = StringField(validators=[Email()])
     password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
     confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
-    captcha = StringField(validators=[Captcha('IMAGE_CAPTCHA', 'email')])
+    captcha = StringField(validators=[Captcha(IMAGE_CAPTCHA, 'email')])

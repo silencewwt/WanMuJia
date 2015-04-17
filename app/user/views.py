@@ -7,6 +7,7 @@ from . import user as user_blueprint
 from . forms import *
 from app import db
 from app.models import User
+from app.constants import *
 from app.permission import user_permission
 from app.utils.captcha import send_captcha
 from app.utils.validator import available_mobile
@@ -64,7 +65,7 @@ def send_register_email():
     form = EmailRegistrationForm()
     if form.validate_on_submit():
         token = md5_with_salt(form.email.data)
-        redis_set('REG_TOKEN', token, email=form.email.data, password=form.password.data)
+        redis_set(REG_TOKEN, token, email=form.email.data, password=form.password.data)
         return 'ok', 200
     return 'false', 401
 
@@ -72,7 +73,7 @@ def send_register_email():
 @user_blueprint.route('/verify')
 def verify_email():
     token = request.args.get('token', '', type=str)
-    user_info = redis_get('REG_TOKEN', token)
+    user_info = redis_get(REG_TOKEN, token)
     if user_info:
         user = User(
             password=user_info['password'],
