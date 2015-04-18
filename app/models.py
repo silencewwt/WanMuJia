@@ -178,7 +178,7 @@ class ProducerAuthorization(db.Model):
 
 class BaseItem(db.Model):
     # TODO: 单个商品多个分类，多种材料?
-    __tablename__ = 'items'
+    __tablename__ = 'base_items'
     # 商品id
     id = db.Column(db.Integer, primary_key=True)
     # 厂家id
