@@ -87,3 +87,8 @@ def verify_email():
         return u'已激活'
     else:
         return u'激活链接已失效'
+
+
+@user_blueprint.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    pass
