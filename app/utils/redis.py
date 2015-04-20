@@ -4,15 +4,18 @@ import json
 from flask import current_app
 
 from app import local_redis
-from app.constants import REG_TOKEN
+from app.constants import CONFIRM_EMAIL, REGISTER_ACTION
 
 
 def redis_set(content_type, key, value, expire=None, **kwargs):
-    if content_type == REG_TOKEN:
-        value = json.dumps(dict(
-            password=kwargs['password'],
-            email=kwargs['email']
-        ))
+    if content_type == CONFIRM_EMAIL:
+        value_dict = {
+            'email': kwargs['email'],
+            'action': kwargs['action']
+        }
+        if kwargs['action'] == REGISTER_ACTION:
+            value_dict['password'] = kwargs['password']
+        value = json.dumps(value_dict)
     key = '%s:%s' % (content_type, key)
     expire = expire if expire else current_app.config['%s_DURATION' % content_type]
     local_redis.set(key, value, expire)
@@ -21,7 +24,7 @@ def redis_set(content_type, key, value, expire=None, **kwargs):
 def redis_get(content_type, key, **kwargs):
     key = '%s:%s' % (content_type, key)
     value = local_redis.get(key)
-    if content_type == REG_TOKEN and value is not None:
+    if content_type == CONFIRM_EMAIL and value is not None:
         value = json.loads(value)
     return value
 
