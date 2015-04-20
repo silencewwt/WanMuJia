@@ -65,7 +65,7 @@ def send_register_email():
     form = EmailRegistrationForm()
     if form.validate_on_submit():
         token = md5_with_salt(form.email.data)
-        redis_set(REG_TOKEN, token, email=form.email.data, password=form.password.data)
+        redis_set(CONFIRM_EMAIL, token, None, email=form.email.data, password=form.password.data, action='register')
         return 'ok', 200
     return 'false', 401
 
@@ -73,20 +73,23 @@ def send_register_email():
 @user_blueprint.route('/verify')
 def verify_email():
     token = request.args.get('token', '', type=str)
-    user_info = redis_get(REG_TOKEN, token)
-    if user_info:
-        user = User(
-            password=user_info['password'],
-            mobile='',
-            email=user_info['email'],
-        )
-        db.session.add(user)
-        db.session.commit()
-        login_user(user)
-        identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
-        return u'已激活'
-    else:
-        return u'激活链接已失效'
+    action = request.args.get('action', '', type=str)
+    user_info = redis_get(CONFIRM_EMAIL, token)
+    if user_info and user_info['action'] == action:
+        if action == REGISTER_ACTION:
+            user = User(
+                password=user_info['password'],
+                mobile='',
+                email=user_info['email'],
+            )
+            db.session.add(user)
+            db.session.commit()
+            login_user(user)
+            identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
+            return u'已激活'
+        elif action == RESET_PASSWORD_ACTION:
+            pass
+    return u'激活链接已失效'
 
 
 @user_blueprint.route('/reset_password', methods=['GET', 'POST'])
