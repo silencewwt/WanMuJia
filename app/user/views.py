@@ -9,7 +9,7 @@ from app import db
 from app.models import User
 from app.constants import *
 from app.permission import user_permission
-from app.utils.captcha import send_captcha
+from app.utils.captcha import send_sms_captcha
 from app.utils.validator import available_mobile
 from app.utils.utils import md5_with_salt
 from app.utils.redis import redis_set, redis_get
@@ -54,7 +54,7 @@ def send_sms():
     # TODO: verify image captcha
     mobile = request.values.get('mobile', '', type=str)
     if available_mobile(mobile):
-        send_captcha('user', mobile)
+        send_sms_captcha(mobile)
         return 'ok', 200
     return 'false', 401
 
