@@ -4,8 +4,8 @@ import string
 
 from captcha.image import ImageCaptcha
 
-from redis import redis_set, redis_verify
-from ..constants import SMS_CAPTCHA
+from redis import redis_set, redis_verify, redis_get
+from ..constants import SMS_CAPTCHA, SMS_CAPTCHA_SENT
 from ..sms import sms_generator
 
 ic = ImageCaptcha()
@@ -26,9 +26,13 @@ def sms_captcha_generator():
 
 
 def send_sms_captcha(mobile):
-    captcha_chars = sms_captcha_generator()
-    redis_set(SMS_CAPTCHA, mobile, captcha_chars)
-    sms_generator(SMS_CAPTCHA, mobile, captcha=captcha_chars)
+    if not redis_get(SMS_CAPTCHA_SENT, mobile):
+        captcha_chars = sms_captcha_generator()
+        redis_set(SMS_CAPTCHA, mobile, captcha_chars)
+        sms_generator(SMS_CAPTCHA, mobile, captcha=captcha_chars)
+        redis_set(SMS_CAPTCHA_SENT, mobile, True, 60)
+        return True
+    return False
 
 
 def verify_sms_captcha(mobile, sms_captcha):
