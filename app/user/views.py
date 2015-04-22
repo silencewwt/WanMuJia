@@ -1,5 +1,5 @@
 # -*-coding: utf-8 -*-
-from flask import current_app, request, render_template, redirect, flash
+from flask import current_app, request, render_template, redirect, flash, session
 from flask_security import login_user, logout_user, login_required
 from flask_security.utils import identity_changed, Identity
 
@@ -9,7 +9,7 @@ from app import db
 from app.models import User
 from app.constants import *
 from app.permission import user_permission
-from app.utils.captcha import send_sms_captcha
+from app.utils.captcha_ import send_sms_captcha
 from app.utils.validator import available_mobile
 from app.utils.utils import md5_with_salt
 from app.utils.redis import redis_set, redis_get
@@ -70,7 +70,7 @@ def send_register_email():
     return 'false', 401
 
 
-@user_blueprint.route('/verify')
+@user_blueprint.route('/verify', methods=['GET', 'POST'])
 def verify_email():
     token = request.args.get('token', '', type=str)
     action = request.args.get('action', '', type=str)
@@ -88,7 +88,16 @@ def verify_email():
             identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
             return u'已激活'
         elif action == RESET_PASSWORD_ACTION:
-            pass
+            form = ResetPasswordForm()
+            if form.validate_on_submit():
+                user = User.query.filter_by(email=user_info['email']).limit(1).first()
+                if user:
+                    user.password = form.password.data
+                    # TODO: 重新登录 or 已登录？
+                    return 'reset password success'
+                else:
+                    return 'reset password fail'
+            return render_template('user/verify_reset_password.html', reset_form=form)
     return u'激活链接已失效'
 
 
