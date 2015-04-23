@@ -8,6 +8,7 @@ from . forms import *
 from app import db
 from app.models import User
 from app.constants import *
+from app.core import login as model_login
 from app.permission import user_permission
 from app.utils.captcha_ import send_sms_captcha
 from app.utils.validator import available_mobile
@@ -19,12 +20,7 @@ from app.utils.redis import redis_set, redis_get
 def login():
     login_form = LoginForm()
     if login_form.validate_on_submit():
-        user = User.query.filter_by(username=login_form.username.data).first() or \
-            User.query.filter_by(mobile=login_form.username.data).first() or \
-            User.query.filter_by(email=login_form.username.data).first()
-        if user and user.verify_password(login_form.username.data):
-            login_user(user, login_form.remember_me.data)
-            identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
+        if model_login(User, login_form):
             return redirect('/')    # TODO: redirect
         flash(u'用户名或密码错误')
     return render_template('user/login.html', login_form=login_form)
