@@ -68,27 +68,27 @@ gulp.task('server', ['sass', 'js', 'img', 'lib', 'pages'], function () {
 });
 
 
-gulp.task('compress', ['sass', 'js'], function () {
-    gulp.src('./src/static/css/main.css')
+gulp.task('compress', ['sass', 'js', 'img', 'lib', 'pages'], function () {
+    gulp.src(conf.serverPath + './static/css/main.css')
         .pipe($.minifyCss())
-        .pipe(gulp.dest('./dist/static/css'));
-    gulp.src('./src/static/lib/*.css')
+        .pipe(gulp.dest(conf.distPath + './static/css'));
+    gulp.src(conf.serverPath + './static/lib/*.css')
         .pipe($.minifyCss())
-        .pipe(gulp.dest('./dist/static/lib'));
-    gulp.src('./src/static/js/*.js')
+        .pipe(gulp.dest(conf.distPath + './static/lib'));
+    gulp.src(conf.serverPath + './static/js/*.js')
         .pipe($.uglify())
-        .pipe(gulp.dest('./dist/static/js'));
-    gulp.src('./src/static/lib/*.js')
+        .pipe(gulp.dest(conf.distPath + './static/js'));
+    gulp.src(conf.serverPath + './static/lib/*.js')
         .pipe($.uglify())
-        .pipe(gulp.dest('./dist/static/lib'));
-    gulp.src('./src/pages/*.html')
+        .pipe(gulp.dest(conf.distPath + './static/lib'));
+    gulp.src(conf.serverPath + './pages/**/*.html')
         .pipe($.minifyHtml())
-        .pipe(gulp.dest('./dist/templates'));
+        .pipe(gulp.dest(conf.distPath + './templates'));
 });
 
-//gulp.task('release', ['compress'], function () {
-//    gulp.src('./static/fonts/*')
-//        .pipe(gulp.dest('./dist/static/fonts'));
-//});
+gulp.task('release', ['compress'], function () {
+    gulp.src(conf.serverPath + './static/lib/fonts/**')
+        .pipe(gulp.dest(conf.distPath + './static/lib/fonts'));
+});
 
 gulp.task('default', ['server']);
