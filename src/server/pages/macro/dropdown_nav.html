@@ -1,0 +1,10 @@
+{% macro dropdown(name, list) %}
+    <span class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">{{ name }}</span>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">{{ list[0] }}</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">{{ list[1] }}</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">{{ list[2] }}</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">{{ list[3] }}</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">{{ list[4] }}</a></li>
+    </ul>
+{% endmacro %}

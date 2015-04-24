@@ -1,0 +1,112 @@
+// Global
+
+body {
+  background-color: $bgc-base;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  color: #fff;
+}
+
+
+a {
+  color: #fff;
+  text-decoration: none;
+
+  &:hover, &:focus {
+    text-decoration: none ;
+  }
+}
+
+.clearfix {
+  @include clearfix();
+}
+
+.wrapper {
+  width: $wrapper-width-base;
+  margin: auto;
+  @extend .clearfix;
+}
+
+
+// Navigation
+.nav {
+  @extend .clearfix;
+
+  margin: 0 (-$nav-interval-base);
+  padding: 0;
+  list-style: none;
+
+  & > li {
+    margin: 0 $nav-interval-base;
+    float: left;
+    line-height: $nav-line-height-large;
+  }
+}
+
+// Arrow down
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  vertical-align: middle;
+  border-top:   $caret-width-base dashed;
+  border-right: $caret-width-base solid transparent;
+  border-left:  $caret-width-base solid transparent;
+}
+
+
+// Dialog
+.dialog {
+  z-index: 100;
+  display: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+
+  & p {
+    margin: 30% 20% 0 20%;
+    color: #fff;
+    font-size: 16px;
+    line-height: $nav-line-height-large;
+    text-align: center;
+  }
+}
+
+
+// Dropdown
+.dropdown-base {
+  @extend .dropdown;
+
+  & .dropdown-menu {
+    z-index: 1001;
+    min-width: 100px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    text-align: center;
+  }
+
+  &.open .dropdown-toggle {
+    color: $font-color-base;
+  }
+
+  & li {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+
+    &:last-child {
+      border: none;
+    }
+
+    & a {
+      color: $font-color-base;
+    }
+
+    & a:hover {
+      color: $dropdown-link-hover-color;
+    }
+  }
+}

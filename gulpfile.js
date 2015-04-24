@@ -9,38 +9,58 @@ var $ = require('gulp-load-plugins')({
 
 var conf = {
     pojName: 'myj',
-    version: '0.0.0'
+    version: '0.0.0',
+    serverPath: './src/server/',
+    staticPath: './src/static/',
+    distPath: './dist/'
 };
 
 
 gulp.task('sass', function () {
-    return gulp.src('./src/static/scss/*.scss')
+    return gulp.src(conf.staticPath + './scss/*.scss')
         .pipe($.sass({errLogToConsole: true}))
         .pipe($.autoprefixer({
             browsers: ['last 2 versions']
         }))
-        .pipe(gulp.dest('./src/static/css'));
+        .pipe(gulp.dest(conf.serverPath + './static/css'));
 });
 
-gulp.task('lint', function () {
-    return gulp.src('./src/static/js/*.js')
+gulp.task('js', function () {
+    return gulp.src(conf.staticPath + './js/*.js')
         .pipe($.jshint())
-        .pipe($.jshint.reporter(stylish));
+        .pipe($.jshint.reporter(stylish))
+        .pipe(gulp.dest(conf.serverPath + './static/js'));
 });
 
-gulp.task('nunjs', function () {
-    return gulp.src('./src/pages/*.html')
-        .pipe($.rename({extname: '.nunjs'}))
-        .pipe(gulp.dest('./src/pages/nunjs'));
+gulp.task('img', function () {
+    return gulp.src(conf.staticPath + './img/**')
+        .pipe(gulp.dest(conf.serverPath + './static/img'));
 });
 
-gulp.task('server', ['sass', 'lint', 'nunjs'], function () {
+gulp.task('lib', function () {
+    gulp.src(
+            ['./lib/*.js', './lib/*.css']
+            .map(function (src) {
+                return conf.staticPath + src;
+            })
+        )
+        .pipe(gulp.dest(conf.serverPath + './static/lib'));
+
+    gulp.src(conf.staticPath + './lib/fonts/**')
+        .pipe(gulp.dest(conf.serverPath + './static/lib/fonts'));
+});
+
+gulp.task('pages', function () {
+    return gulp.src('./src/pages/**')
+        .pipe(gulp.dest(conf.serverPath + './pages'));
+});
+
+gulp.task('server', ['sass', 'js', 'img', 'lib', 'pages'], function () {
     $.nodemon({
-        script: './src/server.js',
+        script: conf.serverPath + 'server.js',
         ext: 'js html scss',
         ignore: 'gulpfile.js',
-        env: { 'NODE_ENV': 'development' },
-        tasks: ['sass', 'lint', 'nunjs']
+        tasks: ['sass', 'js', 'img', 'lib', 'pages']
     })
     .on('restart', function () {
         console.log('restarted!');
@@ -48,8 +68,8 @@ gulp.task('server', ['sass', 'lint', 'nunjs'], function () {
 });
 
 
-gulp.task('compress', ['sass', 'lint'], function () {
-    gulp.src('./src/static/css/*.css')
+gulp.task('compress', ['sass', 'js'], function () {
+    gulp.src('./src/static/css/main.css')
         .pipe($.minifyCss())
         .pipe(gulp.dest('./dist/static/css'));
     gulp.src('./src/static/lib/*.css')
@@ -66,9 +86,9 @@ gulp.task('compress', ['sass', 'lint'], function () {
         .pipe(gulp.dest('./dist/templates'));
 });
 
-gulp.task('release', ['compress'], function () {
-    gulp.src('./static/fonts/*')
-        .pipe(gulp.dest('./dist/static/fonts'));
-});
+//gulp.task('release', ['compress'], function () {
+//    gulp.src('./static/fonts/*')
+//        .pipe(gulp.dest('./dist/static/fonts'));
+//});
 
 gulp.task('default', ['server']);

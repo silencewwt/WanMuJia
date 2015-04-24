@@ -1,0 +1,81 @@
+{% from 'macro/dropdown_nav.html' import dropdown %}
+
+<header>
+    <div class="user-nav">
+        <div class="wrapper">
+            <ul class="nav basic-info">
+                <li class="user-info">
+                    <a href="/user/login" class="login">请登录</a>
+                    <a href="/user/register" class="login">注册</a>
+                </li>
+            </ul>
+
+            <ul class="nav service">
+                <li class="user-like"><a href="/user/collection">收藏夹</a></li>
+                <li class="user-order"><a href="/user/order">我的订单</a></li>
+                <li class="user-cart"><a href="/user/cart">购物车</a></li>
+                <li class="dropdown-qr">
+                    <a href="#" class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">
+                        <img src="img/qr.jpg" alt="二维码"/>
+                    </a>
+                    <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <a href=""><img src="img/qr.jpg" alt="二维码"/></a>
+                    </div>
+                </li>
+                <li class="dropdown-merchant">
+                    <a href="#" class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">
+                        商户入口
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">我是商家</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">我是厂家</a></li>
+                    </ul>
+                </li>
+                <li class="serve-phone">
+                    <a href="javascript:return false;">服务电话：400 627 2273</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="brand">
+        <div class="wrapper">
+            <h1 class="logo">
+                <a href="#">LOGO</a>
+            </h1>
+            <a href="#" class="city">
+                北京
+                <span class="caret"></span>
+            </a>
+
+            <div class="search-box">
+                <form action="" method="get">
+                    <input type="text"/>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <nav class="main-nav">
+        <div class="wrapper">
+            <ul class="nav">
+                <li class="dropdown-nav">
+                    {{ dropdown('家庭', ['餐厅', '书房', '厨卫', '走廊', '健身房']) }}
+                </li>
+                <li class="dropdown-nav">
+                    {{ dropdown('工艺品', ['餐厅', '书房', '厨卫', '走廊', '健身房']) }}
+                </li>
+                <li class="dropdown-nav">
+                    {{ dropdown('酒店', ['餐厅', '书房', '厨卫', '走廊', '健身房']) }}
+                </li>
+                <li class="dropdown-nav">
+                    {{ dropdown('其他', ['餐厅', '书房', '厨卫', '走廊', '健身房']) }}
+                </li>
+                <li class="dropdown-nav">
+                    {{ dropdown('私人定制', ['餐厅', '书房', '厨卫', '走廊', '健身房']) }}
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>

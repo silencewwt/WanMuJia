@@ -1,0 +1,47 @@
+// Variables
+@import "../lib/bootstrap-sass/sass/bootstrap/variables";
+
+// global
+$bgc-base:                #170b09;
+$bgc-info-base:           #322827;
+
+$icon-font-path:          '../lib/fonts/bootstrap/';
+
+$font-family-base:        SimHei, sans-serif;
+$font-size-base:          14px;
+$font-size-large:         18px;
+$font-size-lx:            24px;
+$font-color-base:         #929292;
+
+$border-color-base:       #9c9c9c;
+
+$link-hover-color:        #969696;
+
+
+// wrapper
+$wrapper-width-base:      960px;
+$wrapper-width-full:      100%;
+
+
+// nav
+$nav-interval-small:      10px;
+$nav-interval-base:       14px;
+$nav-interval-large:      80px;
+
+$nav-line-height-base:    1.7;
+$nav-line-height-large:   2.4;
+
+
+// dropdown
+$dropdown-bg:             rgba(0, 0, 0, 0.7);
+$dropdown-link-color:     #fff;
+$dropdown-link-hover-color: #fff;
+$dropdown-link-hover-bg:  lighten($dropdown-bg, 10%);
+
+
+// brand
+$brand-margin-top:        42px;
+
+
+// items
+$item-interval-width:     104px;

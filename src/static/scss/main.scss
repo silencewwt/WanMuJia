@@ -1,7 +1,14 @@
-// main.scss
+//@import "../lib/bootstrap-sass/bootstrap";
 
-h1 {
-  font-size: 20px;
-  display: flex;
-  box-shadow: inset;
-}
+@import "variable";
+@import "mixins";
+@import "../lib/bootstrap-sass/sass/bootstrap/normalize";
+@import "../lib/bootstrap-sass/sass/bootstrap/dropdowns";
+@import "../lib/bootstrap-sass/sass/bootstrap/carousel";
+@import "../lib/bootstrap-sass/sass/bootstrap/glyphicons";
+@import "../lib/bootstrap-sass/sass/bootstrap/scaffolding";
+
+@import "global";
+@import "header";
+@import "index";
+@import "footer";
