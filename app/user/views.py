@@ -1,5 +1,5 @@
 # -*-coding: utf-8 -*-
-from flask import current_app, request, render_template, redirect, flash, session
+from flask import current_app, request, render_template, redirect, flash, session, url_for
 from flask_security import login_user, logout_user, login_required
 from flask_security.utils import identity_changed, Identity
 
@@ -84,19 +84,33 @@ def verify_email():
             identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
             return u'已激活'
         elif action == RESET_PASSWORD_ACTION:
-            form = ResetPasswordForm()
-            if form.validate_on_submit():
-                user = User.query.filter_by(email=user_info['email']).limit(1).first()
-                if user:
-                    user.password = form.password.data
-                    # TODO: 重新登录 or 已登录？
-                    return 'reset password success'
-                else:
-                    return 'reset password fail'
-            return render_template('user/verify_reset_password.html', reset_form=form)
+            session['reset'] = True
+            session['email'] = user_info['email']
+            return redirect(url_for('reset_password'))
     return u'激活链接已失效'
 
 
 @user_blueprint.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
-    pass
+    mobile_form = MobileResetPasswordForm()
+    email_form = EmailResetPasswordForm()
+    reset_form = ResetPasswordForm()
+    if mobile_form.validate_on_submit():
+        # TODO: store data in redis
+        session['reset'] = True
+        session['mobile'] = mobile_form.mobile.data
+        return 'mobile ok'
+    elif email_form.validate_on_submit():
+        session['reset'] = True
+        session['email'] = email_form.email.data
+        return 'email ok'
+    elif 'reset' in session and session['reset'] is True:
+        if 'mobile' in session:
+            user = User.query.filter_by(mobile=session['mobile']).first()
+        elif 'email' in session:
+            user = User.query.filter_by(email=session['email']).first()
+        else:
+            return 'error'
+        user.password = reset_form.password.data
+        return 'reset password success'
+    return render_template('user/reset_password.html', mobile_form=mobile_form, email_form=email_form)
