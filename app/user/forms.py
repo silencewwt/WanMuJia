@@ -35,7 +35,7 @@ class ResetPasswordForm(Form):
 
 class MobileResetPasswordForm(Form):
     mobile = StringField(validators=[Mobile()])
-    captcha = StringField(validators=[Captcha(IMAGE_CAPTCHA, 'mobile')])
+    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
 
 
 class EmailResetPasswordForm(Form):

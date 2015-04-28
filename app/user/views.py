@@ -11,7 +11,7 @@ from app.constants import *
 from app.core import login as model_login
 from app.permission import user_permission
 from app.utils.captcha_ import send_sms_captcha
-from app.utils.validator import available_mobile
+from app.utils.validator import available_mobile, validate_mobile
 from app.utils.utils import md5_with_salt
 from app.utils.redis import redis_set, redis_get
 
@@ -48,8 +48,8 @@ def register():
 def send_sms():
     # TODO: CSRF Token
     # TODO: verify image captcha
-    mobile = request.values.get('mobile', '', type=str)
-    if available_mobile(mobile):
+    mobile = request.values.get('mobile', '', type=str).strip()
+    if validate_mobile(mobile):
         send_sms_captcha(mobile)
         return 'ok', 200
     return 'false', 401
@@ -107,10 +107,13 @@ def reset_password():
     elif 'reset' in session and session['reset'] is True:
         if 'mobile' in session:
             user = User.query.filter_by(mobile=session['mobile']).first()
+            session.pop('mobile')
         elif 'email' in session:
             user = User.query.filter_by(email=session['email']).first()
+            session.pop('email')
         else:
-            return 'error'
+            return 'error', 401
         user.password = reset_form.password.data
+        session.pop('reset')
         return 'reset password success'
     return render_template('user/reset_password.html', mobile_form=mobile_form, email_form=email_form)
