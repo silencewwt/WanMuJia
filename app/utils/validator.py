@@ -1,4 +1,5 @@
 # -*-coding: utf-8 -*-
+import re
 from wtforms.validators import Regexp, Email as BaseEmail, ValidationError
 
 from app.models import User, Producer, Dealer, Privilege
@@ -51,6 +52,13 @@ def available_mobile(mobile):
     if User.query.filter_by(mobile=mobile).first() or \
             Producer.query.filter_by(mobile=mobile).first() or \
             Dealer.query.filter_by(mobile=mobile).first():
+        return False
+    return True
+
+
+def validate_mobile(mobile):
+    match = re.match(r'^1[3-8]\d{9}$', mobile)
+    if not match:
         return False
     return True
 
