@@ -8,7 +8,7 @@ from . forms import *
 from app import db
 from app.models import User
 from app.constants import *
-from app.core import login as model_login
+from app.core import login as model_login, reset_password as model_reset_password
 from app.permission import user_permission
 from app.utils.captcha_ import send_sms_captcha
 from app.utils.validator import available_mobile, validate_mobile
@@ -92,28 +92,4 @@ def verify_email():
 
 @user_blueprint.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
-    mobile_form = MobileResetPasswordForm()
-    email_form = EmailResetPasswordForm()
-    reset_form = ResetPasswordForm()
-    if mobile_form.validate_on_submit():
-        # TODO: store data in redis
-        session['reset'] = True
-        session['mobile'] = mobile_form.mobile.data
-        return 'mobile ok'
-    elif email_form.validate_on_submit():
-        session['reset'] = True
-        session['email'] = email_form.email.data
-        return 'email ok'
-    elif 'reset' in session and session['reset'] is True:
-        if 'mobile' in session:
-            user = User.query.filter_by(mobile=session['mobile']).first()
-            session.pop('mobile')
-        elif 'email' in session:
-            user = User.query.filter_by(email=session['email']).first()
-            session.pop('email')
-        else:
-            return 'error', 401
-        user.password = reset_form.password.data
-        session.pop('reset')
-        return 'reset password success'
-    return render_template('user/reset_password.html', mobile_form=mobile_form, email_form=email_form)
+    return model_reset_password(User, 'user')

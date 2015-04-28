@@ -26,18 +26,3 @@ class EmailRegistrationForm(Form):
     password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
     confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
     captcha = StringField(validators=[Captcha(IMAGE_CAPTCHA, 'email')])
-
-
-class ResetPasswordForm(Form):
-    password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
-    confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
-
-
-class MobileResetPasswordForm(Form):
-    mobile = StringField(validators=[Mobile()])
-    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
-
-
-class EmailResetPasswordForm(Form):
-    email = StringField(validators=[Email()])
-    captcha = StringField(validators=[Captcha(IMAGE_CAPTCHA, 'email')])
