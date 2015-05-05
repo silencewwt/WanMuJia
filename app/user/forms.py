@@ -21,8 +21,16 @@ class RegistrationForm(Form):
     captcha = StringField(validators=[Captcha(IMAGE_CAPTCHA, 'mobile')])
 
 
+class MobileRegistrationForm(Form):
+    mobile = StringField(validators=[Mobile(), Length(11, 11)])
+    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
+
+
 class EmailRegistrationForm(Form):
     email = StringField(validators=[Email()])
+
+
+class RegistrationDetailForm(Form):
     password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
     confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
-    captcha = StringField(validators=[Captcha(IMAGE_CAPTCHA, 'email')])
+    username = StringField(DataRequired(), Length(2, 14))
