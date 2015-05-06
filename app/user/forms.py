@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length, EqualTo
 
 from app.constants import *
-from app.utils.validator import Email, Mobile, Captcha
+from app.utils.validator import Email, Mobile, Captcha, UserName
 
 
 class LoginForm(Form):
@@ -33,4 +33,4 @@ class EmailRegistrationForm(Form):
 class RegistrationDetailForm(Form):
     password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
     confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
-    username = StringField(DataRequired(), Length(2, 14))
+    username = StringField(validators=[UserName()])

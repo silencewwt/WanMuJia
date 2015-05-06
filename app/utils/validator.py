@@ -48,6 +48,14 @@ class Captcha(object):
             raise ValidationError(self.message)
 
 
+class UserName(object):
+    def __call__(self, form, field):
+        if not re.match(r'^\w{4,14}$', field.data, re.UNICODE) or re.match(r'^\d*$', field.data, re.UNICODE):
+            raise ValidationError(u'用户名中含有非法字符!')
+        if not available_username(field.data):
+            raise ValidationError(u'该用户名已被使用!')
+
+
 def available_mobile(mobile):
     if User.query.filter_by(mobile=mobile).first() or \
             Producer.query.filter_by(mobile=mobile).first() or \
@@ -64,4 +72,4 @@ def validate_mobile(mobile):
 
 
 def available_username(username):
-    pass
+    return not User.query.filter_by(username=username).limit(1).first()
