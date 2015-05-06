@@ -28,20 +28,52 @@ def login():
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(
-            mobile=form.mobile.data,
-            password=form.password.data,
-            email=form.email.data
-        )
-        db.session.add(user)
-        db.session.commit()
-        login_user(user)
-        identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
-        flash(u'注册成功!')
-        return redirect('/')
-    return render_template('user/register.html', register_form=form)
+    form_type = request.args.get('form', '', type=str)
+    mobile_form = MobileRegistrationForm()
+    email_form = EmailRegistrationForm()
+    detail_form = RegistrationDetailForm()
+    if 'step_done' in session:
+        if session['step_done'] == 0:
+            if form_type == 'mobile' and mobile_form.validate_on_submit():
+                session['step_done'] = 1
+                session['mobile'] = mobile_form.mobile.data
+            elif form_type == 'email' and email_form.validate_on_submit():
+                session['step_done'] = 1
+                session['email'] = email_form.email.data
+            else:
+                # TODO: step 1 page
+                return 'step 1 page'
+        elif session['step_done'] == 1 and detail_form.validate_on_submit():
+            if 'mobile' in session and session['mobile']:
+                mobile = session['mobile']
+                email = ''
+            elif 'email' in session and session['email']:
+                mobile = ''
+                email = session['email']
+            else:
+                return 'error', 401
+            user = User(
+                password=detail_form.password.data,
+                mobile=mobile,
+                email=email,
+                username=detail_form.username.data
+            )
+            db.session.add(user)
+            db.session.commit()
+            login_user(user)
+            identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
+            flash(u'注册成功!')
+            session.pop('step_done')
+            if mobile:
+                session.pop('mobile')
+            if email:
+                session.pop('email')
+            return redirect('/')
+        elif session['step_done'] == 1 and not detail_form.validate_on_submit():
+            # TODO: step 2 page
+            return 'step 2 page'
+    session['step_done'] = 0
+    return render_template('user/register.html', mobile_form=mobile_form, email_form=email_form, detail_form=detail_form)
 
 
 @user_blueprint.route('/send_sms', methods=['POST'])
