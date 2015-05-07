@@ -17,8 +17,9 @@ def id_generator(size=4, chars=None):
 
 
 def image_captcha_generator():
-    captcha_output = ic.generate(id_generator())
-    return captcha_output
+    chars = id_generator()
+    captcha_output = ic.generate(chars)
+    return chars, captcha_output.getvalue()
 
 
 def sms_captcha_generator():
