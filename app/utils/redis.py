@@ -4,7 +4,7 @@ import json
 from flask import current_app
 
 from app import local_redis
-from app.constants import CONFIRM_EMAIL, REGISTER_ACTION
+from app.constants import CONFIRM_EMAIL, REGISTER_ACTION, IMAGE_CAPTCHA
 
 
 def redis_set(content_type, key, value, expire=None, **kwargs):
@@ -26,6 +26,9 @@ def redis_get(content_type, key, **kwargs):
     value = local_redis.get(key)
     if content_type == CONFIRM_EMAIL and value is not None:
         value = json.loads(value)
+    if content_type == IMAGE_CAPTCHA and value != '':
+        token = key[-32:]
+        redis_set(IMAGE_CAPTCHA, token, '', 7200)
     return value
 
 

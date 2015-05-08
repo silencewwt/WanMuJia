@@ -1,8 +1,10 @@
 # -*-coding: utf-8 -*-
 import re
+from flask import session
 from wtforms.validators import Regexp, Email as BaseEmail, ValidationError
 
 from app.models import User, Producer, Dealer, Privilege
+from app.constants import IMAGE_CAPTCHA_CODE
 from app.utils.redis import redis_verify
 
 
@@ -44,8 +46,14 @@ class Captcha(object):
         self.message = message
 
     def __call__(self, form, field):
-        if not redis_verify(self.captcha_type, form[self.key_field], field.data):
-            raise ValidationError(self.message)
+        if self.captcha_type == IMAGE_CAPTCHA_CODE:
+            if 'captcha_token' not in session:
+                raise ValidationError(self.message)
+            if not redis_verify(self.captcha_type, session['captcha_token'], field.data.upper()):
+                raise ValidationError(self.message)
+        else:
+            if not redis_verify(self.captcha_type, form[self.key_field], field.data):
+                raise ValidationError(self.message)
 
 
 class UserName(object):
