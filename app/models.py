@@ -176,15 +176,19 @@ class ProducerAuthorization(db.Model):
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
 
 
-class BaseItem(db.Model):
+class Item(db.Model):
     # TODO: 单个商品多个分类，多种材料?
-    __tablename__ = 'base_items'
+    __tablename__ = 'items'
     # 商品id
     id = db.Column(db.Integer, primary_key=True)
+    # 创建时间
+    created = db.Column(db.Integer, default=time.time, nullable=False)
     # 厂家id
     producer_id = db.Column(db.Integer, nullable=False)
     # 商品名称
     item = db.Column(db.Unicode(20), nullable=False)
+    # 指导价格
+    price = db.Column(db.Integer, nullable=False)
 
 
 class ItemCategory(db.Model):
@@ -206,13 +210,13 @@ class Material(db.Model):
     material = db.Column(db.Unicode(10), nullable=False)
 
 
-class Item(db.Model):
-    __tablename__ = 'items'
-    id = db.Column(db.Integer, primary_key=True)
-    item_id = db.Column(db.Integer, nullable=False)
-    created = db.Column(db.Integer, default=time.time, nullable=False)
-    dealer_id = db.Column(db.Integer, nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+# class Item(db.Model):
+#     __tablename__ = 'items'
+#     id = db.Column(db.Integer, primary_key=True)
+#     item_id = db.Column(db.Integer, nullable=False)
+#     created = db.Column(db.Integer, default=time.time, nullable=False)
+#     dealer_id = db.Column(db.Integer, nullable=False)
+#     price = db.Column(db.Integer, nullable=False)
 
 
 class Privilege(BaseUser, db.Model):
