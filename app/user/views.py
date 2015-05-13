@@ -32,24 +32,24 @@ def register():
     mobile_form = MobileRegistrationForm()
     email_form = EmailRegistrationForm()
     detail_form = RegistrationDetailForm()
-    if 'step_done' in session:
-        if session['step_done'] == 0:
-            if form_type == 'mobile' and mobile_form.validate_on_submit():
-                session['step_done'] = 1
-                session['mobile'] = mobile_form.mobile.data
-            elif form_type == 'email' and email_form.validate_on_submit():
-                session['step_done'] = 1
-                session['email'] = email_form.email.data
+    if USER_REGISTER_STEP_DONE in session:
+        if session[USER_REGISTER_STEP_DONE] == 0:
+            if form_type == USER_REGISTER_MOBILE and mobile_form.validate_on_submit():
+                session[USER_REGISTER_STEP_DONE] = 1
+                session[USER_REGISTER_MOBILE] = mobile_form.mobile.data
+            elif form_type == USER_REGISTER_EMAIL and email_form.validate_on_submit():
+                session[USER_REGISTER_STEP_DONE] = 1
+                session[USER_REGISTER_EMAIL] = email_form.email.data
             else:
                 # TODO: step 1 page
                 return 'step 1 page'
-        elif session['step_done'] == 1 and detail_form.validate_on_submit():
-            if 'mobile' in session and session['mobile']:
-                mobile = session['mobile']
+        elif session[USER_REGISTER_STEP_DONE] == 1 and detail_form.validate_on_submit():
+            if USER_REGISTER_MOBILE in session and session[USER_REGISTER_MOBILE]:
+                mobile = session[USER_REGISTER_MOBILE]
                 email = ''
-            elif 'email' in session and session['email']:
+            elif USER_REGISTER_EMAIL in session and session[USER_REGISTER_EMAIL]:
                 mobile = ''
-                email = session['email']
+                email = session[USER_REGISTER_EMAIL]
             else:
                 return 'error', 401
             user = User(
@@ -63,16 +63,16 @@ def register():
             login_user(user)
             identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
             flash(u'注册成功!')
-            session.pop('step_done')
+            session.pop(USER_REGISTER_STEP_DONE)
             if mobile:
-                session.pop('mobile')
+                session.pop(USER_REGISTER_MOBILE)
             if email:
-                session.pop('email')
+                session.pop(USER_REGISTER_EMAIL)
             return redirect('/')
-        elif session['step_done'] == 1 and not detail_form.validate_on_submit():
+        elif session[USER_REGISTER_STEP_DONE] == 1 and not detail_form.validate_on_submit():
             # TODO: step 2 page
             return 'step 2 page'
-    session['step_done'] = 0
+    session[USER_REGISTER_STEP_DONE] = 0
     return render_template('user/register.html', mobile_form=mobile_form, email_form=email_form, detail_form=detail_form)
 
 
