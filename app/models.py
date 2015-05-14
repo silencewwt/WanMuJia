@@ -104,10 +104,12 @@ class Producer(BaseUser, db.Model):
     legal_person_name = db.Column(db.Unicode(10), nullable=False)
     # 法人身份证号码
     legal_person_identity = db.Column(db.CHAR(18), nullable=False)
+    # 法人身份证正面图片
+    legal_person_identity_front = db.Column(db.String(255), default='', nullable=False)
+    # 法人身份证反面图片
+    legal_person_identity_back = db.Column(db.String(255), default='', nullable=False)
     # 品牌厂家名称
     name = db.Column(db.Unicode(30), unique=True, nullable=False)
-    # 营业执照注册号
-    license_identity = db.Column(db.String(20), nullable=False)
     # 营业执照所在地
     license_address = db.Column(db.Unicode(30), nullable=False)
     # 营业执照期限
@@ -115,16 +117,28 @@ class Producer(BaseUser, db.Model):
     # 长期印业执照
     license_long_time_limit = db.Column(db.Boolean, default=False, nullable=False)
     # 营业执照副本扫描件
-    license_image = db.Column(db.String(255), nullable=False)
+    license_image = db.Column(db.String(255), default='', nullable=False)
     # 地址 id
     address_id = db.Column(db.Integer, nullable=False)
     # 联系手机
     contact_mobile = db.Column(db.CHAR(11), nullable=False)
     # 联系电话
     contact_telephone = db.Column(db.CHAR(15), nullable=False)
+    # 已通过审核
+    confirmed = db.Column(db.Boolean, default=False, nullable=False)
 
-    def __init__(self, password, mobile, email):
+    def __init__(self, password, mobile, email, legal_person_name, legal_person_identity, name, license_address,
+                 license_limit, license_long_time_limit, address_id, contact_mobile, contact_telephone):
         super(Producer, self).__init__(password, mobile, email)
+        self.legal_person_name = legal_person_name
+        self.legal_person_identity = legal_person_identity
+        self.name = name
+        self.license_address = license_address
+        self.license_limit = license_limit
+        self.license_long_time_limit = license_long_time_limit
+        self.address_id = address_id
+        self.contact_mobile = contact_mobile
+        self.contact_telephone = contact_telephone
 
     def get_id(self):
         return producer_id_prefix + unicode(self.id)
@@ -154,6 +168,8 @@ class Dealer(BaseUser, db.Model):
     contact_mobile = db.Column(db.CHAR(11), nullable=False)
     # 联系电话
     contact_telephone = db.Column(db.CHAR(15), nullable=False)
+    # 已通过审核
+    confirmed = db.Column(db.Boolean, default=False, nullable=False)
 
     def __init__(self, password, mobile, email):
         super(Dealer, self).__init__(password, mobile, email)
@@ -162,18 +178,18 @@ class Dealer(BaseUser, db.Model):
         return dealer_id_prefix + unicode(self.id)
 
 
-class ProducerAuthorization(db.Model):
-    __tablename__ = 'producer_authorizations'
-    # id
-    id = db.Column(db.Integer, primary_key=True)
-    # 商家id
-    dealer_id = db.Column(db.Integer, nullable=False)
-    # 厂家id
-    producer_id = db.Column(db.Integer, nullable=False)
-    # 授权时间
-    created = db.Column(db.Integer, default=time.time, nullable=False)
-    # 确认授权
-    confirmed = db.Column(db.Boolean, default=False, nullable=False)
+# class ProducerAuthorization(db.Model):
+#     __tablename__ = 'producer_authorizations'
+#     # id
+#     id = db.Column(db.Integer, primary_key=True)
+#     # 商家id
+#     dealer_id = db.Column(db.Integer, nullable=False)
+#     # 厂家id
+#     producer_id = db.Column(db.Integer, nullable=False)
+#     # 授权时间
+#     created = db.Column(db.Integer, default=time.time, nullable=False)
+#     # 确认授权
+#     confirmed = db.Column(db.Boolean, default=False, nullable=False)
 
 
 class Item(db.Model):
@@ -292,8 +308,6 @@ class UserAddress(db.Model):
     __tablename__ = 'user_addresses'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
-    province_id = db.Column(db.Integer, nullable=False)
-    city_id = db.Column(db.Integer, nullable=False)
     district_id = db.Column(db.Integer, nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
@@ -304,8 +318,6 @@ class ProducerAddress(db.Model):
     __tablename__ = 'producer_addresses'
     id = db.Column(db.Integer, primary_key=True)
     producer_id = db.Column(db.Integer, nullable=False)
-    province_id = db.Column(db.Integer, nullable=False)
-    city_id = db.Column(db.Integer, nullable=False)
     district_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
@@ -316,8 +328,6 @@ class DealerAddress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     dealer_id = db.Column(db.Integer, nullable=False)
     province_id = db.Column(db.Integer, nullable=False)
-    city_id = db.Column(db.Integer, nullable=False)
-    district_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
