@@ -55,7 +55,9 @@
     URL:
         /user/collection
     method:
-        GET, POST
+        GET, POST, DELETE
+    parameters:
+        item
 
 ###user setting
     URL:
@@ -88,3 +90,45 @@
         /producer/reset_password
     method:
         GET, POST
+
+###producer item list
+    URL:
+        /producer/list
+    method:
+        GET, POST
+    parameters:
+        item
+
+##item
+
+###item list
+    URL:
+        /items
+    method:
+        GET, POST
+    parameters:
+        id, page
+
+###item detail
+    URL:
+        /items/detail
+    method:
+        GET
+    parameters:
+        id
+
+###item filter
+    URL:
+        /items
+    method:
+        GET
+    parameters:
+        page
+    
+###item compare
+    URL:
+        /items/compare
+    method:
+        GET
+    parameters:
+        first, second
