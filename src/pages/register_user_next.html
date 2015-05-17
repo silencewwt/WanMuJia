@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/css/register.css"/>
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper-register">
+        <h1 class="title offset">新用户注册</h1>
+
+        <form action="/user/register/result" method="post">
+            <div class="form-group">
+                <div class="wrapper-label">
+                    <label class="control-label" for="nickname">昵称</label>
+                </div>
+                <input name="nickname" type="text" id="nickname"/>
+            </div>
+            <div class="form-group">
+                <div class="wrapper-label">
+                    <label class="control-label" for="password">密码</label>
+                </div>
+                <input name="password" type="password" id="password"/>
+            </div>
+            <div class="form-group">
+                <div class="wrapper-label">
+                    <label class="control-label" for="confirm_pwd">确认密码</label>
+                </div>
+                <input name="confirm_pwd" type="password" id="confirm_pwd"/>
+            </div>
+
+            <div class="form-group offset action">
+                <input type="submit" value="完成"/>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

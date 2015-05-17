@@ -1,0 +1,100 @@
+// Header
+.basic-info {
+  float: left;
+
+  & a {
+    margin-right: $nav-interval-small;
+  }
+}
+
+.service {
+  float: right;
+}
+
+.dropdown-qr {
+  @extend .dropdown-base;
+
+  & img {
+    vertical-align: middle;
+  }
+
+  &.open .dropdown-menu, & .dropdown-menu {
+    @extend .dropdown-menu-right;
+    min-width: 0;
+
+    & img {
+      width: 50px;
+    }
+  }
+}
+
+.dropdown-mine {
+  @extend .dropdown-base;
+
+  &.open .dropdown-menu {
+    @extend .dropdown-menu-right;
+    min-width: 0;
+  }
+}
+
+
+$brand-margin-top: 41px;
+.brand {
+  height: 130px;
+
+  & .logo {
+    margin: $brand-margin-top 0 0 0;
+    font-size: 30px;
+    float: left;
+
+    & a:hover {
+      color: #fff;
+    }
+  }
+
+  & .city {
+    margin: $brand-margin-top+11 0 0 20px;
+    float: left;
+  }
+
+  & .search-box {
+    margin: $brand-margin-top+3 0 0 250px;
+
+    & input {
+      box-sizing: border-box;
+      padding: 5px 36px 5px 5px;
+      width: 515px;
+      height: 34px;
+      border: 1px solid $border-color-base;
+      background: url(../../img/search.png) 98% 50% / 20px 20px no-repeat transparent;
+      outline: none;
+    }
+  }
+}
+
+.main-nav {
+  text-align: center;
+
+  & .nav {
+    display: inline-block;
+
+    & > li {
+      margin: 0 30px;
+      font-size: $font-size-large;
+      line-height: $nav-line-height-base;
+
+      & span {
+        display: inline-block;
+        width: 100px;
+      }
+
+      & span:hover {
+        color: $link-hover-color;
+      }
+    }
+  }
+
+  & .dropdown-nav {
+    @extend .dropdown-base;
+  }
+}

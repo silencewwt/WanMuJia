@@ -1,0 +1,66 @@
+@import "main";
+
+.wrapper-cmp {
+  @extend .wrapper;
+  padding: 50px 80px 80px;
+  width: $wrapper-width-small;
+  background-color: $bgc-btn;
+}
+
+.compare {
+  margin-top: 30px;
+  text-align: center;
+
+  & h3 {
+    margin: 0 0 40px;
+    font-size: 30px;
+    font-weight: 100;
+  }
+
+}
+
+.compare-img {
+  margin-bottom: 50px;
+
+  & .first, & .second {
+    display: inline-block;
+    width: 300px;
+    height: 300px;
+
+    & img {
+      height: 300px;
+    }
+  }
+
+  & .first {
+    float: left;
+  }
+
+  & .second {
+    float: right;
+  }
+}
+
+.compare-params {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid $border-color-display;
+
+  & td {
+    border: 1px solid $border-color-display;
+  }
+
+  & .param {
+    line-height: 48px;
+    font-weight: 100;
+
+    & .param-name {
+      width: 140px;
+    }
+
+    & .first, & .second {
+      display: table-cell;
+      width: 268px;
+    }
+  }
+}

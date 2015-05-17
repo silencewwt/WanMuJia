@@ -1,24 +1,32 @@
 // Variables
 @import "../lib/bootstrap-sass/sass/bootstrap/variables";
 
-// global
+// bgc
 $bgc-base:                #170b09;
+$bgc-btn:                 #221715;
 $bgc-info-base:           #322827;
+$bgc-content:             #231716;
 
+// font
 $icon-font-path:          '../lib/fonts/bootstrap/';
 
 $font-family-base:        SimHei, sans-serif;
 $font-size-base:          14px;
 $font-size-large:         18px;
 $font-size-lx:            24px;
-$font-color-base:         #929292;
+$font-color-base:         #969696;
 
+// border
 $border-color-base:       #9c9c9c;
+$border-color-display:    #323232;
 
+// link
 $link-hover-color:        #969696;
+$link-hover-color-display:#646464;
 
 
 // wrapper
+$wrapper-width-small:     840px;
 $wrapper-width-base:      960px;
 $wrapper-width-full:      100%;
 
@@ -39,9 +47,16 @@ $dropdown-link-hover-color: #fff;
 $dropdown-link-hover-bg:  lighten($dropdown-bg, 10%);
 
 
-// brand
-$brand-margin-top:        42px;
-
-
 // items
 $item-interval-width:     104px;
+$item-interval-height:    38px;
+$item-img-width:          250px;
+$item-img-height:         250px;
+
+
+// Paging
+$font-size-paging:        12px;
+$pre-next-margin:         15px;
+$page-width:              30px;
+$page-height:             30px;
+$pre-next-width:          70px;

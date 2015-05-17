@@ -1,0 +1,22 @@
+{
+  "id": "",
+  "name": "黄花梨高端舒适躺椅",
+  "price": 3899,
+  "desc": "精选来自越南的千年黄花梨，经过精心筛选，雕刻而成。",
+  "imgs": [
+    "/img/item04.jpg",
+    "/img/item02.jpg",
+    "/img/item03.jpg",
+    "/img/item.jpg",
+    "/img/item05.jpg"
+  ],
+  "params": {
+    "inner diameter": "长2010mm \u00d7 宽1600mm",
+    "outer diameter": "长2010mm \u00d7 宽1930mm"
+  },
+  "vender": {
+    "name": "年年红",
+    "logo": "/img/nnh_logo.jpg",
+    "desc": "中国十大古典家具品牌红木行业唯一荣登2011 CCTV中国年度品牌"
+  }
+}

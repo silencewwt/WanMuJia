@@ -1,0 +1,13 @@
+//@import "../lib/bootstrap-sass/bootstrap";
+
+@import "variable";
+@import "mixins";
+@import "../lib/bootstrap-sass/sass/bootstrap/normalize";
+@import "../lib/bootstrap-sass/sass/bootstrap/dropdowns";
+@import "../lib/bootstrap-sass/sass/bootstrap/carousel";
+@import "../lib/bootstrap-sass/sass/bootstrap/glyphicons";
+@import "../lib/bootstrap-sass/sass/bootstrap/scaffolding";
+
+@import "global/global";
+@import "global/header";
+@import "global/footer";

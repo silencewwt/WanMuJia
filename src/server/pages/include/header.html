@@ -11,26 +11,37 @@
             </ul>
 
             <ul class="nav service">
-                <li class="user-like"><a href="/user/collection">收藏夹</a></li>
-                <li class="user-order"><a href="/user/order">我的订单</a></li>
-                <li class="user-cart"><a href="/user/cart">购物车</a></li>
+                <li class="dropdown-mine">
+                    <a href="/user/personal" class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">
+                    我的万木家
+                    <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/user/personal">收藏夹</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/user/personal">账户设置</a></li>
+                    </ul>
+                </li>
+                <li class="user-cart"><a href="/compare" target="_blank">对比</a></li>
                 <li class="dropdown-qr">
                     <a href="#" class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">
-                        <img src="img/qr.jpg" alt="二维码"/>
+                        <img src="/img/qr.jpg" alt="二维码"/>
                     </a>
                     <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <a href=""><img src="img/qr.jpg" alt="二维码"/></a>
+                        <a href=""><img src="/img/qr.jpg" alt="二维码"/></a>
                     </div>
                 </li>
                 <li class="dropdown-merchant">
-                    <a href="#" class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">
-                        商户入口
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">我是商家</a></li>
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">我是厂家</a></li>
-                    </ul>
+                    <a href="/vender/login">厂家入口</a>
+
+                    <!-- For Future Version -->
+                    <!--<a href="#" class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">-->
+                        <!--商户入口-->
+                        <!--<span class="caret"></span>-->
+                    <!--</a>-->
+                    <!--<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">-->
+                        <!--<li role="presentation"><a role="menuitem" tabindex="-1" href="#">我是商家</a></li>-->
+                        <!--<li role="presentation"><a role="menuitem" tabindex="-1" href="#">我是厂家</a></li>-->
+                    <!--</ul>-->
                 </li>
                 <li class="serve-phone">
                     <a href="javascript:return false;">服务电话：400 627 2273</a>
@@ -42,7 +53,7 @@
     <div class="brand">
         <div class="wrapper">
             <h1 class="logo">
-                <a href="#">LOGO</a>
+                <a href="/">LOGO</a>
             </h1>
             <a href="#" class="city">
                 北京

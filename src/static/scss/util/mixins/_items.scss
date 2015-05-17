@@ -1,0 +1,32 @@
+// Items
+
+@mixin items($item-interval-width, $item-interval-height, $item-img-width, $item-img-height) {
+  margin-right: -$item-interval-width;
+
+  & .item {
+    display: inline-block;
+    margin-right: $item-interval-width;
+    margin-bottom: $item-interval-height;
+    float: left;
+
+    & > a {
+      display: block;
+      position: relative;
+      width: $item-img-width;
+      height: $item-img-height;
+      & img {
+        height: $item-img-height;
+      }
+    }
+
+    & .item-info {
+      padding: 16px 10px 10px;
+      text-align: center;
+      line-height: $nav-line-height-base;
+      background-color: $bgc-info-base;
+      & h5 {
+        margin: 0 0 5px 0;
+      }
+    }
+  }
+}
