@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, flash, render_template, redirect, request, session
-from flask_security import login_user, logout_user, login_required
+from flask_security import login_user, logout_user, login_required, current_user
 from flask_security.utils import identity_changed, Identity
 
 from app import db
 from app.core import login as model_login, reset_password as model_reset_password
-from app.models import Producer
-from .import producer as producer_blueprint
-from .forms import LoginForm, RegistrationDetailForm
+from app.models import Producer, Item
+from app.permission import producer_permission
 from app.forms import MobileRegistrationForm
 from app.constants import *
+from .import producer as producer_blueprint
+from .forms import LoginForm, RegistrationDetailForm, ItemForm
 
 
 @producer_blueprint.route('/login', methods=['GET', 'POST'])
@@ -45,3 +46,14 @@ def register():
             return 'step 2 page'
     session[PRODUCER_REGISTER_STEP_DONE] = 0
     return 'step 1 page'
+
+
+@producer_blueprint.route('/list', methods=['GET', 'POST'])
+@producer_permission.require()
+def item_list():
+    form = ItemForm()
+    if form.validate_on_submit():
+        pass
+    page = request.args.get('page', 1, type=int)
+    items = Item.query.filter_by(producer_id=current_user.id).paginate(page, 100, False).items
+    return render_template('producer/list.html', items=items)
