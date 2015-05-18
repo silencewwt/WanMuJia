@@ -71,6 +71,10 @@ class Collection(db.Model):
     # 创建时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
+    def __init__(self, user_id, item_id):
+        self.user_id = user_id
+        self.item_id = item_id
+
 
 class Order(db.Model):
     __tablename__ = 'orders'
@@ -98,6 +102,8 @@ class Order(db.Model):
 
 class Producer(BaseUser, db.Model):
     __tablename__ = 'producers'
+    # 邮箱是否已验证
+    email_confirmed = db.Column(db.Boolean, default=False, nullable=False)
     # logo图片
     logo = db.Column(db.String(255), default='', nullable=False)
     # 法人真实姓名
