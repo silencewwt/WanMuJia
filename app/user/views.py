@@ -1,12 +1,12 @@
 # -*-coding: utf-8 -*-
 from flask import current_app, request, render_template, redirect, flash, session, url_for
-from flask_security import login_user, logout_user, login_required
+from flask_security import login_user, logout_user, login_required, current_user
 from flask_security.utils import identity_changed, Identity
 
 from . import user as user_blueprint
 from . forms import *
 from app import db
-from app.models import User
+from app.models import User, Collection
 from app.constants import *
 from app.core import login as model_login, reset_password as model_reset_password
 from app.permission import user_permission
@@ -125,3 +125,26 @@ def verify_email():
 @user_blueprint.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
     return model_reset_password(User, 'user')
+
+
+@user_blueprint.route('/collection', methods=['GET', 'POST', 'DELETE'])
+# @user_permission.require()
+def collection():
+    if request.method == 'GET':
+        page = request.args.get('page', 1, type=int)
+        collections = Collection.query.filter_by(user_id=current_user.id).paginate(page, 50, False).items
+        return render_template('/user/collection.html', collections=collections)
+
+    item_id = request.form.get('item', 0, type=int)
+    item_collection = Collection.query.filter_by(user_id=current_user.id, item_id=item_id).first()
+    if request.method == 'POST':
+        if not item_collection:
+            item_collection = Collection(current_user.id, item_id)
+            db.session.add(item_collection)
+            db.session.commit()
+        return 'ok', 200
+    else:  # DELETE
+        if item_collection:
+            db.session.delete(item_collection)
+            db.session.commit()
+        return 'ok', 200
