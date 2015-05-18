@@ -18,7 +18,9 @@ def item_filter():
 
 @item_blueprint.route("/detail")
 def detail():
-    pass
+    item_id = request.args.get('id', 0, type=int)
+    item = Item.query.get_or_404(item_id)
+    return render_template("/item/detail", item=item)
 
 
 @item_blueprint.route("/compare")
