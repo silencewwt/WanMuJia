@@ -57,7 +57,7 @@
     method:
         GET, POST, DELETE
     parameters:
-        item
+        page, item
 
 ###user setting
     URL:
@@ -103,7 +103,7 @@
 
 ###item list
     URL:
-        /items
+        /item
     method:
         GET, POST
     parameters:
@@ -111,7 +111,7 @@
 
 ###item detail
     URL:
-        /items/detail
+        /item/detail
     method:
         GET
     parameters:
@@ -119,7 +119,7 @@
 
 ###item filter
     URL:
-        /items
+        /item/filter
     method:
         GET
     parameters:
@@ -127,7 +127,7 @@
     
 ###item compare
     URL:
-        /items/compare
+        /item/compare
     method:
         GET
     parameters:

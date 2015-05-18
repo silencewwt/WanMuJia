@@ -6,7 +6,7 @@ from app.models import Item
 from . import item as item_blueprint
 
 
-@item_blueprint.route("/list")
+@item_blueprint.route("/")
 def item_list():
     pass
 
