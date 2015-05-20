@@ -7,7 +7,7 @@ from flask.ext.login import UserMixin
 from flask_security.utils import encrypt_password, verify_password
 
 from app import db, login_manager
-from permission import admin_id_prefix, vendor_id_prefix, dealer_id_prefix, user_id_prefix
+from permission import admin_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
 
 
 class BaseUser(UserMixin):
@@ -85,7 +85,7 @@ class Order(db.Model):
     # 用户收货地址id
     user_address_id = db.Column(db.Integer, nullable=False)
     # 商家id
-    dealer_id = db.Column(db.Integer, nullable=False)
+    distributor_id = db.Column(db.Integer, nullable=False)
     # 商品id
     item_id = db.Column(db.Integer, nullable=False)
     # 创建时间
@@ -158,22 +158,14 @@ class Distributor(BaseUser, db.Model):
     legal_person_identity = db.Column(db.CHAR(18), nullable=False)
     # 商家名称
     name = db.Column(db.Unicode(30), nullable=False)
-    # 营业执照注册号
-    license_identity = db.Column(db.String(20), nullable=False)
-    # 营业执照所在地
-    license_address = db.Column(db.Unicode(30), nullable=False)
-    # 营业执照期限
-    license_limit = db.Column(db.Integer, nullable=False)
-    # 长期印业执照
-    license_long_time_limit = db.Column(db.Boolean, default=False, nullable=False)
-    # 营业执照副本扫描件
-    license_image = db.Column(db.String(255), nullable=False)
     # 地址 id
     address_id = db.Column(db.Integer, nullable=False)
     # 联系手机
-    contact_mobile = db.Column(db.CHAR(11), nullable=False)
+    contact_mobile = db.Column(db.String(30), nullable=False)
     # 联系电话
-    contact_telephone = db.Column(db.CHAR(15), nullable=False)
+    contact_telephone = db.Column(db.String(30), nullable=False)
+    # 联系人
+    contact = db.Column(db.Unicode(10), nullable=False)
     # 删除确认
     deleted_confirmed = db.Column(db.Boolean, default=False, nullable=False)
     # 已删除
@@ -183,7 +175,7 @@ class Distributor(BaseUser, db.Model):
         super(Distributor, self).__init__(password, mobile, email)
 
     def get_id(self):
-        return dealer_id_prefix + unicode(self.id)
+        return distributor_id_prefix + unicode(self.id)
 
 
 # class VendorAuthorization(db.Model):
@@ -191,7 +183,7 @@ class Distributor(BaseUser, db.Model):
 #     # id
 #     id = db.Column(db.Integer, primary_key=True)
 #     # 商家id
-#     dealer_id = db.Column(db.Integer, nullable=False)
+#     distributor_id = db.Column(db.Integer, nullable=False)
 #     # 厂家id
 #     vendor_id = db.Column(db.Integer, nullable=False)
 #     # 授权时间
@@ -239,7 +231,7 @@ class Material(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     item_id = db.Column(db.Integer, nullable=False)
 #     created = db.Column(db.Integer, default=time.time, nullable=False)
-#     dealer_id = db.Column(db.Integer, nullable=False)
+#     distributor_id = db.Column(db.Integer, nullable=False)
 #     price = db.Column(db.Integer, nullable=False)
 
 
@@ -332,9 +324,9 @@ class VendorAddress(db.Model):
 
 
 class DealerAddress(db.Model):
-    __tablename__ = 'dealer_addresses'
+    __tablename__ = 'distributor_addresses'
     id = db.Column(db.Integer, primary_key=True)
-    dealer_id = db.Column(db.Integer, nullable=False)
+    distributor_id = db.Column(db.Integer, nullable=False)
     province_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
@@ -347,6 +339,6 @@ def load_user(user_id):
         return Privilege.query.get(id_)
     elif user_id.starswith(vendor_id_prefix):
         return Vendor.query.get(id_)
-    elif user_id.starswith(dealer_id_prefix):
+    elif user_id.starswith(distributor_id_prefix):
         return Distributor.query.get(id_)
     return User.query.get(id_)

@@ -45,7 +45,7 @@ def create_app(config_name):
     from .item import item as item_blueprint
     app.register_blueprint(item_blueprint, url_prefix='/item')
 
-    from .dealer import dealer as dealer_blueprint
-    app.register_blueprint(dealer_blueprint, url_prefix='dealer')
+    from .distributor import distributor as distributor_blueprint
+    app.register_blueprint(distributor_blueprint, url_prefix='distributor')
 
     return app
