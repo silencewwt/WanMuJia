@@ -1,5 +1,4 @@
 // ITEM
-
 $(function () {
     var itemWrapper = $('.item-wrapper');
     itemWrapper.delegate('.item > a', 'mouseover', function () {

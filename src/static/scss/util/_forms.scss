@@ -12,7 +12,7 @@ $checkbox-size: 14px;
   @extend .clearfix;
   margin: 0 auto 30px;
 
-  & > input, & > .upload, & > .hint {
+  & > input, & > .upload, & > .hint, & > button {
     float: left;
   }
 
@@ -75,7 +75,7 @@ $checkbox-size: 14px;
 
 input[type="text"], input[type="email"], input[type="password"] {
   box-sizing: border-box;
-  padding: 0 14px;
+  padding: 0 18px;
   width: 350px;
   height: $form-group-height;
   outline: none;

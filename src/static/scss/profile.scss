@@ -11,6 +11,9 @@ $item-img-height: 228px;
 
 $tab-height: 55px;
 
+$left-width: 270px;
+
+
 .wrapper-personal {
   @extend .wrapper;
   margin-top: 20px;
@@ -19,9 +22,6 @@ $tab-height: 55px;
   background-color: $bgc-content;
 }
 
-.item .dialog p {
-  font-size: $font-size-base;
-}
 
 .overview {
   @extend .wrapper;
@@ -85,9 +85,26 @@ $tab-height: 55px;
     width: $content-width;
     text-align: center;
 
-    // Items
-    .item-wrapper {
-      @include items($item-interval-width, $item-interval-height, $item-img-width, $item-img-height);
+    .collections {
+      // Items
+      .item-wrapper {
+        @include items($item-interval-width, $item-interval-height, $item-img-width, $item-img-height);
+      }
     }
+
+    .profile {
+      .wrapper-label {
+        width: $left-width;
+      }
+
+      input[type="text"], input[type="email"], input[type="password"] {
+        width: 300px;
+      }
+
+      .offset {
+        padding-left: $left-width;
+      }
+    }
+
   }
 }

@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/css/address.css"/>
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper-addr">
+        <div class="form-group input-addr">
+            <button class="city">
+                西安市
+                <span class="caret"></span>
+            </button>
+
+            <label for="detail_addr">
+                <input type="text" id="detail_addr" placeholder="请输入您的详细地址"/>
+            </label>
+        </div>
+    </div>
+{% endblock %}

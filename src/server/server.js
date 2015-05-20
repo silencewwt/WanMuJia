@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 
+// index
 app.get('/', function (req, res) {
 
     fs.readFile('src/server/data/index_data.json', function (err, data) {
@@ -85,7 +86,14 @@ app.get('/compare', function (req, res) {
     });
 });
 
+app.get('/address', function (req, res) {
+    res.render('address', {
+        title: '选择地址'
+    });
+});
 
+
+// user
 app.get('/user/login', function (req, res) {
     res.render('login_user', {
         title: '用户登录'
@@ -113,7 +121,7 @@ app.post('/user/register/result', function (req, res) {
     })
 });
 
-app.get('/user/personal', function (req, res) {
+app.get('/user/profile', function (req, res) {
     fs.readFile('src/server/data/index_data.json', function (err, data) {
         if (err) {
             console.log(err);
@@ -121,7 +129,7 @@ app.get('/user/personal', function (req, res) {
         }
 
         var _data = JSON.parse(data);
-        res.render('personal', {
+        res.render('profile', {
             title: '用户个人中心',
             items: _data.new_items,
             info: {
@@ -136,6 +144,7 @@ app.get('/user/personal', function (req, res) {
 });
 
 
+// vender
 app.get('/vender/login', function (req, res) {
     res.render('login_vender', {
         title: '厂家登录'
