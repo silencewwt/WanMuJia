@@ -7,7 +7,7 @@ from flask import current_app
 
 
 def generate_dir_path(id_):
-    return '%s/producer_%s/' % (id_ % 100, md5(str(id_)).hexdigest())
+    return '%s/vendor_%s/' % (id_ % 100, md5(str(id_)).hexdigest())
 
 
 def save_image(id_, field):

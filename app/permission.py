@@ -6,9 +6,9 @@ _user_role = RoleNeed('user')
 user_id_prefix = u'u'
 user_permission = Permission(_user_role)
 
-_producer_role = RoleNeed('producer')
-producer_id_prefix = u'p'
-producer_permission = Permission(_producer_role)
+_vendor_role = RoleNeed('vendor')
+vendor_id_prefix = u'p'
+vendor_permission = Permission(_vendor_role)
 
 _dealer_role = RoleNeed('dealer')
 dealer_id_prefix = u'd'
@@ -25,8 +25,8 @@ def identity_config(app):
         if identity.id:
             if identity.id.startswith(user_id_prefix):
                 identity.provides.add(_user_role)
-            elif identity.id.startswith(producer_id_prefix):
-                identity.provides.add(_producer_role)
+            elif identity.id.startswith(vendor_id_prefix):
+                identity.provides.add(_vendor_role)
             elif identity.id.startswith(dealer_id_prefix):
                 identity.provides.add(_dealer_role)
             elif identity.id.startswith(admin_id_prefix):

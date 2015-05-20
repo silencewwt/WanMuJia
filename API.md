@@ -65,35 +65,35 @@
     method:
         GET, POST
         
-##producer
+##vendor
 
-###producer register
+###vendor register
     URL:
-        /producer/register
+        /vendor/register
     method:
         GET, POST
 
-###producer login
+###vendor login
     URL:
-        /producer/login
+        /vendor/login
     method:
         GET, POST
 
-###producer logout
+###vendor logout
     URL:
-        /producer/logout
+        /vendor/logout
     method:
         GET, POST
 
-###producer reset password
+###vendor reset password
     URL:
-        /producer/reset_password
+        /vendor/reset_password
     method:
         GET, POST
 
-###producer item list
+###vendor item list
     URL:
-        /producer/list
+        /vendor/list
     method:
         GET, POST
     parameters:

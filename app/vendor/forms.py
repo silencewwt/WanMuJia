@@ -7,7 +7,7 @@ from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo
 
 from app import db
-from app.models import Producer, District, ProducerAddress
+from app.models import Vendor, District, VendorAddress
 from app.utils import save_image
 from app.utils.validator import Email, Mobile
 
@@ -64,12 +64,12 @@ class RegistrationDetailForm(Form):
         except:
             raise ValidationError(u'图片格式错误')
 
-    def add_producer(self, mobile):
+    def add_vendor(self, mobile):
         district = District.query.filter_by(cn_id=self.address_id)
-        address = ProducerAddress(producer_id='', district_id=district.id, address=self.address.data)
+        address = VendorAddress(vendor_id='', district_id=district.id, address=self.address.data)
         db.session.add(address)
         db.session.commit()
-        producer = Producer(
+        vendor = Vendor(
             password=self.password.data,
             email=self.password.data,
             mobile=mobile,
@@ -83,11 +83,15 @@ class RegistrationDetailForm(Form):
             contact_telephone=self.contact_telephone.data,
             address_id=address.id
         )
-        db.session.add(producer)
+        db.session.add(vendor)
         db.session.commit()
-        identity_front = save_image(producer.id, self.legal_person_identity_front)
-        identity_back = save_image(producer.id, self.legal_person_identity_back)
-        license_image = save_image(producer.id, self.license_image)
-        producer.legal_person_identity_front = identity_front
-        producer.legal_person_identity_back = identity_back
-        producer.license_image = license_image
+        identity_front = save_image(vendor.id, self.legal_person_identity_front)
+        identity_back = save_image(vendor.id, self.legal_person_identity_back)
+        license_image = save_image(vendor.id, self.license_image)
+        vendor.legal_person_identity_front = identity_front
+        vendor.legal_person_identity_back = identity_back
+        vendor.license_image = license_image
+
+
+class ItemForm(Form):
+    pass

@@ -4,7 +4,7 @@ from flask_security import login_user, logout_user, login_required
 from flask_security.utils import identity_changed, Identity
 
 from app import db
-from app.models import User, Producer, Dealer
+from app.models import User, Vendor, Distributor
 from app.constants import *
 from app.forms import *
 
@@ -35,27 +35,27 @@ def reset_password(model, url_prefix):
     mobile_form = MobileResetPasswordForm()
     email_form = EmailResetPasswordForm()
     reset_form = ResetPasswordForm()
-    if mobile_form.validate_on_submit():
+    form_type = request.args.get('form')
+    if form_type == 'mobile' and mobile_form.validate_on_submit():
         # TODO: store data in redis
         session['reset'] = True
         session['mobile'] = mobile_form.mobile.data
         return 'mobile ok'
-    elif email_form.validate_on_submit():
+    elif form_type == 'email' and email_form.validate_on_submit():
         session['reset'] = True
         session['email'] = email_form.email.data
         return 'email ok'
     elif 'reset' in session and session['reset'] is True:
+        instance = None
+        session.pop('reset')
         if 'mobile' in session:
             instance = model.query.filter_by(mobile=session['mobile']).first()
             session.pop('mobile')
         elif 'email' in session:
             instance = model.query.filter_by(email=session['email']).first()
             session.pop('email')
-        else:
-            return 'error', 401
         if instance:
             instance.password = reset_form.password.data
-            session.pop('reset')
             return 'reset password success'
         else:
             return 'error', 401

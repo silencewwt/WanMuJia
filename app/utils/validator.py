@@ -3,7 +3,7 @@ import re
 from flask import session
 from wtforms.validators import Regexp, Email as BaseEmail, ValidationError
 
-from app.models import User, Producer, Dealer, Privilege
+from app.models import User, Vendor, Distributor, Privilege
 from app.constants import IMAGE_CAPTCHA_CODE
 from app.utils.redis import redis_verify
 
@@ -18,12 +18,8 @@ class Email(BaseEmail):
     def __call__(self, form, field):
         if self.required or field.data:
             super(Email, self).__call__(form, field)
-            if self.available:
-                if User.query.filter_by(email=field.data).first() or \
-                        Producer.query.filter_by(email=field.data).first() or \
-                        Dealer.query.filter_by(email=field.data).first() or \
-                        Privilege.query.filter_by(email=field.data).first():
-                    raise ValidationError(self.message)
+            if self.available and not available_email(field.data):
+                raise ValidationError(self.message)
 
 
 class Mobile(Regexp):
@@ -66,8 +62,14 @@ class UserName(object):
 
 def available_mobile(mobile):
     if User.query.filter_by(mobile=mobile).first() or \
-            Producer.query.filter_by(mobile=mobile).first() or \
+            Vendor.query.filter_by(mobile=mobile).first() or \
             Dealer.query.filter_by(mobile=mobile).first():
+        return False
+    return True
+
+
+def available_email(email):
+    if User.query.filter_by(email=email).first() or Vendor.query.filter_by(email=email).first():
         return False
     return True
 

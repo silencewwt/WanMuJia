@@ -7,7 +7,7 @@ from flask.ext.login import UserMixin
 from flask_security.utils import encrypt_password, verify_password
 
 from app import db, login_manager
-from permission import admin_id_prefix, producer_id_prefix, dealer_id_prefix, user_id_prefix
+from permission import admin_id_prefix, vendor_id_prefix, dealer_id_prefix, user_id_prefix
 
 
 class BaseUser(UserMixin):
@@ -100,8 +100,8 @@ class Order(db.Model):
     price_payed = db.Column(db.Boolean, default=False, nullable=False)
 
 
-class Producer(BaseUser, db.Model):
-    __tablename__ = 'producers'
+class Vendor(BaseUser, db.Model):
+    __tablename__ = 'vendors'
     # 邮箱是否已验证
     email_confirmed = db.Column(db.Boolean, default=False, nullable=False)
     # logo图片
@@ -135,7 +135,7 @@ class Producer(BaseUser, db.Model):
 
     def __init__(self, password, mobile, email, legal_person_name, legal_person_identity, name, license_address,
                  license_limit, license_long_time_limit, address_id, contact_mobile, contact_telephone):
-        super(Producer, self).__init__(password, mobile, email)
+        super(Vendor, self).__init__(password, mobile, email)
         self.legal_person_name = legal_person_name
         self.legal_person_identity = legal_person_identity
         self.name = name
@@ -147,11 +147,11 @@ class Producer(BaseUser, db.Model):
         self.contact_telephone = contact_telephone
 
     def get_id(self):
-        return producer_id_prefix + unicode(self.id)
+        return vendor_id_prefix + unicode(self.id)
 
 
-class Dealer(BaseUser, db.Model):
-    __tablename__ = 'dealers'
+class Distributor(BaseUser, db.Model):
+    __tablename__ = 'distributors'
     # 法人真实姓名
     legal_person_name = db.Column(db.Unicode(10), nullable=False)
     # 法人身份证号码
@@ -174,24 +174,26 @@ class Dealer(BaseUser, db.Model):
     contact_mobile = db.Column(db.CHAR(11), nullable=False)
     # 联系电话
     contact_telephone = db.Column(db.CHAR(15), nullable=False)
-    # 已通过审核
-    confirmed = db.Column(db.Boolean, default=False, nullable=False)
+    # 删除确认
+    deleted_confirmed = db.Column(db.Boolean, default=False, nullable=False)
+    # 已删除
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
     def __init__(self, password, mobile, email):
-        super(Dealer, self).__init__(password, mobile, email)
+        super(Distributor, self).__init__(password, mobile, email)
 
     def get_id(self):
         return dealer_id_prefix + unicode(self.id)
 
 
-# class ProducerAuthorization(db.Model):
-#     __tablename__ = 'producer_authorizations'
+# class VendorAuthorization(db.Model):
+#     __tablename__ = 'vendor_authorizations'
 #     # id
 #     id = db.Column(db.Integer, primary_key=True)
 #     # 商家id
 #     dealer_id = db.Column(db.Integer, nullable=False)
 #     # 厂家id
-#     producer_id = db.Column(db.Integer, nullable=False)
+#     vendor_id = db.Column(db.Integer, nullable=False)
 #     # 授权时间
 #     created = db.Column(db.Integer, default=time.time, nullable=False)
 #     # 确认授权
@@ -206,7 +208,7 @@ class Item(db.Model):
     # 创建时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
     # 厂家id
-    producer_id = db.Column(db.Integer, nullable=False)
+    vendor_id = db.Column(db.Integer, nullable=False)
     # 商品名称
     item = db.Column(db.Unicode(20), nullable=False)
     # 指导价格
@@ -320,10 +322,10 @@ class UserAddress(db.Model):
     mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
 
 
-class ProducerAddress(db.Model):
-    __tablename__ = 'producer_addresses'
+class VendorAddress(db.Model):
+    __tablename__ = 'vendor_addresses'
     id = db.Column(db.Integer, primary_key=True)
-    producer_id = db.Column(db.Integer, nullable=False)
+    vendor_id = db.Column(db.Integer, nullable=False)
     district_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
@@ -343,8 +345,8 @@ def load_user(user_id):
     id_ = int(user_id[1:])
     if user_id.starswith(admin_id_prefix):
         return Privilege.query.get(id_)
-    elif user_id.starswith(producer_id_prefix):
-        return Producer.query.get(id_)
+    elif user_id.starswith(vendor_id_prefix):
+        return Vendor.query.get(id_)
     elif user_id.starswith(dealer_id_prefix):
-        return Dealer.query.get(id_)
+        return Distributor.query.get(id_)
     return User.query.get(id_)

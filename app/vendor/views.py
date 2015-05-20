@@ -5,25 +5,25 @@ from flask_security.utils import identity_changed, Identity
 
 from app import db
 from app.core import login as model_login, reset_password as model_reset_password
-from app.models import Producer, Item
-from app.permission import producer_permission
+from app.models import Vendor, Item
+from app.permission import vendor_permission
 from app.forms import MobileRegistrationForm
 from app.constants import *
-from .import producer as producer_blueprint
+from .import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm
 
 
-@producer_blueprint.route('/login', methods=['GET', 'POST'])
+@vendor_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        if model_login(Producer, form):
+        if model_login(Vendor, form):
             return redirect('/')    # TODO: redirect
         flash(u'用户名或密码错误!')
     return render_template('user/login.html', login_form=form)
 
 
-@producer_blueprint.route('/register', methods=['GET', 'POST'])
+@vendor_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form_type = request.args.get('form', '', type=str)
     mobile_form = MobileRegistrationForm()
@@ -37,9 +37,9 @@ def register():
             return 'step 1 page'
         elif PRODUCER_REGISTER_STEP_DONE == 1:
             if form_type == 'detail' and detail_form.validate_on_submit():
-                producer = detail_form.add_producer(session[PRODUCER_REGISTER_MOBILE])
-                login_user(producer)
-                identity_changed.send(current_app._get_current_object(), Identity(producer.get_id()))
+                vendor = detail_form.add_vendor(session[PRODUCER_REGISTER_MOBILE])
+                login_user(vendor)
+                identity_changed.send(current_app._get_current_object(), Identity(vendor.get_id()))
                 session.pop(PRODUCER_REGISTER_MOBILE)
                 session.pop(PRODUCER_REGISTER_STEP_DONE)
                 return 'register done'
@@ -48,12 +48,17 @@ def register():
     return 'step 1 page'
 
 
-@producer_blueprint.route('/list', methods=['GET', 'POST'])
-@producer_permission.require()
+@vendor_blueprint.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    return model_reset_password(Vendor, 'vendor')
+
+
+@vendor_blueprint.route('/list', methods=['GET', 'POST'])
+@vendor_permission.require()
 def item_list():
     form = ItemForm()
     if form.validate_on_submit():
         pass
     page = request.args.get('page', 1, type=int)
-    items = Item.query.filter_by(producer_id=current_user.id).paginate(page, 100, False).items
-    return render_template('producer/list.html', items=items)
+    items = Item.query.filter_by(vendor_id=current_user.id).paginate(page, 100, False).items
+    return render_template('vendor/list.html', items=items)
