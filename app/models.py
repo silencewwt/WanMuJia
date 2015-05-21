@@ -205,6 +205,8 @@ class Item(db.Model):
     item = db.Column(db.Unicode(20), nullable=False)
     # 指导价格
     price = db.Column(db.Integer, nullable=False)
+    # 材料
+    material_id = db.Column(db.Integer, nullable=False)
 
 
 class ItemCategory(db.Model):
