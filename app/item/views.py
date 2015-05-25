@@ -9,7 +9,7 @@ from . import item as item_blueprint
 
 @item_blueprint.route("/")
 def item_list():
-    return render_template("/item/list")
+    return render_template("/item/list.html")
 
 
 @item_blueprint.route("/filter")
@@ -40,14 +40,14 @@ def item_filter():
     elif abs(order) == 3:
         query.order_by(Item.created if order > 0 else -Item.created)
     items = query.paginate(page, current_app.config['ITEM_PER_PAGE'], False).items
-    return render_template("/item/filter", items=items)
+    return render_template("/item/filter.html", items=items)
 
 
 @item_blueprint.route("/detail")
 def detail():
     item_id = request.args.get('id', 0, type=int)
     item = Item.query.get_or_404(item_id)
-    return render_template("/item/detail", item=item)
+    return render_template("/item/detail.html", item=item)
 
 
 @item_blueprint.route("/compare")
