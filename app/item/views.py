@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, request
+from sqlalchemy import and_
 
 from app import db
 from app.models import Item, ItemCategory
@@ -31,7 +32,7 @@ def item_filter():
         price_not_in = (price_list[i] for i in range(5) if i not in price)
         # TODO: 价格筛选
         for p in price_not_in:
-            query.filter(~Item.price >= p[0]).filter(~Item.price <= p[1])
+            query.filter(~and_(Item.price >= p[0], Item.price <= p[1]))
     if abs(order) == 1:
         query.order_by(Item.price if order > 0 else -Item.price)
     elif abs(order) == 2:
