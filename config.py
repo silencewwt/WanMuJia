@@ -19,6 +19,7 @@ class Config(object):
     CONFIRM_EMAIL_DURATION = 86400  # seconds
     SMS_CAPTCHA_DURATION = 600  # seconds
     IMAGE_CAPTCHA_DURATION = 600  # seconds
+    ITEM_PER_PAGE = 40
 
 
 class DevelopmentConfig(Config):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, request
+from flask import render_template, request, current_app
 from sqlalchemy import and_
 
 from app import db
@@ -9,7 +9,7 @@ from . import item as item_blueprint
 
 @item_blueprint.route("/")
 def item_list():
-    pass
+    return render_template("/item/list")
 
 
 @item_blueprint.route("/filter")
@@ -39,7 +39,7 @@ def item_filter():
         pass
     elif abs(order) == 3:
         query.order_by(Item.created if order > 0 else -Item.created)
-    items = query.paginate(page, 20, False).items
+    items = query.paginate(page, current_app.config['ITEM_PER_PAGE'], False).items
     return render_template("/item/filter", items=items)
 
 
