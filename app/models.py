@@ -244,10 +244,41 @@ class Category(db.Model):
     category = db.Column(db.Unicode(10), nullable=False)
 
 
+class MaterialCategory(db.Model):
+    __tablename__ = 'material_categories'
+    id = db.Column(db.Integer, primary_key=True)
+    material_category = db.Column(db.Unicode(10), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        categories = [u'紫檀木类', u'花梨木类', u'香枝木类', u'黑酸枝木类', u'红酸枝木类', u'鸡翅木类', u'乌木类', u'条纹乌木类']
+        for category in categories:
+            db.session.add(MaterialCategory(material_category=category))
+            db.session.commit()
+
+
 class Material(db.Model):
     __tablename__ = 'materials'
     id = db.Column(db.Integer, primary_key=True)
+    material_category_id = db.Column(db.Integer, nullable=False)
     material = db.Column(db.Unicode(10), nullable=False)
+    alias = db.Column(db.Unicode(10), default=u'', nullable=False)
+    origin = db.Column(db.Unicode(30), nullable=False)
+
+    def __init__(self, material_category_id, material, alias, origin):
+        self.material = material
+        self.material_category_id = material_category_id
+        self.alias = alias
+        self.origin = origin
+
+    @staticmethod
+    def generate_fake():
+        categories = {u'紫檀木类': [[u'檀香紫檀', u'小叶紫檀', u'印度']], u'花梨木类': [[u'越柬紫檀', u'越柬花梨', u'越南、柬埔寨、老挝'], [u'安达曼紫檀', u'', u'印度安达曼群岛'], [u'刺猬紫檀', u'非洲花梨', u'非洲（冈比亚、科特迪瓦、几内亚比绍、马里、塞内加尔）'], [u'印度紫檀', u'', u'印度'], [u'大果紫檀', u'缅甸花梨', u'缅甸、泰国、老挝'], [u'囊状紫檀', u'', u'印度'], [u'鸟足紫檀', u'老挝花梨', u'东南亚中南半岛（老挝、柬埔寨）']], u'香枝木类': [[u'降香黄檀', u'黄花梨', u'中国海南、越南']], u'黑酸枝木类': [[u'刀状黑黄檀', u'缅甸黑酸枝、老挝黑酸枝', u'缅甸、老挝'], [u'黑黄檀', u'版纳黑檀', u'云南、越南、缅甸'], [u'阔叶黄檀', u'紫花梨', u'印度、印度尼西亚'], [u'卢氏黑黄檀', u'大叶紫檀', u'马达加斯加'], [u'东非黑黄檀', u'紫光檀、非洲黑檀', u'非洲东部（坦桑尼亚、塞内加尔、莫桑比克）'], [u'巴西黑黄檀', u'', u'巴西'], [u'亚马孙黄檀', u'', u'巴西'], [u'伯利兹黄檀', u'', u'伯利兹']], u'红酸枝木类': [[u'巴西黄檀', u'', u'巴西'], [u'赛州黄檀', u'', u'巴西'], [u'交趾黄檀', u'大红酸枝', u'老挝、柬埔寨'], [u'绒毛黄檀', u'紫薇檀、黄檀木', u'巴西、墨西哥'], [u'中美洲黄檀', u'', u'中美洲（尼加拉瓜、哥斯达黎加、危地马拉）'], [u'奥氏黄檀', u'', u'缅甸、泰国、老挝'], [u'微凹黄檀', u'小叶红酸枝、可可波罗', u'中美洲（巴拿马、哥斯达黎加、尼加拉瓜、洪都拉斯）']], u'鸡翅木类': [[u'非洲崖豆木', u'非洲黑鸡翅', u'非洲'], [u'白花崖豆木', u'缅甸鸡翅木', u'缅甸、泰国'], [u'铁刀木', u'', u'印度、泰国、马来西亚、缅甸']], u'乌木类': [[u'乌木', u'阴沉木', u'各国'], [u'厚瓣乌木', u'黑檀', u'西非'], [u'毛药乌木', u'', u''], [u'蓬赛乌木', u'', u'菲律宾']], u'条纹乌木类': [[u'苏拉威西乌木', u'条纹乌木', u'赤道周边国家'], [u'菲律宾乌木', u'菲律宾黑檀', u'菲律宾']]}
+        for category in categories:
+            material_category = MaterialCategory.filter_by(material_category=category).first()
+            for material in categories[category]:
+                db.session.add(Material(material_category.id, material[0], material[1], material[2]))
+                db.session.commit()
 
 
 class Privilege(BaseUser, db.Model):
