@@ -16,7 +16,7 @@ class BaseUser(UserMixin):
     # 哈希后的密码
     password_hash = db.Column('password', db.String(120), nullable=False)
     # 手机号码
-    mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
+    mobile = db.Column(db.CHAR(11), nullable=False)
     # 邮箱
     email = db.Column(db.String(64), nullable=False)
     # 注册时间
@@ -152,6 +152,10 @@ class Vendor(BaseUser, db.Model):
 
 class Distributor(BaseUser, db.Model):
     __tablename__ = 'distributors'
+    # 登录名
+    username = db.Column(db.Unicode(20), nullable=False)
+    # 生产商 id
+    vendor_id = db.Column(db.Integer, nullable=False)
     # 法人真实姓名
     legal_person_name = db.Column(db.Unicode(10), nullable=False)
     # 法人身份证号码
@@ -171,11 +175,29 @@ class Distributor(BaseUser, db.Model):
     # 已删除
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
-    def __init__(self, password, mobile, email):
-        super(Distributor, self).__init__(password, mobile, email)
+    def __init__(self, password, vendor_id, legal_person_name, legal_person_identity, name, address_id,
+                 contact_mobile, contact_telephone, contact):
+        super(Distributor, self).__init__(password, mobile='', email='')
+        self.username = self.generate_username()
+        self.vendor_id = vendor_id
+        self.legal_person_name = legal_person_name
+        self.legal_person_identity = legal_person_identity
+        self.name = name
+        self.address_id = address_id
+        self.contact_mobile = contact_mobile
+        self.contact_telephone = contact_telephone
+        self.contact = contact
 
     def get_id(self):
         return distributor_id_prefix + unicode(self.id)
+
+    @staticmethod
+    def generate_username():
+        from random import randint
+        while 1:
+            username = randint(10000000, 99999999)
+            if not Distributor.filter_by(username=username).limit(1).first():
+                return username
 
 
 # class VendorAuthorization(db.Model):
@@ -226,15 +248,6 @@ class Material(db.Model):
     __tablename__ = 'materials'
     id = db.Column(db.Integer, primary_key=True)
     material = db.Column(db.Unicode(10), nullable=False)
-
-
-# class Item(db.Model):
-#     __tablename__ = 'items'
-#     id = db.Column(db.Integer, primary_key=True)
-#     item_id = db.Column(db.Integer, nullable=False)
-#     created = db.Column(db.Integer, default=time.time, nullable=False)
-#     distributor_id = db.Column(db.Integer, nullable=False)
-#     price = db.Column(db.Integer, nullable=False)
 
 
 class Privilege(BaseUser, db.Model):
@@ -325,11 +338,11 @@ class VendorAddress(db.Model):
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
 
-class DealerAddress(db.Model):
+class DistributorAddress(db.Model):
     __tablename__ = 'distributor_addresses'
     id = db.Column(db.Integer, primary_key=True)
     distributor_id = db.Column(db.Integer, nullable=False)
-    province_id = db.Column(db.Integer, nullable=False)
+    district_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
