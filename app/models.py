@@ -346,6 +346,11 @@ class DistributorAddress(db.Model):
     address = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
+    def __init__(self, distributor_id, district_id, address):
+        self.distributor_id = distributor_id
+        self.district_id = district_id
+        self.address = address
+
 
 @login_manager.user_loader
 def load_user(user_id):
