@@ -2,7 +2,7 @@
 from flask import render_template, request
 
 from app import db
-from app.models import Item
+from app.models import Item, ItemCategory
 from . import item as item_blueprint
 
 
@@ -13,7 +13,33 @@ def item_list():
 
 @item_blueprint.route("/filter")
 def item_filter():
-    pass
+    page = request.args.get('page', 1, type=int)
+    brands = request.args.getlist('brand', type=int)
+    materials = request.args.getlist('material', type=int)
+    categories = request.args.getlist('category', type=int)
+    order = request.args.get('order', 0, type=int)
+    price = request.args.getlist('price', type=int)
+    price_list = ((0, 10000), (10001, 50000), (50001, 100000), (100001, 500000), (500001, 1999999999))
+    query = db.session.query(Item)
+    if brands:
+        query = query.filter(Item.vendor_id.in_(brands))
+    if materials:
+        query = query.filter(Item.material_id.in_(materials))
+    if categories:
+        query = query.filter(Item.id == ItemCategory.item_id, ItemCategory.category_id.in_(categories))
+    if price:
+        price_not_in = (price_list[i] for i in range(5) if i not in price)
+        # TODO: 价格筛选
+        for p in price_not_in:
+            query.filter(~Item.price >= p[0]).filter(~Item.price <= p[1])
+    if abs(order) == 1:
+        query.order_by(Item.price if order > 0 else -Item.price)
+    elif abs(order) == 2:
+        pass
+    elif abs(order) == 3:
+        query.order_by(Item.created if order > 0 else -Item.created)
+    items = query.paginate(page, 20, False).items
+    return render_template("/item/filter", items=items)
 
 
 @item_blueprint.route("/detail")
