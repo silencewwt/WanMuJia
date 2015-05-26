@@ -468,6 +468,18 @@ class Paint(db.Model):
         db.session.commit()
 
 
+class Decoration(db.Model):
+    __tablename__ = 'decorations'
+    id = db.Column(db.Integer, primary_key=True)
+    decoration = db.Column(db.Unicode(10), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        for decoration in (u"白铜镶嵌", u"黄铜镶嵌", u"石料镶嵌"):
+            db.session.add(Decoration(decoration=decoration))
+        db.session.commit()
+
+
 @login_manager.user_loader
 def load_user(user_id):
     id_ = int(user_id[1:])
