@@ -229,6 +229,37 @@ class Item(db.Model):
     price = db.Column(db.Integer, nullable=False)
     # 材料
     material_id = db.Column(db.Integer, nullable=False)
+    # 商品二级分类id
+    second_category_id = db.Column(db.Integer, nullable=False)
+
+
+class FirstCategory(db.Model):
+    __tablename__ = 'first_categories'
+    id = db.Column(db.Integer, primary_key=True)
+    first_category = db.Column(db.Unicode(10), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        first_categories = [u'椅凳类', u'桌案类', u'床榻类', u'柜架类', u'其他类']
+        for first_category in first_categories:
+            db.session.add(first_category=first_category)
+        db.session.commit()
+
+
+class SecondCategory(db.Model):
+    __tablename__ = 'second_categories'
+    id = db.Column(db.Integer, primary_key=True)
+    second_category = db.Column(db.Unicode(10), nullable=False)
+    first_category_id = db.Column(db.Integer, nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        categories = {u"椅凳类": [u'交椅', u'圈椅', u'太师椅', u'官帽椅', u'长凳', u'鼓凳', u'杌凳', u'宝座'], u"桌案类": [u'书桌', u'画案', u'条形桌案', u'方桌', u'八仙桌', u'炕桌', u'炕几'], u"床榻类": [u'拔步床', u'架子床', u'罗汉床', u'榻'], u"柜架类": [u'书柜', u'顶箱柜', u'方角柜', u'圆角柜', u'酒柜', u'书架', u'衣架', u'博古架'], u"其他类": [u'箱', u'屏风', u'挂件', u'手串', u'雕刻工艺品']}
+        for category in categories:
+            first_category = FirstCategory.query.filter_by(first_category=category).first()
+            for second_category in categories[category]:
+                db.session.add(SecondCategory(second_category=second_category, first_category_id=first_category.id))
+            db.session.commit()
 
 
 class ItemCategory(db.Model):
@@ -254,7 +285,7 @@ class MaterialCategory(db.Model):
         categories = [u'紫檀木类', u'花梨木类', u'香枝木类', u'黑酸枝木类', u'红酸枝木类', u'鸡翅木类', u'乌木类', u'条纹乌木类']
         for category in categories:
             db.session.add(MaterialCategory(material_category=category))
-            db.session.commit()
+        db.session.commit()
 
 
 class Material(db.Model):
@@ -278,7 +309,7 @@ class Material(db.Model):
             material_category = MaterialCategory.filter_by(material_category=category).first()
             for material in categories[category]:
                 db.session.add(Material(material_category.id, material[0], material[1], material[2]))
-                db.session.commit()
+            db.session.commit()
 
 
 class Privilege(BaseUser, db.Model):
