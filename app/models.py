@@ -480,6 +480,18 @@ class Decoration(db.Model):
         db.session.commit()
 
 
+class Tenon(db.Model):
+    __tablename__ = 'tenons'
+    id = db.Column(db.Integer, primary_key=True)
+    tenon = db.Column(db.Unicode(10), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        for tenon in (u'燕尾榫', u'明榫', u'暗榫', u'楔钉榫', u'套榫', u'抱肩榫', u'勾挂榫', u'夹头榫', u'插肩榫', u'走马销', u'平榫'):
+            db.session.add(Tenon(tenon=tenon))
+        db.session.commit()
+
+
 @login_manager.user_loader
 def load_user(user_id):
     id_ = int(user_id[1:])
