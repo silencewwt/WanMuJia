@@ -420,15 +420,27 @@ class DistributorAddress(db.Model):
         self.address = address
 
 
-class Sanding(db.Model):
-    __tablename__ = 'sandings'
+class Stove(db.Model):
+    __tablename__ = 'stoves'
     id = db.Column(db.Integer, primary_key=True)
-    sanding = db.Column(db.Integer, nullable=False)
+    stove = db.Column(db.Integer, nullable=False)
 
     @staticmethod
     def generate_fake():
-        for sanding in (180, 280, 320, 400, 600, 800, 1000, 1200, 1500, 2000, 2500, 3000, 4000, 5000):
-            db.session.add(Sanding(sanding=sanding))
+        for stove in (u'水煮', u'蒸汽', u'煮蜡'):
+            db.session.add(Stove(stove=stove))
+        db.session.commit()
+
+
+class Sand(db.Model):
+    __tablename__ = 'sands'
+    id = db.Column(db.Integer, primary_key=True)
+    sand = db.Column(db.Integer, nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        for sand in (180, 280, 320, 400, 600, 800, 1000, 1200, 1500, 2000, 2500, 3000, 4000, 5000):
+            db.session.add(Sand(sand=sand))
         db.session.commit()
 
 
