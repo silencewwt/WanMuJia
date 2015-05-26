@@ -423,12 +423,24 @@ class DistributorAddress(db.Model):
 class Stove(db.Model):
     __tablename__ = 'stoves'
     id = db.Column(db.Integer, primary_key=True)
-    stove = db.Column(db.Integer, nullable=False)
+    stove = db.Column(db.Unicode(10), nullable=False)
 
     @staticmethod
     def generate_fake():
         for stove in (u'水煮', u'蒸汽', u'煮蜡'):
             db.session.add(Stove(stove=stove))
+        db.session.commit()
+
+
+class Carve(db.Model):
+    __tablename__ = 'carves'
+    id = db.Column(db.Integer, primary_key=True)
+    carve = db.Column(db.Unicode, nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        for carve in (u"透雕", u"浮雕", u"浅浮雕", u"镂空雕", u"圆雕(立体雕)", u"微雕", u"阴阳额雕", u"阴雕", u"通雕"):
+            db.session.add(Carve(carve=carve))
         db.session.commit()
 
 
