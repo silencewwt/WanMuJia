@@ -420,15 +420,15 @@ class DistributorAddress(db.Model):
         self.address = address
 
 
-class Burnish(db.Model):
-    __tablename__ = 'burnishes'
+class Sanding(db.Model):
+    __tablename__ = 'sandings'
     id = db.Column(db.Integer, primary_key=True)
-    burnish = db.Column(db.Integer, nullable=False)
+    sanding = db.Column(db.Integer, nullable=False)
 
     @staticmethod
     def generate_fake():
-        for burnish in (180, 280, 320, 400, 600, 800, 1000, 1200, 1500, 2000, 2500, 3000, 4000, 5000):
-            db.session.add(Burnish(burnish=burnish))
+        for sanding in (180, 280, 320, 400, 600, 800, 1000, 1200, 1500, 2000, 2500, 3000, 4000, 5000):
+            db.session.add(Sanding(sanding=sanding))
         db.session.commit()
 
 
