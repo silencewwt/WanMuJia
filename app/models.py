@@ -435,7 +435,7 @@ class Stove(db.Model):
 class Carve(db.Model):
     __tablename__ = 'carves'
     id = db.Column(db.Integer, primary_key=True)
-    carve = db.Column(db.Unicode, nullable=False)
+    carve = db.Column(db.Unicode(10), nullable=False)
 
     @staticmethod
     def generate_fake():
@@ -453,6 +453,18 @@ class Sand(db.Model):
     def generate_fake():
         for sand in (180, 280, 320, 400, 600, 800, 1000, 1200, 1500, 2000, 2500, 3000, 4000, 5000):
             db.session.add(Sand(sand=sand))
+        db.session.commit()
+
+
+class Paint(db.Model):
+    __tablename__ = 'paints'
+    id = db.Column(db.Integer, primary_key=True)
+    paint = db.Column(db.Unicode(10), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        for paint in (u"生漆", u"烫蜡"):
+            db.session.add(Paint(paint=paint))
         db.session.commit()
 
 
