@@ -7,16 +7,16 @@ user_id_prefix = u'u'
 user_permission = Permission(_user_role)
 
 _vendor_role = RoleNeed('vendor')
-vendor_id_prefix = u'p'
+vendor_id_prefix = u'v'
 vendor_permission = Permission(_vendor_role)
 
 _distributor_role = RoleNeed('distributor')
 distributor_id_prefix = u'd'
 distributor_permission = Permission(_distributor_role)
 
-_admin_role = RoleNeed('admin')
-admin_id_prefix = u'a'
-admin_permission = Permission(_admin_role)
+_privilege_role = RoleNeed('privilege')
+privilege_id_prefix = u'p'
+privilege_permission = Permission(_privilege_role)
 
 
 def identity_config(app):
@@ -29,5 +29,5 @@ def identity_config(app):
                 identity.provides.add(_vendor_role)
             elif identity.id.startswith(distributor_id_prefix):
                 identity.provides.add(_distributor_role)
-            elif identity.id.startswith(admin_id_prefix):
-                identity.provides.add(_admin_role)
+            elif identity.id.startswith(privilege_id_prefix):
+                identity.provides.add(_privilege_role)
