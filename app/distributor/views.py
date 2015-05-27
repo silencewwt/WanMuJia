@@ -20,7 +20,7 @@ def login():
     return render_template('distributor/login.html', login_form=form)
 
 
-@distributor_blueprint.route('/register', methdos=['GET', 'POST'])
+@distributor_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if 'register_permission' in session and session['register_permission'] and \
             'vendor_id' in session and Vendor.get(session['vendor_id']):
