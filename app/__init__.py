@@ -8,7 +8,7 @@ from flask.ext.principal import Principal
 from flask_security import Security
 
 from config import config
-from permission import identity_config
+from .permission import identity_config
 
 
 app = Flask(__name__)
@@ -46,6 +46,6 @@ def create_app(config_name):
     app.register_blueprint(item_blueprint, url_prefix='/item')
 
     from .distributor import distributor as distributor_blueprint
-    app.register_blueprint(distributor_blueprint, url_prefix='distributor')
+    app.register_blueprint(distributor_blueprint, url_prefix='/distributor')
 
     return app

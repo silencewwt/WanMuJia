@@ -7,7 +7,8 @@ from flask.ext.login import UserMixin
 from flask_security.utils import encrypt_password, verify_password
 
 from app import db, login_manager
-from permission import admin_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
+from app.utils import PY3
+from .permission import privilege_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
 
 
 class BaseUser(UserMixin):
@@ -21,6 +22,8 @@ class BaseUser(UserMixin):
     email = db.Column(db.String(64), nullable=False)
     # 注册时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
+
+    id_prefix = ''
 
     def __init__(self, password, mobile, email):
         self.password = password
@@ -38,18 +41,23 @@ class BaseUser(UserMixin):
     def verify_password(self, password):
         return verify_password(password, self.password_hash)
 
+    def get_id(self):
+        if PY3:
+            return self.id_prefix + self.id
+        else:
+            return self.id_prefix + unicode(self.id)
+
 
 class User(BaseUser, db.Model):
     __tablename__ = 'users'
     # 用户名
     username = db.Column(db.Unicode(20), unique=True, nullable=False)
 
+    id_prefix = user_id_prefix
+
     def __init__(self, password, mobile, email, username=u''):
         super(User, self).__init__(password, mobile, email)
         self.username = username if username else self.generate_username()
-
-    def get_id(self):
-        return user_id_prefix + unicode(self.id)
 
     @staticmethod
     def generate_username():
@@ -133,6 +141,8 @@ class Vendor(BaseUser, db.Model):
     # 已通过审核
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
 
+    id_prefix = vendor_id_prefix
+
     def __init__(self, password, mobile, email, legal_person_name, legal_person_identity, name, license_address,
                  license_limit, license_long_time_limit, address_id, contact_mobile, contact_telephone):
         super(Vendor, self).__init__(password, mobile, email)
@@ -145,9 +155,6 @@ class Vendor(BaseUser, db.Model):
         self.address_id = address_id
         self.contact_mobile = contact_mobile
         self.contact_telephone = contact_telephone
-
-    def get_id(self):
-        return vendor_id_prefix + unicode(self.id)
 
 
 class Distributor(BaseUser, db.Model):
@@ -175,6 +182,8 @@ class Distributor(BaseUser, db.Model):
     # 已删除
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
+    id_prefix = distributor_id_prefix
+
     def __init__(self, password, vendor_id, legal_person_name, legal_person_identity, name, address_id,
                  contact_mobile, contact_telephone, contact):
         super(Distributor, self).__init__(password, mobile='', email='')
@@ -188,15 +197,12 @@ class Distributor(BaseUser, db.Model):
         self.contact_telephone = contact_telephone
         self.contact = contact
 
-    def get_id(self):
-        return distributor_id_prefix + unicode(self.id)
-
     @staticmethod
     def generate_username():
         from random import randint
         while 1:
             username = randint(10000000, 99999999)
-            if not Distributor.filter_by(username=username).limit(1).first():
+            if not Distributor.query.filter_by(username=username).limit(1).first():
                 return username
 
 
@@ -248,7 +254,7 @@ class FirstCategory(db.Model):
     def generate_fake():
         first_categories = [u'椅凳类', u'桌案类', u'床榻类', u'柜架类', u'其他类']
         for first_category in first_categories:
-            db.session.add(first_category=first_category)
+            db.session.add(FirstCategory(first_category=first_category))
         db.session.commit()
 
 
@@ -299,12 +305,12 @@ class Material(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     material_category_id = db.Column(db.Integer, nullable=False)
     material = db.Column(db.Unicode(10), nullable=False)
-    alias = db.Column(db.Unicode(10), default=u'', nullable=False)
+    alias = db.Column(db.Unicode(20), default=u'', nullable=False)
     origin = db.Column(db.Unicode(30), nullable=False)
 
     def __init__(self, material_category_id, material, alias, origin):
-        self.material = material
         self.material_category_id = material_category_id
+        self.material = material
         self.alias = alias
         self.origin = origin
 
@@ -312,7 +318,7 @@ class Material(db.Model):
     def generate_fake():
         categories = {u'紫檀木类': [[u'檀香紫檀', u'小叶紫檀', u'印度']], u'花梨木类': [[u'越柬紫檀', u'越柬花梨', u'越南、柬埔寨、老挝'], [u'安达曼紫檀', u'', u'印度安达曼群岛'], [u'刺猬紫檀', u'非洲花梨', u'非洲（冈比亚、科特迪瓦、几内亚比绍、马里、塞内加尔）'], [u'印度紫檀', u'', u'印度'], [u'大果紫檀', u'缅甸花梨', u'缅甸、泰国、老挝'], [u'囊状紫檀', u'', u'印度'], [u'鸟足紫檀', u'老挝花梨', u'东南亚中南半岛（老挝、柬埔寨）']], u'香枝木类': [[u'降香黄檀', u'黄花梨', u'中国海南、越南']], u'黑酸枝木类': [[u'刀状黑黄檀', u'缅甸黑酸枝、老挝黑酸枝', u'缅甸、老挝'], [u'黑黄檀', u'版纳黑檀', u'云南、越南、缅甸'], [u'阔叶黄檀', u'紫花梨', u'印度、印度尼西亚'], [u'卢氏黑黄檀', u'大叶紫檀', u'马达加斯加'], [u'东非黑黄檀', u'紫光檀、非洲黑檀', u'非洲东部（坦桑尼亚、塞内加尔、莫桑比克）'], [u'巴西黑黄檀', u'', u'巴西'], [u'亚马孙黄檀', u'', u'巴西'], [u'伯利兹黄檀', u'', u'伯利兹']], u'红酸枝木类': [[u'巴西黄檀', u'', u'巴西'], [u'赛州黄檀', u'', u'巴西'], [u'交趾黄檀', u'大红酸枝', u'老挝、柬埔寨'], [u'绒毛黄檀', u'紫薇檀、黄檀木', u'巴西、墨西哥'], [u'中美洲黄檀', u'', u'中美洲（尼加拉瓜、哥斯达黎加、危地马拉）'], [u'奥氏黄檀', u'', u'缅甸、泰国、老挝'], [u'微凹黄檀', u'小叶红酸枝、可可波罗', u'中美洲（巴拿马、哥斯达黎加、尼加拉瓜、洪都拉斯）']], u'鸡翅木类': [[u'非洲崖豆木', u'非洲黑鸡翅', u'非洲'], [u'白花崖豆木', u'缅甸鸡翅木', u'缅甸、泰国'], [u'铁刀木', u'', u'印度、泰国、马来西亚、缅甸']], u'乌木类': [[u'乌木', u'阴沉木', u'各国'], [u'厚瓣乌木', u'黑檀', u'西非'], [u'毛药乌木', u'', u'菲律宾'], [u'蓬赛乌木', u'', u'菲律宾']], u'条纹乌木类': [[u'苏拉威西乌木', u'条纹乌木', u'印度尼西亚'], [u'菲律宾乌木', u'菲律宾黑檀', u'菲律宾']]}
         for category in categories:
-            material_category = MaterialCategory.filter_by(material_category=category).first()
+            material_category = MaterialCategory.query.filter_by(material_category=category).first()
             for material in categories[category]:
                 db.session.add(Material(material_category.id, material[0], material[1], material[2]))
             db.session.commit()
@@ -323,25 +329,24 @@ class Privilege(BaseUser, db.Model):
     # 用户名
     username = db.Column(db.String(12), nullable=False, unique=True)
 
+    id_prefix = privilege_id_prefix
+
     def __init__(self, password, mobile, email):
         super(Privilege, self).__init__(password, mobile, email)
-
-    def get_id(self):
-        return admin_id_prefix + unicode(self.id)
 
 
 class Province(db.Model):
     __tablename__ = 'provinces'
     id = db.Column(db.Integer, primary_key=True)
     cn_id = db.Column(db.Integer, nullable=False)
-    province = db.Column(db.Unicode(10), nullable=False)
+    province = db.Column(db.Unicode(15), nullable=False)
 
 
 class City(db.Model):
     __tablename__ = 'cities'
     id = db.Column(db.Integer, primary_key=True)
     cn_id = db.Column(db.Integer, nullable=False)
-    city = db.Column(db.Unicode(10), nullable=False)
+    city = db.Column(db.Unicode(15), nullable=False)
     province_id = db.Column(db.Integer, nullable=False)
 
 
@@ -349,7 +354,7 @@ class District(db.Model):
     __tablename__ = 'districts'
     id = db.Column(db.Integer, primary_key=True)
     cn_id = db.Column(db.Integer, nullable=False)
-    district = db.Column(db.Unicode(10), nullable=False)
+    district = db.Column(db.Unicode(15), nullable=False)
     city_id = db.Column(db.Integer, nullable=False)
 
     @staticmethod
@@ -371,12 +376,14 @@ class District(db.Model):
             elif item[0].endswith('00'):
                 if item[1] == u'市辖区':
                     if province_name in directly_city:
-                        item[1] = province_name
+                        name = province_name
                     else:
                         continue
                 elif item[1] == u'县':
                     continue
-                city = City(cn_id=item[0], city=item[1], province_id=province_id)
+                else:
+                    name = item[1]
+                city = City(cn_id=item[0], city=name, province_id=province_id)
                 db.session.add(city)
                 db.session.commit()
                 city_id = city.id
@@ -495,7 +502,7 @@ class Tenon(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     id_ = int(user_id[1:])
-    if user_id.starswith(admin_id_prefix):
+    if user_id.starswith(privilege_id_prefix):
         return Privilege.query.get(id_)
     elif user_id.starswith(vendor_id_prefix):
         return Vendor.query.get(id_)

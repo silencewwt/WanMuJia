@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from cStringIO import StringIO
 from PIL import Image
 from flask.ext.wtf import Form
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
@@ -8,8 +7,13 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo
 
 from app import db
 from app.models import Vendor, District, VendorAddress
-from app.utils import save_image
+from app.utils import save_image, PY3
 from app.utils.validator import Email, Mobile
+
+if PY3:
+    from io import StringIO
+else:
+    from cStringIO import StringIO
 
 
 class LoginForm(Form):

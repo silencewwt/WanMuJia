@@ -1,6 +1,6 @@
 # -*-coding: utf-8 -*-
-from constants import SMS_CAPTCHA
-from tasks import send_sms
+from .constants import SMS_CAPTCHA
+from .tasks import send_sms
 
 
 SMS_CAPTCHA_CONTENT = u'尊敬的木一家用户，您的验证码为%s，请您尽快完成操作，感谢您的使用！'

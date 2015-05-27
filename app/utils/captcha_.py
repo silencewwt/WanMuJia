@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from captcha.image import ImageCaptcha
 
-from redis import redis_set, redis_verify, redis_get
+from .redis import redis_set, redis_verify, redis_get
 from ..constants import SMS_CAPTCHA, SMS_CAPTCHA_SENT, IMAGE_CAPTCHA, IMAGE_CAPTCHA_CODE
 from ..sms import sms_generator
 
