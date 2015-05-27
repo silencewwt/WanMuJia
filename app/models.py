@@ -509,3 +509,17 @@ def load_user(user_id):
     elif user_id.starswith(distributor_id_prefix):
         return Distributor.query.get(id_)
     return User.query.get(id_)
+
+
+def generate_fake_data():
+    FirstCategory.generate_fake()
+    SecondCategory.generate_fake()
+    MaterialCategory.generate_fake()
+    Material.generate_fake()
+    District.generate_fake()
+    Stove.generate_fake()
+    Carve.generate_fake()
+    Sand.generate_fake()
+    Paint.generate_fake()
+    Decoration.generate_fake()
+    Tenon.generate_fake()
