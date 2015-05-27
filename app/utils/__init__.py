@@ -1,2 +1,3 @@
 # -*-coding: utf-8 -*-
-from _image import save_image
+from ._compat import PY3
+from ._image import save_image
