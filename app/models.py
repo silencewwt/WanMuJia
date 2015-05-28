@@ -17,9 +17,9 @@ class BaseUser(UserMixin):
     # 哈希后的密码
     password_hash = db.Column('password', db.String(120), nullable=False)
     # 手机号码
-    mobile = db.Column(db.CHAR(11), nullable=False)
+    mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
     # 邮箱
-    email = db.Column(db.String(64), nullable=False)
+    email = db.Column(db.String(64), unique=True, nullable=False)
     # 注册时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
@@ -181,6 +181,11 @@ class Distributor(BaseUser, db.Model):
     deleted_confirmed = db.Column(db.Boolean, default=False, nullable=False)
     # 已删除
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+    
+    # 手机号码
+    mobile = db.Column(db.CHAR(11), default='', nullable=False)
+    # 邮箱
+    email = db.Column(db.String(64), default='', nullable=False)
 
     id_prefix = distributor_id_prefix
 
@@ -221,7 +226,6 @@ class Distributor(BaseUser, db.Model):
 
 
 class Item(db.Model):
-    # TODO: 单个商品多个分类，多种材料?
     __tablename__ = 'items'
     # 商品id
     id = db.Column(db.Integer, primary_key=True)
@@ -233,7 +237,7 @@ class Item(db.Model):
     item = db.Column(db.Unicode(20), nullable=False)
     # 指导价格
     price = db.Column(db.Integer, nullable=False)
-    # 材料
+    # 材料 id
     material_id = db.Column(db.Integer, nullable=False)
     # 商品二级分类id
     second_category_id = db.Column(db.Integer, nullable=False)
@@ -243,6 +247,18 @@ class Item(db.Model):
     width = db.Column(db.Integer, nullable=False)
     # 高度 cm
     height = db.Column(db.Integer, nullable=False)
+    # 烘干 id
+    stove_id = db.Column(db.Integer, nullable=False)
+    # 雕刻 id
+    carve_id = db.Column(db.Integer, nullable=False)
+    # 打磨砂纸 id
+    sand_id = db.Column(db.Integer, nullable=False)
+    # 涂饰 id
+    paint_id = db.Column(db.Integer, nullable=False)
+    # 装饰 id
+    decoration_id = db.Column(db.Integer, nullable=False)
+    # 榫卯 id
+    tenon_id = db.Column(db.Integer, nullable=False)
 
 
 class FirstCategory(db.Model):
@@ -305,7 +321,9 @@ class Material(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     material_category_id = db.Column(db.Integer, nullable=False)
     material = db.Column(db.Unicode(10), nullable=False)
+    # 别称
     alias = db.Column(db.Unicode(20), default=u'', nullable=False)
+    # 产地
     origin = db.Column(db.Unicode(30), nullable=False)
 
     def __init__(self, material_category_id, material, alias, origin):
