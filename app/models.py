@@ -181,7 +181,7 @@ class Distributor(BaseUser, db.Model):
     deleted_confirmed = db.Column(db.Boolean, default=False, nullable=False)
     # 已删除
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
-    
+
     # 手机号码
     mobile = db.Column(db.CHAR(11), default='', nullable=False)
     # 邮箱
@@ -259,6 +259,22 @@ class Item(db.Model):
     decoration_id = db.Column(db.Integer, nullable=False)
     # 榫卯 id
     tenon_id = db.Column(db.Integer, nullable=False)
+
+    def stock_count(self):
+        return sum([stock.stock for stock in Stock.query.filter(Stock.item_id == self.id, Stock.stock > 0)])
+
+
+class Stock(db.Model):
+    __tablename__ = 'stocks'
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, nullable=False)
+    distributor_id = db.Column(db.Integer, nullable=False)
+    stock = db.Column(db.Integer, default=0, nullable=False)
+
+    def __init__(self, item_id, distributor_id, stock):
+        self.item_id = item_id
+        self.distributor_id = distributor_id
+        self.stock = stock
 
 
 class FirstCategory(db.Model):
