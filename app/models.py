@@ -277,6 +277,9 @@ class Item(db.Model):
     def stock_count(self):
         return sum([stock.stock for stock in Stock.query.filter(Stock.item_id == self.id, Stock.stock > 0)])
 
+    def get_tenon_id(self):
+        return (item_tenon.tenon_id for item_tenon in ItemTenon.query.filter_by(item_id=self.id))
+
 
 class Stock(db.Model):
     __tablename__ = 'stocks'
