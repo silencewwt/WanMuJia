@@ -2,13 +2,14 @@
 from PIL import Image
 from flask.ext.wtf import Form
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import StringField, PasswordField, BooleanField
-from wtforms.validators import ValidationError, DataRequired, Length, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, IntegerField, SelectField, SelectMultipleField
+from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
 from app import db
-from app.models import Vendor, District, VendorAddress
+from app.models import Vendor, District, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, \
+    Decoration, Tenon, Item, ItemTenon
 from app.utils import save_image, PY3
-from app.utils.validator import Email, Mobile
+from app.utils.validator import Email, Mobile, QueryID
 
 if PY3:
     from io import StringIO
@@ -98,4 +99,48 @@ class RegistrationDetailForm(Form):
 
 
 class ItemForm(Form):
-    pass
+    item_name = StringField(validators=[DataRequired()])
+    length = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    width = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    height = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    price = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    material_id = IntegerField(validators=[DataRequired(), QueryID(Material)])
+    second_category_id = IntegerField(validators=[DataRequired(), QueryID(SecondCategory)])
+    stove_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Stove)])
+    carve_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Carve)])
+    sand_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Sand)])
+    paint_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Paint)])
+    decoration_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Decoration)])
+    tenon_id = SelectMultipleField(coerce=int, validators=[DataRequired(), QueryID(Tenon)])
+
+    def generate_choices(self):
+        self.stove_id.choices = [(choice.id, choice.stove) for choice in Stove.query.all()]
+        self.carve_id.choices = [(choice.id, choice.carve) for choice in Carve.query.all()]
+        self.sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
+        self.paint_id.choices = [(choice.id, choice.paint) for choice in Paint.query.all()]
+        self.decoration_id.choices = [(choice.id, choice.decoration_id) for choice in Decoration.query.all()]
+        self.tenon_id.choices = [(choice.id, choice.tenon) for choice in Tenon.query.all()]
+
+    def add_item(self, vendor_id):
+        # TODO: upload images
+        item = Item(
+            vendor_id=vendor_id,
+            item=self.item_name.data,
+            price=self.price.data,
+            material_id=self.material_id.data,
+            second_category_id=self.second_category_id.data,
+            length=self.length.data,
+            width=self.width,
+            height=self.height.data,
+            stove_id=self.stove_id.data,
+            carve_id=self.carve_id.data,
+            sand_id=self.sand_id.data,
+            paint_id=self.paint_id.data,
+            decoration_id=self.decoration_id.data
+        )
+        db.session.add(item)
+        db.sessoin.commit()
+        for tenon_id in self.tenon_id.data:
+            db.session.add(ItemTenon(item_id=item.id, tenon_id=tenon_id))
+        db.session.commit()
+        return item
