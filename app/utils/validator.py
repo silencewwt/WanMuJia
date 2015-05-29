@@ -52,6 +52,15 @@ class Captcha(object):
                 raise ValidationError(self.message)
 
 
+class QueryID(object):
+    def __init__(self, model):
+        self.model = model
+
+    def __call__(self, form, field):
+        if not self.model.query.get(field.data).first():
+            raise ValidationError(u'参数错误!')
+
+
 class UserName(object):
     def __call__(self, form, field):
         if not re.match(r'^\w{4,14}$', field.data, re.UNICODE) or re.match(r'^\d*$', field.data, re.UNICODE):
@@ -62,8 +71,7 @@ class UserName(object):
 
 def available_mobile(mobile):
     if User.query.filter_by(mobile=mobile).first() or \
-            Vendor.query.filter_by(mobile=mobile).first() or \
-            Dealer.query.filter_by(mobile=mobile).first():
+            Vendor.query.filter_by(mobile=mobile).first():
         return False
     return True
 
