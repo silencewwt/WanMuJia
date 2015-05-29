@@ -99,7 +99,7 @@ class RegistrationDetailForm(Form):
 
 
 class ItemForm(Form):
-    item_name = StringField(validators=[DataRequired()])
+    item = StringField(validators=[DataRequired()])
     length = IntegerField(validators=[DataRequired(), NumberRange(1)])
     width = IntegerField(validators=[DataRequired(), NumberRange(1)])
     height = IntegerField(validators=[DataRequired(), NumberRange(1)])
@@ -113,6 +113,9 @@ class ItemForm(Form):
     decoration_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Decoration)])
     tenon_id = SelectMultipleField(coerce=int, validators=[DataRequired(), QueryID(Tenon)])
 
+    attributes = ('item', 'length', 'width', 'height', 'price', 'material_id', 'second_category_id', 'stove_id',
+                  'carve_id', 'sand_id', 'decoration_id')
+
     def generate_choices(self):
         self.stove_id.choices = [(choice.id, choice.stove) for choice in Stove.query.all()]
         self.carve_id.choices = [(choice.id, choice.carve) for choice in Carve.query.all()]
@@ -125,7 +128,7 @@ class ItemForm(Form):
         # TODO: upload images
         item = Item(
             vendor_id=vendor_id,
-            item=self.item_name.data,
+            item=self.item.data,
             price=self.price.data,
             material_id=self.material_id.data,
             second_category_id=self.second_category_id.data,
@@ -144,3 +147,23 @@ class ItemForm(Form):
             db.session.add(ItemTenon(item_id=item.id, tenon_id=tenon_id))
         db.session.commit()
         return item
+
+    def show_item(self, item):
+        for attr in self.attributes:
+            getattr(self, attr).data = getattr(item, attr)
+        self.tenon_id.data = item.get_tenon_id()
+
+    def update_item(self, item):
+        for attr in self.attributes:
+            if not getattr(self, attr).data == getattr(item, attr):
+                setattr(item, attr, getattr(self, attr).data)
+
+        item_tenons = item.get_tenon_id()
+        add_tenons = set(self.tenon_id.data) - set(item_tenons)
+        del_tenons = set(item_tenons) - set(self.tenon_id.data)
+        for tenon_id in add_tenons:
+            db.session.add(ItemTenon(item_id=item.id, tenon_id=tenon_id))
+        for tenon_id in del_tenons:
+            db.session.delete(ItemTenon.query.filter_by(item_id=item.id, tenon_id=tenon_id).limit(1).first())
+        db.session.add(item)
+        db.session.commit()
