@@ -130,7 +130,7 @@ class ItemForm(Form):
             material_id=self.material_id.data,
             second_category_id=self.second_category_id.data,
             length=self.length.data,
-            width=self.width,
+            width=self.width.data,
             height=self.height.data,
             stove_id=self.stove_id.data,
             carve_id=self.carve_id.data,
