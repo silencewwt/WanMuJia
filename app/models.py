@@ -257,8 +257,22 @@ class Item(db.Model):
     paint_id = db.Column(db.Integer, nullable=False)
     # 装饰 id
     decoration_id = db.Column(db.Integer, nullable=False)
-    # 榫卯 id
-    tenon_id = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, vendor_id, item, price, material_id, second_category_id, length, width, height, stove_id,
+                 carve_id, sand_id, paint_id, decoration_id):
+        self.vendor_id = vendor_id
+        self.item = item
+        self.price = price
+        self.material_id = material_id
+        self.second_category_id = second_category_id
+        self.length = length
+        self.width = width
+        self.height = height
+        self.stove_id = stove_id
+        self.carve_id = carve_id
+        self.sand_id = sand_id
+        self.paint_id = paint_id
+        self.decoration_id = decoration_id
 
     def stock_count(self):
         return sum([stock.stock for stock in Stock.query.filter(Stock.item_id == self.id, Stock.stock > 0)])
@@ -531,6 +545,13 @@ class Tenon(db.Model):
         for tenon in (u'燕尾榫', u'明榫', u'暗榫', u'楔钉榫', u'套榫', u'抱肩榫', u'勾挂榫', u'夹头榫', u'插肩榫', u'走马销', u'平榫'):
             db.session.add(Tenon(tenon=tenon))
         db.session.commit()
+
+
+class ItemTenon(db.Model):
+    __tablename__ = 'item_tenons'
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, nullable=False)
+    tenon_id = db.Column(db.Integer, nullable=False)
 
 
 @login_manager.user_loader
