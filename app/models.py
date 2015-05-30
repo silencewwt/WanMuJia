@@ -257,9 +257,11 @@ class Item(db.Model):
     paint_id = db.Column(db.Integer, nullable=False)
     # 装饰 id
     decoration_id = db.Column(db.Integer, nullable=False)
+    # 产品寓意
+    story = db.Column(db.Unicode(5000), default=u'', nullable=False)
 
     def __init__(self, vendor_id, item, price, material_id, second_category_id, length, width, height, stove_id,
-                 carve_id, sand_id, paint_id, decoration_id):
+                 carve_id, sand_id, paint_id, decoration_id, story=u''):
         self.vendor_id = vendor_id
         self.item = item
         self.price = price
@@ -273,6 +275,7 @@ class Item(db.Model):
         self.sand_id = sand_id
         self.paint_id = paint_id
         self.decoration_id = decoration_id
+        self.story = story
 
     def stock_count(self):
         return sum([stock.stock for stock in Stock.query.filter(Stock.item_id == self.id, Stock.stock > 0)])

@@ -2,7 +2,8 @@
 from PIL import Image
 from flask.ext.wtf import Form
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import StringField, PasswordField, BooleanField, IntegerField, SelectField, SelectMultipleField
+from wtforms import StringField, PasswordField, BooleanField, IntegerField, SelectField, SelectMultipleField, \
+    TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
 from app import db
@@ -112,9 +113,10 @@ class ItemForm(Form):
     paint_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Paint)])
     decoration_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Decoration)])
     tenon_id = SelectMultipleField(coerce=int, validators=[DataRequired(), QueryID(Tenon)])
+    story = TextAreaField(validators=[Length(0, 5000)])
 
     attributes = ('item', 'length', 'width', 'height', 'price', 'material_id', 'second_category_id', 'stove_id',
-                  'carve_id', 'sand_id', 'decoration_id')
+                  'carve_id', 'sand_id', 'decoration_id', 'story')
 
     def generate_choices(self):
         self.stove_id.choices = [(choice.id, choice.stove) for choice in Stove.query.all()]
@@ -139,7 +141,8 @@ class ItemForm(Form):
             carve_id=self.carve_id.data,
             sand_id=self.sand_id.data,
             paint_id=self.paint_id.data,
-            decoration_id=self.decoration_id.data
+            decoration_id=self.decoration_id.data,
+            story=self.story.data
         )
         db.session.add(item)
         db.sessoin.commit()
