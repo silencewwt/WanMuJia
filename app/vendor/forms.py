@@ -100,7 +100,7 @@ class RegistrationDetailForm(Form):
 
 
 class ItemForm(Form):
-    item = StringField(validators=[DataRequired()])
+    item = StringField(validators=[DataRequired(), Length(1, 20)])
     length = IntegerField(validators=[DataRequired(), NumberRange(1)])
     width = IntegerField(validators=[DataRequired(), NumberRange(1)])
     height = IntegerField(validators=[DataRequired(), NumberRange(1)])
