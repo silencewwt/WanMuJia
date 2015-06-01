@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import current_app, flash, render_template, redirect, request, session
+from flask import current_app, flash, render_template, redirect, request, session, url_for
 from flask_security import login_user, logout_user, login_required, current_user
 from flask_security.utils import identity_changed, Identity
 
@@ -53,12 +53,36 @@ def reset_password():
     return model_reset_password(Vendor, 'vendor')
 
 
-@vendor_blueprint.route('/list', methods=['GET', 'POST'])
+@vendor_blueprint.route('/list', methods=['GET', 'POST', 'PUT', 'DELETE'])
 @vendor_permission.require()
 def item_list():
+    # TODO: upload images
     form = ItemForm()
-    if form.validate_on_submit():
-        pass
+    form.generate_choices()
+    item_id = request.args.get('item', 0, int)
     page = request.args.get('page', 1, type=int)
-    items = Item.query.filter_by(vendor_id=current_user.id).paginate(page, 100, False).items
-    return render_template('vendor/list.html', items=items)
+    per_page = request.args.get('per_page', 100, type=int)
+    if item_id:
+        item = Item.query.get_or_404(item_id)
+        if request.method == 'GET':
+            form.show_item(item)
+            return render_template('vendor/detail.html', item=item)
+        elif request.method == 'PUT':
+            if form.validate_on_submit():
+                form.update_item(item)
+                return redirect(url_for('.list', item=item.id))
+            flash('something wrong')
+            return 'something wrong'
+        elif request.method == 'DELETE':
+            db.session.delete(item)
+            db.session.commit()
+            return 'delete item successfully'
+    else:
+        if request.method == 'GET':
+            items = Item.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
+            return render_template('vendor/list.html', items=items)
+        elif request.method == 'POST':
+            if form.validate_on_submit():
+                item = form.add_item(current_user.id)
+                return redirect(url_for('.list', item=item.id))
+            return 'add item fail'
