@@ -91,14 +91,123 @@
     method:
         GET, POST
 
-###vendor item list
-    URL:
-        /vendor/list
-    method:
-        GET, POST
-    parameters:
-        item
+###vendor items list
++	item list
+	+	URL:
+	
+			/vendor/items?page=&per_page
+	+    method:
+			
+			GET
+    +	parameters:
+			
+			page: list 
+			per_page: item numbers per page
++	add item
+	+	URL:
+	
+			/vendor/items
+	+	method:
+	
+			POST
++	item detail
+	+	URL:
+		
+			/vendor/items?item=
+	+	method:
+	
+			GET
+	+	parameters:
+	
+			item: item id
++	edit item
+	+	URL:
+	
+			/vendor/items?item=
+	+	method:
+	
+			PUT
+	+	parameters:
+	
+			item: item id
++	delete item
+	+	URL:
+	
+			/vendor/items?item=
+	+	method:
+	
+			DELETE
+	+	parameters:
+	
+			item: item id
++	Item Form
+	+	item: 
+		
+			商品名称
+			Required
+			length: [1, 20]
+	+	length
+			
+			商品长度(cm)
+			Required
+	+	width
+			
+			商品宽度(cm)
+			Required
+	+	height
+			
+			商品高度(cm)
+			Required
+	+	price
+			
+			指导价格(元)
+			Required
+	+	material_id
+			
+			二级材料id
+			SelectField
+			Required
+	+	second_category_id
 
+			二级分类id
+			SelectField
+			Required
+	+	stove_id
+			
+			烘干工艺id
+			SelectField
+			Required
+	+	carve_id
+			
+			雕刻工艺id
+			SelectField
+			Required
+	+	sand_id
+	
+			打磨砂纸id
+			SelectField
+			Required
+	+	paint_id
+			
+			涂饰工艺id
+			SelectField
+			Required
+	+	decoration_id
+	
+			装饰工艺id
+			SelectField
+			Required
+	+	tenon_id
+			
+			榫卯结构id
+			SelectMultipleField
+			Required
+	+	story
+			
+			商品寓意
+			TextAreaField
+			length: [0, 5000]
+			
 ##item
 
 ###item list
