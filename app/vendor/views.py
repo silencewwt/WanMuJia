@@ -53,7 +53,7 @@ def reset_password():
     return model_reset_password(Vendor, 'vendor')
 
 
-@vendor_blueprint.route('/list', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@vendor_blueprint.route('/items', methods=['GET', 'POST', 'PUT', 'DELETE'])
 @vendor_permission.require()
 def item_list():
     # TODO: upload images
@@ -64,13 +64,15 @@ def item_list():
     per_page = request.args.get('per_page', 100, type=int)
     if item_id:
         item = Item.query.get_or_404(item_id)
+        if item.vendor_id != current_user.id:
+            return 'forbidden', 403
         if request.method == 'GET':
             form.show_item(item)
             return render_template('vendor/detail.html', item=item)
         elif request.method == 'PUT':
             if form.validate_on_submit():
                 form.update_item(item)
-                return redirect(url_for('.list', item=item.id))
+                return redirect(url_for('.items', item=item.id))
             flash('something wrong')
             return 'something wrong'
         elif request.method == 'DELETE':
@@ -80,9 +82,9 @@ def item_list():
     else:
         if request.method == 'GET':
             items = Item.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
-            return render_template('vendor/list.html', items=items)
+            return render_template('vendor/items.html', items=items)
         elif request.method == 'POST':
             if form.validate_on_submit():
                 item = form.add_item(current_user.id)
-                return redirect(url_for('.list', item=item.id))
+                return redirect(url_for('.items', item=item.id))
             return 'add item fail'
