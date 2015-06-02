@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
+import re
+
 from flask import current_app, render_template, request, redirect, session
 from flask_security import login_user, logout_user, current_user
 from flask_security.utils import identity_changed, Identity
 
 from app import db
 from app.core import login as model_login
-from app.models import Distributor, Vendor
+from app.models import Distributor, Vendor, Stock, Item
 from app.permission import distributor_permission
 from . import distributor as distributor_blueprint
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, StockForm
 
 
 @distributor_blueprint.route('/login', methods=['GET', 'POST'])
@@ -39,3 +41,24 @@ def register():
 @distributor_blueprint.route('/verify')
 def verify():
     pass
+
+
+@distributor_blueprint.route('/stock', methods=['GET', 'POST'])
+@distributor_permission.require()
+def items_stock():
+    page = request.args.get('page', 1, type=int)
+    form = StockForm()
+    if form.validate_on_submit():
+        item_ids = re.findall('(\d+)', form.items.data)
+        items = Item.query.filter_by(vendor_id=current_user.vendor_id).filter(Item.id.in_(item_ids))
+        stocks = Stock.query.filter_by(distributor_id=current_user.id).filter(Item.id.in_([item.id for item in items]))
+        for stock in stocks:
+            if stock.stock != form.stock.data:
+                stock.stock = form.stock.data
+                db.session.add(stock)
+        for item_id in [item.id for item in items if item.id not in [stock.item_id for stock in stocks]]:
+            db.session.add(Stock(item_id=item_id, distributor_id=current_user.id, stock=form.stock.data))
+        db.session.commit()
+        return 'success'
+    items = Item.query.filter_by(vendor_id=current_user.vendor_id).paginate(page, 100, False).items
+    return render_template('distributor/stock.html', items=items)
