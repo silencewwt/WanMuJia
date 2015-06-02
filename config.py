@@ -16,7 +16,8 @@ class Config(object):
     SECURITY_PASSWORD_SALT = 'password_salt'
     MD5_SALT = 'md5_salt'
     REMEMBER_COOKIE_DURATION = timedelta(7)
-    CONFIRM_EMAIL_DURATION = 86400  # seconds
+    CONFIRM_EMAIL_DURATION = 86400  # seconds (24 hours)
+    DISTRIBUTOR_REGISTER_DURATION = 86400
     SMS_CAPTCHA_DURATION = 600  # seconds
     IMAGE_CAPTCHA_DURATION = 600  # seconds
     ITEM_PER_PAGE = 40
