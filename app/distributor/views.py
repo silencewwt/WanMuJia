@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 import re
 
-from flask import current_app, render_template, request, redirect, session
+from flask import current_app, render_template, request, redirect, session, url_for
 from flask_security import login_user, logout_user, current_user
 from flask_security.utils import identity_changed, Identity
 
 from app import db
 from app.core import login as model_login
 from app.models import Distributor, Vendor, Stock, Item
+from app.constants import DISTRIBUTOR_REGISTER
 from app.permission import distributor_permission
+from app.utils.redis import redis_get
 from . import distributor as distributor_blueprint
 from .forms import LoginForm, RegisterForm, StockForm
 
@@ -40,7 +42,14 @@ def register():
 
 @distributor_blueprint.route('/verify')
 def verify():
-    pass
+    token = request.args.get('token', '', type=str)
+    action = request.args.get('action', '', type=str)
+    vendor_id = redis_get(DISTRIBUTOR_REGISTER, token, delete=True)
+    if vendor_id:
+        session['register_permission'] = True
+        session['vendor_id'] = vendor_id
+        return redirect(url_for('.register'))
+    return u'已失效'
 
 
 @distributor_blueprint.route('/stock', methods=['GET', 'POST'])
