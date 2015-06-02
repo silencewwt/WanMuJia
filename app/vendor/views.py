@@ -28,23 +28,23 @@ def register():
     form_type = request.args.get('form', '', type=str)
     mobile_form = MobileRegistrationForm()
     detail_form = RegistrationDetailForm()
-    if PRODUCER_REGISTER_STEP_DONE in session:
-        if PRODUCER_REGISTER_STEP_DONE == 0:
+    if VENDOR_REGISTER_STEP_DONE in session:
+        if VENDOR_REGISTER_STEP_DONE == 0:
             if form_type == 'mobile' and mobile_form.validate_on_submit():
-                session[PRODUCER_REGISTER_MOBILE] = mobile_form.mobile.data
-                session[PRODUCER_REGISTER_STEP_DONE] = 1
+                session[VENDOR_REGISTER_MOBILE] = mobile_form.mobile.data
+                session[VENDOR_REGISTER_STEP_DONE] = 1
                 return 'step 2 page'
             return 'step 1 page'
-        elif PRODUCER_REGISTER_STEP_DONE == 1:
+        elif VENDOR_REGISTER_STEP_DONE == 1:
             if form_type == 'detail' and detail_form.validate_on_submit():
-                vendor = detail_form.add_vendor(session[PRODUCER_REGISTER_MOBILE])
+                vendor = detail_form.add_vendor(session[VENDOR_REGISTER_MOBILE])
                 login_user(vendor)
                 identity_changed.send(current_app._get_current_object(), Identity(vendor.get_id()))
-                session.pop(PRODUCER_REGISTER_MOBILE)
-                session.pop(PRODUCER_REGISTER_STEP_DONE)
+                session.pop(VENDOR_REGISTER_MOBILE)
+                session.pop(VENDOR_REGISTER_STEP_DONE)
                 return 'register done'
             return 'step 2 page'
-    session[PRODUCER_REGISTER_STEP_DONE] = 0
+    session[VENDOR_REGISTER_STEP_DONE] = 0
     return 'step 1 page'
 
 
