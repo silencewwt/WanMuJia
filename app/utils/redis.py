@@ -21,9 +21,11 @@ def redis_set(content_type, key, value, expire=None, **kwargs):
     local_redis.set(key, value, expire)
 
 
-def redis_get(content_type, key, **kwargs):
+def redis_get(content_type, key, delete=False, **kwargs):
     key = '%s:%s' % (content_type, key)
     value = local_redis.get(key)
+    if value and delete:
+        local_redis.delete(key)
     if content_type == CONFIRM_EMAIL and value is not None:
         value = json.loads(value)
     if content_type == IMAGE_CAPTCHA and value != '':
