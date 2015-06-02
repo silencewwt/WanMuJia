@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask.ext.wtf import Form
-from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired, Length, EqualTo
+from wtforms import StringField, PasswordField, IntegerField
+from wtforms.validators import DataRequired, Length, EqualTo, NumberRange
 
 from app import db
 from app.models import Distributor, DistributorAddress
@@ -47,3 +47,8 @@ class RegisterForm(Form):
         db.session.commit()
         distributor.address_id = distributor_address.id
         return distributor
+
+
+class StockForm(Form):
+    items = StringField(validators=[DataRequired()])
+    stock = IntegerField(validators=[DataRequired(), NumberRange(0)])
