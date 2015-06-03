@@ -5,10 +5,12 @@ from flask_security.utils import identity_changed, Identity
 
 from app import db
 from app.core import login as model_login, reset_password as model_reset_password
-from app.models import Vendor, Item
+from app.models import Vendor, Item, Distributor
 from app.permission import vendor_permission
 from app.forms import MobileRegistrationForm
 from app.constants import *
+from app.utils import md5_with_timestamp_salt
+from app.utils.redis import redis_get, redis_set
 from .import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm
 

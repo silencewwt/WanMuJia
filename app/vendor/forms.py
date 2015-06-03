@@ -9,7 +9,8 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, N
 from app import db
 from app.models import Vendor, District, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, \
     Decoration, Tenon, Item, ItemTenon
-from app.utils import save_image, PY3
+from app.utils import PY3
+from app.utils.image import save_image
 from app.utils.validator import Email, Mobile, QueryID
 
 if PY3:

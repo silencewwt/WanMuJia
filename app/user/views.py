@@ -10,9 +10,9 @@ from app.models import User, Collection
 from app.constants import *
 from app.core import login as model_login, reset_password as model_reset_password
 from app.permission import user_permission
-from app.utils.captcha_ import send_sms_captcha
+from app.utils import md5_with_salt
+from app.utils.captcha import send_sms_captcha
 from app.utils.validator import available_mobile, validate_mobile
-from app.utils.utils import md5_with_salt
 from app.utils.redis import redis_set, redis_get
 
 
@@ -128,7 +128,7 @@ def reset_password():
 
 
 @user_blueprint.route('/collection', methods=['GET', 'POST', 'DELETE'])
-# @user_permission.require()
+@user_permission.require()
 def collection():
     if request.method == 'GET':
         page = request.args.get('page', 1, type=int)
