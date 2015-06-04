@@ -55,38 +55,44 @@ def reset_password():
     return model_reset_password(Vendor, 'vendor')
 
 
-@vendor_blueprint.route('/items', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@vendor_blueprint.route('/items')
 @vendor_permission.require()
 def item_list():
-    # TODO: upload images
-    form = ItemForm()
-    form.generate_choices()
-    item_id = request.args.get('item', 0, int)
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 100, type=int)
-    if item_id:
-        item = Item.query.get_or_404(item_id)
-        if item.vendor_id != current_user.id:
-            return 'forbidden', 403
-        if request.method == 'GET':
-            form.show_item(item)
-            return render_template('vendor/detail.html', item=item)
-        elif request.method == 'PUT':
-            if form.validate_on_submit():
-                form.update_item(item)
-                return redirect(url_for('.items', item=item.id))
-            flash('something wrong')
-            return 'something wrong'
-        elif request.method == 'DELETE':
-            db.session.delete(item)
-            db.session.commit()
-            return 'delete item successfully'
-    else:
-        if request.method == 'GET':
-            items = Item.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
-            return render_template('vendor/items.html', items=items)
-        elif request.method == 'POST':
-            if form.validate_on_submit():
-                item = form.add_item(current_user.id)
-                return redirect(url_for('.items', item=item.id))
-            return 'add item fail'
+    items = Item.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
+    return render_template('vendor/items.html', items=items)
+
+
+@vendor_blueprint.route('/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
+@vendor_permission.require()
+def item_detail(item_id):
+    item = Item.query.get_or_404(item_id)
+    if item.vendor_id != current_user.id:
+        return 'forbidden', 403
+    form = ItemForm()
+    form.generate_choices()
+    if request.method == 'GET':
+        form.show_item(item)
+        return render_template('/vendor/item_detail.html', form=form)
+    elif request.method == 'PUT':
+        if form.validate():
+            form.update_item(item)
+            return redirect(url_for('.item_detail', item_id=item.id))
+        else:
+            pass
+    elif request.method == 'DELETE':
+        db.session.delete(item)
+        db.session.commit()
+        return redirect(url_for('.item_list'))
+
+
+@vendor_blueprint.route('/items/new_item', methods=['GET', 'POST'])
+@vendor_permission.require()
+def new_item():
+    form = ItemForm()
+    if form.validate_on_submit():
+        item = form.add_item(current_user.id)
+        return redirect(url_for('.item_detail', item_id=item.id))
+    form.generate_choices()
+    return render_template('vendor/item_detail.html')
