@@ -60,6 +60,7 @@ def reset_password():
 def item_list():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 100, type=int)
+    # TODO: per_page limit
     items = Item.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
     return render_template('vendor/items.html', items=items)
 
@@ -96,3 +97,32 @@ def new_item():
         return redirect(url_for('.item_detail', item_id=item.id))
     form.generate_choices()
     return render_template('vendor/item_detail.html')
+
+
+@vendor_blueprint.route('/distributors')
+@vendor_permission.require()
+def distributor_list():
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 100, type=int)
+    # TODO: per_page limit
+    distributors = Distributor.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
+    return render_template('vendor/distributors.html', distributors=distributors)
+
+
+@vendor_blueprint.route('/distributors/<int:distributor_id>')
+@vendor_permission.require()
+def distributor_detail(distributor_id):
+    distributor = Distributor.query.get_or_404(distributor_id)
+    if distributor.vendor_id != current_user.id:
+        return 'forbidden', 403
+    return render_template('vendor/distributor_detail.html', distributor=distributor)
+
+
+@vendor_blueprint.route('/distributors/invitation', methods=['GET', 'POST'])
+@vendor_permission.require()
+def invite_distributor():
+    if request.method == 'POST':
+        token = md5_with_timestamp_salt(current_user.id)
+        redis_set(DISTRIBUTOR_REGISTER, token, current_user.id)
+        return '%s/distributor/verify?token=%s' % ('www.wanmujia.com', token)   # TODO: host
+    return render_template('vendor/invitation.html')
