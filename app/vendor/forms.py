@@ -42,13 +42,17 @@ class RegistrationDetailForm(Form):
     contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
     contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
-    address_id = StringField(validators=[DataRequired(), Length(6, 6)])
+    address_id = IntegerField(validators=[DataRequired(), Length(6, 6)])
 
     # TODO: add address select
 
     def validate_license_limit(self, field):
         if not field.data and not self.license_long_time_limit.data:
             raise ValidationError(u'请填写营业执照期限或选择长期营业执照')
+
+    def validate_address_id(self, field):
+        if not District.query.filter_by(cn_id=field.data).first():
+            raise ValidationError(u'行政区不存在!')
 
     def validate_legal_person_identity_front(self, field):
         try:
@@ -72,7 +76,7 @@ class RegistrationDetailForm(Form):
             raise ValidationError(u'图片格式错误')
 
     def add_vendor(self, mobile):
-        district = District.query.filter_by(cn_id=self.address_id)
+        district = District.query.filter_by(cn_id=self.address_id).first()
         address = VendorAddress(vendor_id='', district_id=district.id, address=self.address.data)
         db.session.add(address)
         db.session.commit()
