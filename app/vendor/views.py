@@ -12,7 +12,7 @@ from app.constants import *
 from app.utils import md5_with_timestamp_salt
 from app.utils.redis import redis_get, redis_set
 from .import vendor as vendor_blueprint
-from .forms import LoginForm, RegistrationDetailForm, ItemForm
+from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm
 
 
 @vendor_blueprint.route('/login', methods=['GET', 'POST'])
@@ -126,3 +126,15 @@ def invite_distributor():
         redis_set(DISTRIBUTOR_REGISTER, token, current_user.id)
         return '%s/distributor/verify?token=%s' % ('www.wanmujia.com', token)   # TODO: host
     return render_template('vendor/invitation.html')
+
+
+@vendor_blueprint.route('/settings', methods=['GET', 'POST'])
+@vendor_permission.require()
+def settings():
+    form = SettingsForm()
+    if request.method == 'POST':
+        if form.validate():
+            form.update_vendor_setting(current_user)
+    else:
+        form.show_vendor_setting(current_user)
+    return render_template('vendor/settings.html', form=form)
