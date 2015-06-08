@@ -211,20 +211,6 @@ class Distributor(BaseUser, db.Model):
                 return username
 
 
-# class VendorAuthorization(db.Model):
-#     __tablename__ = 'vendor_authorizations'
-#     # id
-#     id = db.Column(db.Integer, primary_key=True)
-#     # 商家id
-#     distributor_id = db.Column(db.Integer, nullable=False)
-#     # 厂家id
-#     vendor_id = db.Column(db.Integer, nullable=False)
-#     # 授权时间
-#     created = db.Column(db.Integer, default=time.time, nullable=False)
-#     # 确认授权
-#     confirmed = db.Column(db.Boolean, default=False, nullable=False)
-
-
 class Item(db.Model):
     __tablename__ = 'items'
     # 商品id
