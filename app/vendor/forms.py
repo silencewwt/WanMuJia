@@ -8,7 +8,7 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, N
 
 from app import db
 from app.models import Vendor, District, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, \
-    Decoration, Tenon, Item, ItemTenon
+    Decoration, Tenon, Item, ItemTenon, ItemImage
 from app.utils import PY3
 from app.utils.image import save_image
 from app.utils.validator import Email, Mobile, QueryID
@@ -42,15 +42,14 @@ class RegistrationDetailForm(Form):
     contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
     contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
-    address_id = IntegerField(validators=[DataRequired(), Length(6, 6)])
-
-    # TODO: add address select
+    district_cn_id = IntegerField(validators=[DataRequired(), Length(6, 6)])
+    logo = FileField(validators=[FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
     def validate_license_limit(self, field):
         if not field.data and not self.license_long_time_limit.data:
             raise ValidationError(u'请填写营业执照期限或选择长期营业执照')
 
-    def validate_address_id(self, field):
+    def validate_district_cn_id(self, field):
         if not District.query.filter_by(cn_id=field.data).first():
             raise ValidationError(u'行政区不存在!')
 
@@ -75,8 +74,16 @@ class RegistrationDetailForm(Form):
         except:
             raise ValidationError(u'图片格式错误')
 
+    def validate_logo(self, field):
+        if field.data:
+            try:
+                im = Image.open(StringIO(field.data))
+                im.verify()
+            except:
+                raise ValidationError(u'图片格式错误')
+
     def add_vendor(self, mobile):
-        district = District.query.filter_by(cn_id=self.address_id).first()
+        district = District.query.filter_by(cn_id=self.district_cn_id).first()
         address = VendorAddress(vendor_id='', district_id=district.id, address=self.address.data)
         db.session.add(address)
         db.session.commit()
@@ -174,4 +181,45 @@ class ItemForm(Form):
         for tenon_id in del_tenons:
             db.session.delete(ItemTenon.query.filter_by(item_id=item.id, tenon_id=tenon_id).limit(1).first())
         db.session.add(item)
+        db.session.commit()
+
+
+class SettingsForm(Form):
+    logo = FileField(validators=[FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
+    contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
+    address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
+    district_cn_id = StringField(validators=[DataRequired(u'必填'), Length(6, 6)])
+
+    def validate_logo(self, field):
+        if field.data:
+            try:
+                im = Image.open(StringIO(field.data))
+                im.verify()
+            except:
+                raise ValidationError(u'图片格式错误')
+
+    def validate_district_cn_id(self, field):
+        if not District.query.filter_by(cn_id=field.data).first():
+            raise ValidationError(u'行政区不存在!')
+
+    def show_vendor_setting(self, vendor):
+        self.contact_mobile.data = vendor.contact_mobile
+        self.contact_telephone.data = vendor.contact_telephone
+        vendor_address = VendorAddress.query.get(vendor.address_id)
+        self.district_cn_id.data = District.query.filter_by(vendor_address.district_id).first().cn_id
+        self.address.data = vendor_address.address
+
+    def update_vendor_setting(self, vendor):
+        vendor.contact_mobile = self.contact_mobile.data
+        vendor.contact_telephone = self.contact_telephone.data
+        vendor_address = VendorAddress.query.get(vendor.address_id)
+        vendor_address.address = self.address.data
+        district = District.query.filter_by(cn_id=self.district_cn_id).first()
+        vendor_address.district_id = district.id
+        if self.logo.data:
+            logo = save_image(vendor.id, self.logo)
+            vendor.logo = logo
+        db.session.add(vendor)
+        db.session.add(vendor_address)
         db.session.commit()
