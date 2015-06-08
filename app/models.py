@@ -284,6 +284,15 @@ class Item(db.Model):
         return (item_tenon.tenon_id for item_tenon in ItemTenon.query.filter_by(item_id=self.id))
 
 
+class ItemImage(db.Model):
+    __tablename__ = 'item_images'
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, nullable=False)
+    image = db.Column(db.String(255), nullable=False)
+    created = db.Column(db.Integer, default=time.time, nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+
+
 class Stock(db.Model):
     __tablename__ = 'stocks'
     id = db.Column(db.Integer, primary_key=True)
