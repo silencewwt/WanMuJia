@@ -2,6 +2,7 @@
 import re
 from flask import session
 from wtforms.validators import Regexp, Email as BaseEmail, ValidationError
+from PIL import Image as BaseImage
 
 from app.models import User, Vendor, Distributor, Privilege
 from app.constants import IMAGE_CAPTCHA_CODE
@@ -57,7 +58,7 @@ class QueryID(object):
         self.model = model
 
     def __call__(self, form, field):
-        if not self.model.query.get(field.data).first():
+        if not self.model.query.get(field.data):
             raise ValidationError(u'参数错误!')
 
 
@@ -67,6 +68,20 @@ class UserName(object):
             raise ValidationError(u'用户名中含有非法字符!')
         if not available_username(field.data):
             raise ValidationError(u'该用户名已被使用!')
+
+
+class Image(object):
+    def __init__(self, required=True):
+        self.required = required
+
+    def __call__(self, form, field):
+        if self.required:
+            try:
+                im = BaseImage.open(field.data.stream.raw)
+                im.close()
+                del im
+            except:
+                raise ValidationError(u'图片格式错误')
 
 
 def available_mobile(mobile):
