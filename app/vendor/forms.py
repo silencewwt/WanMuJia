@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from PIL import Image
 from flask.ext.wtf import Form
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, IntegerField, SelectField, SelectMultipleField, \
@@ -9,14 +8,8 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, N
 from app import db
 from app.models import Vendor, District, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, \
     Decoration, Tenon, Item, ItemTenon, ItemImage
-from app.utils import PY3
 from app.utils.image import save_image
-from app.utils.validator import Email, Mobile, QueryID
-
-if PY3:
-    from io import StringIO
-else:
-    from cStringIO import StringIO
+from app.utils.validator import Email, Mobile, QueryID, Image
 
 
 class LoginForm(Form):
@@ -31,19 +24,20 @@ class RegistrationDetailForm(Form):
     legal_person_name = StringField(validators=[DataRequired(u'必填')])
     legal_person_identity = StringField(validators=[DataRequired(u'必填'), Length(18, 18, u'身份证号码不符合规范!')])
     legal_person_identity_front = FileField(validators=[
-        FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+        Image(required=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     legal_person_identity_back = FileField(validators=[
-        FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+        Image(required=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     name = StringField(validators=[DataRequired(u'必填'), Length(2, 30, u'品牌厂商名称不符合规范')])
     license_address = StringField(validators=[DataRequired(u'必填')])
     license_limit = StringField(validators=[Length(8, 8)])
     license_long_time_limit = BooleanField()
-    license_image = FileField(validators=[FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    license_image = FileField(validators=[
+        Image(required=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
     contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
     district_cn_id = IntegerField(validators=[DataRequired(), Length(6, 6)])
-    logo = FileField(validators=[FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
     def validate_license_limit(self, field):
         if not field.data and not self.license_long_time_limit.data:
@@ -52,35 +46,6 @@ class RegistrationDetailForm(Form):
     def validate_district_cn_id(self, field):
         if not District.query.filter_by(cn_id=field.data).first():
             raise ValidationError(u'行政区不存在!')
-
-    def validate_legal_person_identity_front(self, field):
-        try:
-            im = Image.open(StringIO(field.data))
-            im.verify()
-        except:
-            raise ValidationError(u'图片格式错误')
-
-    def validate_legal_person_identity_back(self, field):
-        try:
-            im = Image.open(StringIO(field.data))
-            im.verify()
-        except:
-            raise ValidationError(u'图片格式错误')
-
-    def validate_license_image(self, field):
-        try:
-            im = Image.open(StringIO(field.data))
-            im.verify()
-        except:
-            raise ValidationError(u'图片格式错误')
-
-    def validate_logo(self, field):
-        if field.data:
-            try:
-                im = Image.open(StringIO(field.data))
-                im.verify()
-            except:
-                raise ValidationError(u'图片格式错误')
 
     def add_vendor(self, mobile):
         district = District.query.filter_by(cn_id=self.district_cn_id).first()
@@ -185,19 +150,11 @@ class ItemForm(Form):
 
 
 class SettingsForm(Form):
-    logo = FileField(validators=[FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
     contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
     district_cn_id = StringField(validators=[DataRequired(u'必填'), Length(6, 6)])
-
-    def validate_logo(self, field):
-        if field.data:
-            try:
-                im = Image.open(StringIO(field.data))
-                im.verify()
-            except:
-                raise ValidationError(u'图片格式错误')
 
     def validate_district_cn_id(self, field):
         if not District.query.filter_by(cn_id=field.data).first():
