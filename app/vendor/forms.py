@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from flask_security import current_user
 from flask.ext.wtf import Form
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, IntegerField, SelectField, SelectMultipleField, \
@@ -104,7 +105,6 @@ class ItemForm(Form):
         self.tenon_id.choices = [(choice.id, choice.tenon) for choice in Tenon.query.all()]
 
     def add_item(self, vendor_id):
-        # TODO: upload images
         item = Item(
             vendor_id=vendor_id,
             item=self.item.data,
@@ -146,6 +146,68 @@ class ItemForm(Form):
         for tenon_id in del_tenons:
             db.session.delete(ItemTenon.query.filter_by(item_id=item.id, tenon_id=tenon_id).limit(1).first())
         db.session.add(item)
+        db.session.commit()
+
+
+class ItemImageForm(Form):
+    item_id = IntegerField()
+    image = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'])])
+
+    def validate_item_id(self, field):
+        if field.data and field.data != current_user.id:
+            raise ValidationError('wrong id')
+
+    def add_item_image(self):
+        image_path, image_hash = save_image(current_user.id, self.image)
+        item_image = ItemImage(self.item_id.data, image_path, image_hash, 999)  # 新上传的图片默认在最后
+        db.session.add(item_image)
+        db.session.commit()
+        return image_hash
+
+
+class ItemImageSortForm(Form):
+    item_id = IntegerField()
+    images = StringField(validators=[])
+
+    image_list = []
+
+    def validate_item_id(self, field):
+        if field.data and field.data != current_user.id:
+            raise ValidationError('wrong id')
+
+    def validate_images(self, field):
+        image_list = []
+        image_hashes = [image_hash.strip() for image_hash in field.data.split(',')]
+        for image_hash in image_hashes:
+            item_image = ItemImage.query.filter_by(image_hash=image_hash, item_id=self.item_id.data).limit(1).first()
+            if not len(image_hash) == 32 or not item_image:
+                raise ValidationError(u'图片hash值错误!')
+            image_list.append(image_list)
+        self.image_list = image_list
+
+    def update_item_image_sort(self):
+        for i in range(0, len(self.image_list)):
+            self.image_list[i].sort = i
+            db.session.add(self.image_list[i])
+        db.session.commit()
+
+
+class ItemImageDeleteForm(Form):
+    image_hash = StringField(validators=[DataRequired(), Length(32, 32)])
+
+    item_image = None
+
+    def validate_image_hash(self, field):
+        item_image = ItemImage.query.filter_by(image_hash=field.data, is_deleted=False).limit(1).first()
+        if not item_image:
+            raise ValidationError()
+        if not item_image.get_vendor_id() == current_user.id:
+            raise ValidationError()
+        self.item_image = item_image
+
+    def delete_image(self):
+        self.item_image.is_deleted = True
+        db.session.add(self.item_image)
         db.session.commit()
 
 
