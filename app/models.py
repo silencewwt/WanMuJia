@@ -269,14 +269,32 @@ class Item(db.Model):
     def get_tenon_id(self):
         return (item_tenon.tenon_id for item_tenon in ItemTenon.query.filter_by(item_id=self.id))
 
+    def get_item_images(self):
+        return Item.query.filter_by(item_id=self.id, is_deleted=False).\
+            order_by(ItemImage.created).order_by(ItemImage.sort).all()
+
 
 class ItemImage(db.Model):
     __tablename__ = 'item_images'
     id = db.Column(db.Integer, primary_key=True)
     item_id = db.Column(db.Integer, nullable=False)
     image = db.Column(db.String(255), nullable=False)
+    image_hash = db.Column(db.String(32), nullable=False)
+    sort = db.Column(db.Integer, nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+
+    def __init__(self, item_id, image, image_hash, sort):
+        self.item_id = item_id
+        self.image = image
+        self.image_hash = image_hash
+        self.sort = sort
+
+    def get_item(self):
+        return Item.query.get(self.item_id)
+
+    def get_vendor_id(self):
+        return self.get_item().vendor_id
 
 
 class Stock(db.Model):
