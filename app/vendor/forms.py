@@ -69,9 +69,9 @@ class RegistrationDetailForm(Form):
         )
         db.session.add(vendor)
         db.session.commit()
-        identity_front = save_image(vendor.id, self.legal_person_identity_front)
-        identity_back = save_image(vendor.id, self.legal_person_identity_back)
-        license_image = save_image(vendor.id, self.license_image)
+        identity_front = save_image(vendor.id, 'vendor', self.legal_person_identity_front)
+        identity_back = save_image(vendor.id, 'vendor', self.legal_person_identity_back)
+        license_image = save_image(vendor.id, 'vendor', self.license_image)
         vendor.legal_person_identity_front = identity_front
         vendor.legal_person_identity_back = identity_back
         vendor.license_image = license_image
@@ -158,7 +158,7 @@ class ItemImageForm(Form):
             raise ValidationError('wrong id')
 
     def add_item_image(self):
-        image_path, image_hash = save_image(current_user.id, self.image)
+        image_path, image_hash = save_image(self.item_id.data, 'item', self.image)
         item_image = ItemImage(self.item_id.data, image_path, image_hash, 999)  # 新上传的图片默认在最后
         db.session.add(item_image)
         db.session.commit()
@@ -237,7 +237,7 @@ class SettingsForm(Form):
         district = District.query.filter_by(cn_id=self.district_cn_id).first()
         vendor_address.district_id = district.id
         if self.logo.data:
-            logo = save_image(vendor.id, self.logo)
+            logo = save_image(vendor.id, 'vendor', self.logo)
             vendor.logo = logo
         db.session.add(vendor)
         db.session.add(vendor_address)
