@@ -9,10 +9,11 @@ from app.models import Vendor, Item, Distributor
 from app.permission import vendor_permission
 from app.forms import MobileRegistrationForm
 from app.constants import *
-from app.utils import md5_with_timestamp_salt
+from app.utils import md5_with_time_salt
 from app.utils.redis import redis_get, redis_set
 from .import vendor as vendor_blueprint
-from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm
+from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
+    ItemImageDeleteForm
 
 
 @vendor_blueprint.route('/login', methods=['GET', 'POST'])
@@ -99,6 +100,32 @@ def new_item():
     return render_template('vendor/item_detail.html')
 
 
+@vendor_blueprint.route('/items/image', methods=['POST', 'DELETE'])
+@vendor_permission.require()
+def upload_item_image():
+    if request.method == 'POST':
+        form = ItemImageForm(csrf_enabled=False)
+        if form.validate():
+            image_hash = form.add_item_image()
+            return image_hash, 200
+        return 403
+    else:
+        form = ItemImageDeleteForm(csrf_enabled=False)
+        if form.validate():
+            form.delete_image()
+        return 403
+
+
+@vendor_blueprint.route('/items/image_sort', methods=['POST'])
+@vendor_permission.require()
+def update_item_image_sort():
+    form = ItemImageSortForm(csrf_enabled=False)
+    if form.validate():
+        form.update_item_image_sort()
+        return 'success', 200
+    return 'forbidden', 403
+
+
 @vendor_blueprint.route('/distributors')
 @vendor_permission.require()
 def distributor_list():
@@ -122,7 +149,7 @@ def distributor_detail(distributor_id):
 @vendor_permission.require()
 def invite_distributor():
     if request.method == 'POST':
-        token = md5_with_timestamp_salt(current_user.id)
+        token = md5_with_time_salt(current_user.id)
         redis_set(DISTRIBUTOR_REGISTER, token, current_user.id)
         return '%s/distributor/verify?token=%s' % ('www.wanmujia.com', token)   # TODO: host
     return render_template('vendor/invitation.html')
