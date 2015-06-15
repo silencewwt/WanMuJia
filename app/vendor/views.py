@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from functools import wraps
+
 from flask import current_app, flash, render_template, redirect, request, session, url_for
 from flask_security import login_user, logout_user, login_required, current_user
 from flask_security.utils import identity_changed, Identity
@@ -14,6 +16,15 @@ from app.utils.redis import redis_get, redis_set
 from .import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
     ItemImageDeleteForm
+
+
+def vendor_confirmed(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        if current_user.confirmed:
+            return f(*args, **kwargs)
+        return '尚未通过审核'
+    return wrapped
 
 
 @vendor_blueprint.route('/login', methods=['GET', 'POST'])
@@ -128,6 +139,7 @@ def update_item_image_sort():
 
 @vendor_blueprint.route('/distributors')
 @vendor_permission.require()
+@vendor_confirmed
 def distributor_list():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 100, type=int)
@@ -138,6 +150,7 @@ def distributor_list():
 
 @vendor_blueprint.route('/distributors/<int:distributor_id>')
 @vendor_permission.require()
+@vendor_confirmed
 def distributor_detail(distributor_id):
     distributor = Distributor.query.get_or_404(distributor_id)
     if distributor.vendor_id != current_user.id:
@@ -147,11 +160,12 @@ def distributor_detail(distributor_id):
 
 @vendor_blueprint.route('/distributors/invitation', methods=['GET', 'POST'])
 @vendor_permission.require()
+@vendor_confirmed
 def invite_distributor():
     if request.method == 'POST':
         token = md5_with_time_salt(current_user.id)
         redis_set(DISTRIBUTOR_REGISTER, token, current_user.id)
-        return '%s/distributor/verify?token=%s' % ('www.wanmujia.com', token)   # TODO: host
+        return 'http://%s/distributor/verify?token=%s' % ('www.wanmujia.com', token)   # TODO: host
     return render_template('vendor/invitation.html')
 
 
