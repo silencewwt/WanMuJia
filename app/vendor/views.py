@@ -69,6 +69,7 @@ def reset_password():
 
 @vendor_blueprint.route('/items')
 @vendor_permission.require()
+@vendor_confirmed
 def item_list():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 100, type=int)
@@ -79,6 +80,7 @@ def item_list():
 
 @vendor_blueprint.route('/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
 @vendor_permission.require()
+@vendor_confirmed
 def item_detail(item_id):
     item = Item.query.get_or_404(item_id)
     if item.vendor_id != current_user.id:
@@ -102,6 +104,7 @@ def item_detail(item_id):
 
 @vendor_blueprint.route('/items/new_item', methods=['GET', 'POST'])
 @vendor_permission.require()
+@vendor_confirmed
 def new_item():
     form = ItemForm()
     if form.validate_on_submit():
@@ -113,6 +116,7 @@ def new_item():
 
 @vendor_blueprint.route('/items/image', methods=['POST', 'DELETE'])
 @vendor_permission.require()
+@vendor_confirmed
 def upload_item_image():
     if request.method == 'POST':
         form = ItemImageForm(csrf_enabled=False)
@@ -129,6 +133,7 @@ def upload_item_image():
 
 @vendor_blueprint.route('/items/image_sort', methods=['POST'])
 @vendor_permission.require()
+@vendor_confirmed
 def update_item_image_sort():
     form = ItemImageSortForm(csrf_enabled=False)
     if form.validate():
