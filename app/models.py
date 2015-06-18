@@ -19,7 +19,7 @@ class BaseUser(UserMixin):
     # 手机号码
     mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
     # 邮箱
-    email = db.Column(db.String(64), unique=True, nullable=False)
+    email = db.Column(db.String(64), nullable=False)
     # 注册时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
@@ -140,6 +140,10 @@ class Vendor(BaseUser, db.Model):
     contact_telephone = db.Column(db.CHAR(15), nullable=False)
     # 已通过审核
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
+    # 审核通过时间
+    confirmed_time = db.Column(db.Integer, default=0, nullable=False)
+    # 审核已回绝
+    rejected = db.Column(db.Boolean, default=False, nullable=False)
 
     id_prefix = vendor_id_prefix
 
