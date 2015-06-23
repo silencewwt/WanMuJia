@@ -142,11 +142,13 @@ class Vendor(BaseUser, db.Model):
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
     # 审核通过时间
     confirmed_time = db.Column(db.Integer, default=0, nullable=False)
+    # 审核信息
+    reject_message = db.Column(db.Unicode(100), default=u'', nullable=False)
     # 审核已回绝
     rejected = db.Column(db.Boolean, default=False, nullable=False)
 
     id_prefix = vendor_id_prefix
-
+    
     def __init__(self, password, mobile, email, legal_person_name, legal_person_identity, name, license_address,
                  license_limit, license_long_time_limit, address_id, contact_mobile, contact_telephone):
         super(Vendor, self).__init__(password, mobile, email)
