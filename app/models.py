@@ -148,7 +148,7 @@ class Vendor(BaseUser, db.Model):
     rejected = db.Column(db.Boolean, default=False, nullable=False)
 
     id_prefix = vendor_id_prefix
-    
+
     def __init__(self, password, mobile, email, legal_person_name, legal_person_identity, name, license_address,
                  license_limit, license_long_time_limit, address_id, contact_mobile, contact_telephone):
         super(Vendor, self).__init__(password, mobile, email)
@@ -215,6 +215,21 @@ class Distributor(BaseUser, db.Model):
             username = randint(10000000, 99999999)
             if not Distributor.query.filter_by(username=username).limit(1).first():
                 return username
+
+
+class DistributorRevocation(db.Model):
+    __tablename__ = 'distributor_revocations'
+    id = db.Column(db.Integer, primary_key=True)
+    # 创建时间
+    created = db.Column(db.Integer, default=time.time, nullable=False)
+    # 商家id
+    distributor_id = db.Column(db.Integer, nullable=False)
+    # 解约合同照片
+    image = db.Column(db.String(255), default='', nullable=False)
+    # 待审核
+    pending = db.Column(db.Boolean, default=True, nullable=False)
+    # 已解约
+    is_revoked = db.Column(db.Boolean, default=False, nullable=False)
 
 
 class Item(db.Model):
