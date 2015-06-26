@@ -132,8 +132,6 @@ class Vendor(BaseUser, db.Model):
     license_long_time_limit = db.Column(db.Boolean, default=False, nullable=False)
     # 营业执照副本扫描件
     license_image = db.Column(db.String(255), default='', nullable=False)
-    # 地址 id
-    address_id = db.Column(db.Integer, nullable=False)
     # 联系手机
     contact_mobile = db.Column(db.CHAR(11), nullable=False)
     # 联系电话
@@ -150,7 +148,7 @@ class Vendor(BaseUser, db.Model):
     id_prefix = vendor_id_prefix
 
     def __init__(self, password, mobile, email, legal_person_name, legal_person_identity, name, license_address,
-                 license_limit, license_long_time_limit, address_id, contact_mobile, contact_telephone):
+                 license_limit, license_long_time_limit, contact_mobile, contact_telephone):
         super(Vendor, self).__init__(password, mobile, email)
         self.legal_person_name = legal_person_name
         self.legal_person_identity = legal_person_identity
@@ -158,9 +156,12 @@ class Vendor(BaseUser, db.Model):
         self.license_address = license_address
         self.license_limit = license_limit
         self.license_long_time_limit = license_long_time_limit
-        self.address_id = address_id
         self.contact_mobile = contact_mobile
         self.contact_telephone = contact_telephone
+
+    @property
+    def address(self):
+        return VendorAddress.query.filter_by(vendor_id=self.id).limit(1).first()
 
 
 class Distributor(BaseUser, db.Model):
@@ -230,6 +231,10 @@ class DistributorRevocation(db.Model):
     pending = db.Column(db.Boolean, default=True, nullable=False)
     # 已解约
     is_revoked = db.Column(db.Boolean, default=False, nullable=False)
+
+    def __init__(self, distributor_id, image):
+        self.distributor_id = distributor_id
+        self.image = image
 
 
 class Item(db.Model):
