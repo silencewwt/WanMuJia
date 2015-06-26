@@ -8,7 +8,7 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, N
 
 from app import db
 from app.models import Vendor, District, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, \
-    Decoration, Tenon, Item, ItemTenon, ItemImage
+    Decoration, Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation
 from app.utils.image import save_image
 from app.utils.validator import Email, Mobile, QueryID, Image
 
@@ -18,10 +18,8 @@ class LoginForm(Form):
     password = PasswordField(validators=[DataRequired()])
 
 
-class RegistrationDetailForm(Form):
-    email = StringField(validators=[Email()])
-    password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password')])
-    confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
+class RegistrationForm(Form):
+    email = StringField(validators=[Email()])   # TODO: exist email
     legal_person_name = StringField(validators=[DataRequired(u'必填')])
     legal_person_identity = StringField(validators=[DataRequired(u'必填'), Length(18, 18, u'身份证号码不符合规范!')])
     legal_person_identity_front = FileField(validators=[
@@ -38,21 +36,40 @@ class RegistrationDetailForm(Form):
     contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
     district_cn_id = IntegerField(validators=[DataRequired(), Length(6, 6)])
-    logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    logo = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+
+    image_fields = ('legal_person_identity_front', 'legal_person_identity_back', 'license_image', 'logo')
 
     def validate_license_limit(self, field):
         if not field.data and not self.license_long_time_limit.data:
             raise ValidationError(u'请填写营业执照期限或选择长期营业执照')
 
-    def validate_district_cn_id(self, field):
+    @staticmethod
+    def validate_district_cn_id(field):
         if not District.query.filter_by(cn_id=field.data).first():
             raise ValidationError(u'行政区不存在!')
 
-    def add_vendor(self, mobile):
+    def save_images(self, vendor=None):
+        vendor = vendor if vendor else current_user
+        for image_field in self.image_fields:
+            if getattr(self, image_field).data:
+                image = save_image(vendor.id, 'vendor', getattr(self, image_field))
+                setattr(vendor, image_field, image)
+                db.session.add(vendor)
+            db.session.commit()
+
+
+class RegistrationDetailForm(RegistrationForm):
+    password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password')])
+    confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
+
+    def save_address(self, vendor):
         district = District.query.filter_by(cn_id=self.district_cn_id).first()
-        address = VendorAddress(vendor_id='', district_id=district.id, address=self.address.data)
+        address = VendorAddress(vendor_id=vendor.id, district_id=district.id, address=self.address.data)
         db.session.add(address)
         db.session.commit()
+
+    def add_vendor(self, mobile):
         vendor = Vendor(
             password=self.password.data,
             email=self.password.data,
@@ -65,16 +82,49 @@ class RegistrationDetailForm(Form):
             name=self.name.data,
             contact_mobile=self.contact_mobile.data,
             contact_telephone=self.contact_telephone.data,
-            address_id=address.id
         )
         db.session.add(vendor)
         db.session.commit()
-        identity_front = save_image(vendor.id, 'vendor', self.legal_person_identity_front)
-        identity_back = save_image(vendor.id, 'vendor', self.legal_person_identity_back)
-        license_image = save_image(vendor.id, 'vendor', self.license_image)
-        vendor.legal_person_identity_front = identity_front
-        vendor.legal_person_identity_back = identity_back
-        vendor.license_image = license_image
+        self.save_images(vendor=vendor)
+        self.save_address(vendor=vendor)
+
+
+class ReconfirmForm(RegistrationForm):
+    legal_person_identity_front = FileField(validators=[
+        Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    legal_person_identity_back = FileField(validators=[
+        Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    license_image = FileField(validators=[
+        Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+
+    attributes = ('legal_person_name', 'legal_person_identity', 'name', 'license_address', 'license_limit',
+                  'license_long_time_limit', 'contact_mobile', 'contact_telephone')
+
+    def update_address(self):
+        district = District.query.filter_by(cn_id=self.district_cn_id).first()
+        current_user.address.address = self.address.data
+        current_user.address.district_id = district.id
+        db.session.add(current_user.address)
+        db.session.commit()
+
+    def show_info(self):
+        for attr in self.attributes:
+            getattr(self, attr).data = getattr(current_user, attr)
+        self.email.data = current_user.email
+        self.address.data = current_user.address.address
+        self.district_cn_id.data = District.query.get(current_user.address.district_id).cn_id
+
+    def reconfirm(self):
+        self.save_images()
+        self.update_address()
+        for attr in self.attributes:
+            setattr(current_user, attr, getattr(self, attr).data)
+        if current_user.email is not self.email.data:
+            current_user.email = self.email.data
+            current_user.email_confirmed = False
+        db.session.add(current_user)
+        db.session.commit()
 
 
 class ItemForm(Form):
@@ -212,13 +262,21 @@ class ItemImageDeleteForm(Form):
 
 
 class SettingsForm(Form):
+    name = StringField(validators=[DataRequired()])
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
     contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
     district_cn_id = StringField(validators=[DataRequired(u'必填'), Length(6, 6)])
 
-    def validate_district_cn_id(self, field):
+    @staticmethod
+    def validate_name(field):
+        vendors = Vendor.query.filter_by(name=field.data)
+        if vendors.count() > 1 or (vendors.first() and vendors.first().id != current_user.id):
+            raise ValidationError('品牌名称已存在')
+
+    @staticmethod
+    def validate_district_cn_id(field):
         if not District.query.filter_by(cn_id=field.data).first():
             raise ValidationError(u'行政区不存在!')
 
@@ -230,6 +288,7 @@ class SettingsForm(Form):
         self.address.data = vendor_address.address
 
     def update_vendor_setting(self, vendor):
+        vendor.name = self.name.data
         vendor.contact_mobile = self.contact_mobile.data
         vendor.contact_telephone = self.contact_telephone.data
         vendor_address = VendorAddress.query.get(vendor.address_id)
@@ -241,4 +300,28 @@ class SettingsForm(Form):
             vendor.logo = logo
         db.session.add(vendor)
         db.session.add(vendor_address)
+        db.session.commit()
+
+
+class RevocationForm(Form):
+    image = FileField(validators=[Image(required=True)])
+    distributor_id = IntegerField()
+
+    distributor = None
+
+    def validate_distributor_id(self, field):
+        distributor = Distributor.query.get(field.data)
+        if not distributor or distributor.vendor_id is not current_user.id:
+            raise ValidationError()
+        self.distributor = distributor
+
+    def revoke(self):
+        image = save_image(current_user.id, 'vendor', self.image)
+        revocation = DistributorRevocation.query.filter_by(distributor_id=self.distributor.id).limit(1).first()
+        if not revocation:
+            revocation = DistributorRevocation(self.distributor.id, image)
+        else:
+            revocation.image = image
+            revocation.pending = True
+        db.session.add(revocation)
         db.session.commit()
