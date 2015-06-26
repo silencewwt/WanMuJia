@@ -36,7 +36,6 @@ def vendor_not_confirmed(f):
     return wrapped
 
 
-
 @vendor_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -100,7 +99,8 @@ def item_detail(item_id):
     form.generate_choices()
     if request.method == 'GET':
         form.show_item(item)
-        return render_template('/vendor/item_detail.html', form=form)
+        distributors = item.in_stock_distributors()
+        return render_template('/vendor/item_detail.html', form=form, distributors=distributors)
     elif request.method == 'PUT':
         if form.validate():
             form.update_item(item)

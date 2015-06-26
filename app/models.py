@@ -299,6 +299,11 @@ class Item(db.Model):
         return Item.query.filter_by(item_id=self.id, is_deleted=False).\
             order_by(ItemImage.created).order_by(ItemImage.sort).all()
 
+    def in_stock_distributors(self):
+        distributors = db.session.query(Distributor).filter(Stock.item_id == self.id, Stock.stock > 0,
+                                                            Stock.distributor_id == Distributor.id,
+                                                            Distributor.is_deleted is False)
+        return distributors
 
 class ItemImage(db.Model):
     __tablename__ = 'item_images'
