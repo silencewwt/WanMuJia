@@ -15,7 +15,7 @@ from app.utils import md5_with_time_salt
 from app.utils.redis import redis_get, redis_set
 from .import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
-    ItemImageDeleteForm
+    ItemImageDeleteForm, RevocationForm, ReconfirmForm
 
 
 def vendor_confirmed(f):
@@ -25,6 +25,16 @@ def vendor_confirmed(f):
             return f(*args, **kwargs)
         return '尚未通过审核'
     return wrapped
+
+
+def vendor_not_confirmed(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        if not current_user.confirmed:
+            return f(*args, **kwargs)
+        return '已通过审核, 无法修改'
+    return wrapped
+
 
 
 @vendor_blueprint.route('/login', methods=['GET', 'POST'])
@@ -73,7 +83,8 @@ def reset_password():
 def item_list():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 100, type=int)
-    # TODO: per_page limit
+    valid_per_page = [10, 25, 50, 100]
+    per_page = per_page if per_page in valid_per_page else valid_per_page[0]
     items = Item.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
     return render_template('vendor/items.html', items=items)
 
@@ -174,6 +185,20 @@ def invite_distributor():
     return render_template('vendor/invitation.html')
 
 
+@vendor_blueprint.route('/distributors/<int:distributor_id>/revocation', methods=['POST'])
+@vendor_permission.require()
+@vendor_confirmed
+def revocation(distributor_id):
+    distributor = Distributor.query.get_or_404(distributor_id)
+    if distributor.vendor_id != current_user.id:
+        return 'forbidden', 403
+    form = RevocationForm()
+    if form.validate_on_submit():
+        form.revoke()
+        return 'ok', 200
+    return '', 500
+
+
 @vendor_blueprint.route('/settings', methods=['GET', 'POST'])
 @vendor_permission.require()
 def settings():
@@ -184,3 +209,19 @@ def settings():
     else:
         form.show_vendor_setting(current_user)
     return render_template('vendor/settings.html', form=form)
+
+
+@vendor_blueprint.route('/reconfirm', methods=['GET', 'POST'])
+@vendor_permission.require()
+@vendor_not_confirmed
+def reconfirm():
+    form = ReconfirmForm()
+    if request.method == 'GET':
+        form.show_info()
+        return render_template('/vendor/reconfirm.html', form=form)
+    else:
+        if form.validate():
+            form.reconfirm()
+        flash(u'something wrong')
+        return redirect(url_for('.reconfirm'))
+
