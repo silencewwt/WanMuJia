@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-from flask import request, render_template, current_app, flash
+from flask import request, render_template, current_app, flash, redirect, url_for
 from flask_security import login_user, current_user
 from flask_security.utils import identity_changed, Identity
 
-from app.models import Vendor, Privilege
+from app.models import Vendor, Privilege, DistributorRevocation
 from app.permission import privilege_permission
 from . import privilege as privilege_blueprint
-from .forms import LoginForm, VendorConfirmForm
+from .forms import LoginForm, VendorConfirmForm, VendorConfirmRejectForm, DistributorRevocationForm
 
 
 @privilege_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if LoginForm.validate_on_submit():
+    if form.validate_on_submit():
         privilege = Privilege.query.filter_by(username=form.username.data).limit(1).first()
         if privilege.verify_password(form.password.data):
             login_user(privilege)
@@ -32,7 +32,7 @@ def vendor_confirm():
 @privilege_blueprint.route('/vendor_confirm/reject', methods=['POST'])
 @privilege_permission.require()
 def vendor_confirm_reject():
-    form = VendorConfirmForm(csrf_enabled=False)
+    form = VendorConfirmRejectForm()
     if form.validate():
         form.reject_vendor()
         return 'rejected'
@@ -47,3 +47,14 @@ def vendor_confirm_pass():
         form.pass_vendor()
         return 'passed'
     return 'invalidate vendor id'
+
+
+@privilege_blueprint.route('/distributors/revocation', methods=['GET, POST'])
+@privilege_permission.require()
+def distributors_revocation():
+    revocations = DistributorRevocation.query.filter_by(pending=True)
+    form = DistributorRevocationForm()
+    if form.validate_on_submit():
+        form.revoke()
+        return redirect(url_for('.distributors_revocation'))
+    return render_template('/privilege/distributors_revocation.html', form=form, revocations=revocations)

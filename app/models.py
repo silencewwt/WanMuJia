@@ -236,6 +236,10 @@ class DistributorRevocation(db.Model):
         self.distributor_id = distributor_id
         self.image = image
 
+    @property
+    def distributor(self):
+        return Distributor.query.get(self.distributor_id)
+
 
 class Item(db.Model):
     __tablename__ = 'items'
