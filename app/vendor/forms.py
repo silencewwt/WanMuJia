@@ -203,7 +203,8 @@ class ItemImageForm(Form):
     item_id = IntegerField()
     image = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'])])
 
-    def validate_item_id(self, field):
+    @staticmethod
+    def validate_item_id(field):
         if field.data and field.data != current_user.id:
             raise ValidationError('wrong id')
 
@@ -221,7 +222,8 @@ class ItemImageSortForm(Form):
 
     image_list = []
 
-    def validate_item_id(self, field):
+    @staticmethod
+    def validate_item_id(field):
         if field.data and field.data != current_user.id:
             raise ValidationError('wrong id')
 
