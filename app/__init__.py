@@ -51,4 +51,7 @@ def create_app(config_name):
     from .privilege import privilege as privilege_blueprint
     app.register_blueprint(privilege_blueprint, url_prefix='/privilege')
 
+    from .service import service as service_blueprint
+    app.register_blueprint(service_blueprint, url_prefix='/service')
+
     return app
