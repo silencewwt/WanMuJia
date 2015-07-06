@@ -1,4 +1,4 @@
-# -*-coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from flask import current_app, request, render_template, redirect, flash, session
 from flask_security import login_user, logout_user, login_required
 from flask_security.utils import identity_changed, Identity
@@ -20,12 +20,12 @@ def _get_login_instance(model, username, *args):
 
 
 def login(model, form):
-    if model == User:
+    if model == User or model == Distributor:
         instance = _get_login_instance(model, form.username.data, 'username')
     else:
         instance = _get_login_instance(model, form.username.data)
     if instance and instance.verify_password(form.password.data):
-        login_user(instance, form.remember_me.data)
+        login_user(instance)
         identity_changed.send(current_app._get_current_object(), Identity(instance.get_id()))
         return True
     return False

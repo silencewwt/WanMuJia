@@ -1,4 +1,4 @@
-# -*-coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from flask import current_app, request, render_template, redirect, flash, session, url_for
 from flask_security import login_user, logout_user, login_required, current_user
 from flask_security.utils import identity_changed, Identity
@@ -11,7 +11,7 @@ from app.constants import *
 from app.core import login as model_login, reset_password as model_reset_password
 from app.permission import user_permission
 from app.utils import md5_with_salt
-from app.utils.captcha import send_sms_captcha
+from app.utils.myj_captcha import send_sms_captcha
 from app.utils.validator import available_mobile, validate_mobile
 from app.utils.redis import redis_set, redis_get
 

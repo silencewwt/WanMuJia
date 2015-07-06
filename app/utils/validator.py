@@ -1,4 +1,4 @@
-# -*-coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 from flask import session
 from wtforms.validators import Regexp, Email as BaseEmail, ValidationError
@@ -24,7 +24,7 @@ class Email(BaseEmail):
 
 
 class Mobile(Regexp):
-    def __init__(self, available=True, message=u'邮箱不符合规范!'):
+    def __init__(self, available=True, message=u'手机号码不符合规范!'):
         self.available = available
         self.message = message
         super(Mobile, self).__init__(r'^1[3-8]\d{9}$', message=self.message)
@@ -75,7 +75,7 @@ class Image(object):
         self.required = required
 
     def __call__(self, form, field):
-        if self.required:
+        if self.required or field.data:
             try:
                 im = BaseImage.open(field.data.stream.raw)
                 im.close()

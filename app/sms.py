@@ -1,4 +1,4 @@
-# -*-coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from .constants import SMS_CAPTCHA
 from .tasks import send_sms
 

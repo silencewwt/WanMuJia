@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask.ext.wtf import Form
-from wtforms import StringField, PasswordField, BooleanField
+from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, Length, EqualTo
 
 from app.constants import *
@@ -20,3 +20,8 @@ class MobileResetPasswordForm(Form):
 class EmailResetPasswordForm(Form):
     email = StringField(validators=[Email()])
     captcha = StringField(validators=[Captcha(IMAGE_CAPTCHA, 'email')])
+
+
+class MobileRegistrationForm(Form):
+    mobile = StringField(validators=[Mobile(), Length(11, 11)])
+    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])

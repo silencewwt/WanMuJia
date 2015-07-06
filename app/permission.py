@@ -1,4 +1,4 @@
-# -*-coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from flask.ext.principal import RoleNeed, Permission, identity_loaded
 
 
