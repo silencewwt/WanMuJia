@@ -207,7 +207,43 @@
 			商品寓意
 			TextAreaField
 			length: [0, 5000]
-			
+    
+###vendor distributors
+    URL:
+        /vendor/distributors
+    method:
+        GET
+
+##vendor distributors detail
+    URL:
+        /vendor/distributors/<distributor_id>
+    method:
+        GET
+
+##vendor distributors invitation
+    URL:
+        /vendor/distributors/invitation
+    method:
+        GET, POST
+
+##vendor distributors revocation
+    URL:
+        /distributors/<distributor_id>/revocation
+    method:
+        POST
+    
+###vendor settings
+    URL:
+        /vendor/settings
+    method:
+        GET, POST
+    
+###vendor reconfirm
+    URL:
+        /vendor/reconfirm
+    method:
+        GET, POST
+    
 ##item
 
 ###item list
@@ -241,3 +277,47 @@
         GET
     parameters:
         first, second
+        
+##privilege
+
+###login
+    URL:
+        /privilege/login
+    method:
+        GET, POST
+    form:
+        username
+        password
+    
+###vendor_confirm
+    URL:
+        /privilege/vendor_confirm
+    method:
+        GET
+    
+###vendor_confirm reject
+    URL:
+        /privilege/vendor_confirm/reject
+    method:
+        POST
+    form:
+        vendor_id
+        reject_message
+    
+###vendor_confirm pass
+    URL:
+        /privilege/vendor_confirm/pass
+    method:
+        POST
+    form:
+        vendor_id
+    
+###distributors revocation
+    URL:
+        /privilege/distributors/revocation
+    method:
+        GET, POST
+    form:
+        distributor_revocation_id
+        revocation_confirm
+    
