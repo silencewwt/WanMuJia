@@ -48,6 +48,9 @@ gulp.task('lib', function () {
 
     gulp.src(conf.staticPath + './lib/fonts/**')
         .pipe(gulp.dest(conf.serverPath + './static/lib/fonts'));
+
+    gulp.src(conf.staticPath + './lib/xenon/**')
+        .pipe(gulp.dest(conf.serverPath + './static/lib/xenon'));
 });
 
 gulp.task('pages', function () {

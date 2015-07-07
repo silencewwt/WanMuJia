@@ -103,16 +103,7 @@ jQuery(document).ready(function($) {
     // Item New page
     if (getPageTitle() === 'item-new') {
         var $newItemForm = $('#new-item-form');
-
-        $('.wizard .next')
-            .off('click')
-            .click(nextHandler);
-
-        $('[href="#fwv-2"]')
-            .off('click')
-            .click(nextHandler);
-
-        function nextHandler () {
+        var nextHandler = function () {
             saveInfos({
                 url: '/vendor/items/new_item',
                 method: 'post',
@@ -121,7 +112,15 @@ jQuery(document).ready(function($) {
                     $newItemForm.bootstrapWizard('next');
                 }
             });
-        }
+        };
+
+        $('.wizard .next')
+            .off('click')
+            .click(nextHandler);
+
+        $('[href="#fwv-2"]')
+            .off('click')
+            .click(nextHandler);
     }
 
 
@@ -164,7 +163,7 @@ jQuery(document).ready(function($) {
             var $this = $(this);
             var files = !!this.files ? this.files : [];
 
-            if (!files.length < 0 || !window.FileReader) return;
+            if (files.length <= 0 || !window.FileReader) return;
 
             if (/^image/.test(files[0].type)) {
                 var reader = new FileReader();
@@ -250,7 +249,7 @@ jQuery(document).ready(function($) {
             url: '/vendor/item_image',
             method: 'put',
             acceptedFiles: 'image/jpg, image/jpeg, image/png',
-            addRemoveLinks: !(getPageTitle() === 'item-edit'),
+            addRemoveLinks: getPageTitle() !== 'item-edit',
             dictDefaultMessage: '拖动文件到此以上传',
             dictResponseError: '服务器错误, 上传失败, 请稍后重试。',
             dictCancelUpload: '取消上传',
@@ -295,7 +294,7 @@ function setCookie(cookieName, coockieValue, expiredays) {
         cookieText += "; expires=" + expiredays.toGMTString();
     }
 
-    return document.cookie = cookieText;
+    return (document.cookie = cookieText);
 }
 
 function getCookie(cookieName) {
@@ -314,7 +313,7 @@ function getCookie(cookieName) {
 }
 
 function convertTimeString(seconds) {
-    if (typeof seconds != 'Number') return '';
+    if (typeof seconds != 'number') return '';
 
     var time = new Date(seconds * 1000);
     return time.getFullYear() + '-' +
