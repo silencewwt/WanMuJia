@@ -93,7 +93,6 @@
                                 method: 'POST',
                                 dataType: 'json',
                                 data: {
-                                    do_login: true,
                                     mobile: $(form).find('#contact_mobile').val(),
                                     captcha: $(form).find('#captcha').val()
                                 },
@@ -111,7 +110,7 @@
                                             }
                                             else
                                             {
-                                                toastr.error("验证码错误，请重试 :)", "注册失败", opts);
+                                                toastr.error(resp.message + " :)", "注册失败", opts);
                                                 $('#captcha').select();
                                             }
                                         }
