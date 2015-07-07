@@ -229,17 +229,18 @@ jQuery(document).ready(function($) {
     // =============== plugins config ===============
 
     // jQuery validate
-    $.validator.addMethod('mobile', function (value, element) {
-        var length = value.length;
-        var mobile = /^((1[3-8][0-9])+\d{8})$/;
-        return this.optional(element) || (length == 11 && mobile.test(value));
-    });
+    if ($.validate !== null) {
+        $.validator.addMethod('mobile', function (value, element) {
+            var length = value.length;
+            var mobile = /^((1[3-8][0-9])+\d{8})$/;
+            return this.optional(element) || (length == 11 && mobile.test(value));
+        });
 
-    $.validator.addMethod('tel', function (value, element) {
-        var tel = /^\d{3,4}-?\d{7,9}$/;    //电话号码格式010-12345678
-        return this.optional(element) || (tel.test(value));
-    });
-
+        $.validator.addMethod('tel', function (value, element) {
+            var tel = /^\d{3,4}-?\d{7,9}$/;    //电话号码格式010-12345678
+            return this.optional(element) || (tel.test(value));
+        });
+    }
 
     // Dropzone
     var $imgUpload = $('#img-upload.dropzone');
