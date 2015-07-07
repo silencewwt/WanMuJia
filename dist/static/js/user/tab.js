@@ -1,0 +1,1 @@
+$(function(){$(".tab .tabs").delegate("li a","click",function(){var a=$(this).parent(),t=a.data("tab");a.siblings().removeClass("active"),a.addClass("active"),a.parent().nextAll(".tab-content").find("."+t).show().siblings().hide()})});

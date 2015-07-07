@@ -72,26 +72,23 @@ gulp.task('server', ['sass', 'js', 'img', 'lib', 'pages'], function () {
 
 
 gulp.task('compress', ['sass', 'js', 'img', 'lib', 'pages'], function () {
-    gulp.src(conf.serverPath + './static/css/main.css')
+    gulp.src(conf.serverPath + './static/css/**/*.css')
         .pipe($.minifyCss())
         .pipe(gulp.dest(conf.distPath + './static/css'));
-    gulp.src(conf.serverPath + './static/lib/*.css')
-        .pipe($.minifyCss())
-        .pipe(gulp.dest(conf.distPath + './static/lib'));
-    gulp.src(conf.serverPath + './static/js/*.js')
+    gulp.src(conf.serverPath + './static/js/**/*.js')
         .pipe($.uglify())
         .pipe(gulp.dest(conf.distPath + './static/js'));
-    gulp.src(conf.serverPath + './static/lib/*.js')
-        .pipe($.uglify())
-        .pipe(gulp.dest(conf.distPath + './static/lib'));
-    gulp.src(conf.serverPath + './pages/**/*.html')
+    gulp.src(conf.serverPath + './pages/**/**')
         .pipe($.minifyHtml())
         .pipe(gulp.dest(conf.distPath + './templates'));
 });
 
 gulp.task('release', ['compress'], function () {
-    gulp.src(conf.serverPath + './static/lib/fonts/**')
-        .pipe(gulp.dest(conf.distPath + './static/lib/fonts'));
+    // gulp.src(conf.serverPath + './static/lib/fonts/**')
+    //     .pipe(gulp.dest(conf.distPath + './static/lib/fonts'));
+
+    gulp.src(conf.serverPath + './static/lib/**/**')
+        .pipe(gulp.dest(conf.distPath + './static/lib'));
 });
 
 gulp.task('default', ['server']);

@@ -1,0 +1,1 @@
+function setCookie(o,e,n){var t=encodeURIComponent(o)+"="+encodeURIComponent(e);return n instanceof Date&&(t+="; expires="+n.toGMTString()),document.cookie=t}function getCookie(o){var e;return decodeURIComponent(document.cookie).split("; ").forEach(function(n){n=n.split("="),o===n[0]&&(e=n[1])}),e}

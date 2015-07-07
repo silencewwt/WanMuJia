@@ -1,0 +1,1 @@
+$(function(){var e=$(".item-wrapper");e.delegate(".item > a","mouseover",function(){$(this).find(".dialog").show()}),e.delegate(".item > a","mouseout",function(){$(this).find(".dialog").hide()})});
