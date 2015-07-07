@@ -31,7 +31,7 @@ app.get('/', function (req, res) {
         }
 
         var _data = JSON.parse(data);
-        res.render('user/user/index', {
+        res.render('user/index', {
             title: '首页',
             new_items: _data.new_items,
             hot_items: _data.hot_items,
