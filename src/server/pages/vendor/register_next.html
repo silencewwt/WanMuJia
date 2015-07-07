@@ -217,7 +217,7 @@
 
             <!-- Add class "fade-in-effect" for login form effect -->
             <form method="post" role="form" id="register" class="register-next-form fade-in-effect">
-
+                {{ form.csrf_token }}
                 <div class="login-header">
                     <a href="/vendor/login" class="logo">
                         <img src="/img/logo.png" alt="" width="150" />

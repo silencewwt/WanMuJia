@@ -143,6 +143,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <form id="contract-form" action="/vendor/distributors/0/revocation" class="validate">
+                    {{ form.csrf_token }}
+                    
                     <div class="modal-header">
                         <h4 class="modal-title">上传解约合同</h4>
                     </div>

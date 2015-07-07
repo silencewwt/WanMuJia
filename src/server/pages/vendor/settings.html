@@ -14,6 +14,8 @@
 
         <div class="panel-body">
             <form method="post" id="settings-form" role="form" action="/vendor/settings" class="validate form-horizontal">
+                {{ form.csrf_token }}
+
                 <div class="form-group required">
                     <label class="col-sm-2 control-label" for="logo">厂家logo</label>
 
