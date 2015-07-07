@@ -44,7 +44,7 @@ def login():
             return jsonify({ACCESS_GRANTED: True})    # TODO: redirect
         flash(u'用户名或密码错误!')
         return jsonify({ACCESS_GRANTED: True})
-    return render_template('vendor/login.html', login_form=form)
+    return render_template('vendor/login.html', form=form)
 
 
 @vendor_blueprint.route('/register', methods=['GET', 'POST'])
@@ -78,7 +78,7 @@ def reset_password():
 
 
 @vendor_blueprint.route('/')
-@vendor_permission.require()
+# @vendor_permission.require()
 def index():
     return render_template('vendor/index.html')
 
