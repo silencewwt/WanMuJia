@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+s_{% extends "layout.html" %}
 
 
 {% block navbar %}
@@ -284,19 +284,19 @@
             <ul id="main-menu" class="main-menu">
                 <!-- add class "multiple-expanded" to allow multiple submenus to open -->
                 <!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
-                <li class="{% block isOverview %}{% endblock %}">
+                <li class="{% block s_isOverview %}{% endblock %}">
                     <a href="/privilege">
                         <i class="linecons-desktop"></i>
                         <span class="title">概览</span>
                     </a>
                 </li>
-                <li class="{% block isItems %}{% endblock %}">
+                <li class="{% block s_isItems %}{% endblock %}">
                     <a href="/privilege/items">
                         <i class="linecons-note"></i>
                         <span class="title">商品管理</span>
                     </a>
                     <ul>
-                        <li class="{% block isItems_li %}{% endblock %}">
+                        <li class="{% block s_isItems_li %}{% endblock %}">
                             <a href="/privilege/items">
                                 <i class="fa-list"></i>
                                 <span class="title">商品列表</span>
@@ -304,13 +304,13 @@
                         </li>
                     </ul>
                 </li>
-                <li class="{% block isDistributors %}{% endblock %}">
+                <li class="{% block s_isDistributors %}{% endblock %}">
                     <a href="/privilege/distributors">
                         <i class="linecons-shop"></i>
                         <span class="title">商家管理</span>
                     </a>
                     <ul>
-                        <li class="{% block isDistributors_li %}{% endblock %}">
+                        <li class="{% block s_isDistributors_li %}{% endblock %}">
                             <a href="/privilege/distributors">
                                 <i class="fa-list-ul"></i>
                                 <span class="title">商家列表</span>
@@ -318,31 +318,31 @@
                         </li>
                     </ul>
                 </li>
-                <li class="{% block isVendors %}{% endblock %}">
+                <li class="{% block s_isVendors %}{% endblock %}">
                     <a href="/privilege/vendors">
                         <i class="fa-suitcase"></i>
                         <span class="title">厂家管理</span>
                     </a>
                     <ul>
-                        <li class="{% block isVendors_li %}{% endblock %}">
+                        <li class="{% block s_isVendors_li %}{% endblock %}">
                             <a href="/privilege/vendors">
                                 <i class="fa-list-ul"></i>
                                 <span class="title">厂家列表</span>
                             </a>
                         </li>
-                        <li class="{% block isVendors_comfirm %}{% endblock %}">
+                        <li class="{% block s_isVendors_comfirm %}{% endblock %}">
                             <a href="/vender/distributors?action=new">
                                 <i class="fa-lock"></i>
                                 <span class="title">厂家审核</span>
                             </a>
                             <ul>
-                                <li class="{% block isVendors_comfirm_register %}{% endblock %}">
+                                <li class="{% block s_isVendors_comfirm_register %}{% endblock %}">
                                     <a href="/privilege/distributors">
                                         <i class="fa-rocket"></i>
                                         <span class="title">厂家入驻审核</span>
                                     </a>
                                 </li>
-                                <li class="{% block isVendors_comfirm_revocation %}{% endblock %}">
+                                <li class="{% block s_isVendors_comfirm_revocation %}{% endblock %}">
                                     <a href="/vender/distributors?action=new">
                                         <i class="fa-undo"></i>
                                         <span class="title">商家解约审核</span>

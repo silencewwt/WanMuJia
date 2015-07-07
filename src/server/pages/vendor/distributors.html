@@ -7,6 +7,8 @@
 
 {% block isDistributors -%} opened active {%- endblock %}
 {% block isDistributors_li -%} active {%- endblock %}
+{% block s_isDistributors -%} opened active {%- endblock %}
+{% block s_isDistributors_li -%} active {%- endblock %}
 
 
 {% block main_content %}
@@ -144,7 +146,7 @@
             <div class="modal-content">
                 <form id="contract-form" action="/vendor/distributors/0/revocation" class="validate">
                     {{ form.csrf_token }}
-                    
+
                     <div class="modal-header">
                         <h4 class="modal-title">上传解约合同</h4>
                     </div>

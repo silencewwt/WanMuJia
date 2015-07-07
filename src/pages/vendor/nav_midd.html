@@ -278,25 +278,25 @@
             <ul id="main-menu" class="main-menu">
                 <!-- add class "multiple-expanded" to allow multiple submenus to open -->
                 <!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
-                <li class="{% block isOverview %}{% endblock %}">
+                <li class="{% block s_isOverview %}{% endblock %}">
                     <a href="/vendor">
                         <i class="linecons-desktop"></i>
                         <span class="title">概览</span>
                     </a>
                 </li>
-                <li class="{% block isItems %}{% endblock %}">
+                <li class="{% block s_s_isItems %}{% endblock %}">
                     <a href="/vendor/items">
                         <i class="linecons-note"></i>
                         <span class="title">商品管理</span>
                     </a>
                     <ul>
-                        <li class="{% block isItems_li %}{% endblock %}">
+                        <li class="{% block s_isItems_li %}{% endblock %}">
                             <a href="/vendor/items">
                                 <i class="fa-list"></i>
                                 <span class="title">商品列表</span>
                             </a>
                         </li>
-                        <li class="{% block isItems_new %}{% endblock %}">
+                        <li class="{% block s_isItems_new %}{% endblock %}">
                             <a href="/vendor/items/new_item">
                                 <i class="fa-plus-square"></i>
                                 <span class="title">添加商品</span>
@@ -304,19 +304,19 @@
                         </li>
                     </ul>
                 </li>
-                <li class="{% block isDistributors %}{% endblock %}">
+                <li class="{% block s_isDistributors %}{% endblock %}">
                     <a href="/vendor/distributors">
                         <i class="linecons-shop"></i>
                         <span class="title">商家管理</span>
                     </a>
                     <ul>
-                        <li class="{% block isDistributors_li %}{% endblock %}">
+                        <li class="{% block s_isDistributors_li %}{% endblock %}">
                             <a href="/vendor/distributors">
                                 <i class="fa-list-ul"></i>
                                 <span class="title">商家列表</span>
                             </a>
                         </li>
-                        <li class="{% block isDistributors_new %}{% endblock %}">
+                        <li class="{% block s_isDistributors_new %}{% endblock %}">
                             <a href="/vender/distributors/invitation">
                                 <i class="fa-plus-circle"></i>
                                 <span class="title">邀请商家</span>
