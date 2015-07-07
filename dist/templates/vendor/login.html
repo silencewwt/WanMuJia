@@ -52,7 +52,6 @@
                                 method: 'POST',
                                 dataType: 'json',
                                 data: {
-                                    do_login: true,
                                     username: $(form).find('#username').val(),
                                     passwd: $(form).find('#password').val()
                                 },
@@ -70,7 +69,7 @@
                                             }
                                             else
                                             {
-                                                toastr.error("密码错误，请重试 :)", "非法登录!", opts);
+                                                toastr.error("用户名或密码错误，请重试 :)", "非法登录!", opts);
                                                 $('#password').select();
                                             }
                                         }
@@ -94,4 +93,4 @@
                     // Set Form focus
                     $("form#login .form-group:has(.form-control):first .form-control").focus();
                 });
-            </script><div class=errors-container></div><form method=post role=form id=login class="login-form fade-in-effect"><div class=login-header><a href=/vendor/login class="logo clearfix"><img src=/img/logo.png width=150> <span>厂家登录</span></a></div><div class=form-group><label class=control-label for=username>用户名</label> <input type=text class="form-control input-dark" name=username id=username autocomplete></div><div class=form-group><label class=control-label for=password>密码</label> <input type=password class="form-control input-dark" name=password id=password autocomplete></div><div class=form-group><button type=submit class="btn btn-dark btn-block text-left"><i class=fa-lock></i> 登录</button></div></form><div class=external-login><a href=/vendor/register class=facebook>还没有入驻？点击进行厂家认证</a></div></div></div></div><script src=/lib/xenon/js/bootstrap.min.js></script><script src=/lib/xenon/js/TweenMax.min.js></script><script src=/lib/xenon/js/resizeable.js></script><script src=/lib/xenon/js/joinable.js></script><script src=/lib/xenon/js/xenon-api.js></script><script src=/lib/xenon/js/xenon-toggles.js></script><script src=/lib/xenon/js/jquery-validate/jquery.validate.min.js></script><script src=/lib/xenon/js/toastr/toastr.min.js></script><script src=/lib/xenon/js/xenon-custom.js></script></body></html>
+            </script><div class=errors-container></div><form method=post role=form id=login class="login-form fade-in-effect">{{ form.csrf_token }}<div class=login-header><a href=/vendor/login class="logo clearfix"><img src=/img/logo.png width=150> <span>厂家登录</span></a></div><div class=form-group><label class=control-label for=username>用户名</label> <input type=text class="form-control input-dark" name=username id=username autocomplete></div><div class=form-group><label class=control-label for=password>密码</label> <input type=password class="form-control input-dark" name=password id=password autocomplete></div><div class=form-group><button type=submit class="btn btn-dark btn-block text-left"><i class=fa-lock></i> 登录</button></div></form><div class=external-login><a href=/vendor/register class=facebook>还没有入驻？点击进行厂家认证</a></div></div></div></div><script src=/lib/xenon/js/bootstrap.min.js></script><script src=/lib/xenon/js/TweenMax.min.js></script><script src=/lib/xenon/js/resizeable.js></script><script src=/lib/xenon/js/joinable.js></script><script src=/lib/xenon/js/xenon-api.js></script><script src=/lib/xenon/js/xenon-toggles.js></script><script src=/lib/xenon/js/jquery-validate/jquery.validate.min.js></script><script src=/lib/xenon/js/toastr/toastr.min.js></script><script src=/lib/xenon/js/xenon-custom.js></script></body></html>
