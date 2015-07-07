@@ -93,7 +93,6 @@
                                 method: 'POST',
                                 dataType: 'json',
                                 data: {
-                                    do_login: true,
                                     username: $(form).find('#username').val(),
                                     passwd: $(form).find('#password').val()
                                 },
@@ -111,7 +110,7 @@
                                             }
                                             else
                                             {
-                                                toastr.error("密码错误，请重试 :)", "非法登录!", opts);
+                                                toastr.error("用户名或密码错误，请重试 :)", "非法登录!", opts);
                                                 $('#password').select();
                                             }
                                         }
@@ -145,7 +144,6 @@
 
             <!-- Add class "fade-in-effect" for login form effect -->
             <form method="post" role="form" id="login" class="login-form fade-in-effect">
-
                 <div class="login-header">
                     <a href="/vendor/login" class="logo clearfix">
                         <img src="/img/logo.png" alt="" width="150" />

@@ -15,8 +15,8 @@ app.set('views', __dirname + '/pages');
 app.engine('html', require('nunjs').__express);
 app.set('view engine', 'html');
 
+// app.use('/static', express.static(path.join(__dirname, './static')));
 app.use(express.static(path.join(__dirname, './static')));
-//app.use('/', express.static(path.join(__dirname, 'server/data')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -227,6 +227,11 @@ app.get('/vendor/settings', function (req, res) {
 
 app.get('/vendor/login', function (req, res) {
     res.render('vendor/login');
+});
+app.post('/vendor/login', function (req, res) {
+    res.send({
+        accessGranted: true
+    });
 });
 app.get('/vendor/register', function (req, res) {
     res.render('vendor/register');
