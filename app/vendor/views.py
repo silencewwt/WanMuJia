@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from functools import wraps
 
-from flask import current_app, flash, render_template, redirect, request, session, url_for
+from flask import current_app, flash, render_template, redirect, request, session, url_for, jsonify
 from flask_security import login_user, logout_user, login_required, current_user
 from flask_security.utils import identity_changed, Identity
 
@@ -39,41 +39,48 @@ def vendor_not_confirmed(f):
 @vendor_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        if model_login(Vendor, form):
-            return redirect('/')    # TODO: redirect
+    if request.method == 'POST':
+        if form.validate() and model_login(Vendor, form):
+            return jsonify({ACCESS_GRANTED: True})    # TODO: redirect
         flash(u'用户名或密码错误!')
-    return render_template('user/login.html', login_form=form)
+        return jsonify({ACCESS_GRANTED: True})
+    return render_template('vendor/login.html', login_form=form)
 
 
 @vendor_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
-    form_type = request.args.get('form', '', type=str)
     mobile_form = MobileRegistrationForm()
     detail_form = RegistrationDetailForm()
+    message = ''
     if VENDOR_REGISTER_STEP_DONE in session:
-        if VENDOR_REGISTER_STEP_DONE == 0:
-            if form_type == 'mobile' and mobile_form.validate_on_submit():
+        if session[VENDOR_REGISTER_STEP_DONE] == 0 and request.method == 'POST':
+            if mobile_form.validate():
                 session[VENDOR_REGISTER_MOBILE] = mobile_form.mobile.data
                 session[VENDOR_REGISTER_STEP_DONE] = 1
-                return 'step 2 page'
-            return 'step 1 page'
-        elif VENDOR_REGISTER_STEP_DONE == 1:
-            if form_type == 'detail' and detail_form.validate_on_submit():
+                return jsonify({ACCESS_GRANTED: True})
+            return jsonify({ACCESS_GRANTED: False})
+        elif session[VENDOR_REGISTER_STEP_DONE] == 1:
+            if detail_form.validate_on_submit():
                 vendor = detail_form.add_vendor(session[VENDOR_REGISTER_MOBILE])
                 login_user(vendor)
                 identity_changed.send(current_app._get_current_object(), Identity(vendor.get_id()))
                 session.pop(VENDOR_REGISTER_MOBILE)
                 session.pop(VENDOR_REGISTER_STEP_DONE)
                 return 'register done'
-            return 'step 2 page'
+            return render_template('vendor/register_next.html', form=detail_form)
     session[VENDOR_REGISTER_STEP_DONE] = 0
-    return 'step 1 page'
+    return render_template('vendor/register.html', form=mobile_form)
 
 
 @vendor_blueprint.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
     return model_reset_password(Vendor, 'vendor')
+
+
+@vendor_blueprint.route('/')
+@vendor_permission.require()
+def index():
+    return render_template('vendor/index.html')
 
 
 @vendor_blueprint.route('/items')
