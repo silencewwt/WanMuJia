@@ -87,6 +87,8 @@ gulp.task('release', ['compress'], function () {
     // gulp.src(conf.serverPath + './static/lib/fonts/**')
     //     .pipe(gulp.dest(conf.distPath + './static/lib/fonts'));
 
+    gulp.src(conf.serverPath + './static/img/**/**')
+        .pipe(gulp.dest(conf.distPath + './static/img'));
     gulp.src(conf.serverPath + './static/lib/**/**')
         .pipe(gulp.dest(conf.distPath + './static/lib'));
 });
