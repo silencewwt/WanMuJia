@@ -1,0 +1,124 @@
+//forms
+
+$form-group-height: 40px;
+$left-width: 350px;
+$checkbox-size: 14px;
+
+.offset {
+  padding-left: $left-width;
+}
+
+.form-group {
+  @extend .clearfix;
+  margin: 0 auto 30px;
+
+  & > input, & > .upload, & > .hint, & > button {
+    float: left;
+  }
+
+  & > .wrapper-label {
+    float: left;
+    width: $left-width;
+
+    & .control-label {
+      float: right;
+      margin-right: 35px;
+      height: $form-group-height;
+      line-height: $form-group-height;
+      font-size: 20px;
+      font-weight: 100;
+      text-align: right;
+    }
+  }
+
+  & > .hint {
+    margin-left: 10px;
+    height: $form-group-height;
+    line-height: $form-group-height;
+    font-size: 16px;
+  }
+
+  .check {
+    float: left;
+    width: $checkbox-size;
+    height: $checkbox-size;
+    background-color: #372e2c;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #433c3a;
+    }
+  }
+  input[type="checkbox"] {
+    display: none;
+  }
+  input[type="checkbox"]:checked + .check::after {
+    display: block;
+    content: '\2714';
+    line-height: $checkbox-size;
+    text-align: center;
+  }
+  .instruct {
+    float: left;
+    margin-left: 10px;
+    height: $font-size-base;
+    font-size: $font-size-base;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  &.action {
+    margin-top: 60px;
+  }
+}
+
+
+input[type="text"], input[type="email"], input[type="password"] {
+  box-sizing: border-box;
+  padding: 0 18px;
+  width: 350px;
+  height: $form-group-height;
+  outline: none;
+  border: none;
+  background-color: #2a201e;
+  font-size: $font-size-large;
+}
+
+button, input[type="submit"], input[type="button"] {
+  padding: 0;
+  width: 180px;
+  height: $form-group-height;
+  border: none;
+  font-size: 20px;
+  line-height: $form-group-height;
+  background-color: #433c3a;
+}
+
+.upload {
+  position: relative;
+  width: 180px;
+  height: $form-group-height;
+  line-height: $form-group-height;
+  background-color: #2a201e;
+  font-size: $font-size-large;
+  text-align: center;
+  cursor: pointer;
+
+  input[type="file"] {
+    display: none;
+  }
+
+  &:visited, &:hover, &:active {
+    color: inherit;
+  }
+
+  .state {
+    position: absolute;
+    top: 120%;
+    left: 0;
+    background-color: transparent;
+    font-size: $font-size-base;
+    line-height: 1;
+    text-align: left;
+  }
+}

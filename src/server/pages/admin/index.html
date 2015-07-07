@@ -1,0 +1,69 @@
+{% extends "nav_midd.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/css/fonts/meteocons/css/meteocons.css">
+    <link rel="stylesheet" href="/css/fonts/elusive/css/elusive.css">
+{% endblock %}
+
+{% block isOverview -%} opened active {%- endblock %}
+
+{% block main_content %}
+    <div class="row">
+
+        <div class="col-sm-3">
+
+            <a href="/privilege/items">
+                <div class="xe-widget xe-vertical-counter xe-vertical-counter-danger" data-suffix="&nbsp;个" data-count=".num" data-from="0" data-to="140" data-duration="2">
+                    <div class="xe-upper">
+
+                        <div class="xe-icon">
+                            <i class="el-th-large"></i>
+                        </div>
+                        <div class="xe-label">
+                            <strong class="num">0</strong>
+                            <span>已上传商品</span>
+                        </div>
+
+                    </div>
+                </div>
+            </a>
+
+        </div>
+
+
+        <div class="col-sm-3">
+
+            <a href="/privilege/distributors">
+                <div class="xe-widget xe-vertical-counter xe-vertical-counter-primary" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="23" data-duration="2" data-easing="false">
+                    <div class="xe-upper">
+
+                        <div class="xe-icon">
+                            <i class="linecons-user"></i>
+                        </div>
+                        <div class="xe-label">
+                            <strong class="num">0家</strong>
+                            <span>已授权商家</span>
+                        </div>
+
+                    </div>
+                    <div class="xe-lower">
+                        <div class="border"></div>
+
+                        <!--<span>Bounce Rate</span>-->
+                        <!--<strong>51.55%</strong>-->
+                    </div>
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    <script src="/js/xenon-widgets.js"></script>
+    <script src="/js/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="/js/jvectormap/regions/jquery-jvectormap-world-mill-en.js"></script>
+{% endblock %}
