@@ -12,7 +12,8 @@ var conf = {
     version: '0.0.0',
     serverPath: './src/server/',
     staticPath: './src/static/',
-    distPath: './dist/'
+    distPath: './dist/',
+    pyPath: '../MuYiJia/app/'
 };
 
 
@@ -93,4 +94,12 @@ gulp.task('release', ['compress'], function () {
         .pipe(gulp.dest(conf.distPath + './static/lib'));
 });
 
-gulp.task('default', ['server']);
+gulp.task('py', ['sass', 'js', 'img', 'lib', 'pages'], function () {
+    gulp.src(conf.serverPath + './pages/**/**')
+        .pipe(gulp.dest(conf.pyPath + './templates'));
+    gulp.src(conf.serverPath + './static/**/**')
+        .pipe(gulp.dest(conf.pyPath + './static'));
+});
+
+
+gulp.task('default', ['py', 'release']);

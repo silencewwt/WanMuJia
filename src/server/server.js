@@ -229,15 +229,33 @@ app.get('/vendor/login', function (req, res) {
     res.render('vendor/login');
 });
 app.post('/vendor/login', function (req, res) {
-    res.send({
-        accessGranted: true
-    });
+    if (req.body.username === '123') {
+        res.send({
+            accessGranted: true
+        });
+    }
+    else {
+        res.send({
+            accessGranted: false,
+            message: '用户不存在'
+        });
+    }
 });
 app.get('/vendor/register', function (req, res) {
     res.render('vendor/register');
 });
 app.get('/vendor/register_next', function (req, res) {
     res.render('vendor/register_next');
+});
+
+
+// admin
+app.get('/privilege', function (req, res) {
+    res.render('admin/index');
+});
+
+app.get('/privilege/login', function (req, res) {
+    res.render('admin/login');
 });
 
 

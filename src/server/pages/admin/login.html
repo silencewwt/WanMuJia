@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="/lib/xenon/css/xenon-forms.css">
     <link rel="stylesheet" href="/lib/xenon/css/xenon-components.css">
     <link rel="stylesheet" href="/lib/xenon/css/xenon-skins.css">
-    <link rel="stylesheet" href="/lib/xenon/css/custom.css">
+    <link rel="stylesheet" href="/css/admin/custom.css">
 
     <script src="/lib/xenon/js/jquery-1.11.1.min.js"></script>
 
@@ -89,7 +89,7 @@
                             };
 
                             $.ajax({
-                                url: "data/login-check.php",
+                                url: "privilege/login",
                                 method: 'POST',
                                 dataType: 'json',
                                 data: {
@@ -107,7 +107,7 @@
                                             // Redirect after successful login page (when progress bar reaches 100%)
                                             if(resp.accessGranted)
                                             {
-                                                window.location.href = '/vendor';
+                                                window.location.href = '/privilege';
                                             }
                                             else
                                             {

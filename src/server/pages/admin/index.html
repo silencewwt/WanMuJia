@@ -1,4 +1,4 @@
-{% extends "nav_midd.html" %}
+{% extends "admin/nav_midd.html" %}
 
 {% block styles %}
     <link rel="stylesheet" href="/lib/xenon/css/fonts/meteocons/css/meteocons.css">
@@ -35,7 +35,7 @@
         <div class="col-sm-3">
 
             <a href="/privilege/distributors">
-                <div class="xe-widget xe-vertical-counter xe-vertical-counter-primary" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="23" data-duration="2" data-easing="false">
+                <div class="xe-widget xe-vertical-counter xe-vertical-counter-white" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="23" data-duration="2" data-easing="false">
                     <div class="xe-upper">
 
                         <div class="xe-icon">
@@ -44,6 +44,33 @@
                         <div class="xe-label">
                             <strong class="num">0家</strong>
                             <span>已授权商家</span>
+                        </div>
+
+                    </div>
+                    <div class="xe-lower">
+                        <div class="border"></div>
+
+                        <!--<span>Bounce Rate</span>-->
+                        <!--<strong>51.55%</strong>-->
+                    </div>
+                </div>
+            </a>
+
+        </div>
+
+
+        <div class="col-sm-3">
+
+            <a href="/privilege/vendors">
+                <div class="xe-widget xe-vertical-counter xe-vertical-counter-primary" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="10" data-duration="2" data-easing="false">
+                    <div class="xe-upper">
+
+                        <div class="xe-icon">
+                            <i class="linecons-truck"></i>
+                        </div>
+                        <div class="xe-label">
+                            <strong class="num">0家</strong>
+                            <span>已入驻厂家</span>
                         </div>
 
                     </div>

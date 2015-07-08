@@ -3,11 +3,11 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	
+
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta name="description" content="万木家厂家后台" />
 	<meta name="author" content="" />
-	
+
 	<title>{% block title -%} 万木家-厂家后台 {%- endblock %}</title>
 
 	<link rel="stylesheet" href="http://fonts.useso.com/css?family=Arimo:400,700,400italic">
@@ -18,7 +18,7 @@
 	<link rel="stylesheet" href="/lib/xenon/css/xenon-forms.css">
 	<link rel="stylesheet" href="/lib/xenon/css/xenon-components.css">
 	<link rel="stylesheet" href="/lib/xenon/css/xenon-skins.css">
-	<link rel="stylesheet" href="/lib/xenon/css/custom.css">
+	<link rel="stylesheet" href="/css/admin/custom.css">
 
 	<!-- Imported styles on this page -->
 	{% block styles %}{% endblock %}
@@ -30,22 +30,22 @@
 		<script src="/lib/xenon/js/html5shiv.min.js"></script>
 		<script src="/lib/xenon/js/respond.min.js"></script>
 	<![endif]-->
-	
-	
+
+
 </head>
 <body class="page-body">
 
-	{% include "./include/settings_pane.html" %}
+	{% include "admin/include/settings_pane.html" %}
 
 	{% block navbar %}{% endblock %}
 
 	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
 
 		{% block sidebar %}{% endblock %}
-		
+
 		<div class="main-content">
 			{% block main_content %}{% endblock %}
-			{% include "./include/footer.html" %}
+			{% include "admin/include/footer.html" %}
 		</div>
 
 	</div>
