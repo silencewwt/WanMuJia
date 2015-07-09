@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from flask_security import current_user
-from flask.ext.wtf import Form
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, IntegerField, SelectField, SelectMultipleField, \
     TextAreaField
@@ -9,6 +8,7 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, N
 from app import db
 from app.models import Vendor, District, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, \
     Decoration, Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation
+from app.utils.forms import Form
 from app.utils.image import save_image
 from app.utils.validator import Email, Mobile, QueryID, Image
 

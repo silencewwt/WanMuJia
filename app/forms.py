@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from flask.ext.wtf import Form
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, Length, EqualTo
 
 from app.constants import *
+from app.utils.forms import Form
 from app.utils.validator import Email, Mobile, Captcha
 
 

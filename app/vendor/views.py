@@ -41,7 +41,7 @@ def login():
     form = LoginForm()
     if request.method == 'POST':
         if form.validate() and model_login(Vendor, form):
-            return jsonify({ACCESS_GRANTED: True})    # TODO: redirect
+            return jsonify({ACCESS_GRANTED: True})
         flash(u'用户名或密码错误!')
         return jsonify({ACCESS_GRANTED: True})
     return render_template('vendor/login.html', form=form)
@@ -51,23 +51,28 @@ def login():
 def register():
     mobile_form = MobileRegistrationForm()
     detail_form = RegistrationDetailForm()
-    message = ''
     if VENDOR_REGISTER_STEP_DONE in session:
-        if session[VENDOR_REGISTER_STEP_DONE] == 0 and request.method == 'POST':
-            if mobile_form.validate():
-                session[VENDOR_REGISTER_MOBILE] = mobile_form.mobile.data
-                session[VENDOR_REGISTER_STEP_DONE] = 1
-                return jsonify({ACCESS_GRANTED: True})
-            return jsonify({ACCESS_GRANTED: False})
+        if session[VENDOR_REGISTER_STEP_DONE] == 0:
+            if request.method == 'POST':
+                if mobile_form.validate():
+                    session[VENDOR_REGISTER_MOBILE] = mobile_form.mobile.data
+                    session[VENDOR_REGISTER_STEP_DONE] = 1
+                    return jsonify({ACCESS_GRANTED: True})
+                return jsonify({ACCESS_GRANTED: False, 'message': mobile_form.error2str()})
+            else:
+                return render_template('vendor/register.html', form=mobile_form)
         elif session[VENDOR_REGISTER_STEP_DONE] == 1:
-            if detail_form.validate_on_submit():
-                vendor = detail_form.add_vendor(session[VENDOR_REGISTER_MOBILE])
-                login_user(vendor)
-                identity_changed.send(current_app._get_current_object(), Identity(vendor.get_id()))
-                session.pop(VENDOR_REGISTER_MOBILE)
-                session.pop(VENDOR_REGISTER_STEP_DONE)
-                return 'register done'
-            return render_template('vendor/register_next.html', form=detail_form)
+            if request.method == 'POST':
+                if detail_form.validate():
+                    vendor = detail_form.add_vendor(session[VENDOR_REGISTER_MOBILE])
+                    login_user(vendor)
+                    identity_changed.send(current_app._get_current_object(), Identity(vendor.get_id()))
+                    session.pop(VENDOR_REGISTER_MOBILE)
+                    session.pop(VENDOR_REGISTER_STEP_DONE)
+                    return jsonify({ACCESS_GRANTED: True})
+                return jsonify({ACCESS_GRANTED: False, 'message': detail_form.error2str()})
+            else:
+                return render_template('vendor/register_next.html', form=detail_form)
     session[VENDOR_REGISTER_STEP_DONE] = 0
     return render_template('vendor/register.html', form=mobile_form)
 
@@ -78,7 +83,7 @@ def reset_password():
 
 
 @vendor_blueprint.route('/')
-# @vendor_permission.require()
+@vendor_permission.require()
 def index():
     return render_template('vendor/index.html')
 
@@ -107,7 +112,7 @@ def item_detail(item_id):
     if request.method == 'GET':
         form.show_item(item)
         distributors = item.in_stock_distributors()
-        return render_template('/vendor/item_detail.html', form=form, distributors=distributors)
+        return render_template('vendor/items.html', form=form, distributors=distributors)
     elif request.method == 'PUT':
         if form.validate():
             form.update_item(item)
@@ -129,7 +134,7 @@ def new_item():
         item = form.add_item(current_user.id)
         return redirect(url_for('.item_detail', item_id=item.id))
     form.generate_choices()
-    return render_template('vendor/item_detail.html')
+    return render_template('vendor/new_item.html')
 
 
 @vendor_blueprint.route('/items/image', methods=['POST', 'DELETE'])
@@ -225,7 +230,7 @@ def reconfirm():
     form = ReconfirmForm()
     if request.method == 'GET':
         form.show_info()
-        return render_template('/vendor/reconfirm.html', form=form)
+        return render_template('vendor/reconfirm.html', form=form)
     else:
         if form.validate():
             form.reconfirm()
