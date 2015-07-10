@@ -91,10 +91,7 @@
                                 url: "/vendor/register",
                                 method: 'POST',
                                 dataType: 'json',
-                                data: {
-                                    mobile: $(form).find('#contact_mobile').val(),
-                                    captcha: $(form).find('#captcha').val()
-                                },
+                                data: $(form).serialize(),
                                 success: function(resp)
                                 {
                                     show_loading_bar({
