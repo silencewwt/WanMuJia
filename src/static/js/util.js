@@ -368,6 +368,23 @@ function bit_rol(num, cnt)
   return (num << cnt) | (num >>> (32 - cnt));
 }
 
+// ====================================
+// Type
+function isObject(obj) {
+    return obj instanceof Object;
+}
+
+function isArray(arr) {
+    if (Array.isArray) {
+        return Array.isArray(arr);
+    }
+    return arr instanceof Array;
+}
+
+function isFunction(fn) {
+    return fn instanceof Function;
+}
+
 
 // Cookies
 function setCookie(cookieName, coockieValue, expiredays) {
@@ -399,7 +416,7 @@ function getCookie(cookieName) {
 
 // queryString to json
 function queryStringToJson(query) {
-    var o = null;
+    var o = {};
     query.split('&')
             .forEach(function (param) {
                 var key = param.split('=')[0];
@@ -410,8 +427,18 @@ function queryStringToJson(query) {
     return o;
 }
 
-
 // Encryption
 function encrypt(key) {
     return hex_md5(hex_md5(key));
+}
+
+function encryptFormData($formData) {
+    var data = isObject($formData) ? $formData : queryStringToJson($formData);
+    if (data.password !== undefined) {
+        data.password = encrypt(data.password);
+    }
+    if (data.confirm_password !== undefined) {
+        data.confirm_password = encrypt(data.confirm_password);
+    }
+    return data;
 }

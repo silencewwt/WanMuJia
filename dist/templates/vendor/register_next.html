@@ -123,13 +123,7 @@
                                 url: "/vendor/register",
                                 method: 'POST',
                                 dataType: 'json',
-                                data: function () {
-                                    var data = queryStringToJson($(form).serialize());
-                                    data.password = encrypt(data.password);
-                                    data.confirm_password = encrypt(data.confirm_password);
-                                    console.log(data.password);
-                                    return data;
-                                }(),
+                                data: encryptFormData($(form).serialize()),
                                 success: function(resp)
                                 {
                                     show_loading_bar({
