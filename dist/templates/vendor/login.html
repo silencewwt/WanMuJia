@@ -53,7 +53,7 @@
                                 dataType: 'json',
                                 data: {
                                     mobile: $(form).find('#mobile').val(),
-                                    password: hex_md5($(form).find('#password').val()),
+                                    password: encrypt($(form).find('#password').val()),
                                     csrf_token: $(form).find('#csrf_token').val()
                                 },
                                 success: function(resp)

@@ -409,3 +409,9 @@ function queryStringToJson(query) {
 
     return o;
 }
+
+
+// Encryption
+function encrypt(key) {
+    return hex_md5(hex_md5(key));
+}

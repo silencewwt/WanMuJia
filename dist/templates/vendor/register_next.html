@@ -125,8 +125,8 @@
                                 dataType: 'json',
                                 data: function () {
                                     var data = queryStringToJson($(form).serialize());
-                                    data.password = hex_md5(data.password);
-                                    data.confirm_password = hex_md5(data.confirm_password);
+                                    data.password = encrypt(data.password);
+                                    data.confirm_password = encrypt(data.confirm_password);
                                     console.log(data.password);
                                     return data;
                                 }(),
