@@ -230,7 +230,6 @@ jQuery(document).ready(function($) {
 
     // jQuery validate
     if ($.validator) {
-        console.log($.validator);
         $.validator.addMethod('mobile', function (value, element) {
             var length = value.length;
             var mobile = /^((1[3-8][0-9])+\d{8})$/;
