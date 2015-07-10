@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width, initial-scale=1.0"><meta name=description content=万木家厂家后台><meta name=author><title>万木家厂家后台 - 登录</title><link rel=stylesheet href="http://fonts.useso.com/css?family=Arimo:400,700,400italic"><link rel=stylesheet href=/lib/xenon/css/fonts/linecons/css/linecons.css><link rel=stylesheet href=/lib/xenon/css/fonts/fontawesome/css/font-awesome.min.css><link rel=stylesheet href=/lib/xenon/css/bootstrap.css><link rel=stylesheet href=/lib/xenon/css/xenon-core.css><link rel=stylesheet href=/lib/xenon/css/xenon-forms.css><link rel=stylesheet href=/lib/xenon/css/xenon-components.css><link rel=stylesheet href=/lib/xenon/css/xenon-skins.css><link rel=stylesheet href=/css/vendor/custom.css><script src=/lib/xenon/js/jquery-1.11.1.min.js></script></head><body class="page-body login-page"><div class=login-container><div class=row><div class=col-sm-6><script type=text/javascript>
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width, initial-scale=1.0"><meta name=description content=万木家厂家后台><title>万木家厂家后台 - 登录</title><link rel=stylesheet href="http://fonts.useso.com/css?family=Arimo:400,700,400italic"><link rel=stylesheet href=/lib/xenon/css/fonts/linecons/css/linecons.css><link rel=stylesheet href=/lib/xenon/css/fonts/fontawesome/css/font-awesome.min.css><link rel=stylesheet href=/lib/xenon/css/bootstrap.css><link rel=stylesheet href=/lib/xenon/css/xenon-core.css><link rel=stylesheet href=/lib/xenon/css/xenon-forms.css><link rel=stylesheet href=/lib/xenon/css/xenon-components.css><link rel=stylesheet href=/lib/xenon/css/xenon-skins.css><link rel=stylesheet href=/css/vendor/custom.css><script src=/lib/xenon/js/jquery-1.11.1.min.js></script><script src=/js/util.js></script></head><body class="page-body login-page"><div class=login-container><div class=row><div class=col-sm-6><script type=text/javascript>
                 jQuery(document).ready(function($)
                 {
                     // Reveal Login form
@@ -8,7 +8,7 @@
                     // Validation and Ajax action
                     $("form#login").validate({
                         rules: {
-                            username: {
+                            mobile: {
                                 required: true
                             },
 
@@ -18,7 +18,7 @@
                         },
 
                         messages: {
-                            username: {
+                            mobile: {
                                 required: '请输入您的用户名(手机号)'
                             },
 
@@ -52,8 +52,9 @@
                                 method: 'POST',
                                 dataType: 'json',
                                 data: {
-                                    username: $(form).find('#username').val(),
-                                    passwd: $(form).find('#password').val()
+                                    mobile: $(form).find('#mobile').val(),
+                                    password: hex_md5($(form).find('#password').val()),
+                                    csrf_token: $(form).find('#csrf_token').val()
                                 },
                                 success: function(resp)
                                 {
@@ -93,4 +94,4 @@
                     // Set Form focus
                     $("form#login .form-group:has(.form-control):first .form-control").focus();
                 });
-            </script><div class=errors-container></div><form method=post role=form id=login class="login-form fade-in-effect">{{ form.csrf_token }}<div class=login-header><a href=/vendor/login class="logo clearfix"><img src=/img/logo.png width=150> <span>厂家登录</span></a></div><div class=form-group><label class=control-label for=username>用户名</label> <input type=text class="form-control input-dark" name=username id=username autocomplete></div><div class=form-group><label class=control-label for=password>密码</label> <input type=password class="form-control input-dark" name=password id=password autocomplete></div><div class=form-group><button type=submit class="btn btn-dark btn-block text-left"><i class=fa-lock></i> 登录</button></div></form><div class=external-login><a href=/vendor/register class=facebook>还没有入驻？点击进行厂家认证</a></div></div></div></div><script src=/lib/xenon/js/bootstrap.min.js></script><script src=/lib/xenon/js/TweenMax.min.js></script><script src=/lib/xenon/js/resizeable.js></script><script src=/lib/xenon/js/joinable.js></script><script src=/lib/xenon/js/xenon-api.js></script><script src=/lib/xenon/js/xenon-toggles.js></script><script src=/lib/xenon/js/jquery-validate/jquery.validate.min.js></script><script src=/lib/xenon/js/toastr/toastr.min.js></script><script src=/lib/xenon/js/xenon-custom.js></script></body></html>
+            </script><div class=errors-container></div><form method=post role=form id=login class="login-form fade-in-effect">{{ form.csrf_token }}<div class=login-header><a href=/vendor/login class="logo clearfix"><img src=/img/logo.png width=150> <span>厂家登录</span></a></div><div class=form-group><label class=control-label for=mobile>用户名</label> <input type=text class="form-control input-dark" name=mobile id=mobile autocomplete></div><div class=form-group><label class=control-label for=password>密码</label> <input type=password class="form-control input-dark" name=password id=password autocomplete></div><div class=form-group><button type=submit class="btn btn-dark btn-block text-left"><i class=fa-lock></i> 登录</button></div></form><div class=external-login><a href=/vendor/register class=facebook>还没有入驻？点击进行厂家认证</a></div></div></div></div><script src=/lib/xenon/js/bootstrap.min.js></script><script src=/lib/xenon/js/TweenMax.min.js></script><script src=/lib/xenon/js/resizeable.js></script><script src=/lib/xenon/js/joinable.js></script><script src=/lib/xenon/js/xenon-api.js></script><script src=/lib/xenon/js/xenon-toggles.js></script><script src=/lib/xenon/js/jquery-validate/jquery.validate.min.js></script><script src=/lib/xenon/js/toastr/toastr.min.js></script><script src=/lib/xenon/js/xenon-custom.js></script></body></html>
