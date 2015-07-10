@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/css/vendor/custom.css">
 
     <script src="/lib/xenon/js/jquery-1.11.1.min.js"></script>
+    <script src="/js/util.js"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -60,85 +61,85 @@
                     );
 
                     $("form#register").validate({
-                        rules: {
-                            email: {
-                                required: true,
-                                email: true
-                            },
-                            password: {
-                                required: true,
-                                regex: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/
-                            },
-                            confirm_password: {
-                                required: true,
-                                equalTo: '#password'
-                            },
-                            agent_name: {
-                                required: true
-                            },
-                            agent_identity: {
-                                required: true,
-                                regex: /^\d{15}(\d\d[0-9xX])?$/
-                            },
-                            agent_identity_photo_front: {
-                                required: true
-                            },
-                            agent_identity_photo_back: {
-                                required: true
-                            },
-                            name: {
-                                required: true
-                            },
-                            license_address: {
-                                required: true
-                            },
-                            limit: {
-                                required: true
-                            },
-                            address: {
-                                required: true
-                            }
-                        },
-
-                        messages: {
-                            email: {
-                                required: '请输入您的邮箱',
-                                email: '请输入合法的邮箱地址'
-                            },
-                            password: {
-                                required: '请设置密码',
-                                regex: '密码长度必须大于等于6位且为字母和数字的组合'
-                            },
-                            confirm_password: {
-                                required: '请再次输入密码',
-                                equalTo: '两次密码输入不一致'
-                            },
-                            agent_name: {
-                                required: '请输入代理人姓名'
-                            },
-                            agent_identity: {
-                                required: '请输入代理人身份证',
-                                regex: '不合法的身份证号码'
-                            },
-                            agent_identity_photo_front: {
-                                required: '请上传代理人身份证正面照片'
-                            },
-                            agent_identity_photo_back: {
-                                required: '请上传代理人身份证背面照片'
-                            },
-                            name: {
-                                required: '请填写厂家名称'
-                            },
-                            license_address: {
-                                required: '请填写营业执照所在地'
-                            },
-                            limit: {
-                                required: '请填写营业期限'
-                            },
-                            address: {
-                                required: '请填写联系地址'
-                            }
-                        },
+                        // rules: {
+                        //     email: {
+                        //         required: true,
+                        //         email: true
+                        //     },
+                        //     password: {
+                        //         required: true,
+                        //         regex: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/
+                        //     },
+                        //     confirm_password: {
+                        //         required: true,
+                        //         equalTo: '#password'
+                        //     },
+                        //     agent_name: {
+                        //         required: true
+                        //     },
+                        //     agent_identity: {
+                        //         required: true,
+                        //         regex: /^\d{15}(\d\d[0-9xX])?$/
+                        //     },
+                        //     agent_identity_photo_front: {
+                        //         required: true
+                        //     },
+                        //     agent_identity_photo_back: {
+                        //         required: true
+                        //     },
+                        //     name: {
+                        //         required: true
+                        //     },
+                        //     license_address: {
+                        //         required: true
+                        //     },
+                        //     limit: {
+                        //         required: true
+                        //     },
+                        //     address: {
+                        //         required: true
+                        //     }
+                        // },
+                        //
+                        // messages: {
+                        //     email: {
+                        //         required: '请输入您的邮箱',
+                        //         email: '请输入合法的邮箱地址'
+                        //     },
+                        //     password: {
+                        //         required: '请设置密码',
+                        //         regex: '密码长度必须大于等于6位且为字母和数字的组合'
+                        //     },
+                        //     confirm_password: {
+                        //         required: '请再次输入密码',
+                        //         equalTo: '两次密码输入不一致'
+                        //     },
+                        //     agent_name: {
+                        //         required: '请输入代理人姓名'
+                        //     },
+                        //     agent_identity: {
+                        //         required: '请输入代理人身份证',
+                        //         regex: '不合法的身份证号码'
+                        //     },
+                        //     agent_identity_photo_front: {
+                        //         required: '请上传代理人身份证正面照片'
+                        //     },
+                        //     agent_identity_photo_back: {
+                        //         required: '请上传代理人身份证背面照片'
+                        //     },
+                        //     name: {
+                        //         required: '请填写厂家名称'
+                        //     },
+                        //     license_address: {
+                        //         required: '请填写营业执照所在地'
+                        //     },
+                        //     limit: {
+                        //         required: '请填写营业期限'
+                        //     },
+                        //     address: {
+                        //         required: '请填写联系地址'
+                        //     }
+                        // },
 
                         // Form Processing via AJAX
                         submitHandler: function(form)
@@ -161,14 +162,16 @@
                             };
 
                             $.ajax({
-                                url: "vendor/register",
+                                url: "/vendor/register",
                                 method: 'POST',
                                 dataType: 'json',
-                                data: {
-                                    do_login: true,
-                                    mobile: $(form).find('#contact_mobile').val(),
-                                    captcha: $(form).find('#captcha').val()
-                                },
+                                data: function () {
+                                    var data = queryStringToJson($(form).serialize());
+                                    data.password = hex_md5(data.password);
+                                    data.confirm_password = hex_md5(data.confirm_password);
+                                    console.log(data.password);
+                                    return data;
+                                }(),
                                 success: function(resp)
                                 {
                                     show_loading_bar({
@@ -216,7 +219,7 @@
             </div>
 
             <!-- Add class "fade-in-effect" for login form effect -->
-            <form method="post" role="form" id="register" class="register-next-form fade-in-effect">
+            <form method="post" role="form" id="register" class="register-next-form fade-in-ffect">
                 {{ form.csrf_token }}
                 <div class="login-header">
                     <a href="/vendor/login" class="logo">

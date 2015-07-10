@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/css/vendor/custom.css">
 
     <script src="/lib/xenon/js/jquery-1.11.1.min.js"></script>
+    <script src="/js/util.js"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -49,7 +50,7 @@
                     // Validation and Ajax action
                     $("form#login").validate({
                         rules: {
-                            username: {
+                            mobile: {
                                 required: true
                             },
 
@@ -59,7 +60,7 @@
                         },
 
                         messages: {
-                            username: {
+                            mobile: {
                                 required: '请输入您的用户名(手机号)'
                             },
 
@@ -93,8 +94,9 @@
                                 method: 'POST',
                                 dataType: 'json',
                                 data: {
-                                    username: $(form).find('#username').val(),
-                                    passwd: $(form).find('#password').val()
+                                    mobile: $(form).find('#mobile').val(),
+                                    password: hex_md5($(form).find('#password').val()),
+                                    csrf_token: $(form).find('#csrf_token').val()
                                 },
                                 success: function(resp)
                                 {
@@ -154,8 +156,8 @@
 
 
                 <div class="form-group">
-                    <label class="control-label" for="username">用户名</label>
-                    <input type="text" class="form-control input-dark" name="username" id="username" autocomplete="off" />
+                    <label class="control-label" for="mobile">用户名</label>
+                    <input type="text" class="form-control input-dark" name="mobile" id="mobile" autocomplete="off" />
                 </div>
 
                 <div class="form-group">
