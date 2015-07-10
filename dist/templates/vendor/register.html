@@ -8,7 +8,7 @@
                     // Validation and Ajax action
                     $("form#register").validate({
                         rules: {
-                            contact_mobile: {
+                            mobile: {
                                 required: true
                             },
 
@@ -18,7 +18,7 @@
                         },
 
                         messages: {
-                            contact_mobile: {
+                            mobile: {
                                 required: '请输入您的手机号'
                             },
 
@@ -90,4 +90,4 @@
                     // Set Form focus
                     $("form#register .form-group:has(.form-control):first .form-control").focus();
                 });
-            </script><div class=errors-container></div><form method=post role=form id=register class="login-form fade-in-effect">{{ form.csrf_token }}<div class=login-header><a href=/vendor/login class=logo><img src=/img/logo.png width=150> <span>厂家入驻</span></a></div><div class=form-group><label class=control-label for=contact_mobile>手机号码</label> <input type=text class="form-control input-dark" name=contact_mobile id=contact_mobile autocomplete></div><div class=form-group><label class=control-label for=captcha>验证码</label> <input type=text class="form-control input-dark" name=captcha id=captcha autocomplete></div><div class=form-group><button type=submit class="btn btn-dark btn-block text-left"><i class="fa fa-mail-forward"></i> 下一步</button></div></form><div class=external-login><a href=javascript:void(0); class="twitter send">点击发送手机验证码</a></div><div class=external-login><a href=/vendor/login class=facebook>已经入驻？点击进行登录</a></div></div></div></div><script src=/lib/xenon/js/bootstrap.min.js></script><script src=/lib/xenon/js/TweenMax.min.js></script><script src=/lib/xenon/js/resizeable.js></script><script src=/lib/xenon/js/joinable.js></script><script src=/lib/xenon/js/xenon-api.js></script><script src=/lib/xenon/js/xenon-toggles.js></script><script src=/lib/xenon/js/jquery-validate/jquery.validate.min.js></script><script src=/lib/xenon/js/toastr/toastr.min.js></script><script src=/lib/xenon/js/xenon-custom.js></script><script src=/js/vendor/custom.js></script></body></html>
+            </script><div class=errors-container></div><form method=post role=form id=register class="login-form fade-in-effect">{{ form.csrf_token }}<div class=login-header><a href=/vendor/login class=logo><img src=/img/logo.png width=150> <span>厂家入驻</span></a></div><div class=form-group><label class=control-label for=mobile>手机号码</label> <input type=text class="form-control input-dark" name=mobile id=mobile autocomplete></div><div class=form-group><label class=control-label for=captcha>验证码</label> <input type=text class="form-control input-dark" name=captcha id=captcha autocomplete></div><div class=form-group><button type=submit class="btn btn-dark btn-block text-left"><i class="fa fa-mail-forward"></i> 下一步</button></div></form><div class=external-login><a href=javascript:void(0); class="twitter send">点击发送手机验证码</a></div><div class=external-login><a href=/vendor/login class=facebook>已经入驻？点击进行登录</a></div></div></div></div><script src=/lib/xenon/js/bootstrap.min.js></script><script src=/lib/xenon/js/TweenMax.min.js></script><script src=/lib/xenon/js/resizeable.js></script><script src=/lib/xenon/js/joinable.js></script><script src=/lib/xenon/js/xenon-api.js></script><script src=/lib/xenon/js/xenon-toggles.js></script><script src=/lib/xenon/js/jquery-validate/jquery.validate.min.js></script><script src=/lib/xenon/js/toastr/toastr.min.js></script><script src=/lib/xenon/js/xenon-custom.js></script><script src=/js/vendor/custom.js></script></body></html>
