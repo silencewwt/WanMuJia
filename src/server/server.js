@@ -261,6 +261,9 @@ app.get('/privilege/login', function (req, res) {
 app.get('/privilege/items', function (req, res) {
     res.render('admin/items');
 });
+app.get('/privilege/items/:id', function (req, res) {
+    res.render('admin/item_detail');
+});
 
 app.get('/privilege/distributors', function (req, res) {
     res.render('admin/distributors');
