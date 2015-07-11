@@ -2,8 +2,8 @@
 from functools import wraps
 
 from flask import current_app, flash, render_template, redirect, request, session, url_for, jsonify
-from flask_security import login_user, logout_user, login_required, current_user
-from flask_security.utils import identity_changed, Identity
+from flask.ext.login import login_user, logout_user, login_required, current_user
+from flask.ext.principal import identity_changed, Identity
 
 from app import db
 from app.core import login as model_login, reset_password as model_reset_password
@@ -40,10 +40,13 @@ def vendor_not_confirmed(f):
 def login():
     form = LoginForm()
     if request.method == 'POST':
-        if form.validate() and model_login(Vendor, form):
+        vendor = Vendor.query.filter_by(mobile=form.mobile.data).first() or \
+            Vendor.query.filter_by(email=form.mobile.data).first()
+        if form.validate() and vendor.verify_password(form.password.data):
+            login_user(vendor)
+            identity_changed.send(current_app._get_current_object(), identity=Identity(vendor.get_id()))
             return jsonify({ACCESS_GRANTED: True})
-        flash(u'用户名或密码错误!')
-        return jsonify({ACCESS_GRANTED: True})
+        return jsonify({ACCESS_GRANTED: False})
     return render_template('vendor/login.html', form=form)
 
 
@@ -85,7 +88,7 @@ def reset_password():
 @vendor_blueprint.route('/')
 @vendor_permission.require()
 def index():
-    return render_template('vendor/index.html')
+    return render_template('vendor/index.html', vendor=current_user)
 
 
 @vendor_blueprint.route('/items')

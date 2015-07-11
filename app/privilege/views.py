@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import request, render_template, current_app, flash, redirect, url_for
-from flask_security import login_user, current_user
-from flask_security.utils import identity_changed, Identity
+from flask.ext.login import login_user, current_user
+from flask.ext.principal import identity_changed, Identity
 
 from app.models import Vendor, Privilege, DistributorRevocation
 from app.permission import privilege_permission

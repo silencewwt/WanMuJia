@@ -4,7 +4,7 @@ import random
 
 from flask import current_app
 from flask.ext.login import UserMixin
-from flask_security.utils import encrypt_password, verify_password
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
 from app.utils import PY3
@@ -15,7 +15,7 @@ class BaseUser(UserMixin):
     # id
     id = db.Column(db.Integer, primary_key=True)
     # 哈希后的密码
-    password_hash = db.Column('password', db.String(120), nullable=False)
+    password_hash = db.Column('password', db.String(128), nullable=False)
     # 手机号码
     mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
     # 邮箱
@@ -36,16 +36,13 @@ class BaseUser(UserMixin):
 
     @password.setter
     def password(self, password):
-        self.password_hash = encrypt_password(password)
+        self.password_hash = generate_password_hash(password)
 
     def verify_password(self, password):
-        return verify_password(password, self.password_hash)
+        return check_password_hash(self.password_hash, password)
 
     def get_id(self):
-        if PY3:
-            return self.id_prefix + self.id
-        else:
-            return self.id_prefix + unicode(self.id)
+        return u'%s%s' % (self.id_prefix, self.id)
 
 
 class User(BaseUser, db.Model):
@@ -162,6 +159,18 @@ class Vendor(BaseUser, db.Model):
     @property
     def address(self):
         return VendorAddress.query.filter_by(vendor_id=self.id).limit(1).first()
+
+    @staticmethod
+    def generate_fake():
+        from faker.factory import Factory
+        fake = Factory.create('zh-CN')
+        for i in range(100):
+            vendor = Vendor(
+                "14e1b600b1fd579f47433b88e8d85291", fake.phone_number(), fake.email(), fake.name(),
+                fake.random_number(18), fake.name(), fake.city(), fake.random_number(2), False, fake.phone_number(),
+                fake.phone_number())
+            db.session.add(vendor)
+        db.session.commit()
 
 
 class Distributor(BaseUser, db.Model):
@@ -611,11 +620,11 @@ class ItemTenon(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     id_ = int(user_id[1:])
-    if user_id.starswith(privilege_id_prefix):
+    if user_id.startswith(privilege_id_prefix):
         return Privilege.query.get(id_)
-    elif user_id.starswith(vendor_id_prefix):
+    elif user_id.startswith(vendor_id_prefix):
         return Vendor.query.get(id_)
-    elif user_id.starswith(distributor_id_prefix):
+    elif user_id.startswith(distributor_id_prefix):
         return Distributor.query.get(id_)
     return User.query.get(id_)
 
@@ -632,3 +641,4 @@ def generate_fake_data():
     Paint.generate_fake()
     Decoration.generate_fake()
     Tenon.generate_fake()
+    Vendor.generate_fake()

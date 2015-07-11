@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, request, render_template, redirect, flash, session
-from flask_security import login_user, logout_user, login_required
-from flask_security.utils import identity_changed, Identity
+from flask.ext.login import login_user, logout_user, login_required
+from flask.ext.principal import identity_changed, Identity
 
 from app import db
 from app.models import User, Vendor, Distributor
@@ -27,7 +27,7 @@ def login(model, form):
     if instance and instance.verify_password(form.password.data):
         login_user(instance)
         identity_changed.send(current_app._get_current_object(), Identity(instance.get_id()))
-        return True
+        return instance
     return False
 
 

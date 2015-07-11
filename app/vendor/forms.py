@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_security import current_user
+from flask.ext.login import current_user
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, BooleanField, IntegerField, SelectField, SelectMultipleField, \
     TextAreaField

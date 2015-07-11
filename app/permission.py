@@ -22,12 +22,13 @@ privilege_permission = Permission(_privilege_role)
 def identity_config(app):
     @identity_loaded.connect_via(app)
     def on_identity_loaded(sender, identity):
-        if identity.id:
-            if identity.id.startswith(user_id_prefix):
+        identity_id = str(identity.id)
+        if identity_id:
+            if identity_id.startswith(user_id_prefix):
                 identity.provides.add(_user_role)
-            elif identity.id.startswith(vendor_id_prefix):
+            elif identity_id.startswith(vendor_id_prefix):
                 identity.provides.add(_vendor_role)
-            elif identity.id.startswith(distributor_id_prefix):
+            elif identity_id.startswith(distributor_id_prefix):
                 identity.provides.add(_distributor_role)
-            elif identity.id.startswith(privilege_id_prefix):
+            elif identity_id.startswith(privilege_id_prefix):
                 identity.provides.add(_privilege_role)

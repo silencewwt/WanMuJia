@@ -2,8 +2,8 @@
 import re
 
 from flask import current_app, render_template, request, redirect, session, url_for
-from flask_security import login_user, logout_user, current_user
-from flask_security.utils import identity_changed, Identity
+from flask.ext.login import login_user, logout_user, current_user
+from flask.ext.principal import identity_changed, Identity
 
 from app import db
 from app.core import login as model_login

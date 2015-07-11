@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, request, render_template, redirect, flash, session, url_for
-from flask_security import login_user, logout_user, login_required, current_user
-from flask_security.utils import identity_changed, Identity
+from flask.ext.login import login_user, logout_user, login_required, current_user
+from flask.ext.principal import identity_changed, Identity
 
 from . import user as user_blueprint
 from . forms import *
