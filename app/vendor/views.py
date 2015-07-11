@@ -2,8 +2,8 @@
 from functools import wraps
 
 from flask import current_app, flash, render_template, redirect, request, session, url_for, jsonify
-from flask.ext.login import login_user, logout_user, login_required, current_user
-from flask.ext.principal import identity_changed, Identity
+from flask.ext.login import login_user, logout_user, current_user
+from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 
 from app import db
 from app.core import login as model_login, reset_password as model_reset_password
@@ -48,6 +48,14 @@ def login():
             return jsonify({ACCESS_GRANTED: True})
         return jsonify({ACCESS_GRANTED: False})
     return render_template('vendor/login.html', form=form)
+
+
+@vendor_blueprint.route('/logout')
+@vendor_permission.require()
+def logout():
+    logout_user()
+    identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
+    return redirect(url_for('.login'))
 
 
 @vendor_blueprint.route('/register', methods=['GET', 'POST'])
