@@ -1,13 +1,13 @@
 """empty message
 
-Revision ID: cc4e912006
+Revision ID: 50a189b2b17
 Revises: None
-Create Date: 2015-06-11 15:07:34.964410
+Create Date: 2015-07-12 00:10:33.995228
 
 """
 
 # revision identifiers, used by Alembic.
-revision = 'cc4e912006'
+revision = '50a189b2b17'
 down_revision = None
 
 from alembic import op
@@ -53,9 +53,18 @@ def upgrade():
     sa.Column('created', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('distributor_revocations',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('created', sa.Integer(), nullable=False),
+    sa.Column('distributor_id', sa.Integer(), nullable=False),
+    sa.Column('image', sa.String(length=255), nullable=False),
+    sa.Column('pending', sa.Boolean(), nullable=False),
+    sa.Column('is_revoked', sa.Boolean(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('distributors',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('password', sa.String(length=120), nullable=False),
+    sa.Column('password', sa.String(length=128), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('username', sa.Unicode(length=20), nullable=False),
     sa.Column('vendor_id', sa.Integer(), nullable=False),
@@ -158,13 +167,12 @@ def upgrade():
     )
     op.create_table('privileges',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('password', sa.String(length=120), nullable=False),
+    sa.Column('password', sa.String(length=128), nullable=False),
     sa.Column('mobile', sa.CHAR(length=11), nullable=False),
     sa.Column('email', sa.String(length=64), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=12), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
     sa.UniqueConstraint('mobile'),
     sa.UniqueConstraint('username')
     )
@@ -214,13 +222,12 @@ def upgrade():
     )
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('password', sa.String(length=120), nullable=False),
+    sa.Column('password', sa.String(length=128), nullable=False),
     sa.Column('mobile', sa.CHAR(length=11), nullable=False),
     sa.Column('email', sa.String(length=64), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('username', sa.Unicode(length=20), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
     sa.UniqueConstraint('mobile'),
     sa.UniqueConstraint('username')
     )
@@ -234,7 +241,7 @@ def upgrade():
     )
     op.create_table('vendors',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('password', sa.String(length=120), nullable=False),
+    sa.Column('password', sa.String(length=128), nullable=False),
     sa.Column('mobile', sa.CHAR(length=11), nullable=False),
     sa.Column('email', sa.String(length=64), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
@@ -249,12 +256,13 @@ def upgrade():
     sa.Column('license_limit', sa.Integer(), nullable=False),
     sa.Column('license_long_time_limit', sa.Boolean(), nullable=False),
     sa.Column('license_image', sa.String(length=255), nullable=False),
-    sa.Column('address_id', sa.Integer(), nullable=False),
     sa.Column('contact_mobile', sa.CHAR(length=11), nullable=False),
     sa.Column('contact_telephone', sa.CHAR(length=15), nullable=False),
     sa.Column('confirmed', sa.Boolean(), nullable=False),
+    sa.Column('confirmed_time', sa.Integer(), nullable=False),
+    sa.Column('reject_message', sa.Unicode(length=100), nullable=False),
+    sa.Column('rejected', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
     sa.UniqueConstraint('mobile'),
     sa.UniqueConstraint('name')
     )
@@ -285,6 +293,7 @@ def downgrade():
     op.drop_table('first_categories')
     op.drop_table('districts')
     op.drop_table('distributors')
+    op.drop_table('distributor_revocations')
     op.drop_table('distributor_addresses')
     op.drop_table('decorations')
     op.drop_table('collections')
