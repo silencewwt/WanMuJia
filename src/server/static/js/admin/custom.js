@@ -4,17 +4,19 @@ jQuery(document).ready(function($) {
 
     // =========== page init ==================
 
-    // Item Edit page
-    if (getPageTitle() === 'item-edit') {
+    // Item Detail page
+    if (getPageTitle() === 'item-detail') {
         var $form = $('#edit-item-form');
         var originFormValue = $form.serialize();
+
+        // Set form disabled
+        setFormDisabled($form);
 
         // Edit-form
         $form.delegate('.form-control', 'keydown', function () {
             $('#save').next().hide();
         });
         $form.find('select').click(function () {
-            console.log('clicked');
             $('#save').next().hide();
         });
 
@@ -100,30 +102,6 @@ jQuery(document).ready(function($) {
     }
 
 
-    // Item New page
-    if (getPageTitle() === 'item-new') {
-        var $newItemForm = $('#new-item-form');
-        var nextHandler = function () {
-            saveInfos({
-                url: '/vendor/items/new_item',
-                method: 'post',
-                form: $('#new-item-form'),
-                success: function () {
-                    $newItemForm.bootstrapWizard('next');
-                }
-            });
-        };
-
-        $('.wizard .next')
-            .off('click')
-            .click(nextHandler);
-
-        $('[href="#fwv-2"]')
-            .off('click')
-            .click(nextHandler);
-    }
-
-
     // Distributors page
     if (getPageTitle() === 'distributors') {
         $('#distributors').delegate('[data-target="#revocation-modal"]', 'click', function () {
@@ -136,23 +114,6 @@ jQuery(document).ready(function($) {
             actions[3] = id;    // url: /vendor/distributors/{id}/revocation
 
             $contractForm.attr('action', actions.join('/'));
-        });
-    }
-
-
-    // Invitation page
-    if (getPageTitle() === 'dist-invitation') {
-        $('#get-key').click(function () {
-            $.ajax({
-                url: '/vendor/distributors/invitation',
-                method: 'post',
-                success: function (data) {
-                    $('.invite-key').text(data);
-                },
-                error: function () {
-
-                }
-            });
         });
     }
 
@@ -190,40 +151,6 @@ jQuery(document).ready(function($) {
         });
     }
 
-
-    // Register page
-    if ($('body').data('page') == 'register') {
-        // 发送按钮倒计时
-        var $send = $('.send');
-        var DELAYTIME = 60000;  // 1min
-        var originValue = $send.val() || $send.text();
-
-        // 页面加载完成时获取发送按钮情况
-        if (getCookie('clickTime')) {
-            console.log(getCookie('clickTime'));
-            console.log('get click time');
-            sendDisable($send, Date.now(), DELAYTIME);
-            setCountDown($send, originValue, DELAYTIME);
-        }
-
-        $send.click(function () {
-            var $this = $(this);
-
-            if ($this.hasClass('disabled')) return;
-
-            setCookie('clickTime', Date.now());
-            // 发送请求
-            $.ajax({
-                url: '/send_sms',
-                method: 'post',
-                data: {
-                    mobile: $('#contact_moblie').val()
-                }
-            });
-
-            setCountDown($this, originValue, DELAYTIME);
-        });
-    }
 
 
     // =============== plugins config ===============
@@ -404,4 +331,8 @@ function setCountDown($send, originValue, DELAYTIME) {
             sendDisable($send, Date.now(), DELAYTIME);
         }
     }, 200);
+}
+
+function setFormDisabled($form) {
+    $form.find('.form-control').attr('disabled', true);
 }

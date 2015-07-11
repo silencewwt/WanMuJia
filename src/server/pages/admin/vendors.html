@@ -43,7 +43,7 @@
     <!-- Basic Setup -->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">已入驻商家列表</h3>
+            <h3 class="panel-title">已入驻厂家列表</h3>
 
             <div class="panel-options">
             </div>
@@ -83,13 +83,13 @@
                         },
                         processing: true,
                         serverSide: true,
-                        ajax: "/privilege/items/datatable",
+                        ajax: "/privilege/vendors/datatable",
                         columns: [
                             {data: "id", bSortable: false, visible: false},
-                            {data: "item", bSortable: false},
-                            {data: "second_category_id", bSortable: false},
-                            {data: "price"},
-                            {data: "size", bSortable: false}
+                            {data: "name", bSortable: false},
+                            {data: "address", bSortable: false},
+                            {data: "contact_mobile"},
+                            {data: "contact", bSortable: false}
                         ],
                         columnDefs: [{
                             targets: [5],
@@ -107,9 +107,9 @@
                 <tr>
                     <th>id</th>
                     <th>名称</th>
-                    <th>木材二级分类</th>
-                    <th>指导价格</th>
-                    <th>商品尺寸</th>
+                    <th>营业执照所在地</th>
+                    <th>营业期限</th>
+                    <th>联系方式</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -118,9 +118,9 @@
                 <tr>
                     <th>id</th>
                     <th>名称</th>
-                    <th>木材二级分类</th>
-                    <th>指导价格</th>
-                    <th>商品尺寸</th>
+                    <th>营业执照所在地</th>
+                    <th>营业期限</th>
+                    <th>联系方式</th>
                     <th>操作</th>
                 </tr>
                 </tfoot>

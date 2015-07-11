@@ -273,6 +273,36 @@ app.get('/privilege/vendors', function (req, res) {
     res.render('admin/vendors');
 });
 
+app.get('/privilege/vendors/datatable', function (req, res) {
+    res.send({
+        "draw": 2,
+        "recordsTotal": 3,
+        "recordsFiltered": 3,
+        "data": [
+            {
+                "id": 1,
+                "name": "Troy",
+                "address": "Young",
+                "contact_mobile": "110",
+                "contact": "PR",
+            },
+            {
+                "id": 2,
+                "name": "Troy",
+                "address": "Young",
+                "contact_mobile": "110",
+                "contact": "PR",
+            },
+            {
+                "id": 3,
+                "name": "Troy",
+                "address": "Young",
+                "contact_mobile": "110",
+                "contact": "PR",
+            }
+        ]
+    });
+});
 
 // 404
 app.use(function(req, res){
