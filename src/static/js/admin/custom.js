@@ -4,6 +4,28 @@ jQuery(document).ready(function($) {
 
     // =========== page init ==================
 
+    // Items page
+    if (getPageTitle() === 'items') {
+        initDatatable($('#items'), {
+            ajax: "/privilege/items/datatable",
+            columns: [
+                {data: "id", bSortable: false, visible: false},
+                {data: "item", bSortable: false},
+                {data: "second_category_id", bSortable: false},
+                {data: "price"},
+                {data: "size", bSortable: false}
+            ],
+            columnDefs: [{
+                targets: [5],
+                data: "id",
+                render: function (id) {
+                    return "<a href='/privilege/items/" + id + "'>详情</a>";
+                }
+            }]
+        });
+    }
+
+
     // Item Detail page
     if (getPageTitle() === 'item-detail') {
         var $form = $('#edit-item-form');
@@ -115,11 +137,55 @@ jQuery(document).ready(function($) {
 
             $contractForm.attr('action', actions.join('/'));
         });
+
+        initDatatable($('#distributors'), {
+            ajax: "/privilege/distributors/datatable",
+            columns: [
+                {data: "id", bSortable: false, visible: false},
+                {data: "name", bSortable: false},
+                {data: "address", bSortable: false},
+                {data: "contact_mobile", bSortable: false},
+                {data: "contact", bSortable: false},
+                {data: "created", bSortable: false}
+            ],
+            columnDefs: [{
+                targets: [6],
+                data: "id",
+                render: function (id) {
+                    return "<a data-toggle='modal' data-target='#revocation-modal' data-dist-id='" + id + "'" + " href='#'>取消授权</a>";
+                }
+            }]
+        });
     }
 
 
-    // Settings page
-    if (getPageTitle() === 'settings') {
+    // Vendors page
+    if (getPageTitle() === 'vendors') {
+        initDatatable($('#vendors'), {
+            ajax: "/privilege/vendors/datatable",
+            columns: [
+                {data: "id", bSortable: false, visible: false},
+                {data: "name", bSortable: false},
+                {data: "license_address", bSortable: false},
+                {data: "limit", bSortable: false},
+                {data: "mobile", bSortable: false}
+            ],
+            columnDefs: [{
+                targets: [5],
+                data: "id",
+                render: function (id) {
+                    return "<a href='/privilege/vendors/" + id + "'>详情</a>";
+                }
+            }]
+        });
+    }
+
+
+    // Vendor detail page
+    if (getPageTitle() === 'vendor-detail') {
+        // Set form disabled
+        setFormDisabled($('#vendor-detail-form'));
+
         $('#logo').on('change', function () {
             var $this = $(this);
             var files = !!this.files ? this.files : [];
@@ -137,20 +203,49 @@ jQuery(document).ready(function($) {
             }
         });
 
-        $('#contact_mobile').rules('add', {
-            mobile: true,
-            messages: {
-                mobile: '请填写合法的手机号码'
-            }
-        });
-        $('#contact_telephone').rules('add', {
-            tel: true,
-            messages: {
-                tel: '请填写合法的固定电话号码'
-            }
-        });
     }
 
+
+    // Vendor confirm page
+    if (getPageTitle() === 'vendor-confirm') {
+        initDatatable($('#vendors'), {
+            ajax: "/privilege/vendor_confirm/datatable",
+            columns: [
+                {data: "id", bSortable: false, visible: false},
+                {data: "name", bSortable: false},
+                {data: "license_address", bSortable: false},
+                {data: "limit", bSortable: false},
+                {data: "mobile", bSortable: false},
+                {data: "state"}
+            ],
+            columnDefs: [{
+                targets: [6],
+                data: "id",
+                render: function (id) {
+                    return '<a href="javascript:void(0);" data-id="' + id + '" data-toggle="modal" data-target="#confirm-modal">详情/操作</a>';
+                }
+            }]
+        });
+
+        initDatatable($('#distributors'), {
+            ajax: "/privilege/distributors/revocation/datatable",
+            columns: [
+                {data: "id", bSortable: false, visible: false},
+                {data: "name", bSortable: false},
+                {data: "address", bSortable: false},
+                {data: "contact_mobile", bSortable: false},
+                {data: "contact", bSortable: false},
+                {data: "state"}
+            ],
+            columnDefs: [{
+                targets: [6],
+                data: "id",
+                render: function (id) {
+                    return '<a href="javascript:void(0);" data-id="' + id + '" data-toggle="modal" data-target="#revocation-modal">详情/操作</a>';
+                }
+            }]
+        });
+    }
 
 
     // =============== plugins config ===============
@@ -209,6 +304,44 @@ jQuery(document).ready(function($) {
         });
     }
 
+
+    // Datatable
+    function initDatatable($el, opt) {
+        $el.dataTable({
+            aLengthMenu: [
+                [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]
+            ],
+            language: {
+                "sProcessing":   "处理中...",
+                "sLengthMenu":   "显示 _MENU_ 项结果",
+                "sZeroRecords":  "没有匹配结果",
+                "sInfo":         "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                "sInfoEmpty":    "显示第 0 至 0 项结果，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                "sInfoPostFix":  "",
+                "sSearch":       "搜索:",
+                "sUrl":          "",
+                "sEmptyTable":     "表中数据为空",
+                "sLoadingRecords": "载入中...",
+                "sInfoThousands":  ",",
+                "oPaginate": {
+                    "sFirst":    "首页",
+                    "sPrevious": "上页",
+                    "sNext":     "下页",
+                    "sLast":     "末页"
+                },
+                "oAria": {
+                    "sSortAscending":  ": 以升序排列此列",
+                    "sSortDescending": ": 以降序排列此列"
+                }
+            },
+            processing: true,
+            serverSide: true,
+            ajax: opt.ajax,
+            columns: opt.columns,
+            columnDefs: opt.columnDefs
+        });
+    }
 
 });
 

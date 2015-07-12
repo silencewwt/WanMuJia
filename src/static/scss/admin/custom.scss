@@ -105,7 +105,7 @@ form .form-group.required > label::before {
 /*Settings*/
 .logo-preview img {
     margin-top: 8px;
-    height: 100px;
+    height: 150px;
 }
 
 /*Login & Register*/
@@ -165,4 +165,16 @@ body.register-page .login-header {
 }
 .register-next-form [type="submit"]:hover {
     background-color: rgba(55, 57, 58, 0.3);
+}
+
+
+// confirm page
+.confirm-info {
+    dt {
+        font-size: 1.5em;
+    }
+    dd {
+        margin-bottom: 20px;
+        font-size: 1.2em;
+    }
 }

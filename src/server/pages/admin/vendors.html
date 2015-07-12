@@ -6,14 +6,14 @@
 {% endblock %}
 
 
-{% block isVendors %} opened active {% endblock %}
-{% block isVendors_li %} active {% endblock %}
-{% block s_isVendors %} opened active {% endblock %}
-{% block s_isVendors_li %} active {% endblock %}
+{% block isVendor %} opened active {% endblock %}
+{% block isVendor_li %} active {% endblock %}
+{% block s_isVendor %} opened active {% endblock %}
+{% block s_isVendor_li %} active {% endblock %}
 
 
 {% block main_content %}
-    <div class="page-title">
+    <div class="page-title" data-page="vendors">
 
         <div class="title-env">
             <h1 class="title">厂家列表</h1>
@@ -50,59 +50,7 @@
         </div>
         <div class="panel-body">
 
-            <script type="text/javascript">
-                jQuery(document).ready(function($)
-                {
-                    $("#items").dataTable({
-                        aLengthMenu: [
-                            [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]
-                        ],
-                        language: {
-                            "sProcessing":   "处理中...",
-                            "sLengthMenu":   "显示 _MENU_ 项结果",
-                            "sZeroRecords":  "没有匹配结果",
-                            "sInfo":         "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
-                            "sInfoEmpty":    "显示第 0 至 0 项结果，共 0 项",
-                            "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
-                            "sInfoPostFix":  "",
-                            "sSearch":       "搜索:",
-                            "sUrl":          "",
-                            "sEmptyTable":     "表中数据为空",
-                            "sLoadingRecords": "载入中...",
-                            "sInfoThousands":  ",",
-                            "oPaginate": {
-                                "sFirst":    "首页",
-                                "sPrevious": "上页",
-                                "sNext":     "下页",
-                                "sLast":     "末页"
-                            },
-                            "oAria": {
-                                "sSortAscending":  ": 以升序排列此列",
-                                "sSortDescending": ": 以降序排列此列"
-                            }
-                        },
-                        processing: true,
-                        serverSide: true,
-                        ajax: "/privilege/vendors/datatable",
-                        columns: [
-                            {data: "id", bSortable: false, visible: false},
-                            {data: "name", bSortable: false},
-                            {data: "address", bSortable: false},
-                            {data: "contact_mobile"},
-                            {data: "contact", bSortable: false}
-                        ],
-                        columnDefs: [{
-                            targets: [5],
-                            data: "id",
-                            render: function (data) {
-                                return "<a href='/privilege/items/" + data + "'>详情</a>"
-                            }
-                        }]
-                    });
-                });
-            </script>
-
-            <table id="items" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <table id="vendors" class="table table-striped table-bordered" cellspacing="0" width="100%">
                 <thead>
                 <tr>
                     <th>id</th>

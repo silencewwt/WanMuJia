@@ -282,9 +282,83 @@ app.get('/privilege/vendors/datatable', function (req, res) {
             {
                 "id": 1,
                 "name": "Troy",
+                "license_address": "Young",
+                "limit": "110",
+                "mobile": "PR",
+            },
+            {
+                "id": 2,
+                "name": "Troy",
+                "license_address": "Young",
+                "limit": "110",
+                "mobile": "PR",
+            },
+            {
+                "id": 3,
+                "name": "Troy",
+                "license_address": "Young",
+                "limit": "110",
+                "mobile": "PR",
+            }
+        ]
+    });
+});
+
+app.get('/privilege/vendors/:id', function (req, res) {
+    res.render('admin/vendor_detail');
+});
+
+app.get('/privilege/vendor_confirm', function (req, res) {
+    res.render('admin/confirm');
+});
+
+app.get('/privilege/vendor_confirm/datatable', function (req, res) {
+    res.send({
+        "draw": 2,
+        "recordsTotal": 3,
+        "recordsFiltered": 3,
+        "data": [
+            {
+                "id": 1,
+                "name": "Troy",
+                "license_address": "Young",
+                "limit": "110",
+                "mobile": "PR",
+                "state": "未审核"
+            },
+            {
+                "id": 2,
+                "name": "Troy",
+                "license_address": "Young",
+                "limit": "110",
+                "mobile": "PR",
+                "state": "未审核"
+            },
+            {
+                "id": 3,
+                "name": "Troy",
+                "license_address": "Young",
+                "limit": "110",
+                "mobile": "PR",
+                "state": "未审核"
+            }
+        ]
+    });
+});
+
+app.get('/privilege/distributors/revocation/datatable', function (req, res) {
+    res.send({
+        "draw": 2,
+        "recordsTotal": 3,
+        "recordsFiltered": 3,
+        "data": [
+            {
+                "id": 1,
+                "name": "Troy",
                 "address": "Young",
                 "contact_mobile": "110",
                 "contact": "PR",
+                "state": "未审核"
             },
             {
                 "id": 2,
@@ -292,6 +366,7 @@ app.get('/privilege/vendors/datatable', function (req, res) {
                 "address": "Young",
                 "contact_mobile": "110",
                 "contact": "PR",
+                "state": "未审核"
             },
             {
                 "id": 3,
@@ -299,10 +374,12 @@ app.get('/privilege/vendors/datatable', function (req, res) {
                 "address": "Young",
                 "contact_mobile": "110",
                 "contact": "PR",
+                "state": "未审核"
             }
         ]
     });
 });
+
 
 // 404
 app.use(function(req, res){
