@@ -108,7 +108,7 @@ def item_list():
     valid_per_page = [10, 25, 50, 100]
     per_page = per_page if per_page in valid_per_page else valid_per_page[0]
     items = Item.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
-    return render_template('vendor/items.html', items=items)
+    return render_template('vendor/items.html', items=items, vendor=current_user)
 
 
 @vendor_blueprint.route('/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -123,7 +123,7 @@ def item_detail(item_id):
     if request.method == 'GET':
         form.show_item(item)
         distributors = item.in_stock_distributors()
-        return render_template('vendor/items.html', form=form, distributors=distributors)
+        return render_template('vendor/items.html', form=form, distributors=distributors, vendor=current_user)
     elif request.method == 'PUT':
         if form.validate():
             form.update_item(item)
@@ -145,7 +145,7 @@ def new_item():
         item = form.add_item(current_user.id)
         return redirect(url_for('.item_detail', item_id=item.id))
     form.generate_choices()
-    return render_template('vendor/new_item.html')
+    return render_template('vendor/new_item.html', vendor=current_user)
 
 
 @vendor_blueprint.route('/items/image', methods=['POST', 'DELETE'])
@@ -184,7 +184,7 @@ def distributor_list():
     per_page = request.args.get('per_page', 100, type=int)
     # TODO: per_page limit
     distributors = Distributor.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
-    return render_template('vendor/distributors.html', distributors=distributors)
+    return render_template('vendor/distributors.html', distributors=distributors, vendor=current_user)
 
 
 @vendor_blueprint.route('/distributors/<int:distributor_id>')
@@ -194,7 +194,7 @@ def distributor_detail(distributor_id):
     distributor = Distributor.query.get_or_404(distributor_id)
     if distributor.vendor_id != current_user.id:
         return 'forbidden', 403
-    return render_template('vendor/distributor_detail.html', distributor=distributor)
+    return render_template('vendor/distributor_detail.html', distributor=distributor, vendor=current_user)
 
 
 @vendor_blueprint.route('/distributors/invitation', methods=['GET', 'POST'])
@@ -205,7 +205,7 @@ def invite_distributor():
         token = md5_with_time_salt(current_user.id)
         redis_set(DISTRIBUTOR_REGISTER, token, current_user.id)
         return 'http://%s/distributor/verify?token=%s' % ('www.wanmujia.com', token)   # TODO: host
-    return render_template('vendor/invitation.html')
+    return render_template('vendor/invitation.html', vendor=current_user)
 
 
 @vendor_blueprint.route('/distributors/<int:distributor_id>/revocation', methods=['POST'])
@@ -231,7 +231,7 @@ def settings():
             form.update_vendor_setting(current_user)
     else:
         form.show_vendor_setting(current_user)
-    return render_template('vendor/settings.html', form=form)
+    return render_template('vendor/settings.html', form=form, vendor=current_user)
 
 
 @vendor_blueprint.route('/reconfirm', methods=['GET', 'POST'])
@@ -241,7 +241,7 @@ def reconfirm():
     form = ReconfirmForm()
     if request.method == 'GET':
         form.show_info()
-        return render_template('vendor/reconfirm.html', form=form)
+        return render_template('vendor/reconfirm.html', form=form, vendor=current_user)
     else:
         if form.validate():
             form.reconfirm()
