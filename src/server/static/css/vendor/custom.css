@@ -67,17 +67,18 @@ form .form-group.required > label::before {
 /*Distributors invitation page*/
 /*invite key*/
 .invite-key-wrapper {
-  margin-top: 100px;
-  padding: 0 150px; }
-
-.invite-key {
-  box-sizing: border-box;
-  padding: 13px 12px;
-  background-color: #fff; }
-
-.invite-key + button {
-  padding-top: 12px;
-  padding-bottom: 12px; }
+  margin-top: 50px;
+  padding: 0 100px; }
+  .invite-key-wrapper .alert {
+    margin-bottom: 50px;
+    font-size: 1.2em; }
+  .invite-key-wrapper .invite-key {
+    box-sizing: border-box;
+    padding: 13px 12px;
+    background-color: #fff; }
+  .invite-key-wrapper .invite-key + button {
+    padding-top: 12px;
+    padding-bottom: 12px; }
 
 /*Settings*/
 .logo-preview img {
