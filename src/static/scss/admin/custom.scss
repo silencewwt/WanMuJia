@@ -178,3 +178,12 @@ body.register-page .login-header {
         font-size: 1.2em;
     }
 }
+
+table {
+    a.dist-op, a.vendor-op {
+        &.disabled {
+            cursor: alias;
+            color: rgb(151, 152, 152);
+        }
+    }
+}

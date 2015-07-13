@@ -380,6 +380,12 @@ app.get('/privilege/distributors/revocation/datatable', function (req, res) {
     });
 });
 
+app.post('/privilege/vendor_confirm/pass', function (req, res) {
+    setTimeout(function () {
+        res.status(404);
+        res.send('error');
+    }, 2000);
+});
 
 // 404
 app.use(function(req, res){

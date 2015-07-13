@@ -208,6 +208,46 @@ jQuery(document).ready(function($) {
 
     // Vendor confirm page
     if (getPageTitle() === 'vendor-confirm') {
+        var confirm = {
+            vId: null,
+            dId: null,
+            confirmedVendor: {},
+            confirmedDist: {},
+            setVid : function (id) {
+                this.vId = id;
+                this.dId = null;
+            },
+            setDid: function (id) {
+                this.dId = id;
+                this.vId = null;
+            },
+            setCurrentIdConfirmed: function () {
+                if (this.vId) {
+                    this.confirmedVendor[this.vId] = true;
+                }
+                else if (this.dId) {
+                    this.confirmedDist[this.dId] = true;
+                }
+            },
+            unsetConfirmed: function (role, id) {
+                if (role === 'vendor') {
+                    console.log('vendor unset');
+                    this.confirmedVendor[id] = false;
+                }
+                else if (role === 'distributor') {
+                    console.log('dist unset');
+                    this.confirmedDist[id] = false;
+                }
+            },
+            isConfirmed: function () {
+                if (this.vId && this.confirmedVendor[this.vId] ||
+                        this.dId && this.confirmedDist[this.dId]) {
+                    return true;
+                }
+                else return false;
+            }
+        };
+
         initDatatable($('#vendors'), {
             ajax: "/privilege/vendor_confirm/datatable",
             columns: [
@@ -222,7 +262,7 @@ jQuery(document).ready(function($) {
                 targets: [6],
                 data: "id",
                 render: function (id) {
-                    return '<a href="javascript:void(0);" data-id="' + id + '" data-toggle="modal" data-target="#confirm-modal">详情/操作</a>';
+                    return '<a class="vendor-op" href="javascript:void(0);" data-id="' + id + '" data-toggle="modal" data-target="#confirm-modal">详情/操作</a>';
                 }
             }]
         });
@@ -241,10 +281,96 @@ jQuery(document).ready(function($) {
                 targets: [6],
                 data: "id",
                 render: function (id) {
-                    return '<a href="javascript:void(0);" data-id="' + id + '" data-toggle="modal" data-target="#revocation-modal">详情/操作</a>';
+                    return '<a class="dist-op" href="javascript:void(0);" data-id="' + id + '" data-toggle="modal" data-target="#revocation-modal">详情/操作</a>';
                 }
             }]
         });
+
+        $('#vendors').delegate('.vendor-op', 'click', function () {
+            var $buttons = $('#confirm-modal .modal-footer button');
+
+            confirm.setVid($(this).data('id'));
+
+            // 如果当前项已审核则禁用弹窗中的按钮
+            if (confirm.isConfirmed()) {
+                $buttons.addClass('disabled');
+            }
+            else {
+                $buttons.removeClass('disabled');
+            }
+        });
+        $('#distributors').delegate('.dist-op', 'click', function () {
+            var $buttons = $('#revocation-modal .modal-footer button');
+
+            confirm.setDid($(this).data('id'));
+
+            // 如果当前项已审核则禁用弹窗中的按钮
+            if (confirm.isConfirmed()) {
+                $buttons.addClass('disabled');
+            }
+            else {
+                $buttons.removeClass('disabled');
+            }
+        });
+
+        $('.modal-footer button').click(function () {
+            var $this = $(this);
+            if ($this.hasClass('disabled')) return;
+
+            var $opLink = null,    // 列表中打开modal窗的操作链接
+                $stateTd = null,   // 列表中的状态列单元格
+                role = null,
+                id = null,
+                url = null,
+                data = null,
+                stateValue = $this.data('state');
+
+            // 先判断是哪种审核，再根据不同的操作(接受或拒绝)做不同的处理
+            if ($this.data('role') == 'vendor') {
+                role = 'vendor';
+                id = confirm.vId;
+                $opLink = $('#vendors a[data-id="' + id + '"]');
+                url = $this.data('action') == 'accept' ?
+                        '/privilege/vendor_confirm/pass' :
+                        '/privilege/vendor_confirm/reject';
+                data = {from: id};
+            }
+            else if ($this.data('role') == 'distributor') {
+                role = 'distributor';
+                id = confirm.dId;
+                $opLink = $('#distributors a[data-id="' + id + '"]');
+                url = '/privilege/distributors/revocation';
+                data = {
+                    distributor_revocation_id: id,
+                    revocation_confirm: $this.data('action') == 'accept' ? true : false
+                };
+            }
+
+            $stateTd = $opLink.parent().prev();
+            $stateTd.removeClass('text-danger').text('处理中...');
+
+            // 暂时将当前id项设为已审核，以防止在响应过程中重复提交请求
+            confirm.setCurrentIdConfirmed();
+
+            $.ajax({
+                url: url,
+                method: 'post',
+                data: data,
+                success: function (data) {
+                    $stateTd.removeClass('text-danger');
+                    $stateTd.text(stateValue);
+                },
+                error: function () {
+                    $stateTd
+                        .addClass('text-danger')
+                        .text('服务器错误请重试');
+                    confirm.unsetConfirmed(role, id);
+                }
+            });
+
+        });
+
+
     }
 
 

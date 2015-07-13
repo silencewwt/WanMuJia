@@ -138,3 +138,7 @@ body.register-page .login-header {
 .confirm-info dd {
   margin-bottom: 20px;
   font-size: 1.2em; }
+
+table a.dist-op.disabled, table a.vendor-op.disabled {
+  cursor: alias;
+  color: #979898; }
