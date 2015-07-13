@@ -63,3 +63,4 @@ target/
 # node
 node_modules/
 
+server/
