@@ -11,8 +11,8 @@ var conf = {
     pojName: 'myj',
     version: '0.0.0',
     serverPath: './src/server/',
-    staticPath: './src/static/',
-    distPath: './dist/',
+    staticPath: './fe-src/static/',
+    distPath: './app/',
     pyPath: '../MuYiJia/app/'
 };
 
