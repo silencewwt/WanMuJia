@@ -113,7 +113,7 @@ def verify_email():
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            identity_changed.send(current_app._get_current_object(), Identity(user.get_id()))
+            identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
             return u'已激活'
         elif action == RESET_PASSWORD_ACTION:
             session['reset'] = True

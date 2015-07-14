@@ -15,8 +15,6 @@ class LoginForm(Form):
 class RegisterForm(Form):
     password = PasswordField(validators=[DataRequired(), Length(6, 32)])
     confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致')])
-    legal_person_name = StringField(validators=[DataRequired(u'必填')])
-    legal_person_identity = StringField(validators=[DataRequired(u'必填'), Length(18, 18)])
     name = StringField(validators=[DataRequired(u'必填')])
     contact_mobile = StringField(validators=[DataRequired(u'必填')])
     contact_telephone = StringField(validators=[DataRequired(u'必填')])
@@ -25,11 +23,12 @@ class RegisterForm(Form):
     address_id = StringField(validators=[DataRequired(u'必填')])
 
     def add_distributor(self, vendor_id):
+        username = Distributor.generate_username()
+        if username is False:
+            return False
         distributor = Distributor(
             password=self.password.data,
             vendor_id=vendor_id,
-            legal_person_name=self.legal_person_name.data,
-            legal_person_identity=self.legal_person_identity.data,
             name=self.name.data,
             address_id=0,
             contact_mobile=self.contact_mobile.data,
