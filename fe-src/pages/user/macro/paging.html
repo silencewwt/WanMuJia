@@ -1,0 +1,45 @@
+{% macro paging(num) %}
+    <div class="wrapper-page">
+        <ul class="pages" data-max-page="{{ num }}">
+            <li class="pre disabled" data-page="0">
+                <a href="#">&lt; 上一页</a>
+            </li>
+
+            {% if num <= 5 %}
+                {% for index in range(1, num + 1) %}
+                    <li class="page" data-page="{{ index }}">
+                        <a href="#">{{ index }}</a>
+                    </li>
+                {% endfor %}
+                <li class="blank">&nbsp;</li>
+            {% endif %}
+
+            {% if num > 5 %}
+                {% for index in range(1, 6) %}
+                <li class="page" data-page="{{ index }}">
+                    <a href="#">{{ index }}</a>
+                </li>
+                {% endfor %}
+                <li class="dot">...</li>
+            {% endif %}
+
+            <li class="next" data-page="2">
+                <a href="#">下一页 &gt;</a>
+            </li>
+        </ul>
+
+
+        {% if num > 5 %}
+            <div class="total">
+                共 {{ num }} 页,
+            </div>
+
+            <div class="form">
+                <span>到第</span>
+                <input type="number" value="2" min="1" max="{{ num }}" />
+                <span>页</span>
+                <input type="submit" value="确认" />
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}

@@ -12,10 +12,8 @@ __pycache__/
 env/
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -61,3 +59,8 @@ target/
 *.sql
 *.db
 *.tar.gz
+
+# node
+node_modules/
+
+server/

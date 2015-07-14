@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="万木家厂家后台" />
+
+    <title>万木家厂家后台 - 注册</title>
+
+    <link rel="stylesheet" href="http://fonts.useso.com/css?family=Arimo:400,700,400italic">
+    <link rel="stylesheet" href="/lib/xenon/css/fonts/linecons/css/linecons.css">
+    <link rel="stylesheet" href="/lib/xenon/css/fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/lib/xenon/css/bootstrap.css">
+    <link rel="stylesheet" href="/lib/xenon/css/xenon-core.css">
+    <link rel="stylesheet" href="/lib/xenon/css/xenon-forms.css">
+    <link rel="stylesheet" href="/lib/xenon/css/xenon-components.css">
+    <link rel="stylesheet" href="/lib/xenon/css/xenon-skins.css">
+    <link rel="stylesheet" href="/css/distributor/custom.css">
+
+    <script src="/lib/xenon/js/jquery-1.11.1.min.js"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/lib/xenon/js/html5shiv.min.js"></script>
+    <script src="/lib/xenon/js/respond.min.js"></script>
+    <![endif]-->
+
+
+</head>
+<body class="page-body login-page" data-page="register">
+
+
+<div class="login-container" >
+
+    <div class="row">
+
+        <div class="col-sm-6">
+
+            <script type="text/javascript">
+                jQuery(document).ready(function($)
+                {
+                    // Reveal Login form
+                    setTimeout(function(){ $(".fade-in-effect").addClass('in'); }, 1);
+
+
+                    // Validation and Ajax action
+                    $("form#register").validate({
+                        rules: {
+                            mobile: {
+                                required: true
+                            },
+
+                            captcha: {
+                                required: true
+                            }
+                        },
+
+                        messages: {
+                            mobile: {
+                                required: '请输入您的手机号'
+                            },
+
+                            captcha: {
+                                required: '请输入手机验证码'
+                            }
+                        },
+
+                        // Form Processing via AJAX
+                        submitHandler: function(form)
+                        {
+                            show_loading_bar(70); // Fill progress bar to 70% (just a given value)
+
+                            var opts = {
+                                "closeButton": true,
+                                "debug": false,
+                                "positionClass": "toast-top-full-width",
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "5000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            };
+
+                            $.ajax({
+                                url: "/distributor/register",
+                                method: 'POST',
+                                dataType: 'json',
+                                data: $(form).serialize(),
+                                success: function(resp)
+                                {
+                                    show_loading_bar({
+                                        delay: .5,
+                                        pct: 100,
+                                        finish: function(){
+
+                                            // Redirect after successful register page (when progress bar reaches 100%)
+                                            if(resp.accessGranted)
+                                            {
+                                                window.location.href = '/distributor/register';
+                                            }
+                                            else
+                                            {
+                                                toastr.error(resp.message + " :)", "注册失败", opts);
+                                                $('#captcha').select();
+                                            }
+                                        }
+                                    });
+
+                                },
+                                error: function (xhr) {
+                                    show_loading_bar({
+                                        delay: .5,
+                                        pct: 100,
+                                        finish: function(){
+                                            toastr.error(xhr.status + "错误，请稍后重试 :)", "服务器错误", opts);
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    });
+
+                    // Set Form focus
+                    $("form#register .form-group:has(.form-control):first .form-control").focus();
+                });
+            </script>
+
+            <!-- Errors container -->
+            <div class="errors-container">
+
+
+            </div>
+
+            <!-- Add class "fade-in-effect" for register form effect -->
+            <form method="post" role="form" id="register" class="login-form fade-in-effect">
+                {{ form.csrf_token }}
+                <div class="login-header">
+                    <a href="/distributor/login" class="logo">
+                        <img src="/img/logo_white.png" alt="" width="150" />
+                        <span>厂家入驻</span>
+                    </a>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="control-label" for="mobile">手机号码</label>
+                    <input type="text" class="form-control input-dark" name="mobile" id="mobile" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="captcha">验证码</label>
+                    <input type="text" class="form-control input-dark" name="captcha" id="captcha" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-dark  btn-block text-left">
+                        <i class="fa fa-mail-forward"></i>
+                        下一步
+                    </button>
+                </div>
+            </form>
+
+
+            <div class="external-login">
+                <a href="javascript:void(0);" class="twitter send">
+                    点击发送手机验证码
+                </a>
+            </div>
+
+            <div class="external-login">
+                <a href="/distributor/login" class="facebook">
+                    已经入驻？点击进行登录
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- Bottom Scripts -->
+<script src="/lib/xenon/js/bootstrap.min.js"></script>
+<script src="/lib/xenon/js/TweenMax.min.js"></script>
+<script src="/lib/xenon/js/resizeable.js"></script>
+<script src="/lib/xenon/js/joinable.js"></script>
+<script src="/lib/xenon/js/xenon-api.js"></script>
+<script src="/lib/xenon/js/xenon-toggles.js"></script>
+<script src="/lib/xenon/js/jquery-validate/jquery.validate.min.js"></script>
+<script src="/lib/xenon/js/toastr/toastr.min.js"></script>
+<script src="/lib/PCASClass.js"></script>
+
+
+<!-- JavaScripts initializations and stuff -->
+<script src="/lib/xenon/js/xenon-custom.js"></script>
+<script src="/js/distributor/custom.js"></script>
+
+</body>
+</html>

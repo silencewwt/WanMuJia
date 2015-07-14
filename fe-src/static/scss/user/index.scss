@@ -1,0 +1,42 @@
+@import "main";
+
+.slide-wrapper {
+  @extend .wrapper;
+  width: 100%;
+  min-width: 960px;
+
+  & img {
+    width: 100%;
+    height: 480px !important;
+  }
+}
+
+.container .divider {
+  margin: 55px 0;
+  min-width: 960px;
+  height: 2px;
+  background-color: #fff;
+  text-align: center;
+
+  & h3 {
+    z-index: 10;
+    display: inline-block;
+    position: relative;
+    top: (-$font-size-lx * $line-height-base / 2);
+    margin: 0;
+    padding: 0 40px;
+    background-color: $bgc-base;
+    font-size: $font-size-lx;
+  }
+}
+
+.container .more {
+  margin-top: 40px;
+  font-size: $font-size-large;
+  text-align: right;
+}
+
+// Items
+.item-wrapper {
+  @include items($item-interval-width, $item-interval-height, $item-img-width, $item-img-height)
+}
