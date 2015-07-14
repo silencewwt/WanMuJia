@@ -82,6 +82,10 @@ body.login-page {
 
 body.register-page .login-header {
     margin-bottom: 20px;
+    .logo span {
+        vertical-align: bottom;
+        zoom: 1;
+    }
 }
 
 .login-page .login-form .login-header .logo,
