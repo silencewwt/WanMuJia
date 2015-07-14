@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 from functools import wraps
 
 from flask import current_app, flash, render_template, redirect, request, session, url_for, jsonify
@@ -6,7 +7,7 @@ from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 
 from app import db
-from app.core import login as model_login, reset_password as model_reset_password
+from app.core import reset_password as model_reset_password
 from app.models import Vendor, Item, Distributor
 from app.permission import vendor_permission
 from app.forms import MobileRegistrationForm
@@ -103,12 +104,24 @@ def index():
 @vendor_permission.require()
 @vendor_confirmed
 def item_list():
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 100, type=int)
-    valid_per_page = [10, 25, 50, 100]
-    per_page = per_page if per_page in valid_per_page else valid_per_page[0]
-    items = Item.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
-    return render_template('vendor/items.html', items=items, vendor=current_user)
+    return render_template('vendor/items.html', vendor=current_user)
+
+
+@vendor_blueprint.route('/items/datatable')
+@vendor_permission.require()
+def items_data_table():
+    draw = request.args.get('draw', 1, type=int)
+    start = request.args.get('start', 0, type=int)
+    length = request.args.get('length', 100, type=int)
+    valid_length = [10, 25, 50, 100]
+    length = length if length in valid_length else valid_length[0]
+    items = Item.query.filter_by(vendor_id=current_user.id).offset(start).limit(length)
+    data = {'draw': draw, 'recordsTotal': Item.query.count(), 'recordsFiltered': items.count(), 'data': []}
+    for item in items:
+        data['data'].append({
+            'id': item.id, 'name': item.item, 'second_category': item.second_category.second_category,
+            'price': item.price, 'size': '%s*%s*%s' % (item.length, item.width, item.height)})
+    return jsonify(data)
 
 
 @vendor_blueprint.route('/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -145,7 +158,7 @@ def new_item():
         item = form.add_item(current_user.id)
         return redirect(url_for('.item_detail', item_id=item.id))
     form.generate_choices()
-    return render_template('vendor/new_item.html', vendor=current_user)
+    return render_template('vendor/new_item.html', form=form, vendor=current_user)
 
 
 @vendor_blueprint.route('/items/image', methods=['POST', 'DELETE'])
@@ -176,25 +189,36 @@ def update_item_image_sort():
     return 'forbidden', 403
 
 
-@vendor_blueprint.route('/distributors')
+@vendor_blueprint.route('/distributors', methods=['GET', 'POST'])
 @vendor_permission.require()
 @vendor_confirmed
 def distributor_list():
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 100, type=int)
-    # TODO: per_page limit
-    distributors = Distributor.query.filter_by(vendor_id=current_user.id).paginate(page, per_page, False).items
-    return render_template('vendor/distributors.html', distributors=distributors, vendor=current_user)
+    form = RevocationForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            form.revoke()
+            return 'ok', 200
+        return '', 500
+    return render_template('vendor/distributors.html', vendor=current_user, form=form)
 
 
-@vendor_blueprint.route('/distributors/<int:distributor_id>')
+@vendor_blueprint.route('/distributors/datatable')
 @vendor_permission.require()
-@vendor_confirmed
-def distributor_detail(distributor_id):
-    distributor = Distributor.query.get_or_404(distributor_id)
-    if distributor.vendor_id != current_user.id:
-        return 'forbidden', 403
-    return render_template('vendor/distributor_detail.html', distributor=distributor, vendor=current_user)
+def distributors_data_table():
+    draw = request.args.get('draw', 1, type=int)
+    start = request.args.get('start', 0, type=int)
+    length = request.args.get('length', 100, type=int)
+    valid_length = [10, 25, 50, 100]
+    length = length if length in valid_length else valid_length[0]
+    distributors = Distributor.query.filter_by(vendor_id=current_user.id).offset(start).limit(length)
+    data = {'draw': draw, 'recordsTotal': Distributor.query.count(), 'recordsFiltered': distributors.count(),
+            'data': []}
+    for distributor in distributors:
+        created = datetime.datetime.fromtimestamp(distributor.created).strftime('%F')
+        data['data'].append({
+            'id': distributor.id, 'name': distributor.name, 'contact_mobile': distributor.contact_mobile,
+            'contact': distributor.contact, 'address': distributor.address.precise_address(), 'created': created})
+    return jsonify(data)
 
 
 @vendor_blueprint.route('/distributors/invitation', methods=['GET', 'POST'])
@@ -206,20 +230,6 @@ def invite_distributor():
         redis_set(DISTRIBUTOR_REGISTER, token, current_user.id)
         return 'http://%s/distributor/verify?token=%s' % ('www.wanmujia.com', token)   # TODO: host
     return render_template('vendor/invitation.html', vendor=current_user)
-
-
-@vendor_blueprint.route('/distributors/<int:distributor_id>/revocation', methods=['POST'])
-@vendor_permission.require()
-@vendor_confirmed
-def revocation(distributor_id):
-    distributor = Distributor.query.get_or_404(distributor_id)
-    if distributor.vendor_id != current_user.id:
-        return 'forbidden', 403
-    form = RevocationForm()
-    if form.validate_on_submit():
-        form.revoke()
-        return 'ok', 200
-    return '', 500
 
 
 @vendor_blueprint.route('/settings', methods=['GET', 'POST'])
@@ -247,4 +257,3 @@ def reconfirm():
             form.reconfirm()
         flash(u'something wrong')
         return redirect(url_for('.reconfirm'))
-
