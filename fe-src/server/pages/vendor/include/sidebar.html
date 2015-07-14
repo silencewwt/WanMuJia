@@ -1,0 +1,62 @@
+<!-- Add "fixed" class to make the sidebar fixed always to the browser viewport. -->
+<!-- Adding class "toggle-others" will keep only one menu item open at a time. -->
+<!-- Adding class "collapsed" collapse sidebar root elements and show only icons. -->
+<div class="sidebar-menu toggle-others collapsed">
+
+    <div class="sidebar-menu-inner">
+
+
+        <ul id="main-menu" class="main-menu">
+            <!-- add class "multiple-expanded" to allow multiple submenus to open -->
+            <!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
+            <li class="{% block isOverview %}{% endblock %}">
+                <a href="/vendor">
+                    <i class="linecons-desktop"></i>
+                    <span class="title">概览</span>
+                </a>
+            </li>
+            <li class="{% block isItems %}{% endblock %}">
+                <a href="/vendor/items">
+                    <i class="linecons-note"></i>
+                    <span class="title">商品管理</span>
+                </a>
+                <ul>
+                    <li class="{% block isItems_li %}{% endblock %}">
+                        <a href="/vendor/items">
+                            <i class="fa-list"></i>
+                            <span class="title">商品列表</span>
+                        </a>
+                    </li>
+                    <li class="{% block isItems_new %}{% endblock %}">
+                        <a href="layout-collapsed-sidebar.html">
+                            <i class="fa-plus-square"></i>
+                            <span class="title">添加商品</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="{% block isDistributors %}{% endblock %}">
+                <a href="/vendor/distributors">
+                    <i class="linecons-shop"></i>
+                    <span class="title">商家管理</span>
+                </a>
+                <ul>
+                    <li class="{% block isDistributors_li %}{% endblock %}">
+                        <a href="/vendor/items">
+                            <i class="fa-list-ul"></i>
+                            <span class="title">商家列表</span>
+                        </a>
+                    </li>
+                    <li class="{% block isDistributors_new %}{% endblock %}">
+                        <a href="/vender/distributors?action=new">
+                            <i class="fa-plus-circle"></i>
+                            <span class="title">邀请商家</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+    </div>
+
+</div>

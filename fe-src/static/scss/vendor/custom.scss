@@ -114,6 +114,15 @@ form .form-group.required > label::before {
     height: 100px;
 }
 
+#settings-form {
+    .address-select {
+        select.form-control {
+            margin-bottom: 5px;
+        }
+    }
+}
+
+
 /*Login & Register*/
 body.login-page {
     padding-top: 100px;
@@ -146,29 +155,39 @@ body.register-page .login-header {
 
 .register-next-form {
     padding: 30px;
-}
-.register-next-form .form-group .form-control {
-    height: 40px;
-    border: 1px solid transparent;
-    background-color: #313334;
-}
-.register-next-form .form-group .control-label {
-    margin: 10px 0;
-    font-size: 16px;
-    color: rgba(151, 152, 152, 0.6);
-}
-.register-next-form .form-group label.error {
-    margin-top: 5px;
-    color: #7E383C;
-}
 
-.register-next-form [type="submit"] {
-    margin-top: 40px;
-    padding: 11px 12px;
-    background-color: transparent;
-    border: 1px solid rgba(55, 57, 58, 0.9);
-    color: #fff;
-}
-.register-next-form [type="submit"]:hover {
-    background-color: rgba(55, 57, 58, 0.3);
+    .form-group {
+        .form-control {
+            height: 40px;
+            border: 1px solid transparent;
+            background-color: #313334;
+        }
+        .control-label {
+            margin: 10px 0;
+            font-size: 16px;
+            color: rgba(151, 152, 152, 0.6);
+        }
+        label.error {
+            margin-top: 5px;
+            color: #7E383C;
+        }
+    }
+
+    [type="submit"] {
+        margin-top: 40px;
+        padding: 11px 12px;
+        background-color: transparent;
+        border: 1px solid rgba(55, 57, 58, 0.9);
+        color: #fff;
+    }
+
+    [type="submit"]:hover {
+        background-color: rgba(55, 57, 58, 0.3);
+    }
+
+    .address-select {
+        select.form-control {
+            color: #fff;
+        }
+    }
 }
