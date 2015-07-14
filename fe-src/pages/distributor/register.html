@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="万木家厂家后台" />
 
-    <title>万木家厂家后台 - 注册</title>
+    <title>万木家商家后台 - 注册</title>
 
     <link rel="stylesheet" href="http://fonts.useso.com/css?family=Arimo:400,700,400italic">
     <link rel="stylesheet" href="/lib/xenon/css/fonts/linecons/css/linecons.css">
@@ -37,133 +37,6 @@
     <div class="row">
 
         <div class="col-sm-6">
-
-            <script type="text/javascript">
-                jQuery(document).ready(function($)
-                {
-                    // Reveal Login form
-                    setTimeout(function(){ $(".fade-in-effect").addClass('in'); }, 1);
-
-                    // LinkageSel
-                    var districtIdSel = new LinkageSel({
-                        data: address,
-                        select: ['#province_cn_id', '#city_cn_id', '#district_cn_id']
-                    });
-
-                    // Validation and Ajax action
-                    $.validator.addMethod(
-                        "regex",
-                        function(value, element, regexp) {
-                            if (regexp.constructor != RegExp)
-                                regexp = new RegExp(regexp);
-                            else if (regexp.global)
-                                regexp.lastIndex = 0;
-                            return this.optional(element) || regexp.test(value);
-                        },
-                        "请检查你的输入。"
-                    );
-
-                    $("form#register").validate({
-                        rules: {
-                            name: {
-                                required: true
-                            },
-                            password: {
-                                required: true,
-                                regex:  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/
-                            },
-                            confirmed_password: {
-                                required: true,
-                                regex:  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/
-                            },
-                            contact: {
-                                required: true
-                            },
-                            contact_mobile: {
-                                required: true,
-                                regex: /^((1[3-8][0-9])+\d{8})$/
-                            },
-                            province_cn_id: {
-                                required: true
-                            },
-                            city_cn_id: {
-                                required: true
-                            },
-                            district_cn_id: {
-                                required: true
-                            }
-                        },
-
-                        messages: {
-                            contact_mobile: {
-                                required: '请输入您的手机号'
-                            }
-                        },
-
-                        // Form Processing via AJAX
-                        submitHandler: function(form)
-                        {
-                            show_loading_bar(70); // Fill progress bar to 70% (just a given value)
-
-                            var opts = {
-                                "closeButton": true,
-                                "debug": false,
-                                "positionClass": "toast-top-full-width",
-                                "onclick": null,
-                                "showDuration": "300",
-                                "hideDuration": "1000",
-                                "timeOut": "5000",
-                                "extendedTimeOut": "1000",
-                                "showEasing": "swing",
-                                "hideEasing": "linear",
-                                "showMethod": "fadeIn",
-                                "hideMethod": "fadeOut"
-                            };
-
-                            $.ajax({
-                                url: "/distributor/register",
-                                method: 'POST',
-                                dataType: 'json',
-                                data: $(form).serialize(),
-                                success: function(resp)
-                                {
-                                    show_loading_bar({
-                                        delay: .5,
-                                        pct: 100,
-                                        finish: function(){
-
-                                            // Redirect after successful register page (when progress bar reaches 100%)
-                                            if(resp.accessGranted)
-                                            {
-                                                window.location.href = '/distributor/register';
-                                            }
-                                            else
-                                            {
-                                                toastr.error(resp.message + " :)", "注册失败", opts);
-                                                $('#captcha').select();
-                                            }
-                                        }
-                                    });
-
-                                },
-                                error: function (xhr) {
-                                    show_loading_bar({
-                                        delay: .5,
-                                        pct: 100,
-                                        finish: function(){
-                                            toastr.error(xhr.status + "错误，请稍后重试 :)", "服务器错误", opts);
-                                        }
-                                    });
-                                }
-                            });
-
-                        }
-                    });
-
-                    // Set Form focus
-                    $("form#register .form-group:has(.form-control):first .form-control").focus();
-                });
-            </script>
 
             <!-- Errors container -->
             <div class="errors-container">
@@ -244,7 +117,133 @@
 
 </div>
 
+<!-- Some init operation -->
+<script type="text/javascript">
+    jQuery(document).ready(function($)
+    {
+        // Reveal Register form
+        setTimeout(function(){ $(".fade-in-effect").addClass('in'); }, 1);
 
+        // LinkageSel
+        var districtIdSel = new LinkageSel({
+            data: address,
+            select: ['#province_cn_id', '#city_cn_id', '#district_cn_id']
+        });
+
+        // Validation and Ajax action
+        $.validator.addMethod(
+            "regex",
+            function(value, element, regexp) {
+                if (regexp.constructor != RegExp)
+                    regexp = new RegExp(regexp);
+                else if (regexp.global)
+                    regexp.lastIndex = 0;
+                return this.optional(element) || regexp.test(value);
+            },
+            "请检查你的输入。"
+        );
+
+        $("form#register").validate({
+            rules: {
+                name: {
+                    required: true
+                },
+                password: {
+                    required: true,
+                    regex:  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/
+                },
+                confirmed_password: {
+                    required: true,
+                    regex:  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/
+                },
+                contact: {
+                    required: true
+                },
+                contact_mobile: {
+                    required: true,
+                    regex: /^((1[3-8][0-9])+\d{8})$/
+                },
+                province_cn_id: {
+                    required: true
+                },
+                city_cn_id: {
+                    required: true
+                },
+                district_cn_id: {
+                    required: true
+                }
+            },
+
+            messages: {
+                contact_mobile: {
+                    required: '请输入您的手机号'
+                }
+            },
+
+            // Form Processing via AJAX
+            submitHandler: function(form)
+            {
+                show_loading_bar(70); // Fill progress bar to 70% (just a given value)
+
+                var opts = {
+                    "closeButton": true,
+                    "debug": false,
+                    "positionClass": "toast-top-full-width",
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
+
+                $.ajax({
+                    url: "/distributor/register",
+                    method: 'POST',
+                    dataType: 'json',
+                    data: $(form).serialize(),
+                    success: function(resp)
+                    {
+                        show_loading_bar({
+                            delay: .5,
+                            pct: 100,
+                            finish: function(){
+
+                                // Redirect after successful register page (when progress bar reaches 100%)
+                                if(resp.accessGranted)
+                                {
+                                    window.location.href = '/distributor/register';
+                                }
+                                else
+                                {
+                                    toastr.error(resp.message + " :)", "注册失败", opts);
+                                    $('#captcha').select();
+                                }
+                            }
+                        });
+
+                    },
+                    error: function (xhr) {
+                        show_loading_bar({
+                            delay: .5,
+                            pct: 100,
+                            finish: function(){
+                                toastr.error(xhr.status + "错误，请稍后重试 :)", "服务器错误", opts);
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
+
+        // Set Form focus
+        $("form#register .form-group:has(.form-control):first .form-control").focus();
+    });
+</script>
 
 <!-- Bottom Scripts -->
 <script src="/lib/xenon/js/bootstrap.min.js"></script>
@@ -256,11 +255,11 @@
 <script src="/lib/xenon/js/jquery-validate/jquery.validate.min.js"></script>
 <script src="/lib/xenon/js/toastr/toastr.min.js"></script>
 <script src="/lib/linkagesel-min.js"></script>
+<script src="/js/address.js"></script>
 
 
 <!-- JavaScripts initializations and stuff -->
 <script src="/lib/xenon/js/xenon-custom.js"></script>
-<script src="/js/address.js"></script>
 <script src="/js/distributor/custom.js"></script>
 
 </body>

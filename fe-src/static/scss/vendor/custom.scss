@@ -114,6 +114,15 @@ form .form-group.required > label::before {
     height: 100px;
 }
 
+#settings-form {
+    .address-select {
+        select.form-control {
+            margin-bottom: 5px;
+        }
+    }
+}
+
+
 /*Login & Register*/
 body.login-page {
     padding-top: 100px;
@@ -174,5 +183,11 @@ body.register-page .login-header {
 
     [type="submit"]:hover {
         background-color: rgba(55, 57, 58, 0.3);
+    }
+
+    .address-select {
+        select.form-control {
+            color: #fff;
+        }
     }
 }

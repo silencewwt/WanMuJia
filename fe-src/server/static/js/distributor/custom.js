@@ -4,16 +4,6 @@ jQuery(document).ready(function($) {
 
     // =========== page init ==================
 
-    // Register page
-    if (getPageTitle() === 'register') {
-        console.log('register');
-        // var districtIdSel = new LinkageSel({
-        //     data: address,
-        //     select: '#district_cn_id'
-        // });
-    }
-
-
     // Items page
     if (getPageTitle() === 'items') {
         initDatatable($('#items'), {
