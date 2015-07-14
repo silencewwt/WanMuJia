@@ -6,11 +6,11 @@ from wtforms import StringField, PasswordField, BooleanField, IntegerField, Sele
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
 from app import db
-from app.models import Vendor, District, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, \
+from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, \
     Decoration, Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation
 from app.utils.forms import Form
 from app.utils.image import save_image
-from app.utils.validator import Email, Mobile, QueryID, Image
+from app.utils.validator import Email, Mobile, QueryID, Image, DistrictValidator
 
 
 class LoginForm(Form):
@@ -27,14 +27,13 @@ class RegistrationForm(Form):
     legal_person_identity_back = FileField(validators=[
         Image(required=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     name = StringField(validators=[DataRequired(u'必填'), Length(2, 30, u'品牌厂商名称不符合规范')])
-    license_address = StringField(validators=[DataRequired(u'必填')])
     license_limit = StringField(validators=[Length(8, 8)])
     license_long_time_limit = BooleanField()
     license_image = FileField(validators=[
         Image(required=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
     contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
-    address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
+    address = StringField(validators=[DistrictValidator(), Length(1, 30)])
     district_cn_id = IntegerField(validators=[DataRequired(), Length(6, 6)])
     logo = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
@@ -43,11 +42,6 @@ class RegistrationForm(Form):
     def validate_license_limit(self, field):
         if not field.data and not self.license_long_time_limit.data:
             raise ValidationError(u'请填写营业执照期限或选择长期营业执照')
-
-    @staticmethod
-    def validate_district_cn_id(field):
-        if not District.query.filter_by(cn_id=field.data).first():
-            raise ValidationError(u'行政区不存在!')
 
     def save_images(self, vendor=None):
         vendor = vendor if vendor else current_user
@@ -64,8 +58,7 @@ class RegistrationDetailForm(RegistrationForm):
     confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
 
     def save_address(self, vendor):
-        district = District.query.filter_by(cn_id=self.district_cn_id).first()
-        address = VendorAddress(vendor_id=vendor.id, district_id=district.id, address=self.address.data)
+        address = VendorAddress(vendor_id=vendor.id, cn_id=self.district_cn_id.data, address=self.address.data)
         db.session.add(address)
         db.session.commit()
 
@@ -76,7 +69,6 @@ class RegistrationDetailForm(RegistrationForm):
             mobile=mobile,
             legal_person_name=self.legal_person_name.data,
             legal_person_identity=self.legal_person_identity.data,
-            license_address=self.license_address.data,
             license_limit=self.license_limit.data,
             license_long_time_limit=self.license_long_time_limit.data,
             name=self.name.data,
@@ -102,9 +94,8 @@ class ReconfirmForm(RegistrationForm):
                   'license_long_time_limit', 'contact_mobile', 'contact_telephone')
 
     def update_address(self):
-        district = District.query.filter_by(cn_id=self.district_cn_id).first()
         current_user.address.address = self.address.data
-        current_user.address.district_id = district.id
+        current_user.address.cn_id = self.district_cn_id.cn_id
         db.session.add(current_user.address)
         db.session.commit()
 
@@ -113,7 +104,7 @@ class ReconfirmForm(RegistrationForm):
             getattr(self, attr).data = getattr(current_user, attr)
         self.email.data = current_user.email
         self.address.data = current_user.address.address
-        self.district_cn_id.data = District.query.get(current_user.address.district_id).cn_id
+        self.district_cn_id.data = current_user.address.cn_id
 
     def reconfirm(self):
         self.save_images()
@@ -151,7 +142,7 @@ class ItemForm(Form):
         self.carve_id.choices = [(choice.id, choice.carve) for choice in Carve.query.all()]
         self.sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
         self.paint_id.choices = [(choice.id, choice.paint) for choice in Paint.query.all()]
-        self.decoration_id.choices = [(choice.id, choice.decoration_id) for choice in Decoration.query.all()]
+        self.decoration_id.choices = [(choice.id, choice.decoration) for choice in Decoration.query.all()]
         self.tenon_id.choices = [(choice.id, choice.tenon) for choice in Tenon.query.all()]
 
     def add_item(self, vendor_id):
@@ -269,7 +260,7 @@ class SettingsForm(Form):
     contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
     contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
-    district_cn_id = StringField(validators=[DataRequired(u'必填'), Length(6, 6)])
+    district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
 
     @staticmethod
     def validate_name(field):
@@ -277,26 +268,20 @@ class SettingsForm(Form):
         if vendors.count() > 1 or (vendors.first() and vendors.first().id != current_user.id):
             raise ValidationError('品牌名称已存在')
 
-    @staticmethod
-    def validate_district_cn_id(field):
-        if not District.query.filter_by(cn_id=field.data).first():
-            raise ValidationError(u'行政区不存在!')
-
     def show_vendor_setting(self, vendor):
         self.contact_mobile.data = vendor.contact_mobile
         self.contact_telephone.data = vendor.contact_telephone
-        vendor_address = VendorAddress.query.get(vendor.address_id)
-        self.district_cn_id.data = District.query.filter_by(vendor_address.district_id).first().cn_id
+        vendor_address = VendorAddress.query.filter_by(vendor_id=vendor.id)
+        self.district_cn_id.data = vendor_address.cn_id
         self.address.data = vendor_address.address
 
     def update_vendor_setting(self, vendor):
         vendor.name = self.name.data
         vendor.contact_mobile = self.contact_mobile.data
         vendor.contact_telephone = self.contact_telephone.data
-        vendor_address = VendorAddress.query.get(vendor.address_id)
+        vendor_address = VendorAddress.query.filter_by(vendor_id=vendor.id)
         vendor_address.address = self.address.data
-        district = District.query.filter_by(cn_id=self.district_cn_id).first()
-        vendor_address.district_id = district.id
+        vendor_address.cn_id = self.district_cn_id.data
         if self.logo.data:
             logo = save_image(vendor.id, 'vendor', self.logo)
             vendor.logo = logo
