@@ -121,8 +121,6 @@ class Vendor(BaseUser, db.Model):
     legal_person_identity_back = db.Column(db.String(255), default='', nullable=False)
     # 品牌厂家名称
     name = db.Column(db.Unicode(30), unique=True, nullable=False)
-    # 营业执照所在地
-    license_address = db.Column(db.Unicode(30), nullable=False)
     # 营业执照期限
     license_limit = db.Column(db.Integer, nullable=False)
     # 长期印业执照
@@ -144,13 +142,12 @@ class Vendor(BaseUser, db.Model):
 
     id_prefix = vendor_id_prefix
 
-    def __init__(self, password, mobile, email, legal_person_name, legal_person_identity, name, license_address,
+    def __init__(self, password, mobile, email, legal_person_name, legal_person_identity, name,
                  license_limit, license_long_time_limit, contact_mobile, contact_telephone):
         super(Vendor, self).__init__(password, mobile, email)
         self.legal_person_name = legal_person_name
         self.legal_person_identity = legal_person_identity
         self.name = name
-        self.license_address = license_address
         self.license_limit = license_limit
         self.license_long_time_limit = license_long_time_limit
         self.contact_mobile = contact_mobile
@@ -167,7 +164,7 @@ class Vendor(BaseUser, db.Model):
         for i in range(100):
             vendor = Vendor(
                 "14e1b600b1fd579f47433b88e8d85291", fake.phone_number(), fake.email(), fake.name(),
-                fake.random_number(18), fake.name(), fake.city(), fake.random_number(2), False, fake.phone_number(),
+                fake.random_number(18), fake.name(), fake.random_number(2), False, fake.phone_number(),
                 fake.phone_number())
             db.session.add(vendor)
         db.session.commit()
@@ -181,8 +178,6 @@ class Distributor(BaseUser, db.Model):
     vendor_id = db.Column(db.Integer, nullable=False)
     # 商家名称
     name = db.Column(db.Unicode(30), nullable=False)
-    # 地址 id
-    address_id = db.Column(db.Integer, nullable=False)
     # 联系手机
     contact_mobile = db.Column(db.String(30), nullable=False)
     # 联系电话
@@ -201,12 +196,11 @@ class Distributor(BaseUser, db.Model):
 
     id_prefix = distributor_id_prefix
 
-    def __init__(self, password, vendor_id, name, address_id, contact_mobile, contact_telephone, contact):
+    def __init__(self, username, password, vendor_id, name, contact_mobile, contact_telephone, contact):
         super(Distributor, self).__init__(password, mobile='', email='')
-        self.username = self.generate_username()
+        self.username = username
         self.vendor_id = vendor_id
         self.name = name
-        self.address_id = address_id
         self.contact_mobile = contact_mobile
         self.contact_telephone = contact_telephone
         self.contact = contact
@@ -219,6 +213,10 @@ class Distributor(BaseUser, db.Model):
             if not Distributor.query.filter_by(username=username).limit(1).first():
                 return username
         return False
+
+    @property
+    def address(self):
+        return DistributorAddress.query.filter_by(distributor_id=self.id).limit(1).first()
 
 
 class DistributorRevocation(db.Model):
@@ -311,6 +309,11 @@ class Item(db.Model):
                                                             Stock.distributor_id == Distributor.id,
                                                             Distributor.is_deleted is False)
         return distributors
+
+    @property
+    def second_category(self):
+        return SecondCategory.query.get(self.second_category_id)
+
 
 class ItemImage(db.Model):
     __tablename__ = 'item_images'
@@ -446,6 +449,9 @@ class Province(db.Model):
     cn_id = db.Column(db.Integer, nullable=False)
     province = db.Column(db.Unicode(15), nullable=False)
 
+    def area_address(self):
+        return self.province
+
 
 class City(db.Model):
     __tablename__ = 'cities'
@@ -454,6 +460,15 @@ class City(db.Model):
     city = db.Column(db.Unicode(15), nullable=False)
     province_id = db.Column(db.Integer, nullable=False)
 
+    def area_address(self):
+        if self.city in [u'北京市', u'上海市', u'天津市', u'重庆市']:
+            return self.city
+        return self.province.area_address() + self.city
+
+    @property
+    def province(self):
+        return Province.query.get(self.province_id)
+
 
 class District(db.Model):
     __tablename__ = 'districts'
@@ -461,6 +476,13 @@ class District(db.Model):
     cn_id = db.Column(db.Integer, nullable=False)
     district = db.Column(db.Unicode(15), nullable=False)
     city_id = db.Column(db.Integer, nullable=False)
+
+    def area_address(self):
+        return self.city.area_address() + self.district
+
+    @property
+    def city(self):
+        return City.query.get(self.city_id)
 
     @staticmethod
     def generate_fake():
@@ -499,36 +521,48 @@ class District(db.Model):
                 db.session.commit()
 
 
-class UserAddress(db.Model):
-    __tablename__ = 'user_addresses'
+class Address(object):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
-    district_id = db.Column(db.Integer, nullable=False)
-    created = db.Column(db.Integer, default=time.time, nullable=False)
+    cn_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
+    created = db.Column(db.Integer, default=time.time, nullable=False)
+
+    @property
+    def area(self):
+        return District.query.filter_by(cn_id=self.cn_id).limit(1).first() or \
+            City.query.filter_by(cn_id=self.cn_id).limit(1).first() or \
+            Province.filter_by(cn_id=self.cn_id).limit(1).first()
+
+    def vague_address(self):
+        return self.area.area_address()
+
+    def precise_address(self):
+        return '%s%s' % (self.vague_address(), self.address)
+
+
+class UserAddress(Address, db.Model):
+    __tablename__ = 'user_addresses'
+    user_id = db.Column(db.Integer, nullable=False)
     mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
 
 
-class VendorAddress(db.Model):
+class VendorAddress(Address, db.Model):
     __tablename__ = 'vendor_addresses'
-    id = db.Column(db.Integer, primary_key=True)
     vendor_id = db.Column(db.Integer, nullable=False)
-    district_id = db.Column(db.Integer, nullable=False)
-    address = db.Column(db.Unicode(30), nullable=False)
-    created = db.Column(db.Integer, default=time.time, nullable=False)
+
+    def __init__(self, vendor_id, cn_id, address):
+        self.vendor_id = vendor_id
+        self.cn_id = cn_id
+        self.address = address
 
 
-class DistributorAddress(db.Model):
+class DistributorAddress(Address, db.Model):
     __tablename__ = 'distributor_addresses'
-    id = db.Column(db.Integer, primary_key=True)
     distributor_id = db.Column(db.Integer, nullable=False)
-    district_id = db.Column(db.Integer, nullable=False)
-    address = db.Column(db.Unicode(30), nullable=False)
-    created = db.Column(db.Integer, default=time.time, nullable=False)
 
-    def __init__(self, distributor_id, district_id, address):
+    def __init__(self, distributor_id, cn_id, address):
         self.distributor_id = distributor_id
-        self.district_id = district_id
+        self.cn_id = cn_id
         self.address = address
 
 
