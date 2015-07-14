@@ -10,8 +10,9 @@ var $ = require('gulp-load-plugins')({
 var conf = {
     pojName: 'myj',
     version: '0.0.0',
-    serverPath: './src/server/',
+    serverPath: './fe-src/server/',
     staticPath: './fe-src/static/',
+    pagePath: './fe-src/pages/',
     distPath: './app/',
     pyPath: '../MuYiJia/app/'
 };
@@ -55,7 +56,7 @@ gulp.task('lib', function () {
 });
 
 gulp.task('pages', function () {
-    return gulp.src('./src/pages/**/**')
+    return gulp.src(conf.pagePath + './**/**')
         .pipe(gulp.dest(conf.serverPath + './pages'));
 });
 

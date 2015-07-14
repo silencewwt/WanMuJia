@@ -1,0 +1,85 @@
+{% import 'user/macro/items_recommend.html' as recommend %}
+
+{% extends "user/layout.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/css/user/index.css">
+{% endblock %}
+
+{% block content %}
+    <div id="banner" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#banner" data-slide-to="0" class="active"></li>
+            <li data-target="#banner" data-slide-to="1"></li>
+            <li data-target="#banner" data-slide-to="2"></li>
+        </ol>
+
+        <div class="carousel-inner slide-wrapper" role="listbox">
+            <div class="item active">
+                <a href=""><img src="img/user/20130924085846.jpg" alt="..."></a>
+                <div class="carousel-caption">
+
+                </div>
+            </div>
+            <div class="item">
+                <a href=""><img src="img/user/20130924085846.jpg" alt="..."></a>
+                <div class="carousel-caption">
+
+                </div>
+            </div>
+            <div class="item">
+                <a href=""><img src="img/user/20130924085846.jpg" alt="..."></a>
+                <div class="carousel-caption">
+
+                </div>
+            </div>
+
+            <div class="dialog"></div>
+        </div>
+
+        <a class="left carousel-control" href="#banner" role="button" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#banner" role="button" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
+
+    <section class="container">
+        {{ recommend.title_divider('新品推荐') }}
+
+        <div class="wrapper">
+            {{ recommend.items(new_items) }}
+            <div class="more">
+                <a href="">查看更多...</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        {{ recommend.title_divider('特别推荐') }}
+
+        <div class="wrapper">
+            {{ recommend.items(hot_items) }}
+            <div class="more">
+                <a href="">查看更多...</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        {{ recommend.title_divider('大师作品') }}
+
+        <div class="wrapper">
+            {{ recommend.items(the_masters) }}
+            <div class="more">
+                <a href="">查看更多...</a>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/user/item.js"></script>
+{% endblock %}

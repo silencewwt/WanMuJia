@@ -1,0 +1,184 @@
+{% extends "distributor/layout.html" %}
+
+
+{% block navbar %}
+    <nav class="navbar horizontal-menu navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
+
+        <div class="navbar-inner">
+
+            <!-- Navbar Brand -->
+            <div class="navbar-brand">
+                <a href="/privilege" class="logo">
+                    <img src="/img/logo.png" width="80" alt="" class="hidden-xs" />
+                    <img src="/img/logo.png" width="80" alt="" class="visible-xs" />
+                </a>
+                <a href="#" data-toggle="settings-pane" data-animate="true">
+                    <i class="linecons-cog"></i>
+                </a>
+            </div>
+
+            <!-- Mobile Toggles Links -->
+            <div class="nav navbar-mobile">
+
+                <!-- This will toggle the mobile menu and will be visible only on mobile devices -->
+                <div class="mobile-menu-toggle">
+                    <!-- This will open the popup with user profile settings, you can use for any purpose, just be creative -->
+                    <a href="#" data-toggle="settings-pane" data-animate="true">
+                        <i class="linecons-cog"></i>
+                    </a>
+
+                    <a href="#" data-toggle="user-info-menu-horizontal">
+                        <i class="fa-bell-o"></i>
+                        <span class="badge badge-success">7</span>
+                    </a>
+
+                    <!-- data-toggle="mobile-menu-horizontal" will show horizontal menu links only -->
+                    <!-- data-toggle="mobile-menu" will show sidebar menu links only -->
+                    <!-- data-toggle="mobile-menu-both" will show sidebar and horizontal menu links -->
+                    <a href="#" data-toggle="mobile-menu-horizontal">
+                        <i class="fa-bars"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="navbar-mobile-clear"></div>
+
+
+            <!-- main menu -->
+
+            <ul class="navbar-nav">
+                <li class="{% block isOverview %}{% endblock %}">
+                    <a href="/vendor">
+                        <i class="linecons-desktop"></i>
+                        <span class="title">概览</span>
+                    </a>
+                </li>
+                <li class="{% block isItems %}{% endblock %}">
+                    <a href="/privilege/items">
+                        <i class="linecons-note"></i>
+                        <span class="title">商品管理</span>
+                    </a>
+                    <ul>
+                        <li class="{% block isItems_li %}{% endblock %}">
+                            <a href="/privilege/items">
+                                <i class="fa-list"></i>
+                                <span class="title">商品列表</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+
+            <!-- notifications and other links -->
+            <ul class="nav nav-userinfo navbar-right">
+
+                <li class="search-form"><!-- You can add "always-visible" to show make the search input visible -->
+
+                    <form method="get" action="">
+                        <input type="text" name="s" class="form-control search-field" placeholder="Type to search..." />
+
+                        <button type="submit" class="btn btn-link">
+                            <i class="linecons-search"></i>
+                        </button>
+                    </form>
+
+                </li>
+
+                <li class="dropdown xs-left">
+                    <a href="#" data-toggle="dropdown" class="notification-icon notification-icon-messages">
+                        <i class="fa-bell-o"></i>
+                        <span class="badge badge-purple"></span>
+                    </a>
+
+                    <ul class="dropdown-menu notifications">
+                        <li class="top">
+                            <p class="small">
+                                <a href="#" class="pull-right">全部标记为已读</a>
+                            </p>
+                        </li>
+
+                        <li>
+                            <ul class="dropdown-menu-list list-unstyled ps-scrollbar">
+                            </ul>
+                        </li>
+
+                        <li class="external">
+                            <a href="#">
+                                <span>查看全部提醒</span>
+                                <i class="fa-link-ext"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="dropdown user-profile">
+                    {% if distributor %}
+                        <a href="#" data-toggle="dropdown">
+                            <img src="/lib/xenon/images/user-1.png" alt="user-image" class="img-circle img-inline userpic-32" width="28" />
+                            <span>
+                                    {{ distributor.name }}
+                                    <i class="fa-angle-down"></i>
+                            </span>
+                        </a>
+
+                        <ul class="dropdown-menu user-profile-menu list-unstyled">
+                            <li class="last">
+                                <a href="distributor/logout">
+                                    <i class="fa-lock"></i>
+                                    登出
+                                </a>
+                            </li>
+                        </ul>
+                    {% else %}
+                        <a href="/distributor/login">请登录</a>
+                    {% endif %}
+                </li>
+
+            </ul>
+
+        </div>
+
+    </nav>
+{% endblock %}
+
+
+{% block sidebar %}
+    <!-- Add "fixed" class to make the sidebar fixed always to the browser viewport. -->
+    <!-- Adding class "toggle-others" will keep only one menu item open at a time. -->
+    <!-- Adding class "collapsed" collapse sidebar root elements and show only icons. -->
+    <div class="sidebar-menu toggle-others collapsed">
+
+        <div class="sidebar-menu-inner">
+
+
+            <ul id="main-menu" class="main-menu">
+                <!-- add class "multiple-expanded" to allow multiple submenus to open -->
+                <!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
+                <li class="{% block s_isOverview %}{% endblock %}">
+                    <a href="/privilege">
+                        <i class="linecons-desktop"></i>
+                        <span class="title">概览</span>
+                    </a>
+                </li>
+                <li class="{% block s_isItems %}{% endblock %}">
+                    <a href="/privilege/items">
+                        <i class="linecons-note"></i>
+                        <span class="title">商品管理</span>
+                    </a>
+                    <ul>
+                        <li class="{% block s_isItems_li %}{% endblock %}">
+                            <a href="/privilege/items">
+                                <i class="fa-list"></i>
+                                <span class="title">商品列表</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+{% endblock %}

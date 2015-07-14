@@ -26,9 +26,6 @@ table .op a:hover {
 
 
 /*form*/
-.form-wizard .tab-content .tab-pane > .form-group {
-    margin-bottom: 15px;
-}
 
 form .form-group.required > label::before {
     display: inline-block;
@@ -50,15 +47,6 @@ form .form-group.required > label::before {
 }
 
 
-/*edit page*/
-.album-image .name > span, .album-image .name > em {
-    display: block !important;
-}
-
-#upload > h2 {
-    margin: 20px 0 30px 30px;
-    font-size: 24px;
-}
 
 /*save button*/
 #save {
@@ -80,33 +68,6 @@ form .form-group.required > label::before {
 
 /************* Pages ********************/
 
-/*Distributors invitation page*/
-
-/*invite key*/
-.invite-key-wrapper {
-    margin-top: 50px;
-    padding: 0 100px;
-
-    .alert {
-        margin-bottom: 50px;
-        font-size: 1.2em;
-    }
-
-    .invite-key {
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        padding: 13px 12px;
-        background-color: #fff;
-    }
-
-    .invite-key + button {
-        padding-top: 12px;
-        padding-bottom: 12px;
-    }
-
-}
-
 
 /*Settings*/
 .logo-preview img {
@@ -124,12 +85,12 @@ body.register-page .login-header {
 }
 
 .login-page .login-form .login-header .logo,
-.register-next-form .logo {
+.register-form .logo {
     display: block;
 }
 
 .login-page .login-form .login-header .logo span,
-.register-next-form .logo span {
+.register-form .logo span {
     padding-left: 10px;
     font-size: 20px;
     color: rgba(151, 152, 152, 0.6);
@@ -144,31 +105,47 @@ body.register-page .login-header {
     text-decoration: none;
 }
 
-.register-next-form {
-    padding: 30px;
-}
-.register-next-form .form-group .form-control {
-    height: 40px;
-    border: 1px solid transparent;
-    background-color: #313334;
-}
-.register-next-form .form-group .control-label {
-    margin: 10px 0;
-    font-size: 16px;
-    color: rgba(151, 152, 152, 0.6);
-}
-.register-next-form .form-group label.error {
-    margin-top: 5px;
-    color: #7E383C;
-}
 
-.register-next-form [type="submit"] {
-    margin-top: 40px;
-    padding: 11px 12px;
-    background-color: transparent;
-    border: 1px solid rgba(55, 57, 58, 0.9);
-    color: #fff;
-}
-.register-next-form [type="submit"]:hover {
-    background-color: rgba(55, 57, 58, 0.3);
+.register-form {
+    padding: 30px;
+
+    .form-group {
+        .form-control {
+            height: 40px;
+            border: 1px solid transparent;
+            background-color: #313334;
+        }
+        .control-label {
+            margin: 10px 0;
+            font-size: 16px;
+            color: rgba(151, 152, 152, 0.6);
+        }
+        label.error {
+            margin-top: 5px;
+            color: #7E383C;
+        }
+    }
+
+    [type="submit"] {
+        margin-top: 40px;
+        padding: 11px 12px;
+        background-color: transparent;
+        border: 1px solid rgba(55, 57, 58, 0.9);
+        color: #fff;
+    }
+
+    [type="submit"]:hover {
+        background-color: rgba(55, 57, 58, 0.3);
+    }
+
+    .address-select {
+        select.form-control {
+            width: 100% !important;
+            padding-left: 20px;
+            border-radius: 0;
+            border-color: transparent;
+            background-color: #313334;
+            color: #fff;
+        }
+    }
 }
