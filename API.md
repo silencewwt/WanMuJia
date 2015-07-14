@@ -1,6 +1,6 @@
 #WanMuJia API Doc
 
-##user
+## User
 
 ###user register
     URL:
@@ -64,8 +64,51 @@
         /user/setting
     method:
         GET, POST
+
+
+## Distributor
+### distributor register
+
+url: /distributor/register
+
+method: GET, POST
+
+postData:
+ + **name** 
+  + 商家名称
+  + type=text
+  + required
+ + **password**
+  + 密码
+  + type=password
+  + required
+ + **confirmed_password**
+  + 确认密码
+  + type=password
+  + required
+ + **contact**
+  + 联系人姓名
+  + type=text
+  + required
+ + **contact_mobile**
+  + 联系人手机
+  + type=text
+  + required
+ + **contact_telephone**
+  + 固话
+  + type=text
+  + required
+ + **district_cn_id**
+  + 行政区号
+  + select
+  + required
+ + **address**
+  + 详细地址
+  + type=text
+  + required
+
         
-##vendor
+## Vendor
 
 ###vendor register
     URL:
