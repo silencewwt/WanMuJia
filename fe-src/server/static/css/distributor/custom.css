@@ -85,7 +85,8 @@ body.register-page .login-header {
   .register-form .form-group .form-control {
     height: 40px;
     border: 1px solid transparent;
-    background-color: #313334; }
+    background-color: #313334;
+    color: #fff; }
   .register-form .form-group .control-label {
     margin: 10px 0;
     font-size: 16px;
@@ -101,5 +102,3 @@ body.register-page .login-header {
     color: #fff; }
   .register-form [type="submit"]:hover {
     background-color: rgba(55, 57, 58, 0.3); }
-  .register-form .address-select select.form-control {
-    color: #fff; }

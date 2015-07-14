@@ -154,7 +154,7 @@
                 },
                 confirmed_password: {
                     required: true,
-                    regex:  /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/
+                    equalTo: '#password'
                 },
                 contact: {
                     required: true
@@ -162,6 +162,10 @@
                 contact_mobile: {
                     required: true,
                     regex: /^((1[3-8][0-9])+\d{8})$/
+                },
+                contact_telephone: {
+                    required: true,
+                    regex: /^\d{3,4}-?\d{7,9}$/
                 },
                 province_cn_id: {
                     required: true
@@ -171,12 +175,46 @@
                 },
                 district_cn_id: {
                     required: true
+                },
+                address: {
+                    required: true
                 }
             },
 
             messages: {
+                name: {
+                    required: '请填写商家名称'
+                },
+                password: {
+                    required: '请设置您的登录密码',
+                    regex: '密码长度必须大于等于6位且为字母和数字的组合'
+                },
+                confirmed_password: {
+                    required: '请再次输入密码',
+                    equalTo: '两次密码输入不一致'
+                },
+                contact: {
+                    required: '请输入联系人姓名'
+                },
                 contact_mobile: {
-                    required: '请输入您的手机号'
+                    required: '请输入联系人手机号码',
+                    regex: '不合法的手机号码'
+                },
+                contact_telephone: {
+                    required: '请输入商家固定电话',
+                    regex: '不合法的电话号码'
+                },
+                province_cn_id: {
+                    required: '请选择省级行政区'
+                },
+                city_cn_id: {
+                    required: '请选择市级行政区'
+                },
+                district_cn_id: {
+                    required: '请选择区级行政区'
+                },
+                address: {
+                    required: '请填写商家详细地址'
                 }
             },
 
