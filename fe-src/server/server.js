@@ -450,6 +450,10 @@ app.get('/distributor/items/datatable', function (req, res) {
     });
 });
 
+app.get('/distributor/settings', function (req, res) {
+    res.render('distributor/settings');
+});
+
 
 // 404
 app.use(function(req, res){
