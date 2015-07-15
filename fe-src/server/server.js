@@ -1,6 +1,6 @@
 /**
- * Created by rain on 15/4/7.
- */
+Created by rain on 15/4/7.
+**/
 
 var fs = require('fs');
 var path = require('path');
@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // index
 app.get('/', function (req, res) {
 
-    fs.readFile('src/server/data/index_data.json', function (err, data) {
+    fs.readFile('fe-src/server/data/index_data.json', function (err, data) {
         if (err) {
             console.log(err);
             res.send('Something Error!');
@@ -42,7 +42,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/display', function (req, res) {
-    fs.readFile('src/server/data/index_data.json', function (err, data) {
+    fs.readFile('fe-src/server/data/index_data.json', function (err, data) {
         if (err) {
             console.log(err);
             res.send('Something Error!');
@@ -57,7 +57,7 @@ app.get('/display', function (req, res) {
 });
 
 app.get('/item', function (req, res) {
-    fs.readFile('src/server/data/item01.json', function (err, data) {
+    fs.readFile('fe-src/server/data/item01.json', function (err, data) {
         if (err) {
             console.log(err);
             res.send('Something Error!');
@@ -72,7 +72,7 @@ app.get('/item', function (req, res) {
 });
 
 app.get('/compare', function (req, res) {
-    fs.readFile('src/server/data/item01.json', function (err, data) {
+    fs.readFile('fe-src/server/data/item01.json', function (err, data) {
         if (err) {
             console.log(err);
             res.send('Something Error!');
@@ -122,7 +122,7 @@ app.post('/user/register/result', function (req, res) {
 });
 
 app.get('/user/profile', function (req, res) {
-    fs.readFile('src/server/data/index_data.json', function (err, data) {
+    fs.readFile('fe-src/server/data/index_data.json', function (err, data) {
         if (err) {
             console.log(err);
             res.send('Something Error!');
@@ -399,6 +399,57 @@ app.get('/distributor/register', function (req, res) {
 
 app.get('/distributor', function (req, res) {
     res.render('distributor/index');
+});
+
+app.get('/distributor/items', function (req, res) {
+    res.render('distributor/items');
+});
+
+app.post('/distributor/items/:id', function (req, res) {
+    if (req.params.id == 2) {
+        res.status(404);
+    }
+    setTimeout(function () {
+        res.send('error');
+    }, 2000);
+});
+
+app.get('/distributor/items/datatable', function (req, res) {
+    res.send({
+        "draw": 2,
+        "recordsTotal": 3,
+        "recordsFiltered": 3,
+        "data": [
+            {
+                "id": 1,
+                "item": "Troy",
+                "second_category_id": "Young",
+                "price": "110",
+                "size": "PR",
+                "inventory": 0
+            },
+            {
+                "id": 2,
+                "item": "Troy",
+                "second_category_id": "Young",
+                "price": "110",
+                "size": "PR",
+                "inventory": 1
+            },
+            {
+                "id": 3,
+                "item": "Troy",
+                "second_category_id": "Young",
+                "price": "110",
+                "size": "PR",
+                "inventory": 1
+            }
+        ]
+    });
+});
+
+app.get('/distributor/settings', function (req, res) {
+    res.render('distributor/settings');
 });
 
 
