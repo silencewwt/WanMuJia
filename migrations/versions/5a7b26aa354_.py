@@ -1,13 +1,13 @@
 """empty message
 
-Revision ID: 50a189b2b17
+Revision ID: 5a7b26aa354
 Revises: None
-Create Date: 2015-07-12 00:10:33.995228
+Create Date: 2015-07-16 00:39:31.988812
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '50a189b2b17'
+revision = '5a7b26aa354'
 down_revision = None
 
 from alembic import op
@@ -47,10 +47,10 @@ def upgrade():
     )
     op.create_table('distributor_addresses',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('distributor_id', sa.Integer(), nullable=False),
-    sa.Column('district_id', sa.Integer(), nullable=False),
+    sa.Column('cn_id', sa.Integer(), nullable=False),
     sa.Column('address', sa.Unicode(length=30), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
+    sa.Column('distributor_id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('distributor_revocations',
@@ -68,10 +68,7 @@ def upgrade():
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('username', sa.Unicode(length=20), nullable=False),
     sa.Column('vendor_id', sa.Integer(), nullable=False),
-    sa.Column('legal_person_name', sa.Unicode(length=10), nullable=False),
-    sa.Column('legal_person_identity', sa.CHAR(length=18), nullable=False),
     sa.Column('name', sa.Unicode(length=30), nullable=False),
-    sa.Column('address_id', sa.Integer(), nullable=False),
     sa.Column('contact_mobile', sa.String(length=30), nullable=False),
     sa.Column('contact_telephone', sa.String(length=30), nullable=False),
     sa.Column('contact', sa.Unicode(length=10), nullable=False),
@@ -173,6 +170,7 @@ def upgrade():
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=12), nullable=False),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email'),
     sa.UniqueConstraint('mobile'),
     sa.UniqueConstraint('username')
     )
@@ -212,10 +210,10 @@ def upgrade():
     )
     op.create_table('user_addresses',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('district_id', sa.Integer(), nullable=False),
-    sa.Column('created', sa.Integer(), nullable=False),
+    sa.Column('cn_id', sa.Integer(), nullable=False),
     sa.Column('address', sa.Unicode(length=30), nullable=False),
+    sa.Column('created', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('mobile', sa.CHAR(length=11), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('mobile')
@@ -228,15 +226,16 @@ def upgrade():
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('username', sa.Unicode(length=20), nullable=False),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email'),
     sa.UniqueConstraint('mobile'),
     sa.UniqueConstraint('username')
     )
     op.create_table('vendor_addresses',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('vendor_id', sa.Integer(), nullable=False),
-    sa.Column('district_id', sa.Integer(), nullable=False),
+    sa.Column('cn_id', sa.Integer(), nullable=False),
     sa.Column('address', sa.Unicode(length=30), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
+    sa.Column('vendor_id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('vendors',
@@ -252,7 +251,6 @@ def upgrade():
     sa.Column('legal_person_identity_front', sa.String(length=255), nullable=False),
     sa.Column('legal_person_identity_back', sa.String(length=255), nullable=False),
     sa.Column('name', sa.Unicode(length=30), nullable=False),
-    sa.Column('license_address', sa.Unicode(length=30), nullable=False),
     sa.Column('license_limit', sa.Integer(), nullable=False),
     sa.Column('license_long_time_limit', sa.Boolean(), nullable=False),
     sa.Column('license_image', sa.String(length=255), nullable=False),
@@ -263,6 +261,7 @@ def upgrade():
     sa.Column('reject_message', sa.Unicode(length=100), nullable=False),
     sa.Column('rejected', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email'),
     sa.UniqueConstraint('mobile'),
     sa.UniqueConstraint('name')
     )
