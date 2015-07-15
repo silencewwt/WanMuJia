@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from json import loads
+import requests
 from flask_celery3 import make_celery
 
 from app import app, mail
@@ -13,5 +15,7 @@ def send_mail(msg):
 
 
 @celery.task
-def send_sms(msg, mobile):
-    pass
+def send_sms(url):
+    response = requests.get(url)
+    response = loads(response.content)
+    print(response['resp']['respCode'])

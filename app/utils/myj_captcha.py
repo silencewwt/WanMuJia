@@ -37,11 +37,11 @@ def sms_captcha_generator():
     return id_generator(6, string.digits)
 
 
-def send_sms_captcha(mobile):
+def send_sms_captcha(template, mobile):
     if not redis_get(SMS_CAPTCHA_SENT, mobile):
         captcha_chars = sms_captcha_generator()
         redis_set(SMS_CAPTCHA, mobile, captcha_chars)
-        sms_generator(SMS_CAPTCHA, mobile, captcha=captcha_chars)
+        sms_generator(template, mobile, contents=[captcha_chars])
         redis_set(SMS_CAPTCHA_SENT, mobile, True, 60)
         return True
     return False
