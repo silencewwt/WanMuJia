@@ -1,6 +1,8 @@
-/**
- * Created by rain on 15/4/7.
- */
+/*
+*
+* Created by rain on 15/4/7.
+*
+*/
 
 var fs = require('fs');
 var path = require('path');
