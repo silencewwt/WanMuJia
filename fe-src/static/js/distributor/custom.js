@@ -6,123 +6,89 @@ jQuery(document).ready(function($) {
 
     // Items page
     if (getPageTitle() === 'items') {
+
         initDatatable($('#items'), {
-            ajax: "/privilege/items/datatable",
+            ajax: "/distributor/items/datatable",
             columns: [
-                {data: "id", bSortable: false, visible: false},
+                {data: "id", visible: false},
                 {data: "item", bSortable: false},
                 {data: "second_category_id", bSortable: false},
                 {data: "price"},
-                {data: "size", bSortable: false}
+                {data: "size", bSortable: false},
+                {data: "inventory", visible: false},
             ],
             columnDefs: [{
-                targets: [5],
-                data: "id",
-                render: function (id) {
-                    return "<a href='/privilege/items/" + id + "'>详情</a>";
+                targets: [6],
+                data: {},
+                render: function (data) {
+                    var text = null, checked = null;
+                    if (data.inventory === 1) {
+                        text = '有货';
+                        checked = 'checked';
+                    }
+                    else {
+                        text = '无货';
+                        checked = '';
+                    }
+
+                    return '<label class="inventory-info">' + text + '</label>' +
+                            '<input type="checkbox" ' + checked + ' class="inventory-checkbox iswitch iswitch-secondary" data-id="' + data.id + '">' +
+                            '<div class="disable-div"></div>';
                 }
             }]
         });
-    }
 
-
-    // Item Detail page
-    if (getPageTitle() === 'item-detail') {
-        var $form = $('#edit-item-form');
-        var originFormValue = $form.serialize();
-
-        // Set form disabled
-        setFormDisabled($form);
-
-        // Edit-form
-        $form.delegate('.form-control', 'keydown', function () {
-            $('#save').next().hide();
-        });
-        $form.find('select').click(function () {
-            $('#save').next().hide();
-        });
-
-        $('#save').click(function () {
+        $('#items').delegate('.inventory-checkbox', 'click', function () {
             var $this = $(this);
             if ($this.hasClass('disabled')) return;
 
-            //$this.addClass('disabled');
-            var dirtyCheck = formDirtyCheck($form, originFormValue);
-            if (dirtyCheck.isDirty) {
-                saveInfos({
-                    url: window.location.pathname,
-                    method: 'put',
-                    form: $form,
-                    success: function (data) {
-                        $this.next()
-                            .text('保存成功！')
-                            .addClass('text-success')
-                            .removeClass('text-danger')
-                            .show();
+            var $loading = $('<span class="loading fa fa-spin fa-spinner"></span>');
+            var $errorHint = $('<span class="error-hint text-danger">服务器错误请重试</span>');
+            var id = $this.data('id');
+            var $td = $this.parent();
 
-                        originFormValue = dirtyCheck.origin;
-                    },
-                    error: function () {
-                        $this.next()
-                            .text('服务器错误，请稍后重试')
-                            .removeClass('text-success')
-                            .addClass('text-danger')
-                            .show();
-
-                        //$this.removeClass('disabled');
-                    }
-                });
-            }
-        });
-
-        // Item Album page
-        var $albumImages = $('.album-images');
-        var deleteImgHash = '';
-
-        $albumImages
-            // 修改 deleteImgHash 变量
-            .delegate('[data-action="trash"]', 'click', function () {
-                console.log('delete');
-                deleteImgHash = $(this)
-                    .parents('.album-image')
-                    .data('hash');
-            })
-            // 修改大图弹窗中图片的 src
-            .delegate('.album-image', 'click', function () {
-                var src = $(this).find('.thumb img').attr('src');
-                $('#gallery-image-modal')
-                    .find('img').attr('src', src);
-            });
-
-        // 确认删除后发送删除请求并删除 gallery 中相应 ui
-        $('#gallery-image-delete-modal')
-            .find('#delete')
-            .click(function () {
-                $albumImages
-                    .find('[data-hash=' + deleteImgHash + ']')
-                    .parent()
-                    .remove();
-
-                deleteImage(deleteImgHash);
-            });
-
-        $('#sort-confirm').click(function () {
-            var sort = [];
-            $albumImages
-                .find('.album-image')
-                .each(function () {
-                    sort.push($(this).data('hash'));
-                });
+            // Set waiting state
+            $this.prop('disabled', true);
+            $td.append($loading);
 
             $.ajax({
-                url: '/items/image_sort',
+                url: '/distributor/items/' + id,
                 method: 'post',
-                data: sort.join(',')
+                data: id,
+                success: function () {
+                    setStock();
+                    $td.find('.error-hint').remove();
+                },
+                error: function () {
+                    toggleCheckState();
+                    setStock();
+                    if ($td.find('.error-hint').length === 0) {
+                        $td.append($errorHint);
+                    }
+                },
             });
-        });
 
+            function setStock() {
+                var $info = $this.prev('.inventory-info');
+                if ($this.is(':checked')) {
+                    $info.text('有货');
+                }
+                else {
+                    $info.text('无货');
+                }
+                $this.prop('disabled', false);
+                $td.find('.loading').remove();
+            }
+
+            function toggleCheckState() {
+                if ($this.is(':checked')) $this.prop('checked', false);
+                else $this.prop('checked', true);
+            }
+        });
     }
 
+
+    
 
 
     // =============== plugins config ===============

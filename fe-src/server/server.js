@@ -403,6 +403,53 @@ app.get('/distributor', function (req, res) {
     res.render('distributor/index');
 });
 
+app.get('/distributor/items', function (req, res) {
+    res.render('distributor/items');
+});
+
+app.post('/distributor/items/:id', function (req, res) {
+    if (req.params.id == 2) {
+        res.status(404);
+    }
+    setTimeout(function () {
+        res.send('error');
+    }, 2000);
+});
+
+app.get('/distributor/items/datatable', function (req, res) {
+    res.send({
+        "draw": 2,
+        "recordsTotal": 3,
+        "recordsFiltered": 3,
+        "data": [
+            {
+                "id": 1,
+                "item": "Troy",
+                "second_category_id": "Young",
+                "price": "110",
+                "size": "PR",
+                "inventory": 0
+            },
+            {
+                "id": 2,
+                "item": "Troy",
+                "second_category_id": "Young",
+                "price": "110",
+                "size": "PR",
+                "inventory": 1
+            },
+            {
+                "id": 3,
+                "item": "Troy",
+                "second_category_id": "Young",
+                "price": "110",
+                "size": "PR",
+                "inventory": 1
+            }
+        ]
+    });
+});
+
 
 // 404
 app.use(function(req, res){

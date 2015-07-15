@@ -161,6 +161,7 @@ body.register-page .login-header {
             height: 40px;
             border: 1px solid transparent;
             background-color: #313334;
+            color: #fff;
         }
         .control-label {
             margin: 10px 0;
@@ -185,9 +186,4 @@ body.register-page .login-header {
         background-color: rgba(55, 57, 58, 0.3);
     }
 
-    .address-select {
-        select.form-control {
-            color: #fff;
-        }
-    }
 }
