@@ -160,13 +160,22 @@ class Vendor(BaseUser, db.Model):
     @staticmethod
     def generate_fake():
         from faker.factory import Factory
-        fake = Factory.create('zh-CN')
+        from random import randint
+        zh_fake = Factory.create('zh-CN')
+        fake = Factory.create()
+        vendors = []
         for i in range(100):
             vendor = Vendor(
-                "14e1b600b1fd579f47433b88e8d85291", fake.phone_number(), fake.email(), fake.name(),
-                fake.random_number(18), fake.name(), fake.random_number(2), False, fake.phone_number(),
-                fake.phone_number())
+                "14e1b600b1fd579f47433b88e8d85291", zh_fake.phone_number(), fake.email(), zh_fake.name(),
+                zh_fake.random_number(18), '%s%s' % (zh_fake.company(), zh_fake.random_number(3)),
+                zh_fake.random_number(2), False, zh_fake.phone_number(), zh_fake.phone_number())
             db.session.add(vendor)
+            vendors.append(vendor)
+        db.session.commit()
+        districts = District.query.all()
+        for vendor in vendors:
+            vendor_address = VendorAddress(vendor.id, districts[randint(0, len(districts))].cn_id, zh_fake.address())
+            db.session.add(vendor_address)
         db.session.commit()
 
 
