@@ -1,8 +1,6 @@
-/*
-*
-* Created by rain on 15/4/7.
-*
-*/
+/**
+Created by rain on 15/4/7.
+**/
 
 var fs = require('fs');
 var path = require('path');
@@ -26,7 +24,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // index
 app.get('/', function (req, res) {
 
-    fs.readFile('src/server/data/index_data.json', function (err, data) {
+    fs.readFile('fe-src/server/data/index_data.json', function (err, data) {
         if (err) {
             console.log(err);
             res.send('Something Error!');
@@ -44,7 +42,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/display', function (req, res) {
-    fs.readFile('src/server/data/index_data.json', function (err, data) {
+    fs.readFile('fe-src/server/data/index_data.json', function (err, data) {
         if (err) {
             console.log(err);
             res.send('Something Error!');
@@ -59,7 +57,7 @@ app.get('/display', function (req, res) {
 });
 
 app.get('/item', function (req, res) {
-    fs.readFile('src/server/data/item01.json', function (err, data) {
+    fs.readFile('fe-src/server/data/item01.json', function (err, data) {
         if (err) {
             console.log(err);
             res.send('Something Error!');
@@ -74,7 +72,7 @@ app.get('/item', function (req, res) {
 });
 
 app.get('/compare', function (req, res) {
-    fs.readFile('src/server/data/item01.json', function (err, data) {
+    fs.readFile('fe-src/server/data/item01.json', function (err, data) {
         if (err) {
             console.log(err);
             res.send('Something Error!');
@@ -124,7 +122,7 @@ app.post('/user/register/result', function (req, res) {
 });
 
 app.get('/user/profile', function (req, res) {
-    fs.readFile('src/server/data/index_data.json', function (err, data) {
+    fs.readFile('fe-src/server/data/index_data.json', function (err, data) {
         if (err) {
             console.log(err);
             res.send('Something Error!');
