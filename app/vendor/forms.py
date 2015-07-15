@@ -194,8 +194,7 @@ class ItemImageForm(Form):
     item_id = IntegerField()
     image = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'])])
 
-    @staticmethod
-    def validate_item_id(field):
+    def validate_item_id(self, field):
         if field.data and field.data != current_user.id:
             raise ValidationError('wrong id')
 
@@ -213,8 +212,7 @@ class ItemImageSortForm(Form):
 
     image_list = []
 
-    @staticmethod
-    def validate_item_id(field):
+    def validate_item_id(self, field):
         if field.data and field.data != current_user.id:
             raise ValidationError('wrong id')
 
@@ -262,8 +260,7 @@ class SettingsForm(Form):
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
 
-    @staticmethod
-    def validate_name(field):
+    def validate_name(self, field):
         vendors = Vendor.query.filter_by(name=field.data)
         if vendors.count() > 1 or (vendors.first() and vendors.first().id != current_user.id):
             raise ValidationError('品牌名称已存在')
@@ -271,22 +268,20 @@ class SettingsForm(Form):
     def show_vendor_setting(self, vendor):
         self.contact_mobile.data = vendor.contact_mobile
         self.contact_telephone.data = vendor.contact_telephone
-        vendor_address = VendorAddress.query.filter_by(vendor_id=vendor.id)
-        self.district_cn_id.data = vendor_address.cn_id
-        self.address.data = vendor_address.address
+        self.district_cn_id.data = vendor.address.cn_id
+        self.address.data = vendor.address.address
 
     def update_vendor_setting(self, vendor):
         vendor.name = self.name.data
         vendor.contact_mobile = self.contact_mobile.data
         vendor.contact_telephone = self.contact_telephone.data
-        vendor_address = VendorAddress.query.filter_by(vendor_id=vendor.id)
-        vendor_address.address = self.address.data
-        vendor_address.cn_id = self.district_cn_id.data
+        vendor.address.address = self.address.data
+        vendor.address.cn_id = self.district_cn_id.data
         if self.logo.data:
             logo = save_image(vendor.id, 'vendor', self.logo)
             vendor.logo = logo
         db.session.add(vendor)
-        db.session.add(vendor_address)
+        db.session.add(vendor.address)
         db.session.commit()
 
 
