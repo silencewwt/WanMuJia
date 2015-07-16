@@ -4,6 +4,31 @@
  *
 */
 
+// alert
+.alert {
+    margin-bottom: 30px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    .close {
+        margin-top: 0;
+    }
+
+    &.alert-warning {
+        color: #8a6d3b;
+        background-color: #fcf8e3;
+        border-color: #faebcc;
+
+        .alert-link {
+            color: #66512c;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+
+// panel
 .inline-block-clear {
     font-size: 0;
 }
@@ -13,6 +38,24 @@
 }
 .panel-options a:hover {
     color: #000 !important;
+}
+
+
+// nav
+.navbar-nav, .main-menu {
+    li {
+        position: relative;
+
+        .disabled-div {
+            z-index: 9999;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            cursor: not-allowed;
+        }
+    }
 }
 
 
