@@ -142,6 +142,7 @@ body.register-page .login-header {
     padding-left: 10px;
     font-size: 20px;
     color: rgba(151, 152, 152, 0.6);
+    vertical-align: bottom;
 }
 
 .send.disabled {
@@ -171,6 +172,22 @@ body.register-page .login-header {
         label.error {
             margin-top: 5px;
             color: #7E383C;
+        }
+
+        &.upload {
+            position: relative;
+
+            & .upload-state {
+                display: none;
+                position: absolute;
+                top: 52px;
+                right: -30px;
+                font-size: 18px;
+
+                &.fa-smile-o {
+                    color: #2e9d18;
+                }
+            }
         }
     }
 

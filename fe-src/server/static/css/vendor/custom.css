@@ -101,7 +101,8 @@ body.register-page .login-header {
 .login-page .login-form .login-header .logo span, .register-next-form .logo span {
   padding-left: 10px;
   font-size: 20px;
-  color: rgba(151, 152, 152, 0.6); }
+  color: rgba(151, 152, 152, 0.6);
+  vertical-align: bottom; }
 
 .send.disabled {
   cursor: not-allowed !important;
@@ -124,6 +125,16 @@ body.register-page .login-header {
   .register-next-form .form-group label.error {
     margin-top: 5px;
     color: #7E383C; }
+  .register-next-form .form-group.upload {
+    position: relative; }
+    .register-next-form .form-group.upload .upload-state {
+      display: none;
+      position: absolute;
+      top: 52px;
+      right: -30px;
+      font-size: 18px; }
+      .register-next-form .form-group.upload .upload-state.fa-smile-o {
+        color: #2e9d18; }
   .register-next-form [type="submit"] {
     margin-top: 40px;
     padding: 11px 12px;

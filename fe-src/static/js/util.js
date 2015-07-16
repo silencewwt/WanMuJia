@@ -432,7 +432,7 @@ function encrypt(key) {
     return hex_md5(hex_md5(key));
 }
 
-function genFormData($form, cb) {
+function genFormDataT($form, cb) {
     var data = queryStringToJson($form.serialize());
     var fileUpload = $form.find('input[type="file"]');
 
@@ -458,4 +458,35 @@ function genFormData($form, cb) {
             };
         });
     }
+}
+
+function genFormData($form, files) {
+    var data = {};
+
+    $form.find('input').each(function () {
+        var value = null;
+
+        if (this.type == 'password' && this.value.length > 0) {
+            value = encrypt(this.value);
+        }
+        else if (this.type == 'file' && files !== undefined) {
+            console.log(files);
+            value = files[this.name];
+        }
+        else {
+            value = this.value;
+        }
+
+        data[this.name] = value;
+    });
+
+    $form.find('select').each(function () {
+        data[this.name] = this.value;
+    });
+
+    $form.find('textarea').each(function () {
+        data[this.name] = this.value;
+    });
+
+    return data;
 }
