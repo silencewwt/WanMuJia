@@ -283,6 +283,11 @@ class Item(db.Model):
     paint_id = db.Column(db.Integer, nullable=False)
     # 装饰 id
     decoration_id = db.Column(db.Integer, nullable=False)
+    # 一级场景 id
+    # "工艺品"与"其他"场景分类先不分二级分类, 但是以后随时可能再添加二级分类, 待以后补全了二级分类, 再将此字段删去
+    first_scene_id = db.Column(db.Integer, nullable=False)
+    # 二级场景 id
+    second_scene_id = db.Column(db.Integer, nullable=False)
     # 产品寓意
     story = db.Column(db.Unicode(5000), default=u'', nullable=False)
 
@@ -396,10 +401,35 @@ class ItemCategory(db.Model):
     category_id = db.Column(db.Integer, nullable=False)
 
 
-class Category(db.Model):
-    __tablename__ = 'categories'
+class FirstScene(db.Model):
+    __tablename__ = 'first_scenes'
     id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.Unicode(10), nullable=False)
+    first_scene = db.Column(db.Unicode(10), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        scenes = {u'家庭': [u'书房', u'客厅', u'卧室', u'厨卫', u'餐厅', u'儿童房'], u'办公': [u'酒店', u'工作室'],
+                  u'工艺品': [], u'其他': []}
+        for scene in scenes:
+            db.session.add(FirstScene(first_scene=scene))
+        db.session.commit()
+
+
+class SecondScene(db.Model):
+    __tablename__ = 'second_scenes'
+    id = db.Column(db.Integer, primary_key=True)
+    first_scene_id = db.Column(db.Integer, nullable=False)
+    second_scene = db.Column(db.Unicode(10), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        scenes = {u'家庭': [u'书房', u'客厅', u'卧室', u'厨卫', u'餐厅', u'儿童房'], u'办公': [u'酒店', u'工作室'],
+                  u'工艺品': [], u'其他': []}
+        for scene in scenes:
+            first_scene = FirstScene.query.filter_by(first_scene=scene).first()
+            for sec_scene in scenes[scene]:
+                db.session.add(SecondScene(first_scene_id=first_scene.id, second_scene=sec_scene))
+        db.session.commit()
 
 
 class MaterialCategory(db.Model):
@@ -678,4 +708,6 @@ def generate_fake_data():
     Paint.generate_fake()
     Decoration.generate_fake()
     Tenon.generate_fake()
+    FirstScene.generate_fake()
+    SecondScene.generate_fake()
     Vendor.generate_fake()
