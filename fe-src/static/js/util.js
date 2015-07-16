@@ -432,34 +432,6 @@ function encrypt(key) {
     return hex_md5(hex_md5(key));
 }
 
-function genFormDataT($form, cb) {
-    var data = queryStringToJson($form.serialize());
-    var fileUpload = $form.find('input[type="file"]');
-
-    if (data.password !== undefined && data.password.length > 0) {
-        console.log(data.password);
-        data.password = encrypt(data.password);
-    }
-    if (data.confirm_password !== undefined && data.confirm_password.length > 0) {
-        data.confirm_password = encrypt(data.confirm_password);
-    }
-
-    if (fileUpload.length > 0) {
-        fileUpload.each(function (index) {
-            var files = this.files;
-            if (files.length <= 0 || !window.FileReader) return;
-
-            var name = this.name;
-            var reader = new FileReader();
-            reader.readAsBinaryString(files[0]);
-            reader.onloadend = function () {
-                data[name] = this.result;
-                cb(data);
-            };
-        });
-    }
-}
-
 function genFormData($form, files) {
     var data = {};
 

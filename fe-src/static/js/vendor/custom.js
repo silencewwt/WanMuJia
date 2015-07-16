@@ -227,116 +227,116 @@ jQuery(document).ready(function($) {
 
 
     // Register_next page
-    // if ($('body').data('page') == 'register-next') {
-    //
-    //     // form validate
-    //     $('#email').rules('add', {
-    //         required: true,
-    //         email: true,
-    //         messages: {
-    //             required: '请输入您的邮箱',
-    //             email: '请输入合法的邮箱地址'
-    //         }
-    //     });
-    //
-    //     $('#password').rules('add', {
-    //         required: true,
-    //         regex: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/,
-    //         messages: {
-    //             required: '请设置密码',
-    //             regex: '密码长度必须大于等于6位且为字母和数字的组合'
-    //         }
-    //     });
-    //
-    //     $('#confirm_password').rules('add', {
-    //         required: true,
-    //         equalTo: '#password',
-    //         messages: {
-    //             required: '请再次输入密码',
-    //             equalTo: '两次密码输入不一致'
-    //         }
-    //     });
-    //
-    //     $('#agent_name').rules('add', {
-    //         required: true,
-    //         messages: {
-    //             required: '请输入代理人姓名',
-    //         }
-    //     });
-    //
-    //     $('#agent_identity').rules('add', {
-    //         required: true,
-    //         regex: /^\d{15}(\d\d[0-9xX])?$/,
-    //         messages: {
-    //             required: '请输入代理人身份证',
-    //             regex: '不合法的身份证号码'
-    //         }
-    //     });
-    //
-    //     $('#agent_identity_photo_front').rules('add', {
-    //         required: true,
-    //         messages: {
-    //             required: '请上传代理人身份证正面照片',
-    //         }
-    //     });
-    //
-    //     $('#agent_identity_photo_back').rules('add', {
-    //         required: true,
-    //         messages: {
-    //             required: '请上传代理人身份证反面照片',
-    //         }
-    //     });
-    //
-    //     $('#name').rules('add', {
-    //         required: true,
-    //         messages: {
-    //             required: '请填写厂家名称',
-    //         }
-    //     });
-    //
-    //     $('#license_address').rules('add', {
-    //         required: true,
-    //         messages: {
-    //             required: '请填写营业执照所在地',
-    //         }
-    //     });
-    //
-    //     $('#limit').rules('add', {
-    //         required: true,
-    //         messages: {
-    //             required: '请填写营业期限',
-    //         }
-    //     });
-    //
-    //     $('#province_cn_id').rules('add', {
-    //         required: true,
-    //         messages: {
-    //             required: '请选择省级行政区',
-    //         }
-    //     });
-    //
-    //     $('#city_cn_id').rules('add', {
-    //         required: true,
-    //         messages: {
-    //             required: '请选择市级行政区',
-    //         }
-    //     });
-    //
-    //     $('#district_cn_id').rules('add', {
-    //         required: true,
-    //         messages: {
-    //             required: '请选择区级行政区',
-    //         }
-    //     });
-    //
-    //     $('#address').rules('add', {
-    //         required: true,
-    //         messages: {
-    //             required: '请填写联系地址',
-    //         }
-    //     });
-    //
-    // }
+    if ($('body').data('page') == 'register-next') {
+
+        // form validate
+        $('#email').rules('add', {
+            required: true,
+            email: true,
+            messages: {
+                required: '请输入您的邮箱',
+                email: '请输入合法的邮箱地址'
+            }
+        });
+
+        $('#password').rules('add', {
+            required: true,
+            regex: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/,
+            messages: {
+                required: '请设置密码',
+                regex: '密码长度必须大于等于6位且为字母和数字的组合'
+            }
+        });
+
+        $('#confirm_password').rules('add', {
+            required: true,
+            equalTo: '#password',
+            messages: {
+                required: '请再次输入密码',
+                equalTo: '两次密码输入不一致'
+            }
+        });
+
+        $('#agent_name').rules('add', {
+            required: true,
+            messages: {
+                required: '请输入代理人姓名',
+            }
+        });
+
+        $('#agent_identity').rules('add', {
+            required: true,
+            regex: /^\d{15}(\d\d[0-9xX])?$/,
+            messages: {
+                required: '请输入代理人身份证',
+                regex: '不合法的身份证号码'
+            }
+        });
+
+        $('#agent_identity_photo_front').rules('add', {
+            required: true,
+            messages: {
+                required: '请上传代理人身份证正面照片',
+            }
+        });
+
+        $('#agent_identity_photo_back').rules('add', {
+            required: true,
+            messages: {
+                required: '请上传代理人身份证反面照片',
+            }
+        });
+
+        $('#name').rules('add', {
+            required: true,
+            messages: {
+                required: '请填写厂家名称',
+            }
+        });
+
+        $('#license_address').rules('add', {
+            required: true,
+            messages: {
+                required: '请填写营业执照所在地',
+            }
+        });
+
+        $('#limit').rules('add', {
+            required: true,
+            messages: {
+                required: '请填写营业期限',
+            }
+        });
+
+        $('#province_cn_id').rules('add', {
+            required: true,
+            messages: {
+                required: '请选择省级行政区',
+            }
+        });
+
+        $('#city_cn_id').rules('add', {
+            required: true,
+            messages: {
+                required: '请选择市级行政区',
+            }
+        });
+
+        $('#district_cn_id').rules('add', {
+            required: true,
+            messages: {
+                required: '请选择区级行政区',
+            }
+        });
+
+        $('#address').rules('add', {
+            required: true,
+            messages: {
+                required: '请填写联系地址',
+            }
+        });
+
+    }
 
 
     // =============== plugins config ===============

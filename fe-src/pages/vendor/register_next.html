@@ -232,12 +232,10 @@
                             finish: function(){
 
                                 // Redirect after successful login page (when progress bar reaches 100%)
-                                if(resp.accessGranted)
-                                {
+                                if(resp.accessGranted) {
                                     window.location.href = '/vendor';
                                 }
-                                else
-                                {
+                                else {
                                     toastr.error(resp.message + " :)", "注册失败", opts);
                                     $('#captcha').select();
                                 }
