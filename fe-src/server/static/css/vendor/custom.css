@@ -3,6 +3,21 @@
  * Apply your custom CSS here
  *
 */
+.alert {
+  margin-bottom: 30px;
+  border: 1px solid transparent;
+  border-radius: 4px; }
+  .alert .close {
+    margin-top: 0; }
+  .alert.alert-warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc; }
+    .alert.alert-warning .alert-link {
+      color: #66512c; }
+      .alert.alert-warning .alert-link:hover {
+        text-decoration: underline; }
+
 .inline-block-clear {
   font-size: 0; }
 
@@ -11,6 +26,17 @@
 
 .panel-options a:hover {
   color: #000 !important; }
+
+.navbar-nav li, .main-menu li {
+  position: relative; }
+  .navbar-nav li .disabled-div, .main-menu li .disabled-div {
+    z-index: 9999;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    cursor: not-allowed; }
 
 /*table*/
 table .op a {
@@ -101,7 +127,8 @@ body.register-page .login-header {
 .login-page .login-form .login-header .logo span, .register-next-form .logo span {
   padding-left: 10px;
   font-size: 20px;
-  color: rgba(151, 152, 152, 0.6); }
+  color: rgba(151, 152, 152, 0.6);
+  vertical-align: bottom; }
 
 .send.disabled {
   cursor: not-allowed !important;
@@ -124,6 +151,16 @@ body.register-page .login-header {
   .register-next-form .form-group label.error {
     margin-top: 5px;
     color: #7E383C; }
+  .register-next-form .form-group.upload {
+    position: relative; }
+    .register-next-form .form-group.upload .upload-state {
+      display: none;
+      position: absolute;
+      top: 52px;
+      right: -30px;
+      font-size: 18px; }
+      .register-next-form .form-group.upload .upload-state.fa-smile-o {
+        color: #2e9d18; }
   .register-next-form [type="submit"] {
     margin-top: 40px;
     padding: 11px 12px;

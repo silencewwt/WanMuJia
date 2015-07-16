@@ -109,6 +109,18 @@ jQuery(document).ready(function($) {
 
     // jQuery validate
     if ($.validator) {
+        $.validator.addMethod(
+            "regex",
+            function(value, element, regexp) {
+                if (regexp.constructor != RegExp)
+                    regexp = new RegExp(regexp);
+                else if (regexp.global)
+                    regexp.lastIndex = 0;
+                return this.optional(element) || regexp.test(value);
+            },
+            "Please check your input."
+        );
+
         $.validator.addMethod('mobile', function (value, element) {
             var length = value.length;
             var mobile = /^((1[3-8][0-9])+\d{8})$/;

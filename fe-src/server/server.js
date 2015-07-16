@@ -244,6 +244,9 @@ app.post('/vendor/login', function (req, res) {
 app.get('/vendor/register', function (req, res) {
     res.render('vendor/register');
 });
+app.post('/vendor/register', function (req, res) {
+    res.send({accessGranted: true});
+});
 app.get('/vendor/register_next', function (req, res) {
     res.render('vendor/register_next');
 });

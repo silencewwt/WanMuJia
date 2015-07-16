@@ -31,7 +31,7 @@
 
 </head>
 
-<body class="page-body login-page register-page" data-page="register">
+<body class="page-body login-page register-page" data-page="register-next">
 
 <div class="login-container" >
 
@@ -81,14 +81,16 @@
                     <input type="text" class="form-control input-dark" name="agent_identity" id="agent_identity" autocomplete="off" />
                 </div>
 
-                <div class="form-group">
+                <div class="form-group upload">
                     <label class="control-label" for="agent_identity_photo_front">身份证正面照片</label>
                     <input type="file" accept="image/jpeg, image/png" class="form-control input-dark" name="agent_identity_photo_front" id="agent_identity_photo_front" autocomplete="off" />
+                    <span class="upload-state fa fa-spin fa-circle-o-notch"></span>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group upload">
                     <label class="control-label" for="agent_identity_photo_back">身份证反面照片</label>
                     <input type="file" class="form-control input-dark" name="agent_identity_photo_back" id="agent_identity_photo_back" autocomplete="off" />
+                    <span class="upload-state fa fa-spin fa-spin fa-circle-o-notch"></span>
                 </div>
 
                 <div class="form-group">
@@ -152,123 +154,48 @@
             select: ['#province_cn_id', '#city_cn_id', '#district_cn_id']
         });
 
+        // FileReader
+        var imgFiles = {};
+        var upload = {$el: null, complete: false};
+        $('input[type="file"]').on('change', function () {
+            var $this = $(this);
+            var files = !!this.files ? this.files : [];
+
+            if (files.length <= 0 || !window.FileReader) return;
+
+            if (/^image/.test(files[0].type)) {
+                var $formGroup = $this.parent();
+                var $uploadState = $formGroup.find('.upload-state');
+                var loadingClass = 'fa-spin fa-spin fa-circle-o-notch';
+                var completeClass = 'fa-smile-o'
+
+                upload.$input = $this;
+                upload.complete = false;
+
+                // update loading ui
+                $uploadState
+                    .removeClass(completeClass).addClass(loadingClass)
+                    .show();
+
+                uploadComplete = false;
+                var reader = new FileReader();
+                reader.readAsBinaryString(files[0]);
+                reader.onloadend = function () {
+                    setTimeout(function () {
+                        imgFiles[$this[0].name] = this.result;
+                        upload.complete = true;
+                        $uploadState.removeClass(loadingClass).addClass(completeClass);
+                    }, 4000);
+                };
+            }
+        });
+
         // Validation and Ajax action
-        $.validator.addMethod(
-            "regex",
-            function(value, element, regexp) {
-                if (regexp.constructor != RegExp)
-                    regexp = new RegExp(regexp);
-                else if (regexp.global)
-                    regexp.lastIndex = 0;
-                return this.optional(element) || regexp.test(value);
-            },
-            "Please check your input."
-        );
-
         $("form#register").validate({
-            rules: {
-                email: {
-                    required: true,
-                    email: true
-                },
-                password: {
-                    required: true,
-                    regex: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/
-                },
-                confirm_password: {
-                    required: true,
-                    equalTo: '#password'
-                },
-                agent_name: {
-                    required: true
-                },
-                agent_identity: {
-                    required: true,
-                    regex: /^\d{15}(\d\d[0-9xX])?$/
-                },
-                agent_identity_photo_front: {
-                    required: true
-                },
-                agent_identity_photo_back: {
-                    required: true
-                },
-                name: {
-                    required: true
-                },
-                license_address: {
-                    required: true
-                },
-                limit: {
-                    required: true
-                },
-                province_cn_id: {
-                    required: true
-                },
-                city_cn_id: {
-                    required: true
-                },
-                district_cn_id: {
-                    required: true
-                },
-                address: {
-                    required: true
-                }
-            },
-
-            messages: {
-                email: {
-                    required: '请输入您的邮箱',
-                    email: '请输入合法的邮箱地址'
-                },
-                password: {
-                    required: '请设置密码',
-                    regex: '密码长度必须大于等于6位且为字母和数字的组合'
-                },
-                confirm_password: {
-                    required: '请再次输入密码',
-                    equalTo: '两次密码输入不一致'
-                },
-                agent_name: {
-                    required: '请输入代理人姓名'
-                },
-                agent_identity: {
-                    required: '请输入代理人身份证',
-                    regex: '不合法的身份证号码'
-                },
-                agent_identity_photo_front: {
-                    required: '请上传代理人身份证正面照片'
-                },
-                agent_identity_photo_back: {
-                    required: '请上传代理人身份证背面照片'
-                },
-                name: {
-                    required: '请填写厂家名称'
-                },
-                license_address: {
-                    required: '请填写营业执照所在地'
-                },
-                limit: {
-                    required: '请填写营业期限'
-                },
-                province_cn_id: {
-                    required: '请选择省级行政区'
-                },
-                city_cn_id: {
-                    required: '请选择市级行政区'
-                },
-                district_cn_id: {
-                    required: '请选择区级行政区'
-                },
-                address: {
-                    required: '请填写联系地址'
-                }
-            },
 
             // Form Processing via AJAX
             submitHandler: function(form)
             {
-                show_loading_bar(70); // Fill progress bar to 70% (just a given value)
-
                 var opts = {
                     "closeButton": true,
                     "debug": false,
@@ -284,45 +211,54 @@
                     "hideMethod": "fadeOut"
                 };
 
-                genFormData($('#register'), function (data) {
-                    $.ajax({
-                        url: "/vendor/register",
-                        method: 'POST',
-                        dataType: 'json',
-                        data: data,
-                        success: function(resp)
-                        {
-                            show_loading_bar({
-                                delay: .5,
-                                pct: 100,
-                                finish: function(){
+                // 如果 uploadComplete 为 false，给出提示然后直接退出当前函数
+                if (upload.complete == false) {
+                    toastr.warning('文件还在上传中' + " :)", "请稍后再提交", opts);
+                    return;
+                }
 
-                                    // Redirect after successful login page (when progress bar reaches 100%)
-                                    if(resp.accessGranted)
-                                    {
+                show_loading_bar(70); // Fill progress bar to 70% (just a given value)
+
+                $.ajax({
+                    url: "/vendor/register",
+                    method: 'POST',
+                    dataType: 'json',
+                    data: genFormData($(form), imgFiles),
+                    success: function(resp)
+                    {
+                        show_loading_bar({
+                            delay: .5,
+                            pct: 100,
+                            finish: function(){
+
+                                // Redirect after successful login page (when progress bar reaches 100%)
+                                if(resp.accessGranted) {
+                                    var countdown = 3;
+                                    var message = '审核结果将在3个工作日通知。后台部分功能将在审核通过后开放。\n'+
+                                    countdown +'秒后自动跳转至后台首页...';
+
+                                    toastr.success(message, '注册成功 :)', opts);
+                                    setTimeout(function () {
                                         window.location.href = '/vendor';
-                                    }
-                                    else
-                                    {
-                                        toastr.error(resp.message + " :)", "注册失败", opts);
-                                        $('#captcha').select();
-                                    }
+                                    }, countdown * 1000);
                                 }
-                            });
-
-                        },
-                        error: function (xhr) {
-                            show_loading_bar({
-                                delay: .5,
-                                pct: 100,
-                                finish: function(){
-                                    toastr.error(xhr.status + "错误，请稍后重试 :)", "服务器错误", opts);
+                                else {
+                                    toastr.error(resp.message + " :)", "注册失败", opts);
                                 }
-                            });
-                        }
-                    });
+                            }
+                        });
 
-                })
+                    },
+                    error: function (xhr) {
+                        show_loading_bar({
+                            delay: .5,
+                            pct: 100,
+                            finish: function(){
+                                toastr.error(xhr.status + "错误，请稍后重试 :)", "服务器错误", opts);
+                            }
+                        });
+                    }
+                });
             }
         });
 

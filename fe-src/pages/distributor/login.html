@@ -93,11 +93,7 @@
                                 url: "distributor/login",
                                 method: 'POST',
                                 dataType: 'json',
-                                data: {
-                                    username: $(form).find('#username').val(),
-                                    password: encrypt($(form).find('#password').val()),
-                                    csrf_token: $(form).find('#csrf_token').val()
-                                },
+                                data: genFormData($(form)),
                                 success: function(resp)
                                 {
                                     show_loading_bar({

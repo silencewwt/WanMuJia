@@ -51,11 +51,7 @@
                                 url: "/vendor/login",
                                 method: 'POST',
                                 dataType: 'json',
-                                data: {
-                                    mobile: $(form).find('#mobile').val(),
-                                    password: encrypt($(form).find('#password').val()),
-                                    csrf_token: $(form).find('#csrf_token').val()
-                                },
+                                data: genFormData($(form)),
                                 success: function(resp)
                                 {
                                     show_loading_bar({

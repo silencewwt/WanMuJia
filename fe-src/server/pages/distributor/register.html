@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="/css/distributor/custom.css">
 
     <script src="/lib/xenon/js/jquery-1.11.1.min.js"></script>
+    <script src="/js/util.js"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -82,7 +83,7 @@
 
                 <div class="form-group">
                     <label class="control-label" for="contact_telephone">固话</label>
-                    <input type="text" class="form-control input-dark" name="contact_telephone" id="contact_telephone" autocomplete="off" />
+                    <input type="text" class="form-control input-dark" name="contact_telephone" id="contact_telephone" autocomplete="off" placeholder="区号-电话号码" />
                 </div>
 
                 <div class="form-group address-select">
@@ -242,7 +243,7 @@
                     url: "/distributor/register",
                     method: 'POST',
                     dataType: 'json',
-                    data: $(form).serialize(),
+                    data: genFormData($(form)),
                     success: function(resp)
                     {
                         show_loading_bar({

@@ -432,30 +432,33 @@ function encrypt(key) {
     return hex_md5(hex_md5(key));
 }
 
-function genFormData($form, cb) {
-    var data = queryStringToJson($form.serialize());
-    var fileUpload = $form.find('input[type="file"]');
+function genFormData($form, files) {
+    var data = {};
 
-    if (data.password !== undefined && data.password.length > 0) {
-        console.log(data.password);
-        data.password = encrypt(data.password);
-    }
-    if (data.confirm_password !== undefined && data.confirm_password.length > 0) {
-        data.confirm_password = encrypt(data.confirm_password);
-    }
+    $form.find('input').each(function () {
+        var value = null;
 
-    if (fileUpload.length > 0) {
-        fileUpload.each(function (index) {
-            var files = this.files;
-            if (files.length <= 0 || !window.FileReader) return;
+        if (this.type == 'password' && this.value.length > 0) {
+            value = encrypt(this.value);
+        }
+        else if (this.type == 'file' && files !== undefined) {
+            console.log(files);
+            value = files[this.name];
+        }
+        else {
+            value = this.value;
+        }
 
-            var name = this.name;
-            var reader = new FileReader();
-            reader.readAsBinaryString(files[0]);
-            reader.onloadend = function () {
-                data[name] = this.result;
-                cb(data);
-            };
-        });
-    }
+        data[this.name] = value;
+    });
+
+    $form.find('select').each(function () {
+        data[this.name] = this.value;
+    });
+
+    $form.find('textarea').each(function () {
+        data[this.name] = this.value;
+    });
+
+    return data;
 }
