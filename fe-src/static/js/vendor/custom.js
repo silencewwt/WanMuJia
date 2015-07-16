@@ -342,7 +342,7 @@ jQuery(document).ready(function($) {
     // =============== plugins config ===============
 
     // jQuery validate
-    if ($.validate !== null) {
+    if ($.validator !== null) {
         $.validator.addMethod(
             "regex",
             function(value, element, regexp) {

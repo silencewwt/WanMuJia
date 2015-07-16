@@ -185,7 +185,7 @@
                         imgFiles[$this[0].name] = this.result;
                         upload.complete = true;
                         $uploadState.removeClass(loadingClass).addClass(completeClass);
-                    }, 2000);
+                    }, 4000);
                 };
             }
         });
@@ -233,11 +233,17 @@
 
                                 // Redirect after successful login page (when progress bar reaches 100%)
                                 if(resp.accessGranted) {
-                                    window.location.href = '/vendor';
+                                    var countdown = 3;
+                                    var message = '审核结果将在3个工作日通知。后台部分功能将在审核通过后开放。\n'+
+                                    countdown +'秒后自动跳转至后台首页...';
+
+                                    toastr.success(message, '注册成功 :)', opts);
+                                    setTimeout(function () {
+                                        window.location.href = '/vendor';
+                                    }, countdown * 1000);
                                 }
                                 else {
                                     toastr.error(resp.message + " :)", "注册失败", opts);
-                                    $('#captcha').select();
                                 }
                             }
                         });
