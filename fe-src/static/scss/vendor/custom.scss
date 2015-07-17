@@ -6,24 +6,46 @@
 
 // alert
 .alert {
-    margin-bottom: 30px;
     border: 1px solid transparent;
     border-radius: 4px;
     .close {
         margin-top: 0;
     }
 
+
     &.alert-warning {
         color: #8a6d3b;
         background-color: #fcf8e3;
         border-color: #faebcc;
-
         .alert-link {
             color: #66512c;
-            &:hover {
-                text-decoration: underline;
-            }
         }
+    }
+
+    &.alert-success {
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+        .alert-link {
+            color: #2b542c;
+        }
+    }
+
+    &.alert-danger {
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+        .alert-link {
+            color: #843534;
+        }
+    }
+
+    & .alert-link:hover {
+        text-decoration: underline;
+    }
+
+    &:last-child {
+        margin-bottom: 30px;
     }
 }
 
@@ -148,6 +170,14 @@ form .form-group.required > label::before {
         padding-bottom: 12px;
     }
 
+}
+
+/* Item page */
+#new-item-form.form-wizard {
+    .tabs a {
+        cursor: default;
+        text-decoration: none;
+    }
 }
 
 

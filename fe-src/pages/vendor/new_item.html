@@ -40,18 +40,25 @@
 
     </div>
 
+    <!-- alert -->
+    <div class="row">
+        <div class="col-sm-12">
+            {{ super() }}
+        </div>
+    </div>
+
     <form role="forl" id="new-item-form" class="form-wizard form-horizontal validate">
         {{ form.csrf_token }}
 
         <ul class="tabs">
             <li class="active">
-                <a href="javascript:void(0)" data-toggle="tab">
+                <a href="#details" data-toggle="tab">
                     填写商品详细信息
                     <span>1</span>
                 </a>
             </li>
             <li>
-                <a href="#fwv-2" data-toggle="tab">
+                <a href="#images" data-toggle="tab">
                     上传商品图片
                     <span>2</span>
                 </a>
@@ -65,7 +72,7 @@
         <div class="tab-content no-margin">
 
             <!-- Tabs Content -->
-            <div class="tab-pane with-bg active" id="fwv-1">
+            <div class="tab-pane with-bg active" id="details">
 
                 <div class="form-group required">
                     <label class="col-sm-2 control-label" for="item">商品名称</label>
@@ -1033,7 +1040,7 @@
 
             </div>
 
-            <div class="tab-pane with-bg" id="fwv-2">
+            <div class="tab-pane with-bg" id="images">
                 <div id="img-upload" class="dropzone">
                     <p class="dz-message">
                         拖动文件到此以上传(或点击)
@@ -1049,7 +1056,7 @@
 
             <ul class="pager wizard">
                 <li class="next">
-                    <a href="#">下一步 <i class="entypo-right-open"></i></a>
+                    <a href="javascript:void(0)">下一步 <i class="entypo-right-open"></i></a>
                 </li>
             </ul>
 
@@ -1060,8 +1067,15 @@
 
 
 {% block scripts %}
+    <!-- Form validate init -->
+    <script type="text/javascript">
+        
+    </script>
+
+
     <script src="/lib/xenon/js/jquery-validate/jquery.validate.min.js"></script>
     <script src="/lib/xenon/js/formwizard/jquery.bootstrap.wizard.min.js"></script>
     <script src="/lib/xenon/js/select2/select2.min.js"></script>
     <script src="/lib/xenon/js/dropzone/dropzone.min.js"></script>
+    <script src="/lib/xenon/js/toastr/toastr.min.js"></script>
 {% endblock %}
