@@ -367,7 +367,7 @@ jQuery(document).ready(function($) {
                 url: '/service/mobile_register_sms',
                 method: 'post',
                 data: {
-                    mobile: $('#contact_moblie').val()
+                    contact_mobile: $('#contact_moblie').val()
                 }
             });
 
