@@ -1,1 +1,0 @@
-$(function(){var e,t=$(".gallery .thumbnail"),i=200;t.delegate("li","mouseenter",function(){var t=$(this),a=t.find("img").attr("src");e=setTimeout(function(){$(".booth img").attr("src",a),t.siblings().removeClass("active"),t.addClass("active")},i)}),t.delegate("li","mouseleave",function(){e&&clearTimeout(e)})});
