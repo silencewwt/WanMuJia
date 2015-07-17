@@ -7,38 +7,38 @@
 var public_vars = public_vars || {};
 
 ;(function($, window, undefined){
-	
+
 	"use strict";
-	
+
 	$(document).ready(function()
-	{	
+	{
 		// Main Vars
 		public_vars.$body                 = $("body");
 		public_vars.$pageContainer        = public_vars.$body.find(".page-container");
 		public_vars.$chat                 = public_vars.$pageContainer.find("#chat");
 		public_vars.$sidebarMenu          = public_vars.$pageContainer.find('.sidebar-menu');
 		public_vars.$mainMenu             = public_vars.$sidebarMenu.find('.main-menu');
-		
+
 		public_vars.$horizontalNavbar     = public_vars.$body.find('.navbar.horizontal-menu');
 		public_vars.$horizontalMenu       = public_vars.$horizontalNavbar.find('.navbar-nav');
-		
+
 		public_vars.$mainContent          = public_vars.$pageContainer.find('.main-content');
 		public_vars.$mainFooter           = public_vars.$body.find('footer.main-footer');
-		
+
 		public_vars.$userInfoMenuHor      = public_vars.$body.find('.navbar.horizontal-menu');
 		public_vars.$userInfoMenu         = public_vars.$body.find('nav.navbar.user-info-navbar');
-		
+
 		public_vars.$settingsPane         = public_vars.$body.find('.settings-pane');
 		public_vars.$settingsPaneIn       = public_vars.$settingsPane.find('.settings-pane-inner');
-		
+
 		public_vars.wheelPropagation      = true; // used in Main menu (sidebar)
-		
+
 		public_vars.$pageLoadingOverlay   = public_vars.$body.find('.page-loading-overlay');
-		
+
 		public_vars.defaultColorsPalette = ['#68b828','#7c38bc','#0e62c7','#fcd036','#4fcdfc','#00b19d','#ff6264','#f7aa47'];
-		
-		
-		
+
+
+
 		// Page Loading Overlay
 		if(public_vars.$pageLoadingOverlay.length)
 		{
@@ -47,94 +47,94 @@ var public_vars = public_vars || {};
 				public_vars.$pageLoadingOverlay.addClass('loaded');
 			});
 		}
-		
+
 		window.onerror = function()
 		{
 			// failsafe remove loading overlay
 			public_vars.$pageLoadingOverlay.addClass('loaded');
 		}
-		
-		
+
+
 		// Setup Sidebar Menu
 		setup_sidebar_menu();
-		
-		
+
+
 		// Setup Horizontal Menu
 		setup_horizontal_menu();
-		
-		
+
+
 		// Sticky Footer
 		if(public_vars.$mainFooter.hasClass('sticky'))
 		{
 			stickFooterToBottom();
 			$(window).on('xenon.resized', stickFooterToBottom);
 		}
-		
-		
+
+
 		// Perfect Scrollbar
 		if($.isFunction($.fn.perfectScrollbar))
 		{
 			if(public_vars.$sidebarMenu.hasClass('fixed'))
 				ps_init();
-				
+
 			$(".ps-scrollbar").each(function(i, el)
 			{
 				var $el = $(el);
-				
+
 				$el.perfectScrollbar({
 					wheelPropagation: false
 				});
 			});
-			
-			
+
+
 			// Chat Scrollbar
 			var $chat_inner = public_vars.$pageContainer.find('#chat .chat-inner');
-			
+
 			if($chat_inner.parent().hasClass('fixed'))
 				$chat_inner.css({maxHeight: $(window).height()}).perfectScrollbar();
-				
-				
+
+
 			// User info opening dropdown trigger PS update
 			$(".user-info-navbar .dropdown:has(.ps-scrollbar)").each(function(i, el)
 			{
 				var $scrollbar = $(this).find('.ps-scrollbar');
-				
+
 				$(this).on('click', '[data-toggle="dropdown"]', function(ev)
 				{
 					ev.preventDefault();
-					
+
 					setTimeout(function()
 					{
 						$scrollbar.perfectScrollbar('update');
 					}, 1);
 				});
 			});
-			
-			
+
+
 			// Scrollable
 			$("div.scrollable").each(function(i, el)
 			{
 				var $this = $(el),
 					max_height = parseInt(attrDefault($this, 'max-height', 200), 10);
-				
+
 				max_height = max_height < 0 ? 200 : max_height;
-				
+
 				$this.css({maxHeight: max_height}).perfectScrollbar({
 					wheelPropagation: true
 				});
 			});
 		}
-		
-		
+
+
 		// User info search button
 		var $uim_search_form = $(".user-info-menu .search-form, .nav.navbar-right .search-form");
-		
+
 		$uim_search_form.each(function(i, el)
 		{
 			var $uim_search_input = $(el).find('.form-control');
-			
+
 			$(el).on('click', '.btn', function(ev)
-			{	
+			{
 				if($uim_search_input.val().trim().length == 0)
 				{
 					jQuery(el).addClass('focused');
@@ -142,15 +142,15 @@ var public_vars = public_vars || {};
 					return false;
 				}
 			});
-		
+
 			$uim_search_input.on('blur', function()
 			{
 				jQuery(el).removeClass('focused');
 			});
 		});
-		
-		
-		
+
+
+
 		// Fixed Footer
 		if(public_vars.$mainFooter.hasClass('fixed'))
 		{
@@ -158,25 +158,25 @@ var public_vars = public_vars || {};
 				paddingBottom: public_vars.$mainFooter.outerHeight(true)
 			});
 		}
-		
-		
-		
+
+
+
 		// Go to to links
 		$('body').on('click', 'a[rel="go-top"]', function(ev)
 		{
 			ev.preventDefault();
-			
+
 			var obj = {pos: $(window).scrollTop()};
-			
+
 			TweenLite.to(obj, .3, {pos: 0, ease:Power4.easeOut, onUpdate: function()
 			{
 				$(window).scrollTop(obj.pos);
 			}});
 		});
-		
-		
-		
-		
+
+
+
+
 		// User info navbar equal heights
 		if(public_vars.$userInfoMenu.length)
 		{
@@ -184,21 +184,21 @@ var public_vars = public_vars || {};
 				minHeight: public_vars.$userInfoMenu.outerHeight() - 1
 			});
 		}
-		
-		
-		
+
+
+
 		// Autosize
 		if($.isFunction($.fn.autosize))
 		{
 			$(".autosize, .autogrow").autosize();
 		}
-		
-		
+
+
 		// Custom Checkboxes & radios
 		cbr_replace();
-		
-		
-		
+
+
+
 		// Auto hidden breadcrumbs
 		$(".breadcrumb.auto-hidden").each(function(i, el)
 		{
@@ -206,14 +206,14 @@ var public_vars = public_vars || {};
 				$as = $bc.find('li a'),
 				collapsed_width = $as.width(),
 				expanded_width = 0;
-			
+
 			$as.each(function(i, el)
 			{
 				var $a = $(el);
-				
+
 				expanded_width = $a.outerWidth(true);
 				$a.addClass('collapsed').width(expanded_width);
-				
+
 				$a.hover(function()
 				{
 					$a.removeClass('collapsed');
@@ -224,9 +224,9 @@ var public_vars = public_vars || {};
 				});
 			});
 		});
-		
-		
-		
+
+
+
 		// Close Modal on Escape Keydown
 		$(window).on('keydown', function(ev)
 		{
@@ -238,14 +238,14 @@ var public_vars = public_vars || {};
 					$(".modal-open .modal:visible").modal('hide');
 			}
 		});
-		
-		
+
+
 		// Minimal Addon focus interaction
 		$(".input-group.input-group-minimal:has(.form-control)").each(function(i, el)
 		{
 			var $this = $(el),
 				$fc = $this.find('.form-control');
-			
+
 			$fc.on('focus', function()
 			{
 				$this.addClass('focused');
@@ -254,9 +254,9 @@ var public_vars = public_vars || {};
 				$this.removeClass('focused');
 			});
 		});
-		
-		
-		
+
+
+
 		// Spinner
 		$(".input-group.spinner").each(function(i, el)
 		{
@@ -264,45 +264,45 @@ var public_vars = public_vars || {};
 				$dec = $ig.find('[data-type="decrement"]'),
 				$inc = $ig.find('[data-type="increment"]'),
 				$inp = $ig.find('.form-control'),
-				
+
 				step = attrDefault($ig, 'step', 1),
 				min = attrDefault($ig, 'min', 0),
 				max = attrDefault($ig, 'max', 0),
 				umm = min < max;
-				
-			
+
+
 			$dec.on('click', function(ev)
 			{
 				ev.preventDefault();
 
 				var num = new Number($inp.val()) - step;
-				
+
 				if(umm && num <= min)
 				{
 					num = min;
 				}
-				
+
 				$inp.val(num);
 			});
-			
+
 			$inc.on('click', function(ev)
 			{
 				ev.preventDefault();
 
 				var num = new Number($inp.val()) + step;
-				
+
 				if(umm && num >= max)
 				{
 					num = max;
 				}
-				
+
 				$inp.val(num);
 			});
 		});
-		
-		
-		
-		
+
+
+
+
 		// Select2 Dropdown replacement
 		if($.isFunction($.fn.select2))
 		{
@@ -312,14 +312,14 @@ var public_vars = public_vars || {};
 					opts = {
 						allowClear: attrDefault($this, 'allowClear', false)
 					};
-				
+
 				$this.select2(opts);
 				$this.addClass('visible');
-				
+
 				//$this.select2("open");
 			});
-			
-			
+
+
 			if($.isFunction($.fn.niceScroll))
 			{
 				$(".select2-results").niceScroll({
@@ -329,10 +329,10 @@ var public_vars = public_vars || {};
 				});
 			}
 		}
-		
-		
-		
-		
+
+
+
+
 		// SelectBoxIt Dropdown replacement
 		if($.isFunction($.fn.selectBoxIt))
 		{
@@ -344,14 +344,14 @@ var public_vars = public_vars || {};
 						'native': attrDefault($this, 'native', false),
 						defaultText: attrDefault($this, 'text', ''),
 					};
-					
+
 				$this.addClass('visible');
 				$this.selectBoxIt(opts);
 			});
 		}
-		
-		
-		
+
+
+
 		// Datepicker
 		if($.isFunction($.fn.datepicker))
 		{
@@ -368,33 +368,33 @@ var public_vars = public_vars || {};
 					},
 					$n = $this.next(),
 					$p = $this.prev();
-								
+
 				$this.datepicker(opts);
-				
+
 				if($n.is('.input-group-addon') && $n.has('a'))
 				{
 					$n.on('click', function(ev)
 					{
 						ev.preventDefault();
-						
+
 						$this.datepicker('show');
 					});
 				}
-				
+
 				if($p.is('.input-group-addon') && $p.has('a'))
 				{
 					$p.on('click', function(ev)
 					{
 						ev.preventDefault();
-						
+
 						$this.datepicker('show');
 					});
 				}
 			});
 		}
-		
-		
-		
+
+
+
 		// Date Range Picker
 		if($.isFunction($.fn.daterangepicker))
 		{
@@ -409,7 +409,7 @@ var public_vars = public_vars || {};
 					'This Month': [moment().startOf('month'), moment().endOf('month')],
 					'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
 				};
-				
+
 				var $this = $(el),
 					opts = {
 						format: attrDefault($this, 'format', 'MM/DD/YYYY'),
@@ -421,58 +421,58 @@ var public_vars = public_vars || {};
 					max_date = attrDefault($this, 'maxDate', ''),
 					start_date = attrDefault($this, 'startDate', ''),
 					end_date = attrDefault($this, 'endDate', '');
-				
+
 				if($this.hasClass('add-ranges'))
 				{
 					opts['ranges'] = ranges;
-				}	
-					
+				}
+
 				if(min_date.length)
 				{
 					opts['minDate'] = min_date;
 				}
-					
+
 				if(max_date.length)
 				{
 					opts['maxDate'] = max_date;
 				}
-					
+
 				if(start_date.length)
 				{
 					opts['startDate'] = start_date;
 				}
-					
+
 				if(end_date.length)
 				{
 					opts['endDate'] = end_date;
 				}
-				
-				
+
+
 				$this.daterangepicker(opts, function(start, end)
 				{
 					var drp = $this.data('daterangepicker');
-					
+
 					if($this.is('[data-callback]'))
 					{
 						//daterange_callback(start, end);
 						callback_test(start, end);
 					}
-					
+
 					if($this.hasClass('daterange-inline'))
 					{
 						$this.find('span').html(start.format(drp.format) + drp.separator + end.format(drp.format));
 					}
 				});
-				
+
 				if(typeof opts['ranges'] == 'object')
 				{
 					$this.data('daterangepicker').container.removeClass('show-calendar');
 				}
 			});
 		}
-		
-		
-		
+
+
+
 		// Timepicker
 		if($.isFunction($.fn.timepicker))
 		{
@@ -489,33 +489,33 @@ var public_vars = public_vars || {};
 					},
 					$n = $this.next(),
 					$p = $this.prev();
-				
+
 				$this.timepicker(opts);
-				
+
 				if($n.is('.input-group-addon') && $n.has('a'))
 				{
 					$n.on('click', function(ev)
 					{
 						ev.preventDefault();
-						
+
 						$this.timepicker('showWidget');
 					});
 				}
-				
+
 				if($p.is('.input-group-addon') && $p.has('a'))
 				{
 					$p.on('click', function(ev)
 					{
 						ev.preventDefault();
-						
+
 						$this.timepicker('showWidget');
 					});
 				}
 			});
 		}
-		
-		
-		
+
+
+
 		// Colorpicker
 		if($.isFunction($.fn.colorpicker))
 		{
@@ -526,38 +526,38 @@ var public_vars = public_vars || {};
 					},
 					$n = $this.next(),
 					$p = $this.prev(),
-					
+
 					$preview = $this.siblings('.input-group-addon').find('.color-preview');
-				
+
 				$this.colorpicker(opts);
-				
+
 				if($n.is('.input-group-addon') && $n.has('a'))
 				{
 					$n.on('click', function(ev)
 					{
 						ev.preventDefault();
-						
+
 						$this.colorpicker('show');
 					});
 				}
-				
+
 				if($p.is('.input-group-addon') && $p.has('a'))
 				{
 					$p.on('click', function(ev)
 					{
 						ev.preventDefault();
-						
+
 						$this.colorpicker('show');
 					});
 				}
-				
+
 				if($preview.length)
 				{
 					$this.on('changeColor', function(ev){
-						
+
 						$preview.css('background-color', ev.color.toHex());
 					});
-					
+
 					if($this.val().length)
 					{
 						$preview.css('background-color', $this.val());
@@ -565,10 +565,10 @@ var public_vars = public_vars || {};
 				}
 			});
 		}
-		
-		
-		
-		
+
+
+
+
 		// Form Validation
 		if($.isFunction($.fn.validate))
 		{
@@ -612,57 +612,57 @@ var public_vars = public_vars || {};
 							if(element.parent('.checkbox, .radio').length || element.parent('.input-group').length)
 							{
 								error.insertAfter(element.parent());
-							} 
-							else 
+							}
+							else
 							{
 								error.insertAfter(element);
 							}
 						}
 					},
 					$fields = $this.find('[data-validate]');
-				
-					
+
+
 				$fields.each(function(j, el2)
 				{
 					var $field = $(el2),
 						name = $field.attr('name'),
 						validate = attrDefault($field, 'validate', '').toString(),
 						_validate = validate.split(',');
-					
+
 					for(var k in _validate)
 					{
 						var rule = _validate[k],
 							params,
 							message;
-						
+
 						if(typeof opts['rules'][name] == 'undefined')
 						{
 							opts['rules'][name] = {};
 							opts['messages'][name] = {};
 						}
-						
+
 						if($.inArray(rule, ['required', 'url', 'email', 'number', 'date', 'creditcard']) != -1)
 						{
 							opts['rules'][name][rule] = true;
-							
+
 							message = $field.data('message-' + rule);
-							
+
 							if(message)
 							{
 								opts['messages'][name][rule] = message;
 							}
 						}
 						// Parameter Value (#1 parameter)
-						else 
+						else
 						if(params = rule.match(/(\w+)\[(.*?)\]/i))
 						{
 							if($.inArray(params[1], ['min', 'max', 'minlength', 'maxlength', 'equalTo']) != -1)
 							{
 								opts['rules'][name][params[1]] = params[2];
-								
-							
+
+
 								message = $field.data('message-' + params[1]);
-								
+
 								if(message)
 								{
 									opts['messages'][name][params[1]] = message;
@@ -671,14 +671,14 @@ var public_vars = public_vars || {};
 						}
 					}
 				});
-				
+
 				$this.validate(opts);
 			});
 		}
-		
-		
-		
-		
+
+
+
+
 		// Input Mask
 		if($.isFunction($.fn.inputmask))
 		{
@@ -693,25 +693,25 @@ var public_vars = public_vars || {};
 					},
 					placeholder = attrDefault($this, 'placeholder', ''),
 					is_regex = attrDefault($this, 'isRegex', '');
-					
+
 				if(placeholder.length)
 				{
 					opts[placeholder] = placeholder;
 				}
-				
+
 				switch(mask.toLowerCase())
 				{
 					case "phone":
 						mask = "(999) 999-9999";
 						break;
-						
+
 					case "currency":
 					case "rcurrency":
-					
+
 						var sign = attrDefault($this, 'sign', '$');;
-						
+
 						mask = "999,999,999.99";
-						
+
 						if($this.data('mask').toLowerCase() == 'rcurrency')
 						{
 							mask += ' ' + sign;
@@ -720,17 +720,17 @@ var public_vars = public_vars || {};
 						{
 							mask = sign + ' ' + mask;
 						}
-						
+
 						opts.numericInput = true;
 						opts.rightAlignNumerics = false;
 						opts.radixPoint = '.';
 						break;
-						
+
 					case "email":
 						mask = 'Regex';
 						opts.regex = "[a-zA-Z0-9._%-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,4}";
 						break;
-					
+
 					case "fdecimal":
 						mask = 'decimal';
 						$.extend(opts, {
@@ -740,19 +740,19 @@ var public_vars = public_vars || {};
 							groupSeparator	: attrDefault($this, 'dec', ',')
 						});
 				}
-				
+
 				if(is_regex)
 				{
 					opts.regex = mask;
 					mask = 'Regex';
 				}
-				
+
 				$this.inputmask(mask, opts);
 			});
 		}
-		
-		
-		
+
+
+
 		// Form Wizard
 		if($.isFunction($.fn.bootstrapWizard))
 		{
@@ -762,57 +762,70 @@ var public_vars = public_vars || {};
 					$tabs = $this.find('> .tabs > li'),
 					$progress = $this.find(".progress-indicator"),
 					_index = $this.find('> ul > li.active').index();
-				
+
 				// Validation
 				var checkFormWizardValidaion = function(tab, navigation, index)
 					{
 			  			if($this.hasClass('validate'))
 			  			{
 							var $valid = $this.valid();
-							
+
 							if( ! $valid)
 							{
 								$this.data('validator').focusInvalid();
 								return false;
 							}
 						}
-						
+
 				  		return true;
 					};
-				
+
+				/*
+				 * edit
+				 */
+				var chooseFnWithPage = function () {
+					if ($('[data-page]').data('page') == 'item-new') {
+						return function () { return false; };
+					}
+					return checkFormWizardValidaion;
+				};
+				/*
+				 * end
+				 */
+
 				// Setup Progress
 				if(_index > 0)
 				{
 					$progress.css({width: _index/$tabs.length * 100 + '%'});
 					$tabs.removeClass('completed').slice(0, _index).addClass('completed');
 				}
-				
+
 				$this.bootstrapWizard({
 					tabClass: "",
 			  		onTabShow: function($tab, $navigation, index)
 			  		{
 			  			var pct = $tabs.eq(index).position().left / $tabs.parent().width() * 100;
-			  			
+
 			  			$tabs.removeClass('completed').slice(0, index).addClass('completed');
 			  			$progress.css({width: pct + '%'});
 			  		},
-			  		
+
 			  		onNext: checkFormWizardValidaion,
-			  		onTabClick: checkFormWizardValidaion
+			  		onTabClick: chooseFnWithPage()	// edit
 			  	});
-			  	
+
 			  	$this.data('bootstrapWizard').show( _index );
-			  	
+
 			  	$this.find('.pager a').on('click', function(ev)
 			  	{
 				  	ev.preventDefault();
 			  	});
 			});
 		}
-		
-		
-		
-		
+
+
+
+
 		// Slider
 		if($.isFunction($.fn.slider))
 		{
@@ -821,27 +834,27 @@ var public_vars = public_vars || {};
 				var $this = $(el),
 					$label_1 = $('<span class="ui-label"></span>'),
 					$label_2 = $label_1.clone(),
-					
+
 					orientation = attrDefault($this, 'vertical', 0) != 0 ? 'vertical' : 'horizontal',
-					
+
 					prefix = attrDefault($this, 'prefix', ''),
 					postfix = attrDefault($this, 'postfix', ''),
-					
+
 					fill = attrDefault($this, 'fill', ''),
 					$fill = $(fill),
-					
+
 					step = attrDefault($this, 'step', 1),
 					value = attrDefault($this, 'value', 5),
 					min = attrDefault($this, 'min', 0),
 					max = attrDefault($this, 'max', 100),
 					min_val = attrDefault($this, 'min-val', 10),
 					max_val = attrDefault($this, 'max-val', 90),
-					
+
 					is_range = $this.is('[data-min-val]') || $this.is('[data-max-val]'),
-					
+
 					reps = 0;
-				
-				
+
+
 				// Range Slider Options
 				if(is_range)
 				{
@@ -856,13 +869,13 @@ var public_vars = public_vars || {};
 						{
 							var min_val = (prefix ? prefix : '') + ui.values[0] + (postfix ? postfix : ''),
 								max_val = (prefix ? prefix : '') + ui.values[1] + (postfix ? postfix : '');
-							
+
 							$label_1.html( min_val );
 							$label_2.html( max_val );
-							
+
 							if(fill)
 								$fill.val(min_val + ',' + max_val);
-								
+
 							reps++;
 						},
 						change: function(ev, ui)
@@ -871,30 +884,30 @@ var public_vars = public_vars || {};
 							{
 								var min_val = (prefix ? prefix : '') + ui.values[0] + (postfix ? postfix : ''),
 									max_val = (prefix ? prefix : '') + ui.values[1] + (postfix ? postfix : '');
-								
+
 								$label_1.html( min_val );
 								$label_2.html( max_val );
-								
+
 								if(fill)
 									$fill.val(min_val + ',' + max_val);
 							}
-							
+
 							reps = 0;
 						}
 					});
-				
+
 					var $handles = $this.find('.ui-slider-handle');
-						
+
 					$label_1.html((prefix ? prefix : '') + min_val + (postfix ? postfix : ''));
 					$handles.first().append( $label_1 );
-					
+
 					$label_2.html((prefix ? prefix : '') + max_val+ (postfix ? postfix : ''));
 					$handles.last().append( $label_2 );
 				}
 				// Normal Slider
 				else
-				{	
-					
+				{
+
 					$this.slider({
 						range: attrDefault($this, 'basic', 0) ? false : "min",
 						orientation: orientation,
@@ -905,13 +918,13 @@ var public_vars = public_vars || {};
 						slide: function(ev, ui)
 						{
 							var val = (prefix ? prefix : '') + ui.value + (postfix ? postfix : '');
-							
+
 							$label_1.html( val );
-							
-							
+
+
 							if(fill)
 								$fill.val(val);
-							
+
 							reps++;
 						},
 						change: function(ev, ui)
@@ -919,37 +932,37 @@ var public_vars = public_vars || {};
 							if(reps == 1)
 							{
 								var val = (prefix ? prefix : '') + ui.value + (postfix ? postfix : '');
-								
+
 								$label_1.html( val );
-								
+
 								if(fill)
 									$fill.val(val);
 							}
-							
+
 							reps = 0;
 						}
 					});
-					
+
 					var $handles = $this.find('.ui-slider-handle');
 						//$fill = $('<div class="ui-fill"></div>');
-					
+
 					$label_1.html((prefix ? prefix : '') + value + (postfix ? postfix : ''));
 					$handles.html( $label_1 );
-					
+
 					//$handles.parent().prepend( $fill );
-					
+
 					//$fill.width($handles.get(0).style.left);
 				}
-				
+
 			})
 		}
 
-		
-		
-		
+
+
+
 		// jQuery Knob
 		if($.isFunction($.fn.knob))
-		{		
+		{
 			$(".knob").knob({
 				change: function (value) {
 				},
@@ -958,9 +971,9 @@ var public_vars = public_vars || {};
 				cancel: function () {
 				},
 				draw: function () {
-				
+
 					if (this.$.data('skin') == 'tron') {
-				
+
 						var a = this.angle(this.cv) // Angle
 							,
 							sa = this.startAngle // Previous start angle
@@ -971,11 +984,11 @@ var public_vars = public_vars || {};
 							, eat = sat + a // End angle
 							,
 							r = 1;
-				
+
 						this.g.lineWidth = this.lineWidth;
-				
+
 						this.o.cursor && (sat = eat - 0.3) && (eat = eat + 0.3);
-				
+
 						if (this.o.displayPrevious) {
 							ea = this.startAngle + this.angle(this.v);
 							this.o.cursor && (sa = ea - 0.3) && (ea = ea + 0.3);
@@ -984,27 +997,27 @@ var public_vars = public_vars || {};
 							this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sa, ea, false);
 							this.g.stroke();
 						}
-				
+
 						this.g.beginPath();
 						this.g.strokeStyle = r ? this.o.fgColor : this.fgColor;
 						this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sat, eat, false);
 						this.g.stroke();
-				
+
 						this.g.lineWidth = 2;
 						this.g.beginPath();
 						this.g.strokeStyle = this.o.fgColor;
 						this.g.arc(this.xy, this.xy, this.radius - this.lineWidth + 1 + this.lineWidth * 2 / 3, 0, 2 * Math.PI, false);
 						this.g.stroke();
-				
+
 						return false;
 					}
 				}
 			});
 		}
-		
-		
-		
-		
+
+
+
+
 		// Wysiwyg Editor
 		if($.isFunction($.fn.wysihtml5))
 		{
@@ -1012,7 +1025,7 @@ var public_vars = public_vars || {};
 			{
 				var $this = $(el),
 					stylesheets = attrDefault($this, 'stylesheet-url', '')
-				
+
 				$(".wysihtml5").wysihtml5({
 					size: 'white',
 					stylesheets: stylesheets.split(','),
@@ -1021,10 +1034,10 @@ var public_vars = public_vars || {};
 				});
 			});
 		}
-		
-		
-		
-		
+
+
+
+
 		// CKeditor WYSIWYG
 		if($.isFunction($.fn.ckeditor))
 		{
@@ -1032,96 +1045,96 @@ var public_vars = public_vars || {};
 				contentsLangDirection: rtl() ? 'rtl' : 'ltr'
 			});
 		}
-		
-		
-		
+
+
+
 		// Dropzone is prezent
 		if(typeof Dropzone != 'undefined')
 		{
 			Dropzone.autoDiscover = false;
-			
+
 			$(".dropzone[action]").each(function(i, el)
 			{
 				$(el).dropzone();
 			});
 		}
-		
-		
-		
-		
+
+
+
+
 		// Tocify Table
 		if($.isFunction($.fn.tocify) && $("#toc").length)
 		{
-			$("#toc").tocify({ 
-				context: '.tocify-content', 
-				selectors: "h2,h3,h4,h5" 
+			$("#toc").tocify({
+				context: '.tocify-content',
+				selectors: "h2,h3,h4,h5"
 			});
-			
-			
+
+
 			var $this = $(".tocify"),
 				watcher = scrollMonitor.create($this.get(0));
-			
+
 			$this.width( $this.parent().width() );
-			
+
 			watcher.lock();
 
-			watcher.stateChange(function() 
+			watcher.stateChange(function()
 			{
 				$($this.get(0)).toggleClass('fixed', this.isAboveViewport)
 			});
 		}
-		
-		
-		
+
+
+
 		// Login Form Label Focusing
 		$(".login-form .form-group:has(label)").each(function(i, el)
 		{
 			var $this = $(el),
 				$label = $this.find('label'),
 				$input = $this.find('.form-control');
-			
+
 			$input.on('focus', function()
 			{
 				$this.addClass('is-focused');
 			});
-			
+
 			$input.on('keydown', function()
 			{
 				$this.addClass('is-focused');
 			});
-				
+
 			$input.on('blur', function()
 			{
 				$this.removeClass('is-focused');
-				
+
 				if($input.val().trim().length > 0)
 				{
 					$this.addClass('is-focused');
 				}
 			});
-			
+
 			$label.on('click', function()
 			{
 				$input.focus();
 			});
-			
+
 			if($input.val().trim().length > 0)
 			{
 				$this.addClass('is-focused');
 			}
 		});
-		
+
 	});
 
 
 	// Enable/Disable Resizable Event
 	var wid = 0;
-	
+
 	$(window).resize(function() {
 		clearTimeout(wid);
 		wid = setTimeout(trigger_resizable, 200);
 	});
-	
+
 
 })(jQuery, window);
 
@@ -1137,26 +1150,26 @@ function setup_sidebar_menu()
 	{
 		var $items_with_subs = public_vars.$sidebarMenu.find('li:has(> ul)'),
 			toggle_others = public_vars.$sidebarMenu.hasClass('toggle-others');
-		
+
 		$items_with_subs.filter('.active').addClass('expanded');
-		
+
 		$items_with_subs.each(function(i, el)
 		{
 			var $li = jQuery(el),
 				$a = $li.children('a'),
 				$sub = $li.children('ul');
-			
+
 			$li.addClass('has-sub');
-			
+
 			$a.on('click', function(ev)
 			{
 				ev.preventDefault();
-				
+
 				if(toggle_others)
 				{
 					sidebar_menu_close_items_siblings($li);
 				}
-				
+
 				if($li.hasClass('expanded') || $li.hasClass('opened'))
 					sidebar_menu_item_collapse($li, $sub);
 				else
@@ -1170,64 +1183,64 @@ function sidebar_menu_item_expand($li, $sub)
 {
 	if($li.data('is-busy') || ($li.parent('.main-menu').length && public_vars.$sidebarMenu.hasClass('collapsed')))
 		return;
-		
+
 	$li.addClass('expanded').data('is-busy', true);
 	$sub.show();
-	
+
 	var $sub_items 	  = $sub.children(),
 		sub_height	= $sub.outerHeight(),
-		
+
 		win_y			 = jQuery(window).height(),
 		total_height	  = $li.outerHeight(),
 		current_y		 = public_vars.$sidebarMenu.scrollTop(),
 		item_max_y		= $li.position().top + current_y,
 		fit_to_viewpport  = public_vars.$sidebarMenu.hasClass('fit-in-viewport');
-		
+
 	$sub_items.addClass('is-hidden');
 	$sub.height(0);
-	
-	
-	TweenMax.to($sub, sm_duration, {css: {height: sub_height}, onUpdate: ps_update, onComplete: function(){ 
-		$sub.height(''); 
+
+
+	TweenMax.to($sub, sm_duration, {css: {height: sub_height}, onUpdate: ps_update, onComplete: function(){
+		$sub.height('');
 	}});
-	
+
 	var interval_1 = $li.data('sub_i_1'),
 		interval_2 = $li.data('sub_i_2');
-	
+
 	window.clearTimeout(interval_1);
-	
+
 	interval_1 = setTimeout(function()
 	{
 		$sub_items.each(function(i, el)
 		{
 			var $sub_item = jQuery(el);
-			
+
 			$sub_item.addClass('is-shown');
 		});
-		
+
 		var finish_on = sm_transition_delay * $sub_items.length,
 			t_duration = parseFloat($sub_items.eq(0).css('transition-duration')),
 			t_delay = parseFloat($sub_items.last().css('transition-delay'));
-		
+
 		if(t_duration && t_delay)
 		{
 			finish_on = (t_duration + t_delay) * 1000;
 		}
-		
+
 		// In the end
 		window.clearTimeout(interval_2);
-	
+
 		interval_2 = setTimeout(function()
 		{
 			$sub_items.removeClass('is-hidden is-shown');
-			
+
 		}, finish_on);
-	
-		
+
+
 		$li.data('is-busy', false);
-		
+
 	}, 0);
-	
+
 	$li.data('sub_i_1', interval_1),
 	$li.data('sub_i_2', interval_2);
 }
@@ -1236,21 +1249,21 @@ function sidebar_menu_item_collapse($li, $sub)
 {
 	if($li.data('is-busy'))
 		return;
-	
+
 	var $sub_items = $sub.children();
-	
+
 	$li.removeClass('expanded').data('is-busy', true);
 	$sub_items.addClass('hidden-item');
-	
+
 	TweenMax.to($sub, sm_duration, {css: {height: 0}, onUpdate: ps_update, onComplete: function()
 	{
 		$li.data('is-busy', false).removeClass('opened');
-		
+
 		$sub.attr('style', '').hide();
 		$sub_items.removeClass('hidden-item');
-		
+
 		$li.find('li.expanded ul').attr('style', '').hide().parent().removeClass('expanded');
-		
+
 		ps_update(true);
 	}});
 }
@@ -1261,7 +1274,7 @@ function sidebar_menu_close_items_siblings($li)
 	{
 		var $_li = jQuery(el),
 			$_sub = $_li.children('ul');
-		
+
 		sidebar_menu_item_collapse($_li, $_sub);
 	});
 }
@@ -1274,7 +1287,7 @@ function setup_horizontal_menu()
 	{
 		var $items_with_subs = public_vars.$horizontalMenu.find('li:has(> ul)'),
 			click_to_expand = public_vars.$horizontalMenu.hasClass('click-to-expand');
-		
+
 		if(click_to_expand)
 		{
 			public_vars.$mainContent.add( public_vars.$sidebarMenu ).on('click', function(ev)
@@ -1282,46 +1295,46 @@ function setup_horizontal_menu()
 				$items_with_subs.removeClass('hover');
 			});
 		}
-		
+
 		$items_with_subs.each(function(i, el)
 		{
 			var $li = jQuery(el),
 				$a = $li.children('a'),
 				$sub = $li.children('ul'),
 				is_root_element = $li.parent().is('.navbar-nav');
-			
+
 			$li.addClass('has-sub');
-			
+
 			// Mobile Only
 			$a.on('click', function(ev)
 			{
 				if(isxs())
 				{
 					ev.preventDefault();
-				
+
 					// Automatically will toggle other menu items in mobile view
 					if(true)
 					{
 						sidebar_menu_close_items_siblings($li);
 					}
-					
+
 					if($li.hasClass('expanded') || $li.hasClass('opened'))
 						sidebar_menu_item_collapse($li, $sub);
 					else
 						sidebar_menu_item_expand($li, $sub);
 				}
 			});
-			
+
 			// Click To Expand
 			if(click_to_expand)
 			{
 				$a.on('click', function(ev)
 				{
 					ev.preventDefault();
-					
+
 					if(isxs())
 						return;
-					
+
 					// For parents only
 					if(is_root_element)
 					{
@@ -1332,29 +1345,29 @@ function setup_horizontal_menu()
 					else
 					{
 						var sub_height;
-						
+
 						// To Expand
 						if($li.hasClass('expanded') == false)
 						{
 							$li.addClass('expanded');
 							$sub.addClass('is-visible');
-							
+
 							sub_height = $sub.outerHeight();
-							
+
 							$sub.height(0);
-							
+
 							TweenLite.to($sub, .15, {css: {height: sub_height}, ease: Sine.easeInOut, onComplete: function(){ $sub.attr('style', ''); }});
-							
+
 							// Hide Existing in the list
 							$li.siblings().find('> ul.is-visible').not($sub).each(function(i, el)
 							{
 								var $el = jQuery(el);
-								
+
 								sub_height = $el.outerHeight();
-								
+
 								$el.removeClass('is-visible').height(sub_height);
 								$el.parent().removeClass('expanded');
-								
+
 								TweenLite.to($el, .15, {css: {height: 0}, onComplete: function(){ $el.attr('style', ''); }});
 							});
 						}
@@ -1362,7 +1375,7 @@ function setup_horizontal_menu()
 						else
 						{
 							sub_height = $sub.outerHeight();
-							
+
 							$li.removeClass('expanded');
 							$sub.removeClass('is-visible').height(sub_height);
 							TweenLite.to($sub, .15, {css: {height: 0}, onComplete: function(){ $sub.attr('style', ''); }});
@@ -1372,13 +1385,13 @@ function setup_horizontal_menu()
 			}
 			// Hover To Expand
 			else
-			{	
+			{
 				$li.hoverIntent({
 					over: function()
 					{
 						if(isxs())
 							return;
-							
+
 						if(is_root_element)
 						{
 							$li.addClass('hover');
@@ -1387,9 +1400,9 @@ function setup_horizontal_menu()
 						{
 							$sub.addClass('is-visible');
 							sub_height = $sub.outerHeight();
-							
+
 							$sub.height(0);
-							
+
 							TweenLite.to($sub, .25, {css: {height: sub_height}, ease: Sine.easeInOut, onComplete: function(){ $sub.attr('style', ''); }});
 						}
 					},
@@ -1397,7 +1410,7 @@ function setup_horizontal_menu()
 					{
 						if(isxs())
 							return;
-							
+
 						if(is_root_element)
 						{
 							$li.removeClass('hover');
@@ -1405,7 +1418,7 @@ function setup_horizontal_menu()
 						else
 						{
 							sub_height = $sub.outerHeight();
-							
+
 							$li.removeClass('expanded');
 							$sub.removeClass('is-visible').height(sub_height);
 							TweenLite.to($sub, .25, {css: {height: 0}, onComplete: function(){ $sub.attr('style', ''); }});
@@ -1423,10 +1436,10 @@ function setup_horizontal_menu()
 function stickFooterToBottom()
 {
 	public_vars.$mainFooter.add( public_vars.$mainContent ).add( public_vars.$sidebarMenu ).attr('style', '');
-	
+
 	if(isxs())
 		return false;
-		
+
 	if(public_vars.$mainFooter.hasClass('sticky'))
 	{
 		var win_height				 = jQuery(window).height(),
@@ -1434,8 +1447,8 @@ function stickFooterToBottom()
 			main_content_height	  = public_vars.$mainFooter.position().top + footer_height,
 			main_content_height_only = main_content_height - footer_height,
 			extra_height			 = public_vars.$horizontalNavbar.outerHeight();
-		
-		
+
+
 		if(win_height > main_content_height - parseInt(public_vars.$mainFooter.css('marginTop'), 10))
 		{
 			public_vars.$mainFooter.css({
@@ -1451,16 +1464,16 @@ function ps_update(destroy_init)
 {
 	if(isxs())
 		return;
-		
+
 	if(jQuery.isFunction(jQuery.fn.perfectScrollbar))
 	{
 		if(public_vars.$sidebarMenu.hasClass('collapsed'))
 		{
 			return;
 		}
-		
+
 		public_vars.$sidebarMenu.find('.sidebar-menu-inner').perfectScrollbar('update');
-		
+
 		if(destroy_init)
 		{
 			ps_destroy();
@@ -1474,14 +1487,14 @@ function ps_init()
 {
 	if(isxs())
 		return;
-		
+
 	if(jQuery.isFunction(jQuery.fn.perfectScrollbar))
 	{
 		if(public_vars.$sidebarMenu.hasClass('collapsed') || ! public_vars.$sidebarMenu.hasClass('fixed'))
 		{
 			return;
 		}
-		
+
 		public_vars.$sidebarMenu.find('.sidebar-menu-inner').perfectScrollbar({
 			wheelSpeed: 2,
 			wheelPropagation: public_vars.wheelPropagation
@@ -1504,7 +1517,7 @@ function cbr_replace()
 {
 	var $inputs = jQuery('input[type="checkbox"].cbr, input[type="radio"].cbr').filter(':not(.cbr-done)'),
 		$wrapper = '<div class="cbr-replaced"><div class="cbr-input"></div><div class="cbr-state"><span></span></div></div>';
-	
+
 	$inputs.each(function(i, el)
 	{
 		var $el = jQuery(el),
@@ -1512,61 +1525,61 @@ function cbr_replace()
 			is_checkbox = $el.is(':checkbox'),
 			is_disabled = $el.is(':disabled'),
 			styles = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'purple', 'blue', 'red', 'gray', 'pink', 'yellow', 'orange', 'turquoise'];
-		
+
 		if( ! is_radio && ! is_checkbox)
 			return;
-		
+
 		$el.after( $wrapper );
 		$el.addClass('cbr-done');
-		
+
 		var $wrp = $el.next();
 		$wrp.find('.cbr-input').append( $el );
-		
+
 		if(is_radio)
 			$wrp.addClass('cbr-radio');
-		
+
 		if(is_disabled)
 			$wrp.addClass('cbr-disabled');
-		
+
 		if($el.is(':checked'))
 		{
 			$wrp.addClass('cbr-checked');
 		}
-		
-		
+
+
 		// Style apply
 		jQuery.each(styles, function(key, val)
 		{
 			var cbr_class = 'cbr-' + val;
-			
+
 			if( $el.hasClass(cbr_class))
 			{
 				$wrp.addClass(cbr_class);
 				$el.removeClass(cbr_class);
 			}
 		});
-		
-		
+
+
 		// Events
 		$wrp.on('click', function(ev)
 		{
 			if(is_radio && $el.prop('checked') || $wrp.parent().is('label'))
 				return;
-			
+
 			if(jQuery(ev.target).is($el) == false)
 			{
 				$el.prop('checked', ! $el.is(':checked'));
 				$el.trigger('change');
 			}
 		});
-		
+
 		$el.on('change', function(ev)
-		{	
+		{
 			$wrp.removeClass('cbr-checked');
-			
+
 			if($el.is(':checked'))
 				$wrp.addClass('cbr-checked');
-				
+
 			cbr_recheck();
 		});
 	});
@@ -1576,7 +1589,7 @@ function cbr_replace()
 function cbr_recheck()
 {
 	var $inputs = jQuery("input.cbr-done");
-	
+
 	$inputs.each(function(i, el)
 	{
 		var $el = jQuery(el),
@@ -1584,10 +1597,10 @@ function cbr_recheck()
 			is_checkbox = $el.is(':checkbox'),
 			is_disabled = $el.is(':disabled'),
 			$wrp = $el.closest('.cbr-replaced');
-		
+
 		if(is_disabled)
 			$wrp.addClass('cbr-disabled');
-		
+
 		if(is_radio && ! $el.prop('checked') && $wrp.hasClass('cbr-checked'))
 		{
 			$wrp.removeClass('cbr-checked');
@@ -1603,7 +1616,7 @@ function attrDefault($el, data_var, default_val)
 	{
 		return $el.data(data_var);
 	}
-	
+
 	return default_val;
 }
 
@@ -1612,7 +1625,7 @@ function attrDefault($el, data_var, default_val)
 function callback_test()
 {
 	alert("Callback function executed! No. of arguments: " + arguments.length + "\n\nSee console log for outputed of the arguments.");
-	
+
 	console.log(arguments);
 }
 
@@ -1928,7 +1941,7 @@ function date(format, timestamp) {
 		return jsdate / 1000 | 0;
 	}
 	};
-	
+
 	this.date = function (format, timestamp) {
 		that = this;
 		jsdate = (timestamp === undefined ? new Date() : // Not provided

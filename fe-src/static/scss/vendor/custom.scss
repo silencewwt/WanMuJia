@@ -172,6 +172,14 @@ form .form-group.required > label::before {
 
 }
 
+/* Item page */
+#new-item-form.form-wizard {
+    .tabs a {
+        cursor: default;
+        text-decoration: none;
+    }
+}
+
 
 /*Settings*/
 .logo-preview img {

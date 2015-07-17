@@ -163,6 +163,11 @@ app.get('/vendor/items/:id', function (req, res) {
         res.render('vendor/edit');
     }
 });
+app.post('/vendor/items/new_item', function (req, res) {
+    setTimeout(function () {
+        res.send({success: false, message: 'error'});
+    }, 2000);
+});
 
 app.post('/vendor/items/:id', function (req, res) {
     if (req.params.id === 'new_item') {

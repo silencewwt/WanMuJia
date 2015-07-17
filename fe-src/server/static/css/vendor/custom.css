@@ -119,6 +119,11 @@ form .form-group.required > label::before {
     padding-top: 12px;
     padding-bottom: 12px; }
 
+/* Item page */
+#new-item-form.form-wizard .tabs a {
+  cursor: default;
+  text-decoration: none; }
+
 /*Settings*/
 .logo-preview img {
   margin-top: 8px;
