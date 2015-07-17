@@ -2,8 +2,6 @@
 import datetime
 from hashlib import md5
 
-from app.utils.redis import redis_get, redis_set
-from app.constants import CACHE, SMS_API_SIGNATURE_CACHE, SMS_API_TIMESTAMP_CACHE, SMS_API_CACHE_EXPIRE
 from app.tasks import send_sms
 
 
@@ -31,13 +29,8 @@ def _timestamp_generator():
 
 
 def _api_param_generator():
-    timestamp = redis_get(CACHE, SMS_API_TIMESTAMP_CACHE)
-    signature = redis_get(CACHE, SMS_API_SIGNATURE_CACHE)
-    if not timestamp or not signature:
-        timestamp = _timestamp_generator()
-        signature = _sig_generator(timestamp)
-        redis_set(CACHE, SMS_API_TIMESTAMP_CACHE, timestamp, SMS_API_CACHE_EXPIRE)
-        redis_set(CACHE, SMS_API_SIGNATURE_CACHE, signature, SMS_API_CACHE_EXPIRE)
+    timestamp = _timestamp_generator()
+    signature = _sig_generator(timestamp)
     return timestamp, signature
 
 
