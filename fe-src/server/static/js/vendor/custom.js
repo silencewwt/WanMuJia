@@ -227,7 +227,7 @@ jQuery(document).ready(function($) {
     // Item New page
     if (getPageTitle() === 'item-new') {
         var $newItemForm = $('#new-item-form');
-        
+
         var nextHandler = function () {
             var $this = $(this);
             if ($this.hasClass('disabled')) {
@@ -364,7 +364,7 @@ jQuery(document).ready(function($) {
             setCookie('clickTime', Date.now());
             // 发送请求
             $.ajax({
-                url: '/send_sms',
+                url: '/service/mobile_register_sms',
                 method: 'post',
                 data: {
                     mobile: $('#contact_moblie').val()
