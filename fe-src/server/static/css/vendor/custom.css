@@ -4,7 +4,6 @@
  *
 */
 .alert {
-  margin-bottom: 30px;
   border: 1px solid transparent;
   border-radius: 4px; }
   .alert .close {
@@ -15,8 +14,22 @@
     border-color: #faebcc; }
     .alert.alert-warning .alert-link {
       color: #66512c; }
-      .alert.alert-warning .alert-link:hover {
-        text-decoration: underline; }
+  .alert.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6; }
+    .alert.alert-success .alert-link {
+      color: #2b542c; }
+  .alert.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1; }
+    .alert.alert-danger .alert-link {
+      color: #843534; }
+  .alert .alert-link:hover {
+    text-decoration: underline; }
+  .alert:last-child {
+    margin-bottom: 30px; }
 
 .inline-block-clear {
   font-size: 0; }
