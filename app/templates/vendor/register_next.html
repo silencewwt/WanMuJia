@@ -57,34 +57,43 @@
                 {% if not form.reconfirm %}
                     <div class="form-group">
                         <label class="control-label" for="email">邮箱</label>
-                        <input type="text" class="form-control input-dark" name="email" id="email" autocomplete="off" />
+                        {{ form.email(class='form-control input-dark', **{
+                            'autocomplete': 'off',
+                        }) }}
                     </div>
 
                     <div class="form-group">
                         <label class="control-label" for="password">密码</label>
-                        <input type="password" class="form-control input-dark" name="password" id="password" autocomplete="off" />
+                        {{ form.password(class='form-control input-dark', **{
+                            'autocomplete': 'off',
+                        }) }}
                     </div>
 
                     <div class="form-group">
                         <label class="control-label" for="confirm_password">再次输入密码</label>
-                        <input type="password" class="form-control input-dark" name="confirm_password" id="confirm_password" autocomplete="off" />
+                        {{ form.confirm_password(class='form-control input-dark', **{
+                            'autocomplete': 'off',
+                        }) }}
                     </div>
                 {% endif %}
 
                 <div class="form-group">
                     <label class="control-label" for="agent_name">代理人真实姓名</label>
-                    <input type="text" value="{% if form.agent_name.data %}{{ form.agent_name.data }}{% endif %}" class="form-control input-dark" name="agent_name" id="agent_name" autocomplete="off" />
-
+                    {{ form.agent_name(class='form-control input-dark', **{
+                        'autocomplete': 'off',
+                    }) }}
                 </div>
 
                 <div class="form-group">
                     <label class="control-label" for="agent_identity">代理人身份证号</label>
-                    <input type="text" value="{% if form.agent_identity.data %}{{ form.agent_identity.data }}{% endif %}" class="form-control input-dark" name="agent_identity" id="agent_identity" autocomplete="off" />
+                    {{ form.agent_identity(class='form-control input-dark', **{
+                        'autocomplete': 'off',
+                    }) }}
                 </div>
 
                 <div class="form-group upload">
                     <label class="control-label" for="agent_identity_front">身份证正面照片</label>
-                    <input type="file" accept="image/jpeg, image/png" class="form-control input-dark" name="agent_identity_front" id="agent_identity_front" autocomplete="off" />
+                    {{ form.agent_identity_front(class='form-control input-dark', accept='image/jpeg, image/png') }}
 
                     <span class="upload-state fa fa-spin fa-circle-o-notch"></span>
 
@@ -95,7 +104,7 @@
 
                 <div class="form-group upload">
                     <label class="control-label" for="agent_identity_back">身份证反面照片</label>
-                    <input type="file" class="form-control input-dark" name="agent_identity_back" id="agent_identity_back" autocomplete="off" />
+                    {{ form.agent_identity_back(class='form-control input-dark', accept='image/jpeg, image/png') }}
 
                     <span class="upload-state fa fa-spin fa-spin fa-circle-o-notch"></span>
 
@@ -106,17 +115,32 @@
 
                 <div class="form-group">
                     <label class="control-label" for="name">品牌厂家名称</label>
-                    <input type="text" value="{% if form.name.data %}{{ form.name.data }}{% endif %}" class="form-control input-dark" name="name" id="name" autocomplete="off" />
+                    {{ form.name(class='form-control input-dark', 'max-length': '20', **{
+                        'autocomplete': 'off',
+                    }) }}
+                </div>
+
+                <div class="form-group upload">
+                    <label class="control-label" for="license_image">营业执照照片</label>
+                    {{ form.license_image(class='form-control input-dark', accept='image/jpeg, image/png') }}
+
+                    <span class="upload-state fa fa-spin fa-circle-o-notch"></span>
+
+                    <div class="img-preview">
+                        <img src="{{ form.license_image_url }}" alt="营业执照照片预览"/>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label class="control-label" for="license_limit">营业期限</label>
-                    <input type="text" value="{% if form.license_limit.data %}{{ form.license_limit.data }}{% endif %}" class="form-control input-dark" name="license_limit" id="license_limit" autocomplete="off" />
+                    {{ form.license_limit(class='form-control input-dark', **{
+                        'autocomplete': 'off',
+                    }) }}
                 </div>
 
                 <div class="form-group address-select">
                     <label class="control-label" for="district_cn_id">联系地址</label>
-                    <select class="form-control" name="province_cn_id" id="province_cn_id"></select>
+                    <select class="form-control" name="province_cn_id" id="province_cn_id" value="110000"></select>
                     <select class="form-control" name="city_cn_id" id="city_cn_id"></select>
                     <select class="form-control" name="district_cn_id" id="district_cn_id"></select>
                 </div>
@@ -124,7 +148,9 @@
 
                 <div class="form-group">
                     <label class="control-label" for="address">联系地址 详细地址</label>
-                    <input type="text" value="{% if form.address.data %}{{ form.address.data }}{% endif %}" class="form-control input-dark" name="address" id="address" autocomplete="off" />
+                    {{ form.address(class='form-control input-dark', **{
+                        'autocomplete': 'off',
+                    }) }}
                 </div>
 
                 <div class="form-group">
