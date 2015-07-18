@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import re
+from base64 import b64decode
 from flask import session
 from wtforms.validators import Regexp, Email as BaseEmail, ValidationError
 from PIL import Image as BaseImage
 
 from app.models import User, Vendor, Distributor, Privilege, Province, City, District
 from app.constants import IMAGE_CAPTCHA_CODE
+from app.utils import StringIO
 from app.utils.redis import redis_verify
 
 
@@ -69,8 +71,13 @@ class QueryID(object):
         self.model = model
 
     def __call__(self, form, field):
-        if not self.model.query.get(field.data):
-            raise ValidationError(u'参数错误!')
+        if not isinstance(field.data, (list, tuple)):
+            if not self.model.query.get(field.data):
+                raise ValidationError(u'参数错误!')
+        else:
+            for data in field.data:
+                if not self.model.query.get(data):
+                    raise ValidationError(u'参数错误!')
 
 
 class UserName(object):
@@ -82,16 +89,22 @@ class UserName(object):
 
 
 class Image(object):
-    def __init__(self, required=True):
+    def __init__(self, required=True, base64=False):
         self.required = required
+        self.base64 = base64
 
     def __call__(self, form, field):
         if self.required or field.data:
+            from io import BytesIO
+            if self.base64:
+                image_str = BytesIO(b64decode(field.data[23:]))
+            else:
+                image_str = field.data.stream.raw
             try:
-                im = BaseImage.open(field.data.stream.raw)
+                im = BaseImage.open(image_str)
                 im.close()
                 del im
-            except:
+            except OSError:
                 raise ValidationError(u'图片格式错误')
 
 
