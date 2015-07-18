@@ -147,7 +147,12 @@ app.get('/user/profile', function (req, res) {
 // vendor
 app.get('/vendor', function (req, res) {
     res.render('vendor/index', {
-        nav: 'OVERVIEW'
+        vendor: {
+            statistic: {
+                items_count: 140,
+                distributors_count: 23,
+            },
+        },
     });
 });
 

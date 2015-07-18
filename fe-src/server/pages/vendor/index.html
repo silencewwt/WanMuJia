@@ -17,7 +17,7 @@
         <div class="col-sm-3">
 
             <a href="/vendor/items">
-                <div class="xe-widget xe-vertical-counter xe-vertical-counter-danger" data-suffix="&nbsp;个" data-count=".num" data-from="0" data-to="140" data-duration="2">
+                <div class="xe-widget xe-vertical-counter xe-vertical-counter-danger" data-suffix="&nbsp;个" data-count=".num" data-from="0" data-to="{{ vendor.statistic.items_count }}" data-duration="2">
                     <div class="xe-upper">
 
                         <div class="xe-icon">
@@ -38,14 +38,14 @@
         <div class="col-sm-3">
 
             <a href="/vendor/distributors">
-                <div class="xe-widget xe-vertical-counter xe-vertical-counter-primary" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="23" data-duration="2" data-easing="false">
+                <div class="xe-widget xe-vertical-counter xe-vertical-counter-primary" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="{{ vendor.statistic.distributors_count }}" data-duration="2" data-easing="false">
                     <div class="xe-upper">
 
                         <div class="xe-icon">
                             <i class="linecons-user"></i>
                         </div>
                         <div class="xe-label">
-                            <strong class="num">0家</strong>
+                            <strong class="num">0</strong>
                             <span>已授权商家</span>
                         </div>
 

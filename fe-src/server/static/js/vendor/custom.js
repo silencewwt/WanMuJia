@@ -138,17 +138,19 @@ jQuery(document).ready(function($) {
             $('#save').next().hide();
         });
         $form.find('select').click(function () {
-            console.log('clicked');
             $('#save').next().hide();
         });
 
         $('#save').click(function () {
             var $this = $(this);
+            var originButtonText = $this.html();
             if ($this.hasClass('disabled')) return;
 
             //$this.addClass('disabled');
             var dirtyCheck = formDirtyCheck($form, originFormValue);
             if (dirtyCheck.isDirty) {
+                setButtonLoading($this);
+
                 saveInfos({
                     url: window.location.pathname,
                     method: 'put',
@@ -161,6 +163,7 @@ jQuery(document).ready(function($) {
                             .show();
 
                         originFormValue = dirtyCheck.origin;
+                        resetButton($this, originButtonText);
                     },
                     error: function () {
                         $this.next()
@@ -169,9 +172,12 @@ jQuery(document).ready(function($) {
                             .addClass('text-danger')
                             .show();
 
-                        //$this.removeClass('disabled');
+                        resetButton($this, originButtonText);
                     }
                 });
+            }
+            else {
+                $this.next().text('没有修改, 无法提交').show();
             }
         });
 
@@ -241,8 +247,7 @@ jQuery(document).ready(function($) {
             var $link = $this.children('a');
             var originVal = $link.html();
 
-            $this.addClass('disabled');
-            $link.html('<span class="fa fa-spin fa-spinner"></span>');
+            setButtonLoading($link);
 
             saveInfos({
                 url: '/vendor/items/new_item',
@@ -256,8 +261,7 @@ jQuery(document).ready(function($) {
                         toastr.error(data.message, '提交失败');
                     }
 
-                    $link.html(originVal);
-                    $this.removeClass('disabled');
+                    resetButton($link, originVal);
                 }
             });
         };
@@ -615,6 +619,15 @@ function setCountDown($send, originValue, DELAYTIME) {
             sendDisable($send, Date.now(), DELAYTIME);
         }
     }, 200);
+}
+
+function setButtonLoading($el) {
+    $el.addClass('disabled')
+        .html('<i><span class="fa fa-spin fa-spinner"></span></i>');
+}
+function resetButton($el, innerHtml) {
+    $el.removeClass('disabled')
+        .html(innerHtml);
 }
 
 function checkValidate($form, selector) {

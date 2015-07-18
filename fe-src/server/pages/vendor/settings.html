@@ -23,7 +23,7 @@
             <form method="post" id="settings-form" role="form" action="/vendor/settings" class="validate form-horizontal">
                 {{ form.csrf_token }}
 
-                <div class="form-group required">
+                <div class="form-group">
                     <label class="col-sm-2 control-label" for="logo">厂家logo</label>
 
                     <div class="col-sm-9">
@@ -39,7 +39,15 @@
                     <label class="col-sm-2 control-label" for="name">厂家名称</label>
 
                     <div class="col-sm-9">
-                        <input name="name" type="text" maxlength="20" class="form-control" id="name" data-validate="required" data-message-required="请填写厂家名称" value="年年红">
+                        <input name="name" type="text" maxlength="20" {% if vendor.confirmed %}disabled{% endif %} class="form-control" id="name" data-validate="required" data-message-required="请填写厂家名称" value="{{ form.name.data }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="introduction">厂家简介</label>
+
+                    <div class="col-sm-9">
+                        <input name="introduction" type="text" maxlength="30" value="{{ form.introduction.data }}" class="form-control" id="introduction" placeholder="输入您的厂家简介...(30字以内)">
                     </div>
                 </div>
 
@@ -47,23 +55,23 @@
                     <label class="col-sm-2 control-label" for="contact">联系人</label>
 
                     <div class="col-sm-9">
-                        <input id="contact" name="contact" type="text" class="form-control" data-validate="required" data-message-required="请填写联系人" />
+                        <input id="contact" name="contact" type="text" value="{{ form.contact.data }}" class="form-control" data-validate="required" data-message-required="请填写联系人" />
                     </div>
                 </div>
 
                 <div class="form-group required">
-                    <label class="col-sm-2 control-label" for="contact_mobile">联系手机</label>
+                    <label class="col-sm-2 control-label" for="mobile">联系手机</label>
 
                     <div class="col-sm-9">
-                        <input id="contact_mobile" name="contact_mobile" type="text" class="form-control" data-validate="required" data-message-required="请填写联系手机"/>
+                        <input id="mobile" name="mobile" type="text" disabled value="{{ form.mobile.data }}" class="form-control" data-validate="required" data-message-required="请填写联系手机"/>
                     </div>
                 </div>
 
                 <div class="form-group required">
-                    <label class="col-sm-2 control-label" for="contact_telephone">联系固话</label>
+                    <label class="col-sm-2 control-label" for="telephone">联系固话</label>
 
                     <div class="col-sm-9">
-                        <input id="contact_telephone" name="contact_telephone" type="text" class="form-control" data-validate="required" data-message-required="请填写联系固话" />
+                        <input id="telephone" name="telephone" type="text" value="{{ form.telephone.data }}" class="form-control" data-validate="required" data-message-required="请填写联系固话" />
                     </div>
                 </div>
 
@@ -80,7 +88,7 @@
                     <label class="col-sm-2 control-label" for="address">详细地址</label>
 
                     <div class="col-sm-9">
-                        <input id="address" name="address" type="text" class="form-control" data-validate="required" data-message-required="请填写厂家地址" />
+                        <input id="address" name="address" type="text" value="{{ form.address.data }}" class="form-control" data-validate="required" data-message-required="请填写厂家地址" />
                     </div>
                 </div>
 
