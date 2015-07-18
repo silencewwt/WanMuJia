@@ -20,11 +20,11 @@ class LoginForm(Form):
 
 class RegistrationForm(Form):
     email = StringField(validators=[Email()])   # TODO: exist email
-    legal_person_name = StringField(validators=[DataRequired(u'必填')])
-    legal_person_identity = StringField(validators=[DataRequired(u'必填'), Length(18, 18, u'身份证号码不符合规范!')])
-    legal_person_identity_front = FileField(validators=[
+    agent_name = StringField(validators=[DataRequired(u'必填')])
+    agent_identity = StringField(validators=[DataRequired(u'必填'), Length(18, 18, u'身份证号码不符合规范!')])
+    agent_identity_front = FileField(validators=[
         Image(required=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    legal_person_identity_back = FileField(validators=[
+    agent_identity_back = FileField(validators=[
         Image(required=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     name = StringField(validators=[DataRequired(u'必填'), Length(2, 30, u'品牌厂商名称不符合规范')])
     license_limit = StringField(validators=[Length(8, 8)])
@@ -34,10 +34,10 @@ class RegistrationForm(Form):
     contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
     contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DistrictValidator(), Length(1, 30)])
-    district_cn_id = IntegerField(validators=[DataRequired(), Length(6, 6)])
+    district_cn_id = StringField(validators=[DataRequired(), Length(6, 6)])
     logo = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
-    image_fields = ('legal_person_identity_front', 'legal_person_identity_back', 'license_image', 'logo')
+    image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
 
     def validate_license_limit(self, field):
         if not field.data and not self.license_long_time_limit.data:
@@ -67,8 +67,8 @@ class RegistrationDetailForm(RegistrationForm):
             password=self.password.data,
             email=self.password.data,
             mobile=mobile,
-            legal_person_name=self.legal_person_name.data,
-            legal_person_identity=self.legal_person_identity.data,
+            agent_name=self.agent_name.data,
+            agent_identity=self.agent_identity.data,
             license_limit=self.license_limit.data,
             license_long_time_limit=self.license_long_time_limit.data,
             name=self.name.data,
@@ -82,20 +82,20 @@ class RegistrationDetailForm(RegistrationForm):
 
 
 class ReconfirmForm(RegistrationForm):
-    legal_person_identity_front = FileField(validators=[
+    agent_identity_front = FileField(validators=[
         Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    legal_person_identity_back = FileField(validators=[
+    agent_identity_back = FileField(validators=[
         Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     license_image = FileField(validators=[
         Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
-    attributes = ('legal_person_name', 'legal_person_identity', 'name', 'license_address', 'license_limit',
+    attributes = ('agent_name', 'legal_person_identity', 'name', 'license_address', 'license_limit',
                   'license_long_time_limit', 'contact_mobile', 'contact_telephone')
 
     def update_address(self):
         current_user.address.address = self.address.data
-        current_user.address.cn_id = self.district_cn_id.cn_id
+        current_user.address.cn_id = self.district_cn_id.data
         db.session.add(current_user.address)
         db.session.commit()
 

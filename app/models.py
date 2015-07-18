@@ -7,7 +7,6 @@ from flask.ext.login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
-from app.utils import PY3
 from .permission import privilege_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
 
 
@@ -112,13 +111,13 @@ class Vendor(BaseUser, db.Model):
     # logo图片
     logo = db.Column(db.String(255), default='', nullable=False)
     # 法人真实姓名
-    legal_person_name = db.Column(db.Unicode(10), nullable=False)
+    agent_name = db.Column(db.Unicode(10), nullable=False)
     # 法人身份证号码
-    legal_person_identity = db.Column(db.CHAR(18), nullable=False)
+    agent_identity = db.Column(db.CHAR(18), nullable=False)
     # 法人身份证正面图片
-    legal_person_identity_front = db.Column(db.String(255), default='', nullable=False)
+    agent_identity_front = db.Column(db.String(255), default='', nullable=False)
     # 法人身份证反面图片
-    legal_person_identity_back = db.Column(db.String(255), default='', nullable=False)
+    agent_identity_back = db.Column(db.String(255), default='', nullable=False)
     # 品牌厂家名称
     name = db.Column(db.Unicode(30), unique=True, nullable=False)
     # 营业执照期限
@@ -142,11 +141,11 @@ class Vendor(BaseUser, db.Model):
 
     id_prefix = vendor_id_prefix
 
-    def __init__(self, password, mobile, email, legal_person_name, legal_person_identity, name,
+    def __init__(self, password, mobile, email, agent_name, agent_identity, name,
                  license_limit, license_long_time_limit, contact_mobile, contact_telephone):
         super(Vendor, self).__init__(password, mobile, email)
-        self.legal_person_name = legal_person_name
-        self.legal_person_identity = legal_person_identity
+        self.agent_name = agent_name
+        self.agent_identity = agent_identity
         self.name = name
         self.license_limit = license_limit
         self.license_long_time_limit = license_long_time_limit
