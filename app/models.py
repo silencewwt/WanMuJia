@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import time
 import random
 
@@ -7,6 +8,8 @@ from flask.ext.login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
+from app.constants import VENDOR_REMINDS
+from app.utils.redis import redis_get, redis_set
 from .permission import privilege_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
 
 
@@ -126,6 +129,8 @@ class Vendor(BaseUser, db.Model):
     license_image = db.Column(db.String(255), default='', nullable=False)
     # 联系电话
     telephone = db.Column(db.CHAR(15), nullable=False)
+    # 简介
+    introduction = db.Column(db.Unicode(30), default=u'', nullable=False)
     # 已通过审核
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
     # 审核通过时间
