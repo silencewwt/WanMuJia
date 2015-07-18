@@ -43,7 +43,7 @@ def login():
     if request.method == 'POST':
         vendor = Vendor.query.filter_by(mobile=form.mobile.data).first() or \
             Vendor.query.filter_by(email=form.mobile.data).first()
-        if form.validate() and vendor.verify_password(form.password.data):
+        if form.validate() and vendor and vendor.verify_password(form.password.data):
             login_user(vendor)
             identity_changed.send(current_app._get_current_object(), identity=Identity(vendor.get_id()))
             return jsonify({ACCESS_GRANTED: True})
@@ -119,7 +119,7 @@ def items_data_table():
     data = {'draw': draw, 'recordsTotal': Item.query.count(), 'recordsFiltered': items.count(), 'data': []}
     for item in items:
         data['data'].append({
-            'id': item.id, 'name': item.item, 'second_category': item.second_category.second_category,
+            'id': item.id, 'item': item.item, 'second_category_id': item.second_category,
             'price': item.price, 'size': '%s*%s*%s' % (item.length, item.width, item.height)})
     return jsonify(data)
 
@@ -136,13 +136,13 @@ def item_detail(item_id):
     if request.method == 'GET':
         form.show_item(item)
         distributors = item.in_stock_distributors()
-        return render_template('vendor/items.html', form=form, distributors=distributors, vendor=current_user)
+        return render_template('vendor/edit.html', form=form, distributors=distributors, vendor=current_user)
     elif request.method == 'PUT':
         if form.validate():
             form.update_item(item)
-            return redirect(url_for('.item_detail', item_id=item.id))
+            return jsonify({'success': True})
         else:
-            pass
+            return jsonify({'success': False, 'message': form.error2str()})
     elif request.method == 'DELETE':
         db.session.delete(item)
         db.session.commit()
@@ -154,18 +154,20 @@ def item_detail(item_id):
 @vendor_confirmed
 def new_item():
     form = ItemForm()
-    if form.validate_on_submit():
-        item = form.add_item(current_user.id)
-        return redirect(url_for('.item_detail', item_id=item.id))
     form.generate_choices()
+    if request.method == 'POST':
+        if form.validate():
+            form.add_item(current_user.id)
+            return jsonify({'success': True})
+        return jsonify({'success': False, 'message': form.error2str()})
     return render_template('vendor/new_item.html', form=form, vendor=current_user)
 
 
-@vendor_blueprint.route('/items/image', methods=['POST', 'DELETE'])
+@vendor_blueprint.route('/items/image', methods=['PUT', 'DELETE'])
 @vendor_permission.require()
 @vendor_confirmed
 def upload_item_image():
-    if request.method == 'POST':
+    if request.method == 'PUT':
         form = ItemImageForm(csrf_enabled=False)
         if form.validate():
             image_hash = form.add_item_image()
@@ -178,7 +180,7 @@ def upload_item_image():
         return 403
 
 
-@vendor_blueprint.route('/items/image_sort', methods=['POST'])
+@vendor_blueprint.route('/items/image_sort', methods=['PUT'])
 @vendor_permission.require()
 @vendor_confirmed
 def update_item_image_sort():
@@ -216,7 +218,7 @@ def distributors_data_table():
     for distributor in distributors:
         created = datetime.datetime.fromtimestamp(distributor.created).strftime('%F')
         data['data'].append({
-            'id': distributor.id, 'name': distributor.name, 'contact_mobile': distributor.contact_mobile,
+            'id': distributor.id, 'name': distributor.name, 'mobile': distributor.mobile,
             'contact': distributor.contact, 'address': distributor.address.precise_address(), 'created': created})
     return jsonify(data)
 
@@ -251,7 +253,7 @@ def reconfirm():
     form = ReconfirmForm()
     if request.method == 'GET':
         form.show_info()
-        return render_template('vendor/reconfirm.html', form=form, vendor=current_user)
+        return render_template('vendor/register_next.html', form=form, vendor=current_user)
     else:
         if form.validate():
             form.reconfirm()

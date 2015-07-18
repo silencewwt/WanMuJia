@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 from flask.ext.login import current_user
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import StringField, PasswordField, BooleanField, IntegerField, SelectField, SelectMultipleField, \
+from wtforms import StringField, PasswordField, BooleanField, IntegerField, SelectMultipleField, \
     TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
 from app import db
 from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, \
-    Decoration, Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation
+    Decoration, Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, \
+    FirstCategory
 from app.utils.forms import Form
 from app.utils.image import save_image
+from app.utils.fields import OptionGroupSelectField, SelectField
 from app.utils.validator import Email, Mobile, QueryID, Image, DistrictValidator
 
 
@@ -23,19 +25,18 @@ class RegistrationForm(Form):
     agent_name = StringField(validators=[DataRequired(u'必填')])
     agent_identity = StringField(validators=[DataRequired(u'必填'), Length(18, 18, u'身份证号码不符合规范!')])
     agent_identity_front = FileField(validators=[
-        Image(required=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+        Image(required=True, base64=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     agent_identity_back = FileField(validators=[
-        Image(required=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+        Image(required=True, base64=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     name = StringField(validators=[DataRequired(u'必填'), Length(2, 30, u'品牌厂商名称不符合规范')])
     license_limit = StringField(validators=[Length(8, 8)])
     license_long_time_limit = BooleanField()
     license_image = FileField(validators=[
-        Image(required=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
-    contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
+        Image(required=True, base64=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DistrictValidator(), Length(1, 30)])
     district_cn_id = StringField(validators=[DataRequired(), Length(6, 6)])
-    logo = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    logo = FileField(validators=[Image(required=True, base64=True), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
     image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
 
@@ -72,8 +73,7 @@ class RegistrationDetailForm(RegistrationForm):
             license_limit=self.license_limit.data,
             license_long_time_limit=self.license_long_time_limit.data,
             name=self.name.data,
-            contact_mobile=self.contact_mobile.data,
-            contact_telephone=self.contact_telephone.data,
+            telephone=self.telephone.data,
         )
         db.session.add(vendor)
         db.session.commit()
@@ -91,7 +91,7 @@ class ReconfirmForm(RegistrationForm):
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
     attributes = ('agent_name', 'legal_person_identity', 'name', 'license_address', 'license_limit',
-                  'license_long_time_limit', 'contact_mobile', 'contact_telephone')
+                  'license_long_time_limit', 'telephone')
 
     def update_address(self):
         current_user.address.address = self.address.data
@@ -124,8 +124,9 @@ class ItemForm(Form):
     width = IntegerField(validators=[DataRequired(), NumberRange(1)])
     height = IntegerField(validators=[DataRequired(), NumberRange(1)])
     price = IntegerField(validators=[DataRequired(), NumberRange(1)])
-    material_id = IntegerField(validators=[DataRequired(), QueryID(Material)])
-    second_category_id = IntegerField(validators=[DataRequired(), QueryID(SecondCategory)])
+    material_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Material)])
+    second_category_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondCategory)])
+    second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene)])
     stove_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Stove)])
     carve_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Carve)])
     sand_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Sand)])
@@ -134,10 +135,25 @@ class ItemForm(Form):
     tenon_id = SelectMultipleField(coerce=int, validators=[DataRequired(), QueryID(Tenon)])
     story = TextAreaField(validators=[Length(0, 5000)])
 
-    attributes = ('item', 'length', 'width', 'height', 'price', 'material_id', 'second_category_id', 'stove_id',
-                  'carve_id', 'sand_id', 'decoration_id', 'story')
+    attributes = ('item', 'length', 'width', 'height', 'price', 'material_id', 'second_category_id', 'second_scene_id',
+                  'stove_id', 'carve_id', 'sand_id', 'decoration_id', 'paint_id', 'story')
 
     def generate_choices(self):
+        self.second_scene_id.choices = []
+        first_scenes = FirstScene.query.order_by(FirstScene.id)
+        for first_scene in first_scenes:
+            l = [(choice.id, choice.second_scene) for choice in
+                 SecondScene.query.filter_by(first_scene_id=first_scene.id)]
+            self.second_scene_id.choices.append((first_scene.first_scene, l))
+
+        self.second_category_id.choices = []
+        first_categories = FirstCategory.query.order_by(FirstCategory.id)
+        for first_category in first_categories:
+            l = [(choice.id, choice.second_category) for choice in
+                 SecondCategory.query.filter_by(first_category_id=first_category.id)]
+            self.second_category_id.choices.append((first_category.first_category, l))
+
+        self.material_id.choices = [(choice.id, choice.material) for choice in Material.query.all()]
         self.stove_id.choices = [(choice.id, choice.stove) for choice in Stove.query.all()]
         self.carve_id.choices = [(choice.id, choice.carve) for choice in Carve.query.all()]
         self.sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
@@ -152,6 +168,7 @@ class ItemForm(Form):
             price=self.price.data,
             material_id=self.material_id.data,
             second_category_id=self.second_category_id.data,
+            second_scene_id=self.second_scene_id.data,
             length=self.length.data,
             width=self.width.data,
             height=self.height.data,
@@ -163,7 +180,7 @@ class ItemForm(Form):
             story=self.story.data
         )
         db.session.add(item)
-        db.sessoin.commit()
+        db.session.commit()
         for tenon_id in self.tenon_id.data:
             db.session.add(ItemTenon(item_id=item.id, tenon_id=tenon_id))
         db.session.commit()
@@ -255,8 +272,7 @@ class ItemImageDeleteForm(Form):
 class SettingsForm(Form):
     name = StringField(validators=[DataRequired()])
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    contact_mobile = StringField(validators=[DataRequired(u'必填'), Mobile(available=False)])
-    contact_telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
+    telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
 
@@ -266,15 +282,13 @@ class SettingsForm(Form):
             raise ValidationError('品牌名称已存在')
 
     def show_vendor_setting(self, vendor):
-        self.contact_mobile.data = vendor.contact_mobile
-        self.contact_telephone.data = vendor.contact_telephone
+        self.telephone.data = vendor.telephone
         self.district_cn_id.data = vendor.address.cn_id
         self.address.data = vendor.address.address
 
     def update_vendor_setting(self, vendor):
         vendor.name = self.name.data
-        vendor.contact_mobile = self.contact_mobile.data
-        vendor.contact_telephone = self.contact_telephone.data
+        vendor.telephone = self.telephone.data
         vendor.address.address = self.address.data
         vendor.address.cn_id = self.district_cn_id.data
         if self.logo.data:

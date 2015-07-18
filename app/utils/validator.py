@@ -7,7 +7,6 @@ from PIL import Image as BaseImage
 
 from app.models import User, Vendor, Distributor, Privilege, Province, City, District
 from app.constants import IMAGE_CAPTCHA_CODE
-from app.utils import StringIO
 from app.utils.redis import redis_verify
 
 
