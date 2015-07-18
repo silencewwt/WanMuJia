@@ -23,7 +23,7 @@
             <form method="post" id="settings-form" role="form" action="/vendor/settings" class="validate form-horizontal">
                 {{ form.csrf_token }}
 
-                <div class="form-group required">
+                <div class="form-group">
                     <label class="col-sm-2 control-label" for="logo">厂家logo</label>
 
                     <div class="col-sm-9">
@@ -40,6 +40,14 @@
 
                     <div class="col-sm-9">
                         <input name="name" type="text" maxlength="20" class="form-control" id="name" data-validate="required" data-message-required="请填写厂家名称" value="年年红">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="introduction">厂家简介</label>
+
+                    <div class="col-sm-9">
+                        <input name="introduction" type="text" maxlength="30" class="form-control" id="introduction" placeholder="输入您的厂家简介...(30字以内)">
                     </div>
                 </div>
 

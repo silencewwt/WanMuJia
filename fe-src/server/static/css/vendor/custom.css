@@ -127,7 +127,7 @@ form .form-group.required > label::before {
 /*Settings*/
 .logo-preview img {
   margin-top: 8px;
-  height: 100px; }
+  min-height: 100px; }
 
 #settings-form .address-select select.form-control {
   margin-bottom: 5px; }
