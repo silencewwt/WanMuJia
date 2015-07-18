@@ -247,7 +247,8 @@ jQuery(document).ready(function($) {
             var $link = $this.children('a');
             var originVal = $link.html();
 
-            setButtonLoading($link);
+            $this.addClass('disabled');
+            $link.html('<i><span class="fa fa-spin fa-spinner"></span></i>');
 
             saveInfos({
                 url: '/vendor/items/new_item',
@@ -260,8 +261,13 @@ jQuery(document).ready(function($) {
                     else {
                         toastr.error(data.message, '提交失败');
                     }
-
-                    resetButton($link, originVal);
+                },
+                error: function (xhr) {
+                    toastr.error('服务器'+ xhr.status +'错误', '提交失败');
+                },
+                done: function () {
+                    $link.html(originVal);
+                    $this.removeClass('disabled');
                 }
             });
         };
@@ -551,7 +557,8 @@ function saveInfos(options) {
         data: options.form.serialize(),
         success: options.success,
         error: options.error
-    });
+    })
+    .done(options.done);
 }
 
 function deleteImage(hash) {
