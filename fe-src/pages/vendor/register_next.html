@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="/css/vendor/custom.css">
 
     <script src="/lib/xenon/js/jquery-1.11.1.min.js"></script>
-    <script src="/js/util.js"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -74,16 +73,17 @@
 
                 <div class="form-group">
                     <label class="control-label" for="agent_name">代理人真实姓名</label>
-                    <input type="text" value="{{ form.agent_name }}" class="form-control input-dark" name="agent_name" id="agent_name" autocomplete="off" />
+                    <input type="text" value="{% if form.agent_name.data %}{{ form.agent_name.data }}{% endif %}" class="form-control input-dark" name="agent_name" id="agent_name" autocomplete="off" />
+
                 </div>
 
                 <div class="form-group">
                     <label class="control-label" for="agent_identity">代理人身份证号</label>
-                    <input type="text" value="{{ form.agent_identity.data }}" class="form-control input-dark" name="agent_identity" id="agent_identity" autocomplete="off" />
+                    <input type="text" value="{% if form.agent_identity.data %}{{ form.agent_identity.data }}{% endif %}" class="form-control input-dark" name="agent_identity" id="agent_identity" autocomplete="off" />
                 </div>
 
                 <div class="form-group upload">
-                    <label class="control-label" for="agent_identity_front">身份证正面照片预览</label>
+                    <label class="control-label" for="agent_identity_front">身份证正面照片</label>
                     <input type="file" accept="image/jpeg, image/png" class="form-control input-dark" name="agent_identity_front" id="agent_identity_front" autocomplete="off" />
 
                     <span class="upload-state fa fa-spin fa-circle-o-notch"></span>
@@ -106,12 +106,12 @@
 
                 <div class="form-group">
                     <label class="control-label" for="name">品牌厂家名称</label>
-                    <input type="text" value="{{ form.name.data }}" class="form-control input-dark" name="name" id="name" autocomplete="off" />
+                    <input type="text" value="{% if form.name.data %}{{ form.name.data }}{% endif %}" class="form-control input-dark" name="name" id="name" autocomplete="off" />
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="limit">营业期限</label>
-                    <input type="text" value="{{ form.limit.data }}" class="form-control input-dark" name="limit" id="limit" autocomplete="off" />
+                    <label class="control-label" for="license_limit">营业期限</label>
+                    <input type="text" value="{% if form.license_limit.data %}{{ form.license_limit.data }}{% endif %}" class="form-control input-dark" name="license_limit" id="license_limit" autocomplete="off" />
                 </div>
 
                 <div class="form-group address-select">
@@ -124,7 +124,7 @@
 
                 <div class="form-group">
                     <label class="control-label" for="address">联系地址 详细地址</label>
-                    <input type="text" value="{{ form.address.data }}" class="form-control input-dark" name="address" id="address" autocomplete="off" />
+                    <input type="text" value="{% if form.address.data %}{{ form.address.data }}{% endif %}" class="form-control input-dark" name="address" id="address" autocomplete="off" />
                 </div>
 
                 <div class="form-group">
@@ -291,6 +291,8 @@
 
 <!-- JavaScripts initializations and stuff -->
 <script src="/lib/xenon/js/xenon-custom.js"></script>
+<script src="/lib/md5.js"></script>
+<script src="/js/util.js"></script>
 <script src="/js/vendor/custom.js"></script>
 
 </body>

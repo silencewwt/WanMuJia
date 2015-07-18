@@ -10,11 +10,10 @@ var $ = require('gulp-load-plugins')({
 var conf = {
     pojName: 'myj',
     version: '0.0.0',
-    serverPath: './fe-src/server/',
+    serverPath: '../MuYiJia/app/',
     staticPath: './fe-src/static/',
     pagePath: './fe-src/pages/',
     distPath: './app/',
-    pyPath: '../MuYiJia/app/'
 };
 
 
@@ -57,21 +56,8 @@ gulp.task('lib', function () {
 
 gulp.task('pages', function () {
     return gulp.src(conf.pagePath + './**/**')
-        .pipe(gulp.dest(conf.serverPath + './pages'));
+        .pipe(gulp.dest(conf.serverPath + './templates'));
 });
-
-gulp.task('server', ['sass', 'js', 'img', 'lib', 'pages'], function () {
-    $.nodemon({
-        script: conf.serverPath + 'server.js',
-        ext: 'js html scss',
-        ignore: 'gulpfile.js',
-        tasks: ['sass', 'js', 'img', 'lib', 'pages']
-    })
-    .on('restart', function () {
-        console.log('restarted!');
-    });
-});
-
 
 gulp.task('compress', ['sass', 'js', 'img', 'lib', 'pages'], function () {
     gulp.src(conf.serverPath + './static/css/**/*.css')
@@ -80,10 +66,13 @@ gulp.task('compress', ['sass', 'js', 'img', 'lib', 'pages'], function () {
     gulp.src(conf.serverPath + './static/js/**/*.js')
         .pipe($.uglify())
         .pipe(gulp.dest(conf.distPath + './static/js'));
-    gulp.src(conf.serverPath + './pages/**/**')
-        .pipe($.minifyHtml())
+    gulp.src(conf.serverPath + './templates/**/**')
+        // .pipe($.minifyHtml())
         .pipe(gulp.dest(conf.distPath + './templates'));
 });
+
+
+gulp.task('server', ['sass', 'js', 'img', 'lib', 'pages']);
 
 gulp.task('release', ['compress'], function () {
     // gulp.src(conf.serverPath + './static/lib/fonts/**')
@@ -95,12 +84,10 @@ gulp.task('release', ['compress'], function () {
         .pipe(gulp.dest(conf.distPath + './static/lib'));
 });
 
-gulp.task('py', ['sass', 'js', 'img', 'lib', 'pages'], function () {
-    gulp.src(conf.serverPath + './pages/**/**')
-        .pipe(gulp.dest(conf.pyPath + './templates'));
-    gulp.src(conf.serverPath + './static/**/**')
-        .pipe(gulp.dest(conf.pyPath + './static'));
+
+gulp.task('watch', function () {
+    gulp.watch(conf.staticPath + './**/*', ['server']);
+    gulp.watch(conf.pagePath + './**/*', ['server']);
 });
 
-
-gulp.task('default', ['py']);
+gulp.task('default', ['server', 'watch']);

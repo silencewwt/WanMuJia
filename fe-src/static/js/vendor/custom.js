@@ -496,7 +496,7 @@ jQuery(document).ready(function($) {
             }
         });
 
-        $('#limit').rules('add', {
+        $('#license_limit').rules('add', {
             required: true,
             messages: {
                 required: '请填写营业期限',

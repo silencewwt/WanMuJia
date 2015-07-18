@@ -1,4 +1,66 @@
-<div class="form-group required"><label class="col-sm-2 control-label" for=item>商品名称</label><div class=col-sm-9><input name=item type=text maxlength=20 value="{% if form.item.data %}{{ form.item.data }}{% endif %}" class=form-control id=item data-validate=required data-message-required=请填写商品名称></div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=length>商品尺寸</label><div class=col-sm-3><div class=input-group><span class=input-group-addon>长</span> <input name=length type=text value="{% if form.length.data %}{{ form.length.data }}{% endif %}" class=form-control id=length data-validate=required,number data-message-required=请填写商品长度 data-message-number=请填写有效的数字> <span class=input-group-addon>cm</span></div></div><div class=col-sm-3><div class=input-group><span class=input-group-addon>宽</span> <input name=width type=text value="{% if form.width.data %}{{ form.width.data }}{% endif %}" class=form-control id=width data-validate=required,number data-message-required=请填写商品宽度 data-message-number=请填写有效的数字> <span class=input-group-addon>cm</span></div></div><div class=col-sm-3><div class=input-group><span class=input-group-addon>高</span> <input name=height type=text value="{% if form.height.data %}{{ form.height.data }}{% endif %}" class=form-control id=height data-validate=required,number data-message-required=请填写商品高度 data-message-number=请填写有效的数字> <span class=input-group-addon>cm</span></div></div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=price>指导价格</label><div class=col-sm-9><div class=input-group><input name=price id=price type=text value="{% if form.price.data %}{{ form.price.data }}{% endif %}" class=form-control data-validate=required,number data-message-required=请填写指导价格 data-message-number=请填写有效的数字> <span class=input-group-addon>元</span></div></div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=second_scene_id>场景分类</label><div class=col-sm-9><script type=text/javascript>
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="item">商品名称</label>
+
+    <div class="col-sm-9">
+        <input name="item" type="text" maxlength="20" value="{% if form.item.data %}{{ form.item.data }}{% endif %}" class="form-control" id="item"
+               data-validate="required" data-message-required="请填写商品名称">
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="length">商品尺寸</label>
+
+    <div class="col-sm-3">
+        <div class="input-group">
+            <span class="input-group-addon">长</span>
+            <input name="length" type="text" value="{% if form.length.data %}{{ form.length.data }}{% endif %}" class="form-control" id="length" data-validate="required,number"
+                   data-message-required="请填写商品长度" data-message-number="请填写有效的数字">
+            <span class="input-group-addon">cm</span>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="input-group">
+            <span class="input-group-addon">宽</span>
+            <input name="width" type="text" value="{% if form.width.data %}{{ form.width.data }}{% endif %}" class="form-control" id="width" data-validate="required,number"
+                   data-message-required="请填写商品宽度" data-message-number="请填写有效的数字">
+            <span class="input-group-addon">cm</span>
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <div class="input-group">
+            <span class="input-group-addon">高</span>
+            <input name="height" type="text" value="{% if form.height.data %}{{ form.height.data }}{% endif %}" class="form-control" id="height" data-validate="required,number"
+                   data-message-required="请填写商品高度" data-message-number="请填写有效的数字">
+            <span class="input-group-addon">cm</span>
+        </div>
+    </div>
+
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="price">指导价格</label>
+
+    <div class="col-sm-9">
+        <div class="input-group">
+            <input name="price" id="price" type="text" value="{% if form.price.data %}{{ form.price.data }}{% endif %}" class="form-control" data-validate="required,number" data-message-required="请填写指导价格" data-message-number="请填写有效的数字">
+            <span class="input-group-addon">元</span>
+        </div>
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="second_scene_id">场景分类</label>
+
+    <div class="col-sm-9">
+        <script type="text/javascript">
             jQuery(document).ready(function($)
             {
                 $("#second_scene_id").select2({
@@ -11,7 +73,19 @@
                 });
 
             });
-        </script>{{ form.second_scene_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '请选择场景分类'}) }}</div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=second_category_id>商品种类</label><div class=col-sm-9><script type=text/javascript>
+        </script>
+
+        {{ form.second_scene_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '请选择场景分类'}) }}
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="second_category_id">商品种类</label>
+
+    <div class="col-sm-9">
+        <script type="text/javascript">
             jQuery(document).ready(function($)
             {
                 $("#second_category_id").select2({
@@ -24,7 +98,19 @@
                 });
 
             });
-        </script>{{ form.second_category_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '请选择商品种类'}) }}</div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=material_id>商品材料</label><div class=col-sm-9><script type=text/javascript>
+        </script>
+
+        {{ form.second_category_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '请选择商品种类'}) }}
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="material_id">商品材料</label>
+
+    <div class="col-sm-9">
+        <script type="text/javascript">
             jQuery(document).ready(function($)
             {
                 $("#material_id").select2({
@@ -37,7 +123,19 @@
                 });
 
             });
-        </script>{{ form.material_id(class='form-control', **{'data-validate': 'required', 'data-message': '请选择商品材料'}) }}</div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=stove_id>烘干工艺</label><div class=col-sm-9><script type=text/javascript>
+        </script>
+
+        {{ form.material_id(class='form-control', **{'data-validate': 'required', 'data-message': '请选择商品材料'}) }}
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="stove_id">烘干工艺</label>
+
+    <div class="col-sm-9">
+        <script type="text/javascript">
             jQuery(document).ready(function($)
             {
                 $("#stove_id").select2({
@@ -50,7 +148,19 @@
                 });
 
             });
-        </script>{{ form.stove_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择烘干工艺'}) }}</div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=carve_id>雕刻工艺</label><div class=col-sm-9><script type=text/javascript>
+        </script>
+
+        {{ form.stove_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择烘干工艺'}) }}
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="carve_id">雕刻工艺</label>
+
+    <div class="col-sm-9">
+        <script type="text/javascript">
             jQuery(document).ready(function($)
             {
                 $("#carve_id").select2({
@@ -63,7 +173,19 @@
                 });
 
             });
-        </script>{{ form.carve_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择雕刻工艺'}) }}</div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=sand_id>打磨砂纸</label><div class=col-sm-9><script type=text/javascript>
+        </script>
+
+        {{ form.carve_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择雕刻工艺'}) }}
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="sand_id">打磨砂纸</label>
+
+    <div class="col-sm-9">
+        <script type="text/javascript">
             jQuery(document).ready(function($)
             {
                 $("#sand_id").select2({
@@ -76,7 +198,19 @@
                 });
 
             });
-        </script>{{ form.sand_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择打磨分类'}) }}</div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=paint_id>涂饰工艺</label><div class=col-sm-9><script type=text/javascript>
+        </script>
+
+        {{ form.sand_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择打磨分类'}) }}
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="paint_id">涂饰工艺</label>
+
+    <div class="col-sm-9">
+        <script type="text/javascript">
             jQuery(document).ready(function($)
             {
                 $("#paint_id").select2({
@@ -89,7 +223,19 @@
                 });
 
             });
-        </script>{{ form.paint_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择涂饰工艺'}) }}</div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=decoration_id>装饰工艺</label><div class=col-sm-9><script type=text/javascript>
+        </script>
+
+        {{ form.paint_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择涂饰工艺'}) }}
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="decoration_id">装饰工艺</label>
+
+    <div class="col-sm-9">
+        <script type="text/javascript">
             jQuery(document).ready(function($)
             {
                 $("#decoration_id").select2({
@@ -102,7 +248,19 @@
                 });
 
             });
-        </script>{{ form.decoration_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择装饰工艺'}) }}</div></div><div class=form-group-separator></div><div class="form-group required"><label class="col-sm-2 control-label" for=tenon_id>榫卯结构</label><div class=col-sm-9><script type=text/javascript>
+        </script>
+
+        {{ form.decoration_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择装饰工艺'}) }}
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group required">
+    <label class="col-sm-2 control-label" for="tenon_id">榫卯结构</label>
+
+    <div class="col-sm-9">
+        <script type="text/javascript">
             jQuery(document).ready(function($)
             {
                 $("#tenon_id").select2({
@@ -115,4 +273,17 @@
                 });
 
             });
-        </script>{{ form.tenon_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择榫卯结构', 'multiple': 'multiple'}) }}</div></div><div class=form-group-separator></div><div class=form-group><label class="col-sm-2 control-label" for=story>商品寓意</label><div class=col-sm-9><textarea value="{% if form.story.data %}{{ form.story.data }}{% endif %}" class="form-control autogrow" name=story id=story rows=3 maxlength=5000></textarea></div></div>
+        </script>
+
+        {{ form.tenon_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择榫卯结构', 'multiple': 'multiple'}) }}
+    </div>
+</div>
+
+<div class="form-group-separator"></div>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label" for="story">商品寓意</label>
+    <div class="col-sm-9">
+        <textarea value="{% if form.story.data %}{{ form.story.data }}{% endif %}" class="form-control autogrow" name="story" id="story" rows="3" maxlength="5000"></textarea>
+    </div>
+</div>

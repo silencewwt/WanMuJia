@@ -1,3 +1,119 @@
-{% extends "vendor/nav_midd.html" %} {% block isItems -%} opened active {%- endblock %} {% block isItems_new -%} active {%- endblock %} {% block s_isItems -%} opened active {%- endblock %} {% block s_isItems_new -%} active {%- endblock %} {% block styles %}<link rel=stylesheet href=/lib/xenon/js/select2/select2.css><link rel=stylesheet href=/lib/xenon/js/select2/select2-bootstrap.css><link rel=stylesheet href=/lib/xenon/js/dropzone/css/dropzone.css>{% endblock %} {% block main_content %}<div class=page-title data-page=item-new><div class=title-env><h1 class=title>添加商品</h1></div><div class=breadcrumb-env><ol class="breadcrumb bc-1"><li><a href=/vendor><i class=fa-home></i>概览</a></li><li><a href=/vendor/items>商品管理</a></li><li class=active><strong>添加商品</strong></li></ol></div></div><div class=row><div class=col-sm-12>{{ super() }}</div></div><form role=forl id=new-item-form class="form-wizard form-horizontal validate">{{ form.csrf_token }}<ul class=tabs><li class=active><a href=#details data-toggle=tab>填写商品详细信息 <span>1</span></a></li><li><a href=#images data-toggle=tab>上传商品图片 <span>2</span></a></li></ul><div class=progress-indicator><span></span></div><div class="tab-content no-margin"><div class="tab-pane with-bg active" id=details>{% include "vendor/include/item_detail_form.html" %}</div><div class="tab-pane with-bg" id=images><div id=img-upload class=dropzone><p class=dz-message>拖动文件到此以上传(或点击)</p><div class=fallback><input name=file type=file multiple></div></div></div><ul class="pager wizard"><li class=next><a href=javascript:void(0)>下一步 <i class=entypo-right-open></i></a></li></ul></div></form>{% endblock %} {% block scripts %}<script type=text/javascript>
+{% extends "vendor/nav_midd.html" %}
 
-    </script><script src=/lib/xenon/js/jquery-validate/jquery.validate.min.js></script><script src=/lib/xenon/js/formwizard/jquery.bootstrap.wizard.min.js></script><script src=/lib/xenon/js/select2/select2.min.js></script><script src=/lib/xenon/js/dropzone/dropzone.min.js></script><script src=/lib/xenon/js/toastr/toastr.min.js></script>{% endblock %}
+{% block isItems -%} opened active {%- endblock %}
+{% block isItems_new -%} active {%- endblock %}
+{% block s_isItems -%} opened active {%- endblock %}
+{% block s_isItems_new -%} active {%- endblock %}
+
+
+{% block styles %}
+    <link rel="stylesheet" href="/lib/xenon/js/select2/select2.css">
+    <link rel="stylesheet" href="/lib/xenon/js/select2/select2-bootstrap.css">
+    <link rel="stylesheet" href="/lib/xenon/js/dropzone/css/dropzone.css">
+{% endblock %}
+
+
+{% block main_content %}
+    <div class="page-title" data-page="item-new">
+
+        <div class="title-env">
+            <h1 class="title">添加商品</h1>
+        </div>
+
+        <div class="breadcrumb-env">
+
+            <ol class="breadcrumb bc-1">
+                <li>
+                    <a href="/vendor"><i class="fa-home"></i>概览</a>
+                </li>
+                <li>
+
+                    <a href="/vendor/items">商品管理</a>
+                </li>
+                <li class="active">
+
+                    <strong>添加商品</strong>
+                </li>
+            </ol>
+
+        </div>
+
+    </div>
+
+    <!-- alert -->
+    <div class="row">
+        <div class="col-sm-12">
+            {{ super() }}
+        </div>
+    </div>
+
+    <form role="forl" id="new-item-form" class="form-wizard form-horizontal validate">
+        {{ form.csrf_token }}
+
+        <ul class="tabs">
+            <li class="active">
+                <a href="#details" data-toggle="tab">
+                    填写商品详细信息
+                    <span>1</span>
+                </a>
+            </li>
+            <li>
+                <a href="#images" data-toggle="tab">
+                    上传商品图片
+                    <span>2</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="progress-indicator">
+            <span></span>
+        </div>
+
+        <div class="tab-content no-margin">
+
+            <!-- Tabs Content -->
+            <div class="tab-pane with-bg active" id="details">
+
+                {% include "vendor/include/item_detail_form.html" %}
+
+            </div>
+
+            <div class="tab-pane with-bg" id="images">
+                <div id="img-upload" class="dropzone">
+                    <p class="dz-message">
+                        拖动文件到此以上传(或点击)
+                    </p>
+                    <div class="fallback">
+                        <input name="file" type="file" multiple />
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Tabs Pager -->
+
+            <ul class="pager wizard">
+                <li class="next">
+                    <a href="javascript:void(0)">下一步 <i class="entypo-right-open"></i></a>
+                </li>
+            </ul>
+
+        </div>
+
+    </form>
+{% endblock %}
+
+
+{% block scripts %}
+    <!-- Form validate init -->
+    <script type="text/javascript">
+
+    </script>
+
+
+    <script src="/lib/xenon/js/jquery-validate/jquery.validate.min.js"></script>
+    <script src="/lib/xenon/js/formwizard/jquery.bootstrap.wizard.min.js"></script>
+    <script src="/lib/xenon/js/select2/select2.min.js"></script>
+    <script src="/lib/xenon/js/dropzone/dropzone.min.js"></script>
+    <script src="/lib/xenon/js/toastr/toastr.min.js"></script>
+{% endblock %}
