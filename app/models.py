@@ -122,8 +122,6 @@ class Vendor(BaseUser, db.Model):
     name = db.Column(db.Unicode(30), unique=True, nullable=False)
     # 营业执照期限
     license_limit = db.Column(db.Integer, nullable=False)
-    # 长期印业执照
-    license_long_time_limit = db.Column(db.Boolean, default=False, nullable=False)
     # 营业执照副本扫描件
     license_image = db.Column(db.String(255), default='', nullable=False)
     # 联系电话
@@ -139,19 +137,26 @@ class Vendor(BaseUser, db.Model):
 
     id_prefix = vendor_id_prefix
 
-    def __init__(self, password, mobile, email, agent_name, agent_identity, name,
-                 license_limit, license_long_time_limit, telephone):
+    def __init__(self, password, mobile, email, agent_name, agent_identity, name, license_limit, telephone):
         super(Vendor, self).__init__(password, mobile, email)
         self.agent_name = agent_name
         self.agent_identity = agent_identity
         self.name = name
         self.license_limit = license_limit
-        self.license_long_time_limit = license_long_time_limit
         self.telephone = telephone
 
     @property
     def address(self):
         return VendorAddress.query.filter_by(vendor_id=self.id).limit(1).first()
+
+    @property
+    def statistic(self):
+        class Object:
+            pass
+        stat = Object()
+        stat.items_count = Item.query.filter_by(vendor_id=self.id).count()
+        stat.distributors_count = Distributor.query.filter_by(vendor_id=self.id).count()
+        return stat
 
     @staticmethod
     def generate_fake():
@@ -164,7 +169,7 @@ class Vendor(BaseUser, db.Model):
             vendor = Vendor(
                 "14e1b600b1fd579f47433b88e8d85291", zh_fake.phone_number(), fake.email(), zh_fake.name(),
                 zh_fake.random_number(18), '%s%s' % (zh_fake.company(), zh_fake.random_number(3)),
-                zh_fake.random_number(2), False, zh_fake.phone_number())
+                zh_fake.random_number(2), zh_fake.phone_number())
             db.session.add(vendor)
             vendors.append(vendor)
         db.session.commit()
