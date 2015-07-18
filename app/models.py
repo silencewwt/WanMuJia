@@ -126,10 +126,8 @@ class Vendor(BaseUser, db.Model):
     license_long_time_limit = db.Column(db.Boolean, default=False, nullable=False)
     # 营业执照副本扫描件
     license_image = db.Column(db.String(255), default='', nullable=False)
-    # 联系手机
-    contact_mobile = db.Column(db.CHAR(11), nullable=False)
     # 联系电话
-    contact_telephone = db.Column(db.CHAR(15), nullable=False)
+    telephone = db.Column(db.CHAR(15), nullable=False)
     # 已通过审核
     confirmed = db.Column(db.Boolean, default=False, nullable=False)
     # 审核通过时间
@@ -142,15 +140,14 @@ class Vendor(BaseUser, db.Model):
     id_prefix = vendor_id_prefix
 
     def __init__(self, password, mobile, email, agent_name, agent_identity, name,
-                 license_limit, license_long_time_limit, contact_mobile, contact_telephone):
+                 license_limit, license_long_time_limit, telephone):
         super(Vendor, self).__init__(password, mobile, email)
         self.agent_name = agent_name
         self.agent_identity = agent_identity
         self.name = name
         self.license_limit = license_limit
         self.license_long_time_limit = license_long_time_limit
-        self.contact_mobile = contact_mobile
-        self.contact_telephone = contact_telephone
+        self.telephone = telephone
 
     @property
     def address(self):
@@ -167,7 +164,7 @@ class Vendor(BaseUser, db.Model):
             vendor = Vendor(
                 "14e1b600b1fd579f47433b88e8d85291", zh_fake.phone_number(), fake.email(), zh_fake.name(),
                 zh_fake.random_number(18), '%s%s' % (zh_fake.company(), zh_fake.random_number(3)),
-                zh_fake.random_number(2), False, zh_fake.phone_number(), zh_fake.phone_number())
+                zh_fake.random_number(2), False, zh_fake.phone_number())
             db.session.add(vendor)
             vendors.append(vendor)
         db.session.commit()
@@ -186,10 +183,8 @@ class Distributor(BaseUser, db.Model):
     vendor_id = db.Column(db.Integer, nullable=False)
     # 商家名称
     name = db.Column(db.Unicode(30), nullable=False)
-    # 联系手机
-    contact_mobile = db.Column(db.String(30), nullable=False)
     # 联系电话
-    contact_telephone = db.Column(db.String(30), nullable=False)
+    telephone = db.Column(db.String(30), nullable=False)
     # 联系人
     contact = db.Column(db.Unicode(10), nullable=False)
     # 删除确认
@@ -204,13 +199,12 @@ class Distributor(BaseUser, db.Model):
 
     id_prefix = distributor_id_prefix
 
-    def __init__(self, username, password, vendor_id, name, contact_mobile, contact_telephone, contact):
-        super(Distributor, self).__init__(password, mobile='', email='')
+    def __init__(self, username, password, vendor_id, name, mobile, telephone, contact):
+        super(Distributor, self).__init__(password, mobile=mobile, email='')
         self.username = username
         self.vendor_id = vendor_id
         self.name = name
-        self.contact_mobile = contact_mobile
-        self.contact_telephone = contact_telephone
+        self.telephone = telephone
         self.contact = contact
 
     @staticmethod
@@ -282,21 +276,19 @@ class Item(db.Model):
     paint_id = db.Column(db.Integer, nullable=False)
     # 装饰 id
     decoration_id = db.Column(db.Integer, nullable=False)
-    # 一级场景 id
-    # "工艺品"与"其他"场景分类先不分二级分类, 但是以后随时可能再添加二级分类, 待以后补全了二级分类, 再将此字段删去
-    first_scene_id = db.Column(db.Integer, nullable=False)
     # 二级场景 id
     second_scene_id = db.Column(db.Integer, nullable=False)
     # 产品寓意
     story = db.Column(db.Unicode(5000), default=u'', nullable=False)
 
-    def __init__(self, vendor_id, item, price, material_id, second_category_id, length, width, height, stove_id,
+    def __init__(self, vendor_id, item, price, material_id, second_category_id, second_scene_id, length, width, height, stove_id,
                  carve_id, sand_id, paint_id, decoration_id, story=u''):
         self.vendor_id = vendor_id
         self.item = item
         self.price = price
         self.material_id = material_id
         self.second_category_id = second_category_id
+        self.second_scene_id = second_scene_id
         self.length = length
         self.width = width
         self.height = height
@@ -311,7 +303,7 @@ class Item(db.Model):
         return sum([stock.stock for stock in Stock.query.filter(Stock.item_id == self.id, Stock.stock > 0)])
 
     def get_tenon_id(self):
-        return (item_tenon.tenon_id for item_tenon in ItemTenon.query.filter_by(item_id=self.id))
+        return [item_tenon.tenon_id for item_tenon in ItemTenon.query.filter_by(item_id=self.id)]
 
     def get_item_images(self):
         return Item.query.filter_by(item_id=self.id, is_deleted=False).\
@@ -325,7 +317,7 @@ class Item(db.Model):
 
     @property
     def second_category(self):
-        return SecondCategory.query.get(self.second_category_id)
+        return SecondCategory.query.get(self.second_category_id).second_category
 
 
 class ItemImage(db.Model):
@@ -407,8 +399,7 @@ class FirstScene(db.Model):
 
     @staticmethod
     def generate_fake():
-        scenes = {u'家庭': [u'书房', u'客厅', u'卧室', u'厨卫', u'餐厅', u'儿童房'], u'办公': [u'酒店', u'工作室'],
-                  u'工艺品': [], u'其他': []}
+        scenes = [u'家庭', u'办公', u'工艺品', u'其他']
         for scene in scenes:
             db.session.add(FirstScene(first_scene=scene))
         db.session.commit()
@@ -423,7 +414,7 @@ class SecondScene(db.Model):
     @staticmethod
     def generate_fake():
         scenes = {u'家庭': [u'书房', u'客厅', u'卧室', u'厨卫', u'餐厅', u'儿童房'], u'办公': [u'酒店', u'工作室'],
-                  u'工艺品': [], u'其他': []}
+                  u'工艺品': [u'工艺品'], u'其他': [u'其他']}
         for scene in scenes:
             first_scene = FirstScene.query.filter_by(first_scene=scene).first()
             for sec_scene in scenes[scene]:
@@ -431,43 +422,17 @@ class SecondScene(db.Model):
         db.session.commit()
 
 
-class MaterialCategory(db.Model):
-    __tablename__ = 'material_categories'
-    id = db.Column(db.Integer, primary_key=True)
-    material_category = db.Column(db.Unicode(10), nullable=False)
-
-    @staticmethod
-    def generate_fake():
-        categories = [u'紫檀木类', u'花梨木类', u'香枝木类', u'黑酸枝木类', u'红酸枝木类', u'鸡翅木类', u'乌木类', u'条纹乌木类']
-        for category in categories:
-            db.session.add(MaterialCategory(material_category=category))
-        db.session.commit()
-
-
 class Material(db.Model):
     __tablename__ = 'materials'
     id = db.Column(db.Integer, primary_key=True)
-    material_category_id = db.Column(db.Integer, nullable=False)
     material = db.Column(db.Unicode(10), nullable=False)
-    # 别称
-    alias = db.Column(db.Unicode(20), default=u'', nullable=False)
-    # 产地
-    origin = db.Column(db.Unicode(30), nullable=False)
-
-    def __init__(self, material_category_id, material, alias, origin):
-        self.material_category_id = material_category_id
-        self.material = material
-        self.alias = alias
-        self.origin = origin
 
     @staticmethod
     def generate_fake():
-        categories = {u'紫檀木类': [[u'檀香紫檀', u'小叶紫檀', u'印度']], u'花梨木类': [[u'越柬紫檀', u'越柬花梨', u'越南、柬埔寨、老挝'], [u'安达曼紫檀', u'', u'印度安达曼群岛'], [u'刺猬紫檀', u'非洲花梨', u'非洲（冈比亚、科特迪瓦、几内亚比绍、马里、塞内加尔）'], [u'印度紫檀', u'', u'印度'], [u'大果紫檀', u'缅甸花梨', u'缅甸、泰国、老挝'], [u'囊状紫檀', u'', u'印度'], [u'鸟足紫檀', u'老挝花梨', u'东南亚中南半岛（老挝、柬埔寨）']], u'香枝木类': [[u'降香黄檀', u'黄花梨', u'中国海南、越南']], u'黑酸枝木类': [[u'刀状黑黄檀', u'缅甸黑酸枝、老挝黑酸枝', u'缅甸、老挝'], [u'黑黄檀', u'版纳黑檀', u'云南、越南、缅甸'], [u'阔叶黄檀', u'紫花梨', u'印度、印度尼西亚'], [u'卢氏黑黄檀', u'大叶紫檀', u'马达加斯加'], [u'东非黑黄檀', u'紫光檀、非洲黑檀', u'非洲东部（坦桑尼亚、塞内加尔、莫桑比克）'], [u'巴西黑黄檀', u'', u'巴西'], [u'亚马孙黄檀', u'', u'巴西'], [u'伯利兹黄檀', u'', u'伯利兹']], u'红酸枝木类': [[u'巴西黄檀', u'', u'巴西'], [u'赛州黄檀', u'', u'巴西'], [u'交趾黄檀', u'大红酸枝', u'老挝、柬埔寨'], [u'绒毛黄檀', u'紫薇檀、黄檀木', u'巴西、墨西哥'], [u'中美洲黄檀', u'', u'中美洲（尼加拉瓜、哥斯达黎加、危地马拉）'], [u'奥氏黄檀', u'', u'缅甸、泰国、老挝'], [u'微凹黄檀', u'小叶红酸枝、可可波罗', u'中美洲（巴拿马、哥斯达黎加、尼加拉瓜、洪都拉斯）']], u'鸡翅木类': [[u'非洲崖豆木', u'非洲黑鸡翅', u'非洲'], [u'白花崖豆木', u'缅甸鸡翅木', u'缅甸、泰国'], [u'铁刀木', u'', u'印度、泰国、马来西亚、缅甸']], u'乌木类': [[u'乌木', u'阴沉木', u'各国'], [u'厚瓣乌木', u'黑檀', u'西非'], [u'毛药乌木', u'', u'菲律宾'], [u'蓬赛乌木', u'', u'菲律宾']], u'条纹乌木类': [[u'苏拉威西乌木', u'条纹乌木', u'印度尼西亚'], [u'菲律宾乌木', u'菲律宾黑檀', u'菲律宾']]}
-        for category in categories:
-            material_category = MaterialCategory.query.filter_by(material_category=category).first()
-            for material in categories[category]:
-                db.session.add(Material(material_category.id, material[0], material[1], material[2]))
-            db.session.commit()
+        materials = [u'紫檀木', u'花梨木', u'香枝木', u'黑酸枝木', u'红酸枝木', u'鸡翅木', u'乌木', u'条纹乌木']
+        for material in materials:
+            db.session.add(Material(material=material))
+        db.session.commit()
 
 
 class Privilege(BaseUser, db.Model):
@@ -698,7 +663,6 @@ def load_user(user_id):
 def generate_fake_data():
     FirstCategory.generate_fake()
     SecondCategory.generate_fake()
-    MaterialCategory.generate_fake()
     Material.generate_fake()
     District.generate_fake()
     Stove.generate_fake()
