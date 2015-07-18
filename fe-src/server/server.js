@@ -255,6 +255,14 @@ app.post('/vendor/register', function (req, res) {
 app.get('/vendor/register_next', function (req, res) {
     res.render('vendor/register_next');
 });
+app.get('/vendor/reconfirm', function (req, res) {
+    res.render('vendor/register_next', {
+        form: {
+            reconfirm: true,
+            agent_identity_front_url: '/img/user/item02.jpg'
+        }
+    });
+});
 
 
 // admin

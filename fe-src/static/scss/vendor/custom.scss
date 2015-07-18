@@ -227,6 +227,14 @@ body.register-page .login-header {
     text-decoration: none;
 }
 
+
+$uploadStateTop: 52px;
+$uploadStateRight: -30px;
+
+// 在重新审核页面，初始状态即显示图片预览
+[data-page="reconfirm"] .img-preview {
+    display: block !important;
+}
 .register-next-form {
     padding: 30px;
 
@@ -250,15 +258,24 @@ body.register-page .login-header {
         &.upload {
             position: relative;
 
-            & .upload-state {
+            .upload-state {
                 display: none;
                 position: absolute;
-                top: 52px;
-                right: -30px;
+                top: $uploadStateTop;
+                right: $uploadStateRight;
                 font-size: 18px;
 
                 &.fa-smile-o {
                     color: #2e9d18;
+                }
+            }
+
+            .img-preview {
+                display: none;
+                margin-top: 10px;
+                background-color: transparent;
+                img {
+                    max-height: 100px;
                 }
             }
         }

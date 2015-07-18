@@ -374,36 +374,55 @@ jQuery(document).ready(function($) {
     }
 
 
-    // Register_next page
-    if ($('body').data('page') == 'register-next') {
+    // Register_next or Reconfirm page
+    if ($('body').data('page') == 'register-next' ||
+            $('body').data('page') == 'reconfirm') {
 
         // form validate
-        $('#email').rules('add', {
-            required: true,
-            email: true,
-            messages: {
-                required: '请输入您的邮箱',
-                email: '请输入合法的邮箱地址'
-            }
-        });
 
-        $('#password').rules('add', {
-            required: true,
-            regex: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/,
-            messages: {
-                required: '请设置密码',
-                regex: '密码长度必须大于等于6位且为字母和数字的组合'
-            }
-        });
+        // only in register-next page
+        if ($('body').data('page') == 'register-next') {
+            $('#email').rules('add', {
+                required: true,
+                email: true,
+                messages: {
+                    required: '请输入您的邮箱',
+                    email: '请输入合法的邮箱地址'
+                }
+            });
 
-        $('#confirm_password').rules('add', {
-            required: true,
-            equalTo: '#password',
-            messages: {
-                required: '请再次输入密码',
-                equalTo: '两次密码输入不一致'
-            }
-        });
+            $('#password').rules('add', {
+                required: true,
+                regex: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/,
+                messages: {
+                    required: '请设置密码',
+                    regex: '密码长度必须大于等于6位且为字母和数字的组合'
+                }
+            });
+
+            $('#confirm_password').rules('add', {
+                required: true,
+                equalTo: '#password',
+                messages: {
+                    required: '请再次输入密码',
+                    equalTo: '两次密码输入不一致'
+                }
+            });
+
+            $('#agent_identity_front').rules('add', {
+                required: true,
+                messages: {
+                    required: '请上传代理人身份证正面照片',
+                }
+            });
+
+            $('#agent_identity_back').rules('add', {
+                required: true,
+                messages: {
+                    required: '请上传代理人身份证反面照片',
+                }
+            });
+        }
 
         $('#agent_name').rules('add', {
             required: true,
@@ -418,20 +437,6 @@ jQuery(document).ready(function($) {
             messages: {
                 required: '请输入代理人身份证',
                 regex: '不合法的身份证号码'
-            }
-        });
-
-        $('#agent_identity_photo_front').rules('add', {
-            required: true,
-            messages: {
-                required: '请上传代理人身份证正面照片',
-            }
-        });
-
-        $('#agent_identity_photo_back').rules('add', {
-            required: true,
-            messages: {
-                required: '请上传代理人身份证反面照片',
             }
         });
 
