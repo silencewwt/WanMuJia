@@ -24,6 +24,8 @@ def redis_set(content_type, key, value, expire=None, **kwargs):
 def redis_get(content_type, key, delete=False, **kwargs):
     key = '%s:%s' % (content_type, key)
     value = local_redis.get(key)
+    if value:
+        value = value.decode()
     if value and delete:
         local_redis.delete(key)
     if content_type == CONFIRM_EMAIL and value is not None:

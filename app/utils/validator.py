@@ -49,7 +49,7 @@ class Captcha(object):
             if not redis_verify(self.captcha_type, session['captcha_token'], field.data.upper()):
                 raise ValidationError(self.message)
         else:
-            if not redis_verify(self.captcha_type, form[self.key_field], field.data):
+            if not redis_verify(self.captcha_type, form[self.key_field].data, field.data):
                 raise ValidationError(self.message)
 
 
