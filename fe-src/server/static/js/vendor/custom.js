@@ -128,6 +128,28 @@ jQuery(document).ready(function($) {
 
     // =========== page init ==================
 
+    // Items page
+    if (getPageTitle() === 'items') {
+        initDatatable($('#items'), {
+            ajax: "/vendor/items/datatable",
+            columns: [
+                {data: "id", bSortable: false, visible: false},
+                {data: "item", bSortable: false},
+                {data: "second_category_id", bSortable: false},
+                {data: "price"},
+                {data: "size", bSortable: false}
+            ],
+            columnDefs: [{
+                targets: [5],
+                data: "id",
+                render: function (data) {
+                    return "<a href='/vendor/items/" + data + "'>详情/编辑</a>";
+                }
+            }]
+        });
+    }
+
+
     // Item Edit page
     if (getPageTitle() === 'item-edit') {
         var $form = $('#edit-item-form');
@@ -261,14 +283,14 @@ jQuery(document).ready(function($) {
                     else {
                         toastr.error(data.message, '提交失败');
                     }
+                    $link.html(originVal);
+                    $this.removeClass('disabled');
                 },
                 error: function (xhr) {
                     toastr.error('服务器'+ xhr.status +'错误', '提交失败');
-                },
-                done: function () {
                     $link.html(originVal);
                     $this.removeClass('disabled');
-                }
+                },
             });
         };
 
@@ -281,6 +303,26 @@ jQuery(document).ready(function($) {
 
     // Distributors page
     if (getPageTitle() === 'distributors') {
+        var $distTable = $('#distributors');
+
+        initDatatable($distTable, {
+            ajax: "/vendor/items/datatable",
+            columns: [
+                {data: "id", bSortable: false, visible: false},
+                {data: "item", bSortable: false},
+                {data: "second_category_id", bSortable: false},
+                {data: "price"},
+                {data: "size", bSortable: false}
+            ],
+            columnDefs: [{
+                targets: [5],
+                data: "id",
+                render: function (data) {
+                    return "<a href='/vendor/items/" + data + "'>详情/编辑</a>";
+                }
+            }],
+        });
+
         $('#distributors').delegate('[data-target="#revocation-modal"]', 'click', function () {
             var id = $(this).data('dist-id');
             var $contractForm = $('#contract-form');
@@ -557,8 +599,7 @@ function saveInfos(options) {
         data: options.form.serialize(),
         success: options.success,
         error: options.error
-    })
-    .done(options.done);
+    });
 }
 
 function deleteImage(hash) {
