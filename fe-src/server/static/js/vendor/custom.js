@@ -496,13 +496,6 @@ jQuery(document).ready(function($) {
             }
         });
 
-        $('#license_address').rules('add', {
-            required: true,
-            messages: {
-                required: '请填写营业执照所在地',
-            }
-        });
-
         $('#limit').rules('add', {
             required: true,
             messages: {

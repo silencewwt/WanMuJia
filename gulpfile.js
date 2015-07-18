@@ -103,4 +103,4 @@ gulp.task('py', ['sass', 'js', 'img', 'lib', 'pages'], function () {
 });
 
 
-gulp.task('default', ['py', 'release']);
+gulp.task('default', ['py']);
