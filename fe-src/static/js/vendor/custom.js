@@ -480,6 +480,13 @@ jQuery(document).ready(function($) {
             }
         });
 
+        $('#license_image').rules('add', {
+            required: true,
+            messages: {
+                required: '请上传营业执照照片',
+            }
+        });
+
         $('#agent_identity').rules('add', {
             required: true,
             regex: /^\d{15}(\d\d[0-9xX])?$/,
@@ -496,7 +503,7 @@ jQuery(document).ready(function($) {
             }
         });
 
-        $('#limit').rules('add', {
+        $('#license_limit').rules('add', {
             required: true,
             messages: {
                 required: '请填写营业期限',

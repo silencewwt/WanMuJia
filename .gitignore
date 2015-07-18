@@ -63,5 +63,4 @@ target/
 # node
 node_modules/
 
-server/pages/
-server/static/
+server/

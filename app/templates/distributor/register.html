@@ -1,4 +1,125 @@
-<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width, initial-scale=1.0"><meta name=description content=万木家厂家后台><title>万木家商家后台 - 注册</title><link rel=stylesheet href="http://fonts.useso.com/css?family=Arimo:400,700,400italic"><link rel=stylesheet href=/lib/xenon/css/fonts/linecons/css/linecons.css><link rel=stylesheet href=/lib/xenon/css/fonts/fontawesome/css/font-awesome.min.css><link rel=stylesheet href=/lib/xenon/css/bootstrap.css><link rel=stylesheet href=/lib/xenon/css/xenon-core.css><link rel=stylesheet href=/lib/xenon/css/xenon-forms.css><link rel=stylesheet href=/lib/xenon/css/xenon-components.css><link rel=stylesheet href=/lib/xenon/css/xenon-skins.css><link rel=stylesheet href=/css/distributor/custom.css><script src=/lib/xenon/js/jquery-1.11.1.min.js></script><script src=/js/util.js></script></head><body class="page-body login-page register-page" data-page=register><div class=login-container><div class=row><div class=col-sm-6><div class=errors-container></div><form method=post role=form id=register class="register-form fade-in-effect">{{ form.csrf_token }}<div class=login-header><a href=/distributor/login class="logo clearfix"><img src=/img/logo_white.png width=150> <span>商家注册</span></a></div><div class=form-group><label class=control-label for=name>商家名称</label> <input type=text class="form-control input-dark" name=name id=name autocomplete></div><div class=form-group><label class=control-label for=password>密码</label> <input type=password class="form-control input-dark" name=password id=password autocomplete></div><div class=form-group><label class=control-label for=confirmed_password>再次输入密码</label> <input type=password class="form-control input-dark" name=confirmed_password id=confirmed_password autocomplete></div><div class=form-group><label class=control-label for=contact>联系人姓名</label> <input type=text class="form-control input-dark" name=contact id=contact autocomplete></div><div class=form-group><label class=control-label for=contact_mobile>联系人手机</label> <input type=text class="form-control input-dark" name=contact_mobile id=contact_mobile autocomplete></div><div class=form-group><label class=control-label for=contact_telephone>固话</label> <input type=text class="form-control input-dark" name=contact_telephone id=contact_telephone autocomplete placeholder=区号-电话号码></div><div class="form-group address-select"><label class=control-label for=district_cn_id>省-市-区</label><select class=form-control name=province_cn_id id=province_cn_id></select><select class=form-control name=city_cn_id id=city_cn_id></select><select class=form-control name=district_cn_id id=district_cn_id></select></div><div class=form-group><label class=control-label for=address>详细地址</label> <input type=text class="form-control input-dark" name=address id=address autocomplete></div><div class=form-group><button type=submit class="btn btn-dark btn-block text-left"><i class="fa fa-mail-forward"></i> 下一步</button></div></form><div class=external-login><a href=/distributor/login class=facebook>已经入驻？点击进行登录</a></div></div></div></div><script type=text/javascript>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="万木家厂家后台" />
+
+    <title>万木家商家后台 - 注册</title>
+
+    <link rel="stylesheet" href="http://fonts.useso.com/css?family=Arimo:400,700,400italic">
+    <link rel="stylesheet" href="/lib/xenon/css/fonts/linecons/css/linecons.css">
+    <link rel="stylesheet" href="/lib/xenon/css/fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/lib/xenon/css/bootstrap.css">
+    <link rel="stylesheet" href="/lib/xenon/css/xenon-core.css">
+    <link rel="stylesheet" href="/lib/xenon/css/xenon-forms.css">
+    <link rel="stylesheet" href="/lib/xenon/css/xenon-components.css">
+    <link rel="stylesheet" href="/lib/xenon/css/xenon-skins.css">
+    <link rel="stylesheet" href="/css/distributor/custom.css">
+
+    <script src="/lib/xenon/js/jquery-1.11.1.min.js"></script>
+    <script src="/js/util.js"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/lib/xenon/js/html5shiv.min.js"></script>
+    <script src="/lib/xenon/js/respond.min.js"></script>
+    <![endif]-->
+
+
+</head>
+<body class="page-body login-page register-page" data-page="register">
+
+
+<div class="login-container" >
+
+    <div class="row">
+
+        <div class="col-sm-6">
+
+            <!-- Errors container -->
+            <div class="errors-container">
+
+
+            </div>
+
+            <!-- Add class "fade-in-effect" for register form effect -->
+            <form method="post" role="form" id="register" class="register-form fade-in-effect">
+                {{ form.csrf_token }}
+                <div class="login-header">
+                    <a href="/distributor/login" class="logo clearfix">
+                        <img src="/img/logo_white.png" alt="" width="150" />
+                        <span>商家注册</span>
+                    </a>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="control-label" for="name">商家名称</label>
+                    <input type="text" class="form-control input-dark" name="name" id="name" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="password">密码</label>
+                    <input type="password" class="form-control input-dark" name="password" id="password" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="confirmed_password">再次输入密码</label>
+                    <input type="password" class="form-control input-dark" name="confirmed_password" id="confirmed_password" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="contact">联系人姓名</label>
+                    <input type="text" class="form-control input-dark" name="contact" id="contact" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="contact_mobile">联系人手机</label>
+                    <input type="text" class="form-control input-dark" name="contact_mobile" id="contact_mobile" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="contact_telephone">固话</label>
+                    <input type="text" class="form-control input-dark" name="contact_telephone" id="contact_telephone" autocomplete="off" placeholder="区号-电话号码" />
+                </div>
+
+                <div class="form-group address-select">
+                    <label class="control-label" for="district_cn_id">省-市-区</label>
+                    <select class="form-control" name="province_cn_id" id="province_cn_id"></select>
+                    <select class="form-control" name="city_cn_id" id="city_cn_id"></select>
+                    <select class="form-control" name="district_cn_id" id="district_cn_id"></select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="address">详细地址</label>
+                    <input type="text" class="form-control input-dark" name="address" id="address" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-dark  btn-block text-left">
+                        <i class="fa fa-mail-forward"></i>
+                        下一步
+                    </button>
+                </div>
+            </form>
+
+
+            <div class="external-login">
+                <a href="/distributor/login" class="facebook">
+                    已经入驻？点击进行登录
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Some init operation -->
+<script type="text/javascript">
     jQuery(document).ready(function($)
     {
         // Reveal Register form
@@ -161,4 +282,24 @@
         // Set Form focus
         $("form#register .form-group:has(.form-control):first .form-control").focus();
     });
-</script><script src=/lib/xenon/js/bootstrap.min.js></script><script src=/lib/xenon/js/TweenMax.min.js></script><script src=/lib/xenon/js/resizeable.js></script><script src=/lib/xenon/js/joinable.js></script><script src=/lib/xenon/js/xenon-api.js></script><script src=/lib/xenon/js/xenon-toggles.js></script><script src=/lib/xenon/js/jquery-validate/jquery.validate.min.js></script><script src=/lib/xenon/js/toastr/toastr.min.js></script><script src=/lib/linkagesel-min.js></script><script src=/js/address.js></script><script src=/lib/xenon/js/xenon-custom.js></script><script src=/js/distributor/custom.js></script></body></html>
+</script>
+
+<!-- Bottom Scripts -->
+<script src="/lib/xenon/js/bootstrap.min.js"></script>
+<script src="/lib/xenon/js/TweenMax.min.js"></script>
+<script src="/lib/xenon/js/resizeable.js"></script>
+<script src="/lib/xenon/js/joinable.js"></script>
+<script src="/lib/xenon/js/xenon-api.js"></script>
+<script src="/lib/xenon/js/xenon-toggles.js"></script>
+<script src="/lib/xenon/js/jquery-validate/jquery.validate.min.js"></script>
+<script src="/lib/xenon/js/toastr/toastr.min.js"></script>
+<script src="/lib/linkagesel-min.js"></script>
+<script src="/js/address.js"></script>
+
+
+<!-- JavaScripts initializations and stuff -->
+<script src="/lib/xenon/js/xenon-custom.js"></script>
+<script src="/js/distributor/custom.js"></script>
+
+</body>
+</html>

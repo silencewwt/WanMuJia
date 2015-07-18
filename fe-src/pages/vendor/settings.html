@@ -28,6 +28,7 @@
 
                     <div class="col-sm-9">
                         <input name="logo" type="file" class="form-control" id="logo" accept="image/jpeg, image/png">
+                        {{ form.logo(class='form-control', accept='image/jpeg, image/png') }}
 
                         <div class="logo-preview">
                             <img src="{{ vendor.logo_url }}" alt="logo"/>
@@ -39,7 +40,10 @@
                     <label class="col-sm-2 control-label" for="name">厂家名称</label>
 
                     <div class="col-sm-9">
-                        <input name="name" type="text" maxlength="20" {% if vendor.confirmed %}disabled{% endif %} class="form-control" id="name" data-validate="required" data-message-required="请填写厂家名称" value="{{ form.name.data }}">
+                        {{ form.name(class='form-control', maxLength='20', **{
+                            'data-validate': 'required',
+                            'data-message-required': '请填写厂家名称',
+                        }) }}
                     </div>
                 </div>
 
@@ -47,15 +51,18 @@
                     <label class="col-sm-2 control-label" for="introduction">厂家简介</label>
 
                     <div class="col-sm-9">
-                        <input name="introduction" type="text" maxlength="30" value="{{ form.introduction.data }}" class="form-control" id="introduction" placeholder="输入您的厂家简介...(30字以内)">
+                        {{ form.introduction(class='form-control', maxLength='30', placeholder='输入您的厂家简介...(30字以内)') }}
                     </div>
                 </div>
 
                 <div class="form-group required">
-                    <label class="col-sm-2 control-label" for="contact">联系人</label>
+                    <label class="col-sm-2 control-label" for="contact">联系人姓名</label>
 
                     <div class="col-sm-9">
-                        <input id="contact" name="contact" type="text" value="{{ form.contact.data }}" class="form-control" data-validate="required" data-message-required="请填写联系人" />
+                        {{ form.contact(class='form-control', **{
+                            'data-validate': 'required',
+                            'data-message-required': '请填写联系人姓名',
+                        }) }}
                     </div>
                 </div>
 
@@ -63,7 +70,10 @@
                     <label class="col-sm-2 control-label" for="mobile">联系手机</label>
 
                     <div class="col-sm-9">
-                        <input id="mobile" name="mobile" type="text" disabled value="{{ form.mobile.data }}" class="form-control" data-validate="required" data-message-required="请填写联系手机"/>
+                        {{ form.mobile(class='form-control', disabled='disabled', **{
+                            'data-validate': 'required',
+                            'data-message-required': '请填写联系手机',
+                        }) }}
                     </div>
                 </div>
 
@@ -71,7 +81,10 @@
                     <label class="col-sm-2 control-label" for="telephone">联系固话</label>
 
                     <div class="col-sm-9">
-                        <input id="telephone" name="telephone" type="text" value="{{ form.telephone.data }}" class="form-control" data-validate="required" data-message-required="请填写联系固话" />
+                        {{ form.telephone(class='form-control', **{
+                            'data-validate': 'required',
+                            'data-message-required': '请填写联系电话',
+                        }) }}
                     </div>
                 </div>
 
@@ -88,7 +101,10 @@
                     <label class="col-sm-2 control-label" for="address">详细地址</label>
 
                     <div class="col-sm-9">
-                        <input id="address" name="address" type="text" value="{{ form.address.data }}" class="form-control" data-validate="required" data-message-required="请填写厂家地址" />
+                        {{ form.address(class='form-control', **{
+                            'data-validate': 'required',
+                            'data-message-required': '请填写厂家地址',
+                        }) }}
                     </div>
                 </div>
 

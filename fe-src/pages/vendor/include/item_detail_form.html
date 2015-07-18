@@ -2,8 +2,11 @@
     <label class="col-sm-2 control-label" for="item">商品名称</label>
 
     <div class="col-sm-9">
-        <input name="item" type="text" maxlength="20" value="{% if form.item.data %}{{ form.item.data }}{% endif %}" class="form-control" id="item"
-               data-validate="required" data-message-required="请填写商品名称">
+        {{ form.item(class='form-control', **{
+            'maxlength': '20',
+            'data-validate': 'required',
+            'data-message-required': '请填写商品名称',
+        }) }}
     </div>
 </div>
 
@@ -15,8 +18,12 @@
     <div class="col-sm-3">
         <div class="input-group">
             <span class="input-group-addon">长</span>
-            <input name="length" type="text" value="{% if form.length.data %}{{ form.length.data }}{% endif %}" class="form-control" id="length" data-validate="required,number"
-                   data-message-required="请填写商品长度" data-message-number="请填写有效的数字">
+            {{ form.length(class='form-control', **{
+                'maxlength': '20',
+                'data-validate': 'required,number',
+                'data-message-required': '请填写商品长度',
+                'data-message-number': '请填写有效的数字',
+            }) }}
             <span class="input-group-addon">cm</span>
         </div>
     </div>
@@ -24,8 +31,12 @@
     <div class="col-sm-3">
         <div class="input-group">
             <span class="input-group-addon">宽</span>
-            <input name="width" type="text" value="{% if form.width.data %}{{ form.width.data }}{% endif %}" class="form-control" id="width" data-validate="required,number"
-                   data-message-required="请填写商品宽度" data-message-number="请填写有效的数字">
+            {{ form.width(class='form-control', **{
+                'maxlength': '20',
+                'data-validate': 'required,number',
+                'data-message-required': '请填写商品宽度',
+                'data-message-number': '请填写有效的数字',
+            }) }}
             <span class="input-group-addon">cm</span>
         </div>
     </div>
@@ -33,8 +44,12 @@
     <div class="col-sm-3">
         <div class="input-group">
             <span class="input-group-addon">高</span>
-            <input name="height" type="text" value="{% if form.height.data %}{{ form.height.data }}{% endif %}" class="form-control" id="height" data-validate="required,number"
-                   data-message-required="请填写商品高度" data-message-number="请填写有效的数字">
+            {{ form.height(class='form-control', **{
+                'maxlength': '20',
+                'data-validate': 'required,number',
+                'data-message-required': '请填写商品高度',
+                'data-message-number': '请填写有效的数字',
+            }) }}
             <span class="input-group-addon">cm</span>
         </div>
     </div>
@@ -48,7 +63,12 @@
 
     <div class="col-sm-9">
         <div class="input-group">
-            <input name="price" id="price" type="text" value="{% if form.price.data %}{{ form.price.data }}{% endif %}" class="form-control" data-validate="required,number" data-message-required="请填写指导价格" data-message-number="请填写有效的数字">
+            {{ form.length(class='form-control', **{
+                'maxlength': '20',
+                'data-validate': 'required,number',
+                'data-message-required': '请填写商品价格',
+                'data-message-number': '请填写有效的数字',
+            }) }}
             <span class="input-group-addon">元</span>
         </div>
     </div>
