@@ -153,7 +153,7 @@ jQuery(document).ready(function($) {
     // Item Edit page
     if (getPageTitle() === 'item-edit') {
         var $itemEditForm = $('#edit-item-form');
-        var originFormValue = $form.serialize();
+        var originFormValue = $itemEditForm.serialize();
 
         // Edit-form
         $itemEditForm.delegate('.form-control', 'keydown', function () {
