@@ -1,9 +1,27 @@
-from wtforms.fields import SelectField
+# -*- coding: utf-8 -*-
+from wtforms.fields import SelectField as BaseSelectField
 from wtforms.validators import ValidationError
-from wtforms.widgets import HTMLString, html_params, Select
+from wtforms.widgets import HTMLString, html_params, Select as BaseSelect
 from html import escape
 
+
 __all__ = ('OptionGroupSelectField', 'OptionGroupSelectWidget')
+
+
+class Select(BaseSelect):
+    def __call__(self, field, **kwargs):
+        kwargs.setdefault('id', field.id)
+        if self.multiple:
+            kwargs['multiple'] = True
+        html = ['<select %s><option></option>' % html_params(name=field.name, **kwargs)]    # 后台模板的选择器需要...
+        for val, label, selected in field.iter_choices():
+            html.append(self.render_option(val, label, selected))
+        html.append('</select>')
+        return HTMLString(''.join(html))
+
+
+class SelectField(BaseSelectField):
+    widget = Select()
 
 
 class OptionGroupSelectWidget(Select):
@@ -11,7 +29,7 @@ class OptionGroupSelectWidget(Select):
     Add support of choices with ``optgroup`` to the ``Select`` widget.
     """
     @classmethod
-    def render_option(cls, value, label, mixed):
+    def render_option(cls, value, label, mixed, **kwargs):
         """
         Render option as HTML tag, but not forget to wrap options into
         ``optgroup`` tag if ``label`` var is ``list`` or ``tuple``.
@@ -42,7 +60,7 @@ class OptionGroupSelectWidget(Select):
 
 class OptionGroupSelectField(SelectField):
     """
-    Add support of ``optgorup``'s' to default WTForms' ``SelectField`` class.
+    Add support of ``optgroup``'s' to default WTForms' ``SelectField`` class.
 
     So, next choices would be supported as well::
 
