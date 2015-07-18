@@ -172,10 +172,6 @@ jQuery(document).ready(function($) {
             var dirtyCheck = formDirtyCheck($itemEditForm, originFormValue);
             if (dirtyCheck.isDirty) {
 
-                if (!checkValidate($itemEditForm)) {
-                    return;
-                }
-
                 setButtonLoading($this);
 
                 saveInfos({
