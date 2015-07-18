@@ -33,7 +33,7 @@
     <div class="col-sm-3">
         <div class="input-group">
             <span class="input-group-addon">高</span>
-            <input name="height" type="text" value="{{ form.height.data }}" class="form-control" id="height" data-validate="required"
+            <input name="height" type="text" value="{{ form.height.data }}" class="form-control" id="height" data-validate="required,number"
                    data-message-required="请填写商品高度" data-message-number="请填写有效的数字">
             <span class="input-group-addon">cm</span>
         </div>
@@ -48,7 +48,7 @@
 
     <div class="col-sm-9">
         <div class="input-group">
-            <input name="price" id="price" type="text" value="{{ form.price.data }}" class="form-control" data-validate="required, number" data-message-required="请填写指导价格" data-message-number="请填写有效的数字">
+            <input name="price" id="price" type="text" value="{{ form.price.data }}" class="form-control" data-validate="required,number" data-message-required="请填写指导价格" data-message-number="请填写有效的数字">
             <span class="input-group-addon">元</span>
         </div>
     </div>

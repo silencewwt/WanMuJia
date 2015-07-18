@@ -178,22 +178,18 @@ jQuery(document).ready(function($) {
                     method: 'put',
                     form: $form,
                     success: function (data) {
-                        $this.next()
-                            .text('保存成功！')
-                            .addClass('text-success')
-                            .removeClass('text-danger')
-                            .show();
+                        if (data.success) {
+                            toastr.success('保存成功!');
+                        }
+                        else {
+                            toastr.error(data.message, '提交失败!');
+                        }
 
                         originFormValue = dirtyCheck.origin;
                         resetButton($this, originButtonText);
                     },
-                    error: function () {
-                        $this.next()
-                            .text('服务器错误，请稍后重试')
-                            .removeClass('text-success')
-                            .addClass('text-danger')
-                            .show();
-
+                    error: function (xhr) {
+                        toastr.error('服务器'+ xhr.status +'错误', '提交失败');
                         resetButton($this, originButtonText);
                     }
                 });
