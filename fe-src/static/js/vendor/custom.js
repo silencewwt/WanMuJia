@@ -234,13 +234,8 @@ jQuery(document).ready(function($) {
                 return;
             }
 
-            if($newItemForm.hasClass('validate')) {
-                var $valid = $newItemForm.valid();
-
-                if( ! $valid) {
-                    $newItemForm.data('validator').focusInvalid();
-                    return;
-                }
+            if (!checkValidate($newItemForm)) {
+                return;
             }
 
             var $link = $this.children('a');
@@ -350,24 +345,27 @@ jQuery(document).ready(function($) {
 
         // 页面加载完成时获取发送按钮情况
         if (getCookie('clickTime')) {
-            console.log(getCookie('clickTime'));
-            console.log('get click time');
             sendDisable($send, Date.now(), DELAYTIME);
             setCountDown($send, originValue, DELAYTIME);
         }
 
         $send.click(function () {
+            if (!checkValidate($('#register'), '#mobile')) {
+                return;
+            }
+
             var $this = $(this);
 
             if ($this.hasClass('disabled')) return;
 
             setCookie('clickTime', Date.now());
+
             // 发送请求
             $.ajax({
                 url: '/service/mobile_register_sms',
                 method: 'post',
                 data: {
-                    mobile: $('#moblie').val()
+                    mobile: $('#mobile').val()
                 }
             });
 
@@ -612,4 +610,31 @@ function setCountDown($send, originValue, DELAYTIME) {
             sendDisable($send, Date.now(), DELAYTIME);
         }
     }, 200);
+}
+
+function checkValidate($form, selector) {
+    if($form.hasClass('validate')) {
+        var valid = null,
+            $el = $form.find(selector);
+
+        if (selector) {
+            if ($el.length > 0) {
+                valid = $el.valid();
+            }
+            else {
+                return;
+            }
+        }
+        else {
+            valid = $form.valid();
+        }
+
+
+        if(!valid) {
+            $form.data('validator').focusInvalid();
+            return false;
+        }
+    }
+
+    return true;
 }
