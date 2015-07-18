@@ -68,10 +68,10 @@
 
 ## Distributor
 ### distributor register
-
-url: /distributor/register
-
-method: GET, POST
+	URL:
+		/distributor/register
+	method:
+		GET, POST
 
 postData:
  + **name** 
@@ -115,6 +115,59 @@ postData:
         /vendor/register
     method:
         GET, POST
+postData:
+ + **password**
+  + 密码
+  + type = text
+  + required
+ + **confirm_password**
+  + 确认密码
+  + type = text
+  + required
+ + **email**
+  + 邮箱
+  + type = text
+  + required
+ + **agent_name**
+  + 代理人姓名
+  + type = text
+  + required
+ + **agent_identity**
+  + 代理人身份证号
+  + type = text
+  + required
+ + **agent_identity_front**
+  + 代理人身份证正面照片
+  + type = img
+  + required
+ + **agent_identity_back**
+  + 代理人身份证反面照片
+  + type = img
+  + required
+ + **name**
+  + 厂家名称
+  + type = text
+  + required
+ + **license_limit**
+  + 营业执照期限
+  + type = text
+  + required
+ + **license_image**
+  + 营业执照照片
+  + type = img
+  + required
+ + **telephone**
+  + 固话
+  + type = text
+  + required
+ + **address**
+  + 详细地址
+  + type = text
+  + required
+ + **district_cn_id**
+  + 区域的cn_id
+  + type = text
+  + required
 
 ###vendor login
     URL:
