@@ -155,6 +155,9 @@ body.register-page .login-header {
 .login-page .external-login a {
   text-decoration: none; }
 
+[data-page="reconfirm"] .img-preview {
+  display: block !important; }
+
 .register-next-form {
   padding: 30px; }
   .register-next-form .form-group .form-control {
@@ -179,6 +182,12 @@ body.register-page .login-header {
       font-size: 18px; }
       .register-next-form .form-group.upload .upload-state.fa-smile-o {
         color: #2e9d18; }
+    .register-next-form .form-group.upload .img-preview {
+      display: none;
+      margin-top: 10px;
+      background-color: transparent; }
+      .register-next-form .form-group.upload .img-preview img {
+        max-height: 100px; }
   .register-next-form [type="submit"] {
     margin-top: 40px;
     padding: 11px 12px;
