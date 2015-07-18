@@ -15,12 +15,11 @@ def mobile_register_sms():
         template = VENDOR_REGISTER_TEMPLATE
     else:
         template = USER_REGISTER_TEMPLATE
-    form = MobileRegisterSMSForm(template)
+    form = MobileRegisterSMSForm(template, csrf_enabled=False)
+    print(form.mobile.data)
     if form.validate():
         form.send_sms()
-        resp = Response('ok', 200)
-        resp.set_cookie('csrf', '', expires=0)
-        return resp
+        return 'ok', 200
     return 'false', 401
 
 

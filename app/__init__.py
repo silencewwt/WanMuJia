@@ -3,7 +3,6 @@ import redis
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
-from flask.ext.mail import Mail
 from flask.ext.principal import Principal
 
 from config import config
@@ -13,7 +12,6 @@ from .permission import identity_config
 app = Flask(__name__, static_url_path='')
 db = SQLAlchemy()
 login_manager = LoginManager()
-mail = Mail()
 principal = Principal()
 
 local_redis = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -27,7 +25,6 @@ def create_app(config_name):
     login_manager.init_app(app)
     login_manager.session_protection = 'strong'
     login_manager.login_view = 'user.login'
-    mail.init_app(app)
     principal.init_app(app)
     identity_config(app)
 
@@ -53,3 +50,9 @@ def create_app(config_name):
     app.register_blueprint(service_blueprint, url_prefix='/service')
 
     return app
+
+
+def create_mail_app():
+    mail_app = Flask(__name__)
+    mail_app.config.from_object(config['mail'])
+    return mail_app

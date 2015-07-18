@@ -42,9 +42,20 @@ class ProductionConfig(Config):
         'mysql+pymysql://dev:devpassword@localhost/wmj?charset=utf8'
 
 
+class MailConfig(Config):
+    MAIL_SERVER = 'smtp.exmail.qq.com'
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = 'notification@wanmujia.com'
+    MAIL_PASSWORD = 'WMJ0241ntfc'
+    WMJ_MAIL_SUBJECT_PREFIX = '[万木家]'
+    WMJ_MAIL_SENDER = 'notification <notification@wanmujia.com>'
+
+
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
-    'default': DevelopmentConfig
+    'default': DevelopmentConfig,
+    'mail': MailConfig
 }

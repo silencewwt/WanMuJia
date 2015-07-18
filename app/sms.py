@@ -8,9 +8,9 @@ from app.tasks import send_sms
 USER_REGISTER_TEMPLATE = '6253'
 RESET_PASSWORD_TEMPLATE = '6256'
 USER_GUIDE_TEMPLATE = '6259'
-VENDOR_REGISTER_TEMPLATE = ''
-VENDOR_PENDING_TEMPLATE = ''
-VENDOR_ACCEPT_TEMPLATE = ''
+VENDOR_REGISTER_TEMPLATE = '10015'
+VENDOR_PENDING_TEMPLATE = '10016'
+VENDOR_ACCEPT_TEMPLATE = '10017'
 
 request_url = 'http://www.ucpaas.com/maap/sms/code?sid={sid}&appId={app_id}&time={timestamp}&sign={signature}&to={to}&' \
               'templateId={template_id}&param={param}'
