@@ -152,14 +152,14 @@ jQuery(document).ready(function($) {
 
     // Item Edit page
     if (getPageTitle() === 'item-edit') {
-        var $form = $('#edit-item-form');
+        var $itemEditForm = $('#edit-item-form');
         var originFormValue = $form.serialize();
 
         // Edit-form
-        $form.delegate('.form-control', 'keydown', function () {
+        $itemEditForm.delegate('.form-control', 'keydown', function () {
             $('#save').next().hide();
         });
-        $form.find('select').click(function () {
+        $itemEditForm.find('select').click(function () {
             $('#save').next().hide();
         });
 
@@ -169,14 +169,19 @@ jQuery(document).ready(function($) {
             if ($this.hasClass('disabled')) return;
 
             //$this.addClass('disabled');
-            var dirtyCheck = formDirtyCheck($form, originFormValue);
+            var dirtyCheck = formDirtyCheck($itemEditForm, originFormValue);
             if (dirtyCheck.isDirty) {
+
+                if (!checkValidate($itemEditForm)) {
+                    return;
+                }
+
                 setButtonLoading($this);
 
                 saveInfos({
                     url: window.location.pathname,
                     method: 'put',
-                    form: $form,
+                    form: $itemEditForm,
                     success: function (data) {
                         if (data.success) {
                             toastr.success('保存成功!');
@@ -189,13 +194,13 @@ jQuery(document).ready(function($) {
                         resetButton($this, originButtonText);
                     },
                     error: function (xhr) {
-                        toastr.error('服务器'+ xhr.status +'错误', '提交失败');
+                        toastr.error('服务器'+ xhr.status +'错误', '提交失败!');
                         resetButton($this, originButtonText);
                     }
                 });
             }
             else {
-                $this.next().text('没有修改, 无法提交').show();
+                toastr.warning('没有修改内容!');
             }
         });
 
