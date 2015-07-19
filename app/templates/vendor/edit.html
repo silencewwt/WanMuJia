@@ -142,65 +142,62 @@
             <div class="gallery-env">
 
                 <!-- Gallery Album Optipns and Images -->
-                <div class="gallery-right">
 
-                    <!-- Album Header -->
-                    <div class="album-header">
-                        <h2>已上传图片</h2>
+                <!-- Album Header -->
+                <div class="album-header">
+                    <h2>已上传图片</h2>
 
-                        <ul class="album-options list-unstyled list-inline">
-                            <li>
-                                <a href="#upload">
-                                    <i class="fa-upload"></i>
-                                    添加图片
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" data-action="sort">
-                                    <i class="fa-arrows"></i>
-                                    重新排序
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Sorting Information -->
-                    <div class="album-sorting-info">
-                        <div class="album-sorting-info-inner clearfix">
-                            <a href="#" id="sort-confirm" class="btn btn-secondary btn-xs btn-single btn-icon btn-icon-standalone pull-right" data-action="sort">
-                                <i class="fa-save"></i>
-                                <span>保存当前顺序</span>
+                    <ul class="album-options list-unstyled list-inline">
+                        <li>
+                            <a href="#upload">
+                                <i class="fa-upload"></i>
+                                添加图片
                             </a>
+                        </li>
+                        <li>
+                            <a href="#" data-action="sort">
+                                <i class="fa-arrows"></i>
+                                重新排序
+                            </a>
+                        </li>
+                    </ul>
+                </div>
 
-                            <i class="fa-arrows-alt"></i>
-                            拖动图片排序
-                        </div>
+                <!-- Sorting Information -->
+                <div class="album-sorting-info">
+                    <div class="album-sorting-info-inner clearfix">
+                        <a href="#" id="sort-confirm" class="btn btn-secondary btn-xs btn-single btn-icon btn-icon-standalone pull-right" data-action="sort">
+                            <i class="fa-save"></i>
+                            <span>保存当前顺序</span>
+                        </a>
+
+                        <i class="fa-arrows-alt"></i>
+                        拖动图片排序
                     </div>
+                </div>
 
-                    <!-- Album Images -->
-                    <div class="album-images row">
+                <!-- Album Images -->
+                <div class="album-images row">
 
-                        <!-- Album Image -->
-                        {% for image in item.images %}
-                            <div class="col-md-3 col-sm-4 col-xs-6">
-                                <div class="album-image" data-hash="{{ image.hash }}">
-                                    <a href="#" class="thumb" data-action="edit">
-                                        <img src="{{ image.url }}" class="img-responsive" />
-                                    </a>
+                    <!-- Album Image -->
+                    {% for image in item.images %}
+                        <div class="col-md-3 col-sm-4 col-xs-6">
+                            <div class="album-image" data-hash="{{ image.hash }}">
+                                <a href="#" class="thumb" data-action="edit">
+                                    <img src="{{ image.url }}" class="img-responsive" />
+                                </a>
 
-                                    <a href="#" class="name">
-                                        <span>{{ image.filename }}</span>
-                                        <em>{{ image.created }}</em>
-                                    </a>
+                                <a href="#" class="name">
+                                    <span>{{ image.filename }}</span>
+                                    <em>{{ image.created }}</em>
+                                </a>
 
-                                    <div class="image-options">
-                                        <a href="#" data-action="trash"><i class="fa-trash"></i></a>
-                                    </div>
+                                <div class="image-options">
+                                    <a href="#" data-action="trash"><i class="fa-trash"></i></a>
                                 </div>
                             </div>
-                        {% endfor %}
-
-                    </div>
+                        </div>
+                    {% endfor %}
 
                 </div>
 
