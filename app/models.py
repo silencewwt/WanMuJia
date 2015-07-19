@@ -124,7 +124,7 @@ class Vendor(BaseUser, db.Model):
     # 品牌厂家名称
     name = db.Column(db.Unicode(30), unique=True, nullable=False)
     # 营业执照期限
-    license_limit = db.Column(db.Integer, nullable=False)
+    license_limit = db.Column(db.CHAR(10), default='2035/07/19', nullable=False)
     # 营业执照副本扫描件
     license_image = db.Column(db.String(255), default='', nullable=False)
     # 联系人
@@ -513,6 +513,9 @@ class Province(db.Model):
     def area_address(self):
         return self.province
 
+    def grade(self):
+        return self
+
 
 class City(db.Model):
     __tablename__ = 'cities'
@@ -530,6 +533,9 @@ class City(db.Model):
     def province(self):
         return Province.query.get(self.province_id)
 
+    def grade(self):
+        return self.province.grade(), self
+
 
 class District(db.Model):
     __tablename__ = 'districts'
@@ -544,6 +550,10 @@ class District(db.Model):
     @property
     def city(self):
         return City.query.get(self.city_id)
+
+    def grade(self):
+        province, city = self.city.grade()
+        return province, city, self
 
     @staticmethod
     def generate_fake():
