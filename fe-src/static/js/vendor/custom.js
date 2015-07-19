@@ -39,6 +39,11 @@ jQuery(document).ready(function($) {
             var passwdReg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/;
             return this.optional(element) || (passwdReg.test(value));
         });
+
+        $.validator.addMethod('customDate', function (value, element) {
+            var dateReg = /^(\d{4})\/((0?([1-9]))|(1[1|2]))\/((0?[1-9])|([12]([1-9]))|(3[0|1]))$/;
+            return this.optional(element) || (dateReg.test(value));
+        });
     }
 
     // Dropzone
@@ -618,10 +623,10 @@ jQuery(document).ready(function($) {
 
         $('#license_limit').rules('add', {
             required: true,
-            date: true,
+            customDate: true,
             messages: {
                 required: '请填写营业期限',
-                date: '不合法的日期格式',
+                customDate: '不合法的日期格式, 格式: 2015/07/19',
             },
         });
 

@@ -133,7 +133,7 @@
 
                 <div class="form-group">
                     <label class="control-label" for="license_limit">营业期限</label>
-                    {{ form.license_limit(class='form-control input-dark', placeholder='格式: 月/日/年, 例: 7/19/2015', **{
+                    {{ form.license_limit(class='form-control input-dark', placeholder='格式: 年/月/日, 例: 2015/07/19', **{
                         'autocomplete': 'off',
                     }) }}
                 </div>
@@ -147,7 +147,7 @@
 
                 <div class="form-group address-select">
                     <label class="control-label" for="district_cn_id">联系地址</label>
-                    <select class="form-control" name="province_cn_id" id="province_cn_id" value="110000" data-province-default="{{ form.province }}"></select>
+                    <select class="form-control" name="province_cn_id" id="province_cn_id" data-province-default="{{ form.province }}"></select>
                     <select class="form-control" name="city_cn_id" id="city_cn_id" data-city-default="{{ form.city }}"></select>
                     <select class="form-control" name="district_cn_id" id="district_cn_id" data-district-default="{{ form.district }}"></select>
                 </div>
