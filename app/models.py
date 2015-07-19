@@ -325,9 +325,11 @@ class Item(db.Model):
     second_scene_id = db.Column(db.Integer, nullable=False)
     # 产品寓意
     story = db.Column(db.Unicode(5000), default=u'', nullable=False)
+    # 已删除
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
-    def __init__(self, vendor_id, item, price, material_id, second_category_id, second_scene_id, length, width, height, stove_id,
-                 carve_id, sand_id, paint_id, decoration_id, story=u''):
+    def __init__(self, vendor_id, item, price, material_id, second_category_id, second_scene_id, length, width, height,
+                 stove_id, carve_id, sand_id, paint_id, decoration_id, story=u''):
         self.vendor_id = vendor_id
         self.item = item
         self.price = price
