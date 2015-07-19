@@ -77,7 +77,6 @@ def register():
                 return render_template('vendor/register.html', form=mobile_form)
         elif session[VENDOR_REGISTER_STEP_DONE] == 1:
             if request.method == 'POST':
-                detail_form.license_limit.data = '20150901'
                 if detail_form.validate():
                     vendor = detail_form.add_vendor(session[VENDOR_REGISTER_MOBILE])
                     vendor.push_confirm_reminds('warning')
