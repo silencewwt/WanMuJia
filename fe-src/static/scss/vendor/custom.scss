@@ -113,14 +113,16 @@ form .form-group.required > label::before {
 
 
 /*dropzone*/
-.dropzone .dz-message {
-    position: absolute;
-    top: 150px;
-    left: 0;
-    right: 0;
-    margin: auto;
-    font-size: 20px;
-    text-align: center;
+.dropzone {
+    .dz-message {
+        position: absolute;
+        top: 150px;
+        left: 0;
+        right: 0;
+        margin: auto;
+        font-size: 20px;
+        text-align: center;
+    }
 }
 
 
@@ -128,7 +130,13 @@ form .form-group.required > label::before {
 .album-image .name > span, .album-image .name > em {
     display: block !important;
 }
-
+.gallery-env .album-images .album-image .thumb {
+    text-align: center;
+    img {
+        width: auto;
+        height: 160px;
+    }
+}
 #upload > h2 {
     margin: 20px 0 30px 30px;
     font-size: 24px;
@@ -194,7 +202,7 @@ form .form-group.required > label::before {
 /*Settings*/
 .logo-preview img {
     margin-top: 8px;
-    min-height: 100px;
+    max-height: 100px;
 }
 
 #settings-form {
@@ -245,6 +253,7 @@ $uploadStateRight: -30px;
 [data-page="reconfirm"] .img-preview {
     display: block !important;
 }
+
 .register-next-form {
     padding: 30px;
 
@@ -255,6 +264,12 @@ $uploadStateRight: -30px;
             background-color: #313334;
             color: #fff;
         }
+
+        input[type="file"].form-control {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
         .control-label {
             margin: 10px 0;
             font-size: 16px;

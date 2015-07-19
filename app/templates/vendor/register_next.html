@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="万木家厂家后台" />
 
-    <title>万木家厂家后台 - {% if form.reconfirm -%} 重新审核 {%- else -%} 注册 {%- endif %}</title>
+    <title>万木家厂家后台 - {% if form.is_reconfirm -%} 重新审核 {%- else -%} 注册 {%- endif %}</title>
 
     <link rel="stylesheet" href="http://fonts.useso.com/css?family=Arimo:400,700,400italic">
     <link rel="stylesheet" href="/lib/xenon/css/fonts/linecons/css/linecons.css">
@@ -30,7 +30,7 @@
 
 </head>
 
-<body class="page-body login-page register-page" data-page="{% if form.reconfirm -%} reconfirm {%- else -%} register-next {%- endif %}">
+<body class="page-body login-page register-page" data-page="{% if form.is_reconfirm -%} is_reconfirm {%- else -%} register-next {%- endif %}">
 
 <div class="login-container" >
 
@@ -54,7 +54,7 @@
                     </a>
                 </div>
 
-                {% if not form.reconfirm %}
+                {% if not form.is_reconfirm %}
                     <div class="form-group">
                         <label class="control-label" for="email">邮箱</label>
                         {{ form.email(class='form-control input-dark', **{
@@ -133,7 +133,7 @@
 
                 <div class="form-group">
                     <label class="control-label" for="license_limit">营业期限</label>
-                    {{ form.license_limit(class='form-control input-dark', placeholder='格式: 月/日/年, 例: 7/19/2015', **{
+                    {{ form.license_limit(class='form-control input-dark', placeholder='格式: 年/月/日, 例: 2015/07/19', **{
                         'autocomplete': 'off',
                     }) }}
                 </div>
@@ -147,7 +147,7 @@
 
                 <div class="form-group address-select">
                     <label class="control-label" for="district_cn_id">联系地址</label>
-                    <select class="form-control" name="province_cn_id" id="province_cn_id" value="110000" data-province-default="{{ form.province }}"></select>
+                    <select class="form-control" name="province_cn_id" id="province_cn_id" data-province-default="{{ form.province }}"></select>
                     <select class="form-control" name="city_cn_id" id="city_cn_id" data-city-default="{{ form.city }}"></select>
                     <select class="form-control" name="district_cn_id" id="district_cn_id" data-district-default="{{ form.district }}"></select>
                 </div>
@@ -168,12 +168,13 @@
                 </div>
             </form>
 
-
-            <div class="external-login">
-                <a href="/vendor/login" class="facebook">
-                    已经入驻？点击进行登录
-                </a>
-            </div>
+            {% if not form.is_reconfirm %}
+                <div class="external-login">
+                    <a href="/vendor/login" class="facebook">
+                        已经入驻？点击进行登录
+                    </a>
+                </div>
+            {% endif %}
         </div>
 
     </div>
@@ -192,7 +193,7 @@
             province: parseInt($('province_cn_id').data('province-default')),
             city: parseInt($('city_cn_id').data('city-default')),
             district: parseInt($('district_cn_id').data('district-default')),
-        }
+        };
         var districtIdSel = new LinkageSel({
             data: address,
             select: ['#province_cn_id', '#city_cn_id', '#district_cn_id'],
@@ -201,7 +202,7 @@
 
         // FileReader
         var imgFiles = {};
-        var upload = {$el: null, complete: false};
+        var latestUpload = {name: '', completed: false};
 
         $('input[type="file"]').on('change', function () {
             var $this = $(this);
@@ -214,9 +215,11 @@
                 var $uploadState = $formGroup.find('.upload-state');
                 var loadingClass = 'fa-spin fa-spin fa-circle-o-notch';
                 var completeClass = 'fa-smile-o';
+                var inputName = $this[0].name;
 
-                upload.$el = $this;
-                upload.complete = false;
+                // 一旦有文件开始上传更改上传状态为未完成
+                latestUpload.name = inputName;
+                latestUpload.completed = false;
 
                 // update loading ui
                 $uploadState
@@ -227,14 +230,22 @@
                 var reader = new FileReader();
                 reader.readAsDataURL(files[0]);
                 reader.onloadend = function () {
-                    imgFiles[$this[0].name] = this.result;
-                    upload.complete = true;
-                    $uploadState.removeClass(loadingClass).addClass(completeClass);
+                    setTimeout(function () {
+                        imgFiles[$this[0].name] = this.result;
 
-                    $formGroup.find('.img-preview')
-                            .show()
-                            .children('img')
-                            .attr('src', this.result);
+                        // 当最后一个文件上传完成时更改上传状态为完成
+                        if (latestUpload.name == inputName) {
+                            latestUpload.completed = true;
+                        }
+
+                        $uploadState.removeClass(loadingClass).addClass(completeClass);
+
+                        $formGroup.find('.img-preview')
+                                .show()
+                                .children('img')
+                                .attr('src', this.result);
+                    }.bind(this), 5000);
+
                 };
             }
         });
@@ -261,7 +272,7 @@
                 };
 
                 // 如果 uploadComplete 为 false，给出提示然后直接退出当前函数
-                if (upload.complete == false) {
+                if (latestUpload.completed == false) {
                     toastr.warning('文件还在上传中' + " :)", "请稍后再提交", opts);
                     return;
                 }
