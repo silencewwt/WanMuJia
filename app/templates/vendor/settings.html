@@ -40,7 +40,7 @@
                     <label class="col-sm-2 control-label" for="name">厂家名称</label>
 
                     <div class="col-sm-9">
-                        {{ form.name(class='form-control', maxLength='20', **{
+                        {{ form.name(class='form-control', disabled='disabled', maxLength='20', **{
                             'data-validate': 'required',
                             'data-message-required': '请填写厂家名称',
                         }) }}

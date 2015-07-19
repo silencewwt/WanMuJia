@@ -138,6 +138,13 @@
                     }) }}
                 </div>
 
+                <div class="form-group">
+                    <label class="control-label" for="telephone">联系固话</label>
+                    {{ form.telephone(class='form-control input-dark', placeholder='区号-电话号码', **{
+                        'autocomplete': 'off',
+                    }) }}
+                </div>
+
                 <div class="form-group address-select">
                     <label class="control-label" for="district_cn_id">联系地址</label>
                     <select class="form-control" name="province_cn_id" id="province_cn_id" value="110000" data-province-default="{{ form.province }}"></select>
