@@ -238,7 +238,11 @@ class ItemImageSortForm(Form):
     image_list = []
 
     def validate_item_id(self, field):
-        if field.data and field.data != current_user.id:
+        if field.data:
+            item = Item.query.get(field.data)
+            if not item or item.vendor_id != current_user.id:
+                raise ValidationError('wrong id')
+        else:
             raise ValidationError('wrong id')
 
     def validate_images(self, field):
