@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 from flask.ext.login import current_user
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import StringField, PasswordField, BooleanField, IntegerField, SelectMultipleField, \
-    TextAreaField
+from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
 from app import db
-from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, \
-    Decoration, Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, \
-    FirstCategory
+from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, Decoration, \
+    Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, FirstCategory
 from app.utils.forms import Form
 from app.utils.image import save_image
 from app.utils.fields import OptionGroupSelectField, SelectField
@@ -263,24 +261,20 @@ class ItemImageDeleteForm(Form):
 
 
 class SettingsForm(Form):
-    name = StringField(validators=[DataRequired()])
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
+    telephone = StringField(validators=[DataRequired(u'电话号码必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
+    introduction = StringField(validators=[])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
-
-    def validate_name(self, field):
-        vendors = Vendor.query.filter_by(name=field.data)
-        if vendors.count() > 1 or (vendors.first() and vendors.first().id != current_user.id):
-            raise ValidationError('品牌名称已存在')
 
     def show_vendor_setting(self, vendor):
         self.telephone.data = vendor.telephone
+        self.introduction.data = vendor.introduction
         self.district_cn_id.data = vendor.address.cn_id
         self.address.data = vendor.address.address
 
     def update_vendor_setting(self, vendor):
-        vendor.name = self.name.data
+        vendor.introduction = self.introduction.data
         vendor.telephone = self.telephone.data
         vendor.address.address = self.address.data
         vendor.address.cn_id = self.district_cn_id.data
