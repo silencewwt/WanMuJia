@@ -20,13 +20,24 @@ jQuery(document).ready(function($) {
 
         $.validator.addMethod('mobile', function (value, element) {
             var length = value.length;
-            var mobile = /^((1[3-8][0-9])+\d{8})$/;
-            return this.optional(element) || (length == 11 && mobile.test(value));
+            var mobileReg = /^((1[3-8][0-9])+\d{8})$/;
+            return this.optional(element) || (length == 11 && mobileReg.test(value));
         });
 
         $.validator.addMethod('tel', function (value, element) {
-            var tel = /^\d{3,4}-?\d{7,9}$/;    //电话号码格式010-12345678
-            return this.optional(element) || (tel.test(value));
+            var telReg = /^\d{3,4}-?\d{7,9}$/;    //电话号码格式010-12345678
+            return this.optional(element) || (telReg.test(value));
+        });
+
+        $.validator.addMethod('identity', function (value, element) {
+            var idReg = /^\d{15}(\d\d[0-9xX])?$/;
+            return this.optional(element) || (idReg.test(value));
+        });
+
+        $.validator.addMethod('password', function (value, element) {
+            //大于等于6位，且同时包含数字和字母
+            var passwdReg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/;
+            return this.optional(element) || (passwdReg.test(value));
         });
     }
 
@@ -303,20 +314,39 @@ jQuery(document).ready(function($) {
         var $distTable = $('#distributors');
 
         initDatatable($distTable, {
-            ajax: "/vendor/items/datatable",
+            ajax: "/vendor/distributors/datatable",
             columns: [
                 {data: "id", bSortable: false, visible: false},
-                {data: "item", bSortable: false},
-                {data: "second_category_id", bSortable: false},
-                {data: "price"},
-                {data: "size", bSortable: false}
+                {data: "name"},
+                {data: "address", bSortable: false},
+                {data: "contact_telephone", bSortable: false},
+                {data: "contact_mobile", bSortable: false},
+                {data: "contact", bSortable: false},
+                {data: "created"},
+                {data: "revocation_state", visible: false},
             ],
             columnDefs: [{
-                targets: [5],
-                data: "id",
+                targets: [8],
+                data: {},
                 render: function (data) {
-                    return "<a href='/vendor/items/" + data + "'>详情/编辑</a>";
-                }
+                    var genRevocateLink = function (text) {
+                        return '<a href="javascript:void(0)" data-dist-id="' + data.id + '">' + text + '</a>';
+                    };
+
+                    if (data.revocation_state == 'pendding') {
+                        return '<span class="text-warning">审核中</span>';
+                    }
+                    else if (data.revocation_state == 'revocated') {
+                        return '<span class="text-success">已取消授权</span>';
+                    }
+                    else if (data.revocation_state == 'rejected') {
+                        return '<span class="text-danger">审核失败;</span>' +
+                                genRevocateLink('点击再次提交审核');
+                    }
+                    else {
+                        return genRevocateLink('取消授权');
+                    }
+                },
             }],
         });
 
@@ -370,13 +400,13 @@ jQuery(document).ready(function($) {
             }
         });
 
-        $('#contact_mobile').rules('add', {
+        $('#mobile').rules('add', {
             mobile: true,
             messages: {
                 mobile: '请填写合法的手机号码'
             }
         });
-        $('#contact_telephone').rules('add', {
+        $('#telephone').rules('add', {
             tel: true,
             messages: {
                 tel: '请填写合法的固定电话号码'
@@ -442,10 +472,10 @@ jQuery(document).ready(function($) {
 
             $('#password').rules('add', {
                 required: true,
-                regex: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/,
+                password: true,
                 messages: {
                     required: '请设置密码',
-                    regex: '密码长度必须大于等于6位且为字母和数字的组合'
+                    password: '密码长度必须大于等于6位且为字母和数字的组合'
                 }
             });
 
@@ -480,19 +510,12 @@ jQuery(document).ready(function($) {
             }
         });
 
-        $('#license_image').rules('add', {
-            required: true,
-            messages: {
-                required: '请上传营业执照照片',
-            }
-        });
-
         $('#agent_identity').rules('add', {
             required: true,
-            regex: /^\d{15}(\d\d[0-9xX])?$/,
+            identity: true,
             messages: {
                 required: '请输入代理人身份证',
-                regex: '不合法的身份证号码'
+                identity: '不合法的身份证号码'
             }
         });
 
@@ -503,11 +526,29 @@ jQuery(document).ready(function($) {
             }
         });
 
-        $('#license_limit').rules('add', {
+        $('#license_image').rules('add', {
             required: true,
             messages: {
-                required: '请填写营业期限',
+                required: '请上传营业执照照片',
             }
+        });
+
+        $('#license_limit').rules('add', {
+            required: true,
+            date: true,
+            messages: {
+                required: '请填写营业期限',
+                date: '不合法的日期格式',
+            },
+        });
+
+        $('#telephone').rules('add', {
+            required: true,
+            tel: true,
+            messages: {
+                required: '请填写联系固话',
+                tel: '不合法的电话号码',
+            },
         });
 
         $('#province_cn_id').rules('add', {

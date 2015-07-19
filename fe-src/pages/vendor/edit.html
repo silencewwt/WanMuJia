@@ -181,112 +181,24 @@
                     <div class="album-images row">
 
                         <!-- Album Image -->
-                        <div class="col-md-3 col-sm-4 col-xs-6">
-                            <div class="album-image" data-hash="123">
-                                <a href="#" class="thumb" data-action="edit">
-                                    <img src="/lib/xenon/images/album-img-1.png" class="img-responsive" />
-                                </a>
+                        {% for image in item.images %}
+                            <div class="col-md-3 col-sm-4 col-xs-6">
+                                <div class="album-image" data-hash="{{ image.hash }}">
+                                    <a href="#" class="thumb" data-action="edit">
+                                        <img src="{{ image.url }}" class="img-responsive" />
+                                    </a>
 
-                                <a href="#" class="name">
-                                    <span>IMG_007.jpg</span>
-                                    <em>28 September 2014</em>
-                                </a>
+                                    <a href="#" class="name">
+                                        <span>{{ image.filename }}</span>
+                                        <em>{{ image.created }}</em>
+                                    </a>
 
-                                <div class="image-options">
-                                    <a href="#" data-action="trash"><i class="fa-trash"></i></a>
+                                    <div class="image-options">
+                                        <a href="#" data-action="trash"><i class="fa-trash"></i></a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Album Image -->
-                        <div class="col-md-3 col-sm-4 col-xs-6">
-                            <div class="album-image">
-                                <a href="#" class="thumb" data-action="edit">
-                                    <img src="/lib/xenon/images/album-img-2.png" class="img-responsive" />
-                                </a>
-
-                                <a href="#" class="name">
-                                    <span>IMG_008.jpg</span>
-                                    <em>20 September 2014</em>
-                                </a>
-
-                                <div class="image-options">
-                                    <a href="#" data-action="trash"><i class="fa-trash"></i></a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Album Image -->
-                        <div class="col-md-3 col-sm-4 col-xs-6">
-                            <div class="album-image">
-                                <a href="#" class="thumb" data-action="edit">
-                                    <img src="/lib/xenon/images/album-img-3.png" class="img-responsive" />
-                                </a>
-
-                                <a href="#" class="name">
-                                    <span>IMG_060.jpg</span>
-                                    <em>03 September 2014</em>
-                                </a>
-
-                                <div class="image-options">
-                                    <a href="#" data-action="trash"><i class="fa-trash"></i></a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Album Image -->
-                        <div class="col-md-3 col-sm-4 col-xs-6">
-                            <div class="album-image">
-                                <a href="#" class="thumb" data-action="edit">
-                                    <img src="/lib/xenon/images/album-img-4.png" class="img-responsive" />
-                                </a>
-
-                                <a href="#" class="name">
-                                    <span>IMG_1008.jpg</span>
-                                    <em>23 August 2014</em>
-                                </a>
-
-                                <div class="image-options">
-                                    <a href="#" data-action="trash"><i class="fa-trash"></i></a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Album Image -->
-                        <div class="col-md-3 col-sm-4 col-xs-6">
-                            <div class="album-image">
-                                <a href="#" class="thumb" data-action="edit">
-                                    <img src="/lib/xenon/images/album-img-5.png" class="img-responsive" />
-                                </a>
-
-                                <a href="#" class="name">
-                                    <span>IMG_023.jpg</span>
-                                    <em>30 July 2014</em>
-                                </a>
-
-                                <div class="image-options">
-                                    <a href="#" data-action="trash"><i class="fa-trash"></i></a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Album Image -->
-                        <div class="col-md-3 col-sm-4 col-xs-6">
-                            <div class="album-image">
-                                <a href="#" class="thumb" data-action="edit">
-                                    <img src="/lib/xenon/images/album-img-6.png" class="img-responsive" />
-                                </a>
-
-                                <a href="#" class="name">
-                                    <span>IMG_012.jpg</span>
-                                    <em>16 July 2014</em>
-                                </a>
-
-                                <div class="image-options">
-                                    <a href="#" data-action="trash"><i class="fa-trash"></i></a>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
 
                     </div>
 
@@ -301,7 +213,7 @@
                         拖动文件到此以上传(或点击)
                     </p>
                     <div class="fallback">
-                        <input name="file" type="file" multiple />
+                        <input name="image" type="file" multiple />
                     </div>
                 </div>
             </div>

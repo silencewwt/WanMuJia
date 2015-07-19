@@ -17,6 +17,7 @@
         </div>
     </div>
 
+
     <div class="panel panel-default">
 
         <div class="panel-body">
@@ -27,7 +28,6 @@
                     <label class="col-sm-2 control-label" for="logo">厂家logo</label>
 
                     <div class="col-sm-9">
-                        <input name="logo" type="file" class="form-control" id="logo" accept="image/jpeg, image/png">
                         {{ form.logo(class='form-control', accept='image/jpeg, image/png') }}
 
                         <div class="logo-preview">
@@ -40,7 +40,7 @@
                     <label class="col-sm-2 control-label" for="name">厂家名称</label>
 
                     <div class="col-sm-9">
-                        {{ form.name(class='form-control', maxLength='20', **{
+                        {{ form.name(class='form-control', disabled='disabled', maxLength='20', **{
                             'data-validate': 'required',
                             'data-message-required': '请填写厂家名称',
                         }) }}
@@ -59,10 +59,7 @@
                     <label class="col-sm-2 control-label" for="contact">联系人姓名</label>
 
                     <div class="col-sm-9">
-                        {{ form.contact(class='form-control', **{
-                            'data-validate': 'required',
-                            'data-message-required': '请填写联系人姓名',
-                        }) }}
+                        {{ form.contact(class='form-control') }}
                     </div>
                 </div>
 
@@ -77,14 +74,11 @@
                     </div>
                 </div>
 
-                <div class="form-group required">
+                <div class="form-group">
                     <label class="col-sm-2 control-label" for="telephone">联系固话</label>
 
                     <div class="col-sm-9">
-                        {{ form.telephone(class='form-control', **{
-                            'data-validate': 'required',
-                            'data-message-required': '请填写联系电话',
-                        }) }}
+                        {{ form.telephone(class='form-control') }}
                     </div>
                 </div>
 
