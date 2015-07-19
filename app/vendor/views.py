@@ -117,7 +117,7 @@ def items_data_table():
     length = request.args.get('length', 100, type=int)
     valid_length = [10, 25, 50, 100]
     length = length if length in valid_length else valid_length[0]
-    items = Item.query.filter_by(vendor_id=current_user.id).offset(start).limit(length)
+    items = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False).offset(start).limit(length)
     data = {'draw': draw, 'recordsTotal': Item.query.count(), 'recordsFiltered': items.count(), 'data': []}
     for item in items:
         data['data'].append({
@@ -149,7 +149,7 @@ def item_detail(item_id):
         item.is_deleted = True
         db.session.add(item)
         db.session.commit()
-        return redirect(url_for('.item_list'))
+        return jsonify({'success': True})
 
 
 @vendor_blueprint.route('/items/new_item', methods=['GET', 'POST'])
@@ -183,7 +183,7 @@ def upload_item_image():
         return 403
 
 
-@vendor_blueprint.route('/items/image_sort', methods=['PUT'])
+@vendor_blueprint.route('/items/image_sort', methods=['POST'])
 @vendor_permission.require()
 @vendor_confirmed
 def update_item_image_sort():
