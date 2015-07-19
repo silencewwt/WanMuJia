@@ -42,49 +42,37 @@ jQuery(document).ready(function($) {
     }
 
     // Dropzone
-    var $imgUpload = $('#img-upload.dropzone');
-    if ($imgUpload.length > 0) {
+    var dz = {
+        initDropzone: function ($el, opt) {
+            $el.dropzone({
+                url: opt.url,
+                method: 'put',
+                acceptedFiles: 'image/jpg, image/jpeg, image/png',
+                addRemoveLinks: getPageTitle() !== 'item-edit',
+                dictDefaultMessage: '拖动文件到此以上传',
+                dictResponseError: '服务器{{ statusCode }}错误, 上传失败, 请稍后重试。',
+                dictCancelUpload: '取消上传',
+                dictCancelUploadConfirmation: '确定取消上传吗？',
+                dictRemoveFile: '移除文件',
 
-        $imgUpload.dropzone({
-            url: '/vendor/items/image',
-            method: 'put',
-            acceptedFiles: 'image/jpg, image/jpeg, image/png',
-            addRemoveLinks: getPageTitle() !== 'item-edit',
-            dictDefaultMessage: '拖动文件到此以上传',
-            dictResponseError: '服务器错误, 上传失败, 请稍后重试。',
-            dictCancelUpload: '取消上传',
-            dictCancelUploadConfirmation: '确定取消上传吗？',
-            dictRemoveFile: '移除文件',
-
-            init: function () {
-                this
-                    .on('removedfile', function (file) {
-                        console.log(file.previewElement);
-                        var hash = $(file.previewElement).data('hash');
-
-                        if (hash) deleteImage(hash);
-                    })
-                    .on('success', function (file, data) {
-                        if (data.success) {
-                            $(file.previewElement).data('hash', data.hash);
-
-                            var $album = $('.album-images');
-                            if ($album.length > 0) {
-                                $album.append($(genImageView({
-                                    name: file.name,
-                                    hash: data.hash,
-                                    url: data.url,
-                                    created: data.created
-                                })));
-                            }
-                        }
-                        else {
-
-                        }
-                    });
-            }
-        });
-    }
+                init: function () {
+                    this
+                        .on('removedfile', function (file) {
+                            var hash = $(file.previewElement).data('hash');
+                            if (hash) deleteImage(hash);
+                        })
+                        .on('success', opt.success);
+                }
+            });
+        },
+        setPreviewError: function (file, message) {
+            $(file.previewElement)
+                    .removeClass('dz-success')
+                    .addClass('dz-error')
+                    .find('.dz-error-message span')
+                    .text('上传失败!' + message);
+        }
+    };
 
 
     // Datatable
@@ -124,6 +112,7 @@ jQuery(document).ready(function($) {
             columnDefs: opt.columnDefs
         });
     }
+
 
     // toastr
     var toastrOpts = {
@@ -182,7 +171,7 @@ jQuery(document).ready(function($) {
             $('#modal-item-name').text(item);
         });
 
-        $('#modal-item-delete').click(function () {
+        $('#modal-item-delete').click(function (e) {
             $.ajax({
                 url: '/vendor/items/' + $confirmForm.data('item-id'),
                 method: 'delete',
@@ -193,6 +182,8 @@ jQuery(document).ready(function($) {
                     window.location.reload();
                 },
             });
+
+            e.preventDefault();
         });
     }
 
@@ -247,6 +238,31 @@ jQuery(document).ready(function($) {
             }
         });
 
+        // init dropzone
+        dz.initDropzone($('#img-upload'), {
+            url: '/vendor/items/image?item_id=' + $itemEditForm.data('item-id'),
+            success: function (file, data) {
+                var $previewElement = $(file.previewElement);
+                if (data.success) {
+                    var image = data.image;
+                    $previewElement.data('hash', image.hash);
+
+                    var $album = $('.album-images');
+                    if ($album.length > 0) {
+                        $album.append($(genImageView({
+                            name: file.name,
+                            hash: image.hash,
+                            url: image.url,
+                            created: image.created
+                        })));
+                    }
+                }
+                else {
+                    dz.setPreviewError(file, data.message);
+                }
+            }
+        });
+
         // Item Album page
         var $albumImages = $('.album-images');
         var deleteImgHash = '';
@@ -287,12 +303,11 @@ jQuery(document).ready(function($) {
                 });
 
             $.ajax({
-                url: '/items/image_sort',
+                url: '/vendor/items/image_sort',
                 method: 'post',
                 data: sort.join(',')
             });
         });
-
     }
 
 
@@ -321,7 +336,25 @@ jQuery(document).ready(function($) {
                 method: 'post',
                 form: $('#new-item-form'),
                 success: function (data) {
+
                     if (data.success) {
+                        toastr.success('您可以继续添加商品图片', '商品添加成功!');
+
+                        // init dropzone
+                        dz.initDropzone($('#img-upload'), {
+                            url: '/vendor/items/image?item_id=' + data.item_id,
+                            success: function (file, data) {
+                                var $previewElement = $(file.previewElement);
+                                if (data.success) {
+                                    var image = data.image;
+                                    $previewElement.data('hash', image.hash);
+                                }
+                                else {
+                                    dz.setPreviewError(file, data.message);
+                                }
+                            }
+                        });
+
                         $newItemForm.bootstrapWizard('next');
                     }
                     else {
@@ -337,7 +370,6 @@ jQuery(document).ready(function($) {
                 },
             });
         };
-
 
         $('.wizard .next')
             .off('click')
@@ -552,6 +584,13 @@ jQuery(document).ready(function($) {
                     required: '请上传代理人身份证反面照片',
                 }
             });
+
+            $('#license_image').rules('add', {
+                required: true,
+                messages: {
+                    required: '请上传营业执照照片',
+                }
+            });
         }
 
         $('#agent_name').rules('add', {
@@ -574,13 +613,6 @@ jQuery(document).ready(function($) {
             required: true,
             messages: {
                 required: '请填写厂家名称',
-            }
-        });
-
-        $('#license_image').rules('add', {
-            required: true,
-            messages: {
-                required: '请上传营业执照照片',
             }
         });
 
@@ -668,7 +700,7 @@ function getCookie(cookieName) {
 function convertTimeString(seconds) {
     if (typeof seconds != 'number') return '';
 
-    var time = new Date(seconds * 1000);
+    var time = new Date('seconds * 1000');
     return time.getFullYear() + '-' +
         time.getMonth() + '-' +
         time.getDay();
@@ -693,8 +725,8 @@ function saveInfos(options) {
 
 function deleteImage(hash) {
     $.ajax({
-        url: '/vendor/item_image',
-        method: 'put',
+        url: '/vendor/items/image',
+        method: 'delete',
         data: {
             image_hash: hash
         }
