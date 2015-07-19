@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import datetime
+from base64 import b64decode
 
+from flask import request
 from flask.ext.login import current_user
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField
@@ -9,6 +11,7 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, N
 from app import db
 from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, Decoration, \
     Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, FirstCategory
+from app.utils import IO
 from app.utils.forms import Form
 from app.utils.image import save_image
 from app.utils.fields import OptionGroupSelectField, SelectField
@@ -35,9 +38,9 @@ class RegistrationForm(Form):
     telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DistrictValidator(), Length(1, 30)])
     district_cn_id = StringField(validators=[DataRequired(), Length(6, 6)])
-    logo = FileField(validators=[Image(required=True, base64=True), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    # logo = FileField(validators=[Image(required=True, base64=True), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
-    image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
+    image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image')
 
     def validate_license_limit(self, field):
         try:
@@ -49,7 +52,8 @@ class RegistrationForm(Form):
         vendor = vendor if vendor else current_user
         for image_field in self.image_fields:
             if getattr(self, image_field).data:
-                image = save_image(vendor.id, 'vendor', getattr(self, image_field))
+                image, image_hash = save_image(vendor.id, 'vendor', getattr(self, image_field),
+                                   IO(b64decode(getattr(self, image_field)).data[23:]))
                 setattr(vendor, image_field, image)
                 db.session.add(vendor)
             db.session.commit()
@@ -89,6 +93,8 @@ class ReconfirmForm(RegistrationForm):
     license_image = FileField(validators=[
         Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+
+    is_reconfirm = True
 
     attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone')
 
@@ -207,19 +213,19 @@ class ItemForm(Form):
 
 
 class ItemImageForm(Form):
-    item_id = IntegerField()
-    image = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'])])
+    item_id = IntegerField(validators=[DataRequired()], data=request.args.get('item_id', 0, type=int))
+    file = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'])])
 
     def validate_item_id(self, field):
         if field.data and field.data != current_user.id:
             raise ValidationError('wrong id')
 
     def add_item_image(self):
-        image_path, image_hash = save_image(self.item_id.data, 'item', self.image)
-        item_image = ItemImage(self.item_id.data, image_path, image_hash, self.image.data.filename, 999)  # 新上传的图片默认在最后
+        image_path, image_hash = save_image(self.item_id.data, 'item', self.file, self.file.data.stream)
+        item_image = ItemImage(self.item_id.data, image_path, image_hash, self.file.data.filename[:30], 999)  # 新上传的图片默认在最后
         db.session.add(item_image)
         db.session.commit()
-        return image_hash
+        return {'hash': item_image.hash, 'url': item_image.url, 'created': item_image.created}
 
 
 class ItemImageSortForm(Form):
@@ -294,7 +300,7 @@ class SettingsForm(Form):
         vendor.address.address = self.address.data
         vendor.address.cn_id = self.district_cn_id.data
         if self.logo.data:
-            logo = save_image(vendor.id, 'vendor', self.logo)
+            logo = save_image(vendor.id, 'vendor', self.logo, self.logo.data.stream)
             vendor.logo = logo
         db.session.add(vendor)
         db.session.add(vendor.address)
@@ -302,7 +308,7 @@ class SettingsForm(Form):
 
 
 class RevocationForm(Form):
-    image = FileField(validators=[Image(required=True)])
+    contract = FileField(validators=[Image(required=True)])
     distributor_id = IntegerField()
 
     distributor = None
@@ -314,7 +320,7 @@ class RevocationForm(Form):
         self.distributor = distributor
 
     def revoke(self):
-        image = save_image(current_user.id, 'vendor', self.image)
+        image, image_hash = save_image(current_user.id, 'vendor', self.contract, self.contract.data.stream)
         revocation = DistributorRevocation.query.filter_by(distributor_id=self.distributor.id).limit(1).first()
         if not revocation:
             revocation = DistributorRevocation(self.distributor.id, image)

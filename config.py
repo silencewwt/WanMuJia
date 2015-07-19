@@ -24,7 +24,7 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    IMAGE_DIR = os.path.join(basedir, 'images')
+    IMAGE_DIR = os.path.join(basedir, 'app/static/')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'mysql+pymysql://dev:devpassword@localhost/wmj?charset=utf8'
     CELERY_BROKER_URL = 'redis://localhost:6379/0'

@@ -12,7 +12,7 @@ from app.utils.redis import redis_verify
 
 
 class Email(BaseEmail):
-    def __init__(self, required=True, available=True, message=u'邮箱不符合规范!'):
+    def __init__(self, required=True, available=True, exist_owner=None, message=u'邮箱不符合规范!'):
         self.required = required
         self.available = available
         self.message = message
@@ -98,11 +98,9 @@ class Image(object):
             if self.base64:
                 image_str = IO(b64decode(field.data[23:]))
             else:
-                image_str = field.data.stream.raw
+                image_str = field.data.stream
             try:
-                im = BaseImage.open(image_str)
-                im.close()
-                del im
+                BaseImage.open(image_str)
             except OSError:
                 raise ValidationError(u'图片格式错误')
 
