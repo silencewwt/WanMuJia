@@ -141,6 +141,8 @@ jQuery(document).ready(function($) {
 
     // Items page
     if (getPageTitle() === 'items') {
+        var $confirmForm = $('#delete-confirm-form');
+
         initDatatable($('#items'), {
             ajax: "/vendor/items/datatable",
             columns: [
@@ -156,7 +158,36 @@ jQuery(document).ready(function($) {
                 render: function (data) {
                     return "<a href='/vendor/items/" + data + "'>详情/编辑</a>";
                 }
+            },
+            {
+                targets: [6],
+                data: {},
+                render: function (data) {
+                    return '<a href="javascript:void(0)" data-item="' + data.item + '" data-item-id="' + data.id + '" data-toggle="modal" data-target="#delete-confirm-modal">删除商品</a>';
+                },
             }]
+        });
+
+        $('#items').delegate('[data-target="#delete-confirm-modal"]', 'click', function () {
+            var $this = $(this);
+            var id = $this.data('item-id');
+            var item = $this.data('item');
+
+            $confirmForm.data('item-id', id);
+            $('#modal-item-name').text(item);
+        });
+
+        $('#modal-item-delete').click(function () {
+            $.ajax({
+                url: '/vendor/items/' + $confirmForm.data('item-id'),
+                method: 'delete',
+                success: function () {
+                    window.location.reload();
+                },
+                error: function () {
+                    window.location.reload();
+                },
+            });
         });
     }
 
@@ -330,7 +361,7 @@ jQuery(document).ready(function($) {
                 data: {},
                 render: function (data) {
                     var genRevocateLink = function (text) {
-                        return '<a href="javascript:void(0)" data-dist-id="' + data.id + '">' + text + '</a>';
+                        return '<a href="javascript:void(0)" data-toggle="modal" data-target="#revocation-modal" data-dist-name="' + data.name + '" data-dist-id="' + data.id + '">' + text + '</a>';
                     };
 
                     if (data.revocation_state == 'pendding') {
@@ -352,6 +383,7 @@ jQuery(document).ready(function($) {
 
         $('#distributors').delegate('[data-target="#revocation-modal"]', 'click', function () {
             var id = $(this).data('dist-id');
+            var name = $(this).data('dist-name');
             var $contractForm = $('#contract-form');
             var actions = $contractForm
                             .attr('action')
@@ -359,6 +391,8 @@ jQuery(document).ready(function($) {
 
             actions[3] = id;    // url: /vendor/distributors/{id}/revocation
 
+            $('#modal-dist-name').text(name);
+            $('#contract').val('');
             $contractForm.attr('action', actions.join('/'));
         });
     }
