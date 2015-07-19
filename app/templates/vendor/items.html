@@ -69,6 +69,7 @@
                     <th>商品种类</th>
                     <th>指导价格</th>
                     <th>商品尺寸</th>
+                    <th>查看</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -80,6 +81,7 @@
                     <th>商品种类</th>
                     <th>指导价格</th>
                     <th>商品尺寸</th>
+                    <th>查看</th>
                     <th>操作</th>
                 </tr>
                 </tfoot>
@@ -91,6 +93,33 @@
         </div>
     </div>
 {% endblock %}
+
+{% block modal %}
+    <div class="modal fade" id="delete-confirm-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="delete-confirm-form">
+
+                    <div class="modal-header">
+                        <h4 class="modal-title">删除商品</h4>
+                    </div>
+
+                    <div class="modal-body">
+
+                        确定删除商品 <em id="modal-item-name"></em> 吗？
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="modal-item-delete" type="submit" class="btn btn-danger">确认</button>
+                        <button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 
 
 {% block scripts %}

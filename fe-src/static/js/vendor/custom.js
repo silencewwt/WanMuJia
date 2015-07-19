@@ -65,16 +65,21 @@ jQuery(document).ready(function($) {
                         if (hash) deleteImage(hash);
                     })
                     .on('success', function (file, data) {
-                        $(file.previewElement).data('hash', data.hash);
+                        if (data.success) {
+                            $(file.previewElement).data('hash', data.hash);
 
-                        var $album = $('.album-images');
-                        if ($album.length > 0) {
-                            $album.append($(genImageView({
-                                name: file.name,
-                                hash: data.hash,
-                                url: data.url,
-                                created: data.created
-                            })));
+                            var $album = $('.album-images');
+                            if ($album.length > 0) {
+                                $album.append($(genImageView({
+                                    name: file.name,
+                                    hash: data.hash,
+                                    url: data.url,
+                                    created: data.created
+                                })));
+                            }
+                        }
+                        else {
+
                         }
                     });
             }
@@ -401,14 +406,26 @@ jQuery(document).ready(function($) {
     // Invitation page
     if (getPageTitle() === 'dist-invitation') {
         $('#get-key').click(function () {
+            var $this = $(this);
+            if ($this.hasClass('disabled')) {
+                return;
+            }
+
+            var originVal = $this.text();
+            setButtonLoading($this);
+
             $.ajax({
                 url: '/vendor/distributors/invitation',
                 method: 'post',
                 success: function (data) {
-                    $('.invite-key').text(data);
+                    $('.invite-key').val(data)
+                            .attr('contenteditable', true)
+                            .focus().select();
+                    resetButton($this, originVal);
                 },
-                error: function () {
-
+                error: function (xhr) {
+                    toastr.error('服务器' + xhr.status + '错误.', '申请失败!');
+                    resetButton($this, originVal);
                 }
             });
         });
