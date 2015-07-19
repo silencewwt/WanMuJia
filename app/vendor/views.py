@@ -220,8 +220,9 @@ def distributors_data_table():
     for distributor in distributors:
         created = datetime.datetime.fromtimestamp(distributor.created).strftime('%F')
         data['data'].append({
-            'id': distributor.id, 'name': distributor.name, 'mobile': distributor.mobile,
-            'contact': distributor.contact, 'address': distributor.address.precise_address(), 'created': created})
+            'id': distributor.id, 'name': distributor.name, 'contact_mobile': distributor.mobile, 'created': created,
+            'contact_telephone': distributor.telephone, 'contact': distributor.contact,
+            'revocation_state': distributor.revocation_state, 'address': distributor.address.precise_address()})
     return jsonify(data)
 
 

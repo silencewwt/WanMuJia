@@ -251,6 +251,18 @@ class Distributor(BaseUser, db.Model):
     def address(self):
         return DistributorAddress.query.filter_by(distributor_id=self.id).limit(1).first()
 
+    @property
+    def revocation_state(self):
+        revocation = DistributorRevocation.query.filter_by(distributor_id=self.id).first()
+        if not revocation:
+            return ''
+        elif revocation.pending:
+            return 'pending'
+        elif revocation.is_revoked:
+            return 'revoked'
+        else:
+            return 'rejected'
+
 
 class DistributorRevocation(db.Model):
     __tablename__ = 'distributor_revocations'
