@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 from flask.ext.login import current_user
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField
@@ -36,6 +38,12 @@ class RegistrationForm(Form):
     logo = FileField(validators=[Image(required=True, base64=True), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
     image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
+
+    def validate_license_limit(self, field):
+        try:
+            datetime.datetime(int(field.data[:4]), int(field.data[4:6]), int(field.data[6:]))
+        except ValueError:
+            raise ValidationError(u'营业执照期限格式错误')
 
     def save_images(self, vendor=None):
         vendor = vendor if vendor else current_user
@@ -264,6 +272,7 @@ class SettingsForm(Form):
     name = StringField()
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     telephone = StringField(validators=[DataRequired(u'电话号码必填'), Length(7, 15)])
+    contact = StringField(validators=[DataRequired()])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
     introduction = StringField(validators=[])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
@@ -273,11 +282,13 @@ class SettingsForm(Form):
         self.introduction.data = vendor.introduction
         self.district_cn_id.data = vendor.address.cn_id
         self.name.data = vendor.name
+        self.contact.data = vendor.contact
         self.address.data = vendor.address.address
 
     def update_vendor_setting(self, vendor):
         vendor.introduction = self.introduction.data
         vendor.telephone = self.telephone.data
+        vendor.contact = self.contact.data
         vendor.address.address = self.address.data
         vendor.address.cn_id = self.district_cn_id.data
         if self.logo.data:
