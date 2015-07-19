@@ -364,21 +364,28 @@ class Item(db.Model):
     def second_category(self):
         return SecondCategory.query.get(self.second_category_id).second_category
 
+    @property
+    def images(self):
+        return ItemImage.query.filter_by(item_id=self.id, is_deleted=False).\
+            order_by(ItemImage.created).order_by(ItemImage.sort)
+
 
 class ItemImage(db.Model):
     __tablename__ = 'item_images'
     id = db.Column(db.Integer, primary_key=True)
     item_id = db.Column(db.Integer, nullable=False)
-    image = db.Column(db.String(255), nullable=False)
-    image_hash = db.Column(db.String(32), nullable=False)
+    path = db.Column(db.String(255), nullable=False)
+    hash = db.Column(db.String(32), nullable=False)
     sort = db.Column(db.Integer, nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+    filename = db.Column(db.Unicode(30), nullable=False)
 
-    def __init__(self, item_id, image, image_hash, sort):
+    def __init__(self, item_id, image, image_hash, filename, sort):
         self.item_id = item_id
-        self.image = image
-        self.image_hash = image_hash
+        self.path = image
+        self.hash = image_hash
+        self.filename = filename
         self.sort = sort
 
     def get_item(self):
@@ -386,6 +393,10 @@ class ItemImage(db.Model):
 
     def get_vendor_id(self):
         return self.get_item().vendor_id
+
+    @property
+    def url(self):
+        return '%s%s' % (current_app.config['STATIC_URL'], self.path)
 
 
 class Stock(db.Model):

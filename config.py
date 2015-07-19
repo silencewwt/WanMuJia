@@ -13,6 +13,7 @@ class Config(object):
     DEBUG = True
     CSRF_ENABLED = True
     MD5_SALT = 'md5_salt'
+    STATIC_URL = 'http://127.0.0.1:5000/'
     REMEMBER_COOKIE_DURATION = timedelta(7)
     CONFIRM_EMAIL_DURATION = 86400  # seconds (24 hours)
     DISTRIBUTOR_REGISTER_DURATION = 86400
