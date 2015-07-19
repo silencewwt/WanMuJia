@@ -127,6 +127,8 @@ class Vendor(BaseUser, db.Model):
     license_limit = db.Column(db.Integer, nullable=False)
     # 营业执照副本扫描件
     license_image = db.Column(db.String(255), default='', nullable=False)
+    # 联系人
+    contact = db.Column(db.String(30), default=u'', nullable=False)
     # 联系电话
     telephone = db.Column(db.CHAR(15), nullable=False)
     # 简介
