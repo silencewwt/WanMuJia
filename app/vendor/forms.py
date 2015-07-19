@@ -2,7 +2,6 @@
 import datetime
 from base64 import b64decode
 
-from flask import request
 from flask.ext.login import current_user
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField
@@ -213,7 +212,7 @@ class ItemForm(Form):
 
 
 class ItemImageForm(Form):
-    item_id = IntegerField(validators=[DataRequired()], data=request.args.get('item_id', 0, type=int))
+    item_id = IntegerField(validators=[DataRequired()])
     file = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'])])
 
     def validate_item_id(self, field):

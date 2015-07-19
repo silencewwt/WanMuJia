@@ -172,6 +172,7 @@ def new_item():
 def upload_item_image():
     if request.method == 'PUT':
         form = ItemImageForm(csrf_enabled=False)
+        form.item_id.data = request.args.get('item_id', 0, type=int)
         if form.validate():
             return jsonify({'success': True, 'image': form.add_item_image()})
         return jsonify({'success': False, 'message': form.error2str()})
