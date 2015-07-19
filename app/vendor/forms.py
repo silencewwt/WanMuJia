@@ -261,6 +261,7 @@ class ItemImageDeleteForm(Form):
 
 
 class SettingsForm(Form):
+    name = StringField()
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     telephone = StringField(validators=[DataRequired(u'电话号码必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
@@ -271,6 +272,7 @@ class SettingsForm(Form):
         self.telephone.data = vendor.telephone
         self.introduction.data = vendor.introduction
         self.district_cn_id.data = vendor.address.cn_id
+        self.name.data = vendor.name
         self.address.data = vendor.address.address
 
     def update_vendor_setting(self, vendor):
