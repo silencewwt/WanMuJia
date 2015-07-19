@@ -20,13 +20,24 @@ jQuery(document).ready(function($) {
 
         $.validator.addMethod('mobile', function (value, element) {
             var length = value.length;
-            var mobile = /^((1[3-8][0-9])+\d{8})$/;
-            return this.optional(element) || (length == 11 && mobile.test(value));
+            var mobileReg = /^((1[3-8][0-9])+\d{8})$/;
+            return this.optional(element) || (length == 11 && mobileReg.test(value));
         });
 
         $.validator.addMethod('tel', function (value, element) {
-            var tel = /^\d{3,4}-?\d{7,9}$/;    //电话号码格式010-12345678
-            return this.optional(element) || (tel.test(value));
+            var telReg = /^\d{3,4}-?\d{7,9}$/;    //电话号码格式010-12345678
+            return this.optional(element) || (telReg.test(value));
+        });
+
+        $.validator.addMethod('identity', function (value, element) {
+            var idReg = /^\d{15}(\d\d[0-9xX])?$/;
+            return this.optional(element) || (idReg.test(value));
+        });
+
+        $.validator.addMethod('password', function (value, element) {
+            //大于等于6位，且同时包含数字和字母
+            var passwdReg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/;
+            return this.optional(element) || (passwdReg.test(value));
         });
     }
 
@@ -311,11 +322,11 @@ jQuery(document).ready(function($) {
                 {data: "contact_telephone", bSortable: false},
                 {data: "contact_mobile", bSortable: false},
                 {data: "contact", bSortable: false},
-                {data: "revocation_state", visible: false},
                 {data: "created"},
+                {data: "revocation_state", visible: false},
             ],
             columnDefs: [{
-                targets: [7],
+                targets: [8],
                 data: {},
                 render: function (data) {
                     var genRevocateLink = function (text) {
@@ -461,10 +472,10 @@ jQuery(document).ready(function($) {
 
             $('#password').rules('add', {
                 required: true,
-                regex: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/,
+                password: true,
                 messages: {
                     required: '请设置密码',
-                    regex: '密码长度必须大于等于6位且为字母和数字的组合'
+                    password: '密码长度必须大于等于6位且为字母和数字的组合'
                 }
             });
 
@@ -501,10 +512,10 @@ jQuery(document).ready(function($) {
 
         $('#agent_identity').rules('add', {
             required: true,
-            regex: /^\d{15}(\d\d[0-9xX])?$/,
+            identity: true,
             messages: {
                 required: '请输入代理人身份证',
-                regex: '不合法的身份证号码'
+                identity: '不合法的身份证号码'
             }
         });
 
@@ -524,9 +535,11 @@ jQuery(document).ready(function($) {
 
         $('#license_limit').rules('add', {
             required: true,
+            date: true,
             messages: {
                 required: '请填写营业期限',
-            }
+                date: '不合法的日期格式',
+            },
         });
 
         $('#telephone').rules('add', {
