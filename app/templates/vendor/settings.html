@@ -91,9 +91,9 @@
                 <div class="form-group address-select required">
                     <label class="control-label col-sm-2" for="district_cn_id">地址(省-市-区)</label>
                     <div class="col-sm-9">
-                        <select class="form-control" name="province_cn_id" id="province_cn_id"></select>
-                        <select class="form-control" name="city_cn_id" id="city_cn_id"></select>
-                        <select class="form-control" name="district_cn_id" id="district_cn_id"></select>
+                        <select class="form-control" name="province_cn_id" id="province_cn_id" data-province-default="{{ form.province }}"></select>
+                        <select class="form-control" name="city_cn_id" id="city_cn_id" data-city-default="{{ form.city }}"></select>
+                        <select class="form-control" name="district_cn_id" id="district_cn_id" data-district-default="{{ form.district }}"></select>
                     </div>
                 </div>
 
@@ -127,10 +127,15 @@
     <script>
         jQuery(document).ready(function($) {
             // LinkageSel
+            var defVal = {
+                province: parseInt($('province_cn_id').data('province-default')),
+                city: parseInt($('city_cn_id').data('city-default')),
+                district: parseInt($('district_cn_id').data('district-default')),
+            }
             var districtIdSel = new LinkageSel({
                 data: address,
-                selStyle: 'margin-bottom: 4px;',
-                select: ['#province_cn_id', '#city_cn_id', '#district_cn_id']
+                select: ['#province_cn_id', '#city_cn_id', '#district_cn_id'],
+                defVal: [defVal.province, defVal.city, defVal.district],
             });
         });
     </script>

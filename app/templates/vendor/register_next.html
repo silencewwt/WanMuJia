@@ -115,7 +115,7 @@
 
                 <div class="form-group">
                     <label class="control-label" for="name">品牌厂家名称</label>
-                    {{ form.name(class='form-control input-dark', 'max-length': '20', **{
+                    {{ form.name(class='form-control input-dark', maxLength='20', **{
                         'autocomplete': 'off',
                     }) }}
                 </div>
@@ -140,9 +140,9 @@
 
                 <div class="form-group address-select">
                     <label class="control-label" for="district_cn_id">联系地址</label>
-                    <select class="form-control" name="province_cn_id" id="province_cn_id" value="110000"></select>
-                    <select class="form-control" name="city_cn_id" id="city_cn_id"></select>
-                    <select class="form-control" name="district_cn_id" id="district_cn_id"></select>
+                    <select class="form-control" name="province_cn_id" id="province_cn_id" value="110000" data-province-default="{{ form.province }}"></select>
+                    <select class="form-control" name="city_cn_id" id="city_cn_id" data-city-default="{{ form.city }}"></select>
+                    <select class="form-control" name="district_cn_id" id="district_cn_id" data-district-default="{{ form.district }}"></select>
                 </div>
 
 
@@ -181,9 +181,15 @@
         setTimeout(function(){ $(".fade-in-effect").addClass('in'); }, 1);
 
         // LinkageSel
+        var defVal = {
+            province: parseInt($('province_cn_id').data('province-default')),
+            city: parseInt($('city_cn_id').data('city-default')),
+            district: parseInt($('district_cn_id').data('district-default')),
+        }
         var districtIdSel = new LinkageSel({
             data: address,
-            select: ['#province_cn_id', '#city_cn_id', '#district_cn_id']
+            select: ['#province_cn_id', '#city_cn_id', '#district_cn_id'],
+            defVal: [defVal.province, defVal.city, defVal.district],
         });
 
         // FileReader
