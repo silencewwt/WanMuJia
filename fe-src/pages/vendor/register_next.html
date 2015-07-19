@@ -202,6 +202,7 @@
         // FileReader
         var imgFiles = {};
         var upload = {$el: null, complete: false};
+
         $('input[type="file"]').on('change', function () {
             var $this = $(this);
             var files = !!this.files ? this.files : [];
@@ -212,9 +213,9 @@
                 var $formGroup = $this.parent();
                 var $uploadState = $formGroup.find('.upload-state');
                 var loadingClass = 'fa-spin fa-spin fa-circle-o-notch';
-                var completeClass = 'fa-smile-o'
+                var completeClass = 'fa-smile-o';
 
-                upload.$input = $this;
+                upload.$el = $this;
                 upload.complete = false;
 
                 // update loading ui

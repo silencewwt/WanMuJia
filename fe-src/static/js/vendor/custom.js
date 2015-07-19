@@ -400,13 +400,13 @@ jQuery(document).ready(function($) {
             }
         });
 
-        $('#contact_mobile').rules('add', {
+        $('#mobile').rules('add', {
             mobile: true,
             messages: {
                 mobile: '请填写合法的手机号码'
             }
         });
-        $('#contact_telephone').rules('add', {
+        $('#telephone').rules('add', {
             tel: true,
             messages: {
                 tel: '请填写合法的固定电话号码'
