@@ -7,6 +7,7 @@ from PIL import Image as BaseImage
 
 from app.models import User, Vendor, Distributor, Privilege, Province, City, District
 from app.constants import IMAGE_CAPTCHA_CODE
+from app.utils import IO
 from app.utils.redis import redis_verify
 
 
@@ -94,9 +95,8 @@ class Image(object):
 
     def __call__(self, form, field):
         if self.required or field.data:
-            from io import BytesIO
             if self.base64:
-                image_str = BytesIO(b64decode(field.data[23:]))
+                image_str = IO(b64decode(field.data[23:]))
             else:
                 image_str = field.data.stream.raw
             try:

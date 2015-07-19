@@ -163,6 +163,25 @@ class Vendor(BaseUser, db.Model):
         stat.distributors_count = Distributor.query.filter_by(vendor_id=self.id).count()
         return stat
 
+    @property
+    def reminds(self):
+        reminds = redis_get(VENDOR_REMINDS, self.id)
+        if reminds:
+            reminds = json.loads(reminds)
+        return reminds
+
+    def push_confirm_reminds(self, status, reject_message=''):
+        link = None
+        if status == 'success':
+            message = '您的认证信息已通过审核'
+        elif status == 'warning':
+            message = '您的认证信息正在审核中'
+        else:
+            message = '您的认证信息尚未能通过审核, 请重新填写.%s' % reject_message
+            link = {'text': '重新填写', 'href': '/vendor/reconfirm'}
+        reminds = {'confirm': [{'message': message, 'type': status, 'link': link}]}
+        redis_set(VENDOR_REMINDS, self.id, json.dumps(reminds), 3600 * 24 * 3)
+
     @staticmethod
     def generate_fake():
         from faker.factory import Factory

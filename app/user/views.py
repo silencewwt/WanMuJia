@@ -11,8 +11,6 @@ from app.constants import *
 from app.core import login as model_login, reset_password as model_reset_password
 from app.permission import user_permission
 from app.utils import md5_with_salt
-from app.utils.myj_captcha import send_sms_captcha
-from app.utils.validator import available_mobile, validate_mobile
 from app.utils.redis import redis_set, redis_get
 
 
@@ -74,17 +72,6 @@ def register():
             return 'step 2 page'
     session[USER_REGISTER_STEP_DONE] = 0
     return render_template('user/register.html', mobile_form=mobile_form, email_form=email_form, detail_form=detail_form)
-
-
-@user_blueprint.route('/send_sms', methods=['POST'])
-def send_sms():
-    # TODO: CSRF Token
-    # TODO: verify image captcha
-    mobile = request.values.get('mobile', '', type=str).strip()
-    if validate_mobile(mobile):
-        send_sms_captcha(mobile)
-        return 'ok', 200
-    return 'false', 401
 
 
 @user_blueprint.route('/reg_email', methods=['POST'])

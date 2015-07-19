@@ -46,6 +46,8 @@ def login():
         if form.validate() and vendor and vendor.verify_password(form.password.data):
             login_user(vendor)
             identity_changed.send(current_app._get_current_object(), identity=Identity(vendor.get_id()))
+            if not vendor.confirmed:
+                vendor.push_confirm_reminds('danger', '233333')
             return jsonify({ACCESS_GRANTED: True})
         return jsonify({ACCESS_GRANTED: False})
     return render_template('vendor/login.html', form=form)

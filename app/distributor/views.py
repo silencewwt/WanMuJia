@@ -31,6 +31,8 @@ def register():
         form = RegisterForm()
         if form.validate_on_submit():
             distributor = form.add_distributor(session['vendor_id'])
+            if distributor is False:
+                pass
             login_user(distributor)
             identity_changed.send(current_app._get_current_object(), Identity(distributor.get_id()))
             session.pop('register_permission')

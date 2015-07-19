@@ -30,7 +30,6 @@ class RegistrationForm(Form):
         Image(required=True, base64=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     name = StringField(validators=[DataRequired(u'必填'), Length(2, 30, u'品牌厂商名称不符合规范')])
     license_limit = StringField(validators=[Length(8, 8)])
-    license_long_time_limit = BooleanField()
     license_image = FileField(validators=[
         Image(required=True, base64=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
@@ -39,10 +38,6 @@ class RegistrationForm(Form):
     logo = FileField(validators=[Image(required=True, base64=True), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
     image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
-
-    def validate_license_limit(self, field):
-        if not field.data and not self.license_long_time_limit.data:
-            raise ValidationError(u'请填写营业执照期限或选择长期营业执照')
 
     def save_images(self, vendor=None):
         vendor = vendor if vendor else current_user
@@ -71,7 +66,6 @@ class RegistrationDetailForm(RegistrationForm):
             agent_name=self.agent_name.data,
             agent_identity=self.agent_identity.data,
             license_limit=self.license_limit.data,
-            license_long_time_limit=self.license_long_time_limit.data,
             name=self.name.data,
             telephone=self.telephone.data,
         )
@@ -90,8 +84,7 @@ class ReconfirmForm(RegistrationForm):
         Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
 
-    attributes = ('agent_name', 'legal_person_identity', 'name', 'license_address', 'license_limit',
-                  'license_long_time_limit', 'telephone')
+    attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone')
 
     def update_address(self):
         current_user.address.address = self.address.data

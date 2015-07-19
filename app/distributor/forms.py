@@ -17,8 +17,8 @@ class RegisterForm(Form):
     password = PasswordField(validators=[DataRequired(), Length(32, 32)])
     confirm_password = PasswordField(validators=[DataRequired(), Length(32, 32), EqualTo('confirm_password', u'前后密码不一致')])
     name = StringField(validators=[DataRequired(u'必填')])
-    contact_mobile = StringField(validators=[DataRequired(u'必填')])
-    contact_telephone = StringField(validators=[DataRequired(u'必填')])
+    mobile = StringField(validators=[DataRequired(u'必填')])
+    telephone = StringField(validators=[DataRequired(u'必填')])
     contact = StringField(validators=[DataRequired(u'必填')])
     address = StringField(validators=[DataRequired(u'必填')])
     district_cn_id = StringField(validators=[DistrictValidator()])
@@ -32,8 +32,8 @@ class RegisterForm(Form):
             password=self.password.data,
             vendor_id=vendor_id,
             name=self.name.data,
-            contact_mobile=self.contact_mobile.data,
-            contact_telephone=self.contact_telephone.data,
+            mobile=self.mobile.data,
+            telephone=self.telephone.data,
             contact=self.contact.data
         )
         db.session.add(distributor)
