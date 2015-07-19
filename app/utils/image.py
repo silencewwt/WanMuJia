@@ -19,9 +19,8 @@ def save_image(id_, dir_name, field, img_stream):
 
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
-    ext = field.data.filename.rsplit('.', 1)[-1]
     image_hash = md5_with_time_salt(id_, 'image')
-    image_name = '%s.%s' % (image_hash, ext)
+    image_name = '%s.%s' % (image_hash, 'jpg')
     image_path = os.path.join(dir_path, image_name)
 
     im = Image.open(img_stream)

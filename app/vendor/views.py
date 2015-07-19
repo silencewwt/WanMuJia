@@ -77,10 +77,11 @@ def register():
                 return render_template('vendor/register.html', form=mobile_form)
         elif session[VENDOR_REGISTER_STEP_DONE] == 1:
             if request.method == 'POST':
+                detail_form.license_limit.data = '20150901'
                 if detail_form.validate():
                     vendor = detail_form.add_vendor(session[VENDOR_REGISTER_MOBILE])
                     login_user(vendor)
-                    identity_changed.send(current_app._get_current_object(), Identity(vendor.get_id()))
+                    identity_changed.send(current_app._get_current_object(), identity=Identity(vendor.get_id()))
                     session.pop(VENDOR_REGISTER_MOBILE)
                     session.pop(VENDOR_REGISTER_STEP_DONE)
                     return jsonify({ACCESS_GRANTED: True})
@@ -118,7 +119,8 @@ def items_data_table():
     valid_length = [10, 25, 50, 100]
     length = length if length in valid_length else valid_length[0]
     items = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False).offset(start).limit(length)
-    data = {'draw': draw, 'recordsTotal': Item.query.count(), 'recordsFiltered': items.count(), 'data': []}
+    data = {'draw': draw, 'recordsTotal': Item.query.filter_by(is_deleted=False).count(),
+            'recordsFiltered': items.count(), 'data': []}
     for item in items:
         data['data'].append({
             'id': item.id, 'item': item.item, 'second_category_id': item.second_category,

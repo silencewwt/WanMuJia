@@ -2,7 +2,7 @@
 import datetime
 from base64 import b64decode
 
-from flask.ext.login import current_user
+from flask.ext.login import current_user, current_app
 from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
@@ -26,18 +26,14 @@ class RegistrationForm(Form):
     email = StringField(validators=[Email()])   # TODO: exist email
     agent_name = StringField(validators=[DataRequired(u'必填')])
     agent_identity = StringField(validators=[DataRequired(u'必填'), Length(18, 18, u'身份证号码不符合规范!')])
-    agent_identity_front = FileField(validators=[
-        Image(required=True, base64=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    agent_identity_back = FileField(validators=[
-        Image(required=True, base64=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    agent_identity_front = FileField(validators=[Image(required=True, base64=True)])
+    agent_identity_back = FileField(validators=[Image(required=True, base64=True)])
+    license_image = FileField(validators=[Image(required=True, base64=True)])
     name = StringField(validators=[DataRequired(u'必填'), Length(2, 30, u'品牌厂商名称不符合规范')])
     license_limit = StringField(validators=[Length(8, 8)])
-    license_image = FileField(validators=[
-        Image(required=True, base64=True), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
     telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
-    address = StringField(validators=[DistrictValidator(), Length(1, 30)])
-    district_cn_id = StringField(validators=[DataRequired(), Length(6, 6)])
-    # logo = FileField(validators=[Image(required=True, base64=True), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    address = StringField(validators=[DataRequired(), Length(1, 30)])
+    district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
 
     image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image')
 
@@ -52,7 +48,7 @@ class RegistrationForm(Form):
         for image_field in self.image_fields:
             if getattr(self, image_field).data:
                 image, image_hash = save_image(vendor.id, 'vendor', getattr(self, image_field),
-                                   IO(b64decode(getattr(self, image_field)).data[23:]))
+                                               IO(b64decode(getattr(self, image_field).data[23:])))
                 setattr(vendor, image_field, image)
                 db.session.add(vendor)
             db.session.commit()
@@ -70,7 +66,7 @@ class RegistrationDetailForm(RegistrationForm):
     def add_vendor(self, mobile):
         vendor = Vendor(
             password=self.password.data,
-            email=self.password.data,
+            email=self.email.data,
             mobile=mobile,
             agent_name=self.agent_name.data,
             agent_identity=self.agent_identity.data,
@@ -82,20 +78,19 @@ class RegistrationDetailForm(RegistrationForm):
         db.session.commit()
         self.save_images(vendor=vendor)
         self.save_address(vendor=vendor)
+        return vendor
 
 
 class ReconfirmForm(RegistrationForm):
-    agent_identity_front = FileField(validators=[
-        Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    agent_identity_back = FileField(validators=[
-        Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    license_image = FileField(validators=[
-        Image(required=False), FileRequired(u'必填'), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    agent_identity_front = FileField(validators=[Image(required=False, base64=True)])
+    agent_identity_back = FileField(validators=[Image(required=False, base64=True)])
+    license_image = FileField(validators=[Image(required=False, base64=True)])
+    logo = FileField(validators=[Image(required=False, base64=True)])
 
     is_reconfirm = True
 
-    attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone')
+    attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone', 'email')
+    url_attributes = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
 
     def update_address(self):
         current_user.address.address = self.address.data
@@ -106,7 +101,8 @@ class ReconfirmForm(RegistrationForm):
     def show_info(self):
         for attr in self.attributes:
             getattr(self, attr).data = getattr(current_user, attr)
-        self.email.data = current_user.email
+        for attr in self.url_attributes:
+            setattr(self, attr + '_url', current_app.config['STATIC_URL'] + getattr(current_user, attr))
         self.address.data = current_user.address.address
         self.district_cn_id.data = current_user.address.cn_id
 
@@ -212,8 +208,8 @@ class ItemForm(Form):
 
 
 class ItemImageForm(Form):
-    item_id = IntegerField(validators=[DataRequired()])
-    file = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png'])])
+    item_id = IntegerField()
+    file = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png', 'jpeg'])])
 
     def validate_item_id(self, field):
         if field.data:

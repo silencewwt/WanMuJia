@@ -161,7 +161,7 @@ class Vendor(BaseUser, db.Model):
         class Object:
             pass
         stat = Object()
-        stat.items_count = Item.query.filter_by(vendor_id=self.id).count()
+        stat.items_count = Item.query.filter_by(vendor_id=self.id, is_deleted=False).count()
         stat.distributors_count = Distributor.query.filter_by(vendor_id=self.id).count()
         return stat
 
