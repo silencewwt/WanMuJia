@@ -146,7 +146,8 @@ def item_detail(item_id):
         else:
             return jsonify({'success': False, 'message': form.error2str()})
     elif request.method == 'DELETE':
-        db.session.delete(item)
+        item.is_deleted = True
+        db.session.add(item)
         db.session.commit()
         return redirect(url_for('.item_list'))
 
@@ -159,8 +160,8 @@ def new_item():
     form.generate_choices()
     if request.method == 'POST':
         if form.validate():
-            form.add_item(current_user.id)
-            return jsonify({'success': True})
+            item = form.add_item(current_user.id)
+            return jsonify({'success': True, 'item_id': item.id})
         return jsonify({'success': False, 'message': form.error2str()})
     return render_template('vendor/new_item.html', form=form, vendor=current_user)
 
@@ -172,9 +173,8 @@ def upload_item_image():
     if request.method == 'PUT':
         form = ItemImageForm(csrf_enabled=False)
         if form.validate():
-            image_hash = form.add_item_image()
-            return image_hash, 200
-        return 403
+            return jsonify({'success': True, 'image': form.add_item_image()})
+        return jsonify({'success': False, 'message': form.error2str()})
     else:
         form = ItemImageDeleteForm(csrf_enabled=False)
         if form.validate():
@@ -235,6 +235,20 @@ def invite_distributor():
         redis_set(DISTRIBUTOR_REGISTER, token, current_user.id)
         return 'http://%s/distributor/verify?token=%s' % ('www.wanmujia.com', token)   # TODO: host
     return render_template('vendor/invitation.html', vendor=current_user)
+
+
+@vendor_blueprint.route('/distributors/<int:distributor_id>/revocation', methods=['POST'])
+@vendor_permission.require()
+@vendor_confirmed
+def revocation(distributor_id):
+    distributor = Distributor.query.get_or_404(distributor_id)
+    if distributor.vendor_id != current_user.id:
+        return 'forbidden', 403
+    form = RevocationForm()
+    if form.validate_on_submit():
+        form.revoke()
+        return 'ok', 200
+    return '', 500
 
 
 @vendor_blueprint.route('/settings', methods=['GET', 'POST'])
