@@ -80,6 +80,7 @@ def register():
                 detail_form.license_limit.data = '20150901'
                 if detail_form.validate():
                     vendor = detail_form.add_vendor(session[VENDOR_REGISTER_MOBILE])
+                    vendor.push_confirm_reminds('warning')
                     login_user(vendor)
                     identity_changed.send(current_app._get_current_object(), identity=Identity(vendor.get_id()))
                     session.pop(VENDOR_REGISTER_MOBILE)

@@ -30,7 +30,7 @@ class RegistrationForm(Form):
     agent_identity_back = FileField(validators=[Image(required=True, base64=True)])
     license_image = FileField(validators=[Image(required=True, base64=True)])
     name = StringField(validators=[DataRequired(u'必填'), Length(2, 30, u'品牌厂商名称不符合规范')])
-    license_limit = StringField(validators=[Length(8, 8)])
+    license_limit = StringField(validators=[Length(8, 10)])
     telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
     address = StringField(validators=[DataRequired(), Length(1, 30)])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
@@ -39,9 +39,11 @@ class RegistrationForm(Form):
 
     def validate_license_limit(self, field):
         try:
-            datetime.datetime(int(field.data[:4]), int(field.data[4:6]), int(field.data[6:]))
+            date = list(map(int, field.data.split('/')))
+            limit = datetime.datetime(date[0], date[1], date[2])
         except ValueError:
             raise ValidationError(u'营业执照期限格式错误')
+        self.license_limit.data = limit.strftime('%G/%m/%d')
 
     def save_images(self, vendor=None):
         vendor = vendor if vendor else current_user
@@ -89,6 +91,7 @@ class ReconfirmForm(RegistrationForm):
 
     is_reconfirm = True
 
+    address_attributes = ('province', 'city', 'district')
     attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone', 'email')
     url_attributes = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
 
@@ -98,6 +101,13 @@ class ReconfirmForm(RegistrationForm):
         db.session.add(current_user.address)
         db.session.commit()
 
+    def show_address(self):
+        grades_id = [_.cn_id for _ in current_user.address.area.grade()]
+        while len(grades_id) < 3:
+            grades_id.append(None)
+        for attr, cn_id in zip(self.address_attributes, grades_id):
+            setattr(self, attr, cn_id)
+
     def show_info(self):
         for attr in self.attributes:
             getattr(self, attr).data = getattr(current_user, attr)
@@ -105,6 +115,7 @@ class ReconfirmForm(RegistrationForm):
             setattr(self, attr + '_url', current_app.config['STATIC_URL'] + getattr(current_user, attr))
         self.address.data = current_user.address.address
         self.district_cn_id.data = current_user.address.cn_id
+        self.show_address()
 
     def reconfirm(self):
         self.save_images()
@@ -287,6 +298,15 @@ class SettingsForm(Form):
     introduction = StringField(validators=[Length(0, 30)])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
 
+    address_attributes = ('province', 'city', 'district')
+
+    def show_address(self):
+        grades_id = [_.cn_id for _ in current_user.address.area.grade()]
+        while len(grades_id) < 3:
+            grades_id.append(None)
+        for attr, cn_id in zip(self.address_attributes, grades_id):
+            setattr(self, attr, cn_id)
+
     def show_vendor_setting(self, vendor):
         self.telephone.data = vendor.telephone
         self.introduction.data = vendor.introduction
@@ -295,6 +315,7 @@ class SettingsForm(Form):
         self.contact.data = vendor.contact
         self.address.data = vendor.address.address
         self.mobile.data = vendor.mobile
+        self.show_address()
 
     def update_vendor_setting(self, vendor):
         vendor.introduction = self.introduction.data
