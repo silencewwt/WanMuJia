@@ -303,20 +303,39 @@ jQuery(document).ready(function($) {
         var $distTable = $('#distributors');
 
         initDatatable($distTable, {
-            ajax: "/vendor/items/datatable",
+            ajax: "/vendor/distributors/datatable",
             columns: [
                 {data: "id", bSortable: false, visible: false},
-                {data: "item", bSortable: false},
-                {data: "second_category_id", bSortable: false},
-                {data: "price"},
-                {data: "size", bSortable: false}
+                {data: "name"},
+                {data: "address", bSortable: false},
+                {data: "contact_telephone", bSortable: false},
+                {data: "contact_mobile", bSortable: false},
+                {data: "contact", bSortable: false},
+                {data: "revocation_state", visible: false},
+                {data: "created"},
             ],
             columnDefs: [{
-                targets: [5],
-                data: "id",
+                targets: [7],
+                data: {},
                 render: function (data) {
-                    return "<a href='/vendor/items/" + data + "'>详情/编辑</a>";
-                }
+                    var genRevocateLink = function (text) {
+                        return '<a href="javascript:void(0)" data-dist-id="' + data.id + '">' + text + '</a>';
+                    };
+
+                    if (data.revocation_state == 'pendding') {
+                        return '<span class="text-warning">审核中</span>';
+                    }
+                    else if (data.revocation_state == 'revocated') {
+                        return '<span class="text-success">已取消授权</span>';
+                    }
+                    else if (data.revocation_state == 'rejected') {
+                        return '<span class="text-danger">审核失败;</span>' +
+                                genRevocateLink('点击再次提交审核');
+                    }
+                    else {
+                        return genRevocateLink('取消授权');
+                    }
+                },
             }],
         });
 
