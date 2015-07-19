@@ -168,6 +168,8 @@ class Vendor(BaseUser, db.Model):
         reminds = redis_get(VENDOR_REMINDS, self.id)
         if reminds:
             reminds = json.loads(reminds)
+        else:
+            reminds = {}
         return reminds
 
     def push_confirm_reminds(self, status, reject_message=''):
