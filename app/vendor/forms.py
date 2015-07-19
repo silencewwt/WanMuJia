@@ -271,10 +271,11 @@ class ItemImageDeleteForm(Form):
 class SettingsForm(Form):
     name = StringField()
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    mobile = StringField(validators=[DataRequired(), Length(11, 11)])
     telephone = StringField(validators=[DataRequired(u'电话号码必填'), Length(7, 15)])
-    contact = StringField(validators=[DataRequired()])
+    contact = StringField()
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
-    introduction = StringField(validators=[])
+    introduction = StringField(validators=[Length(0, 30)])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
 
     def show_vendor_setting(self, vendor):
@@ -284,6 +285,7 @@ class SettingsForm(Form):
         self.name.data = vendor.name
         self.contact.data = vendor.contact
         self.address.data = vendor.address.address
+        self.mobile.data = vendor.mobile
 
     def update_vendor_setting(self, vendor):
         vendor.introduction = self.introduction.data
