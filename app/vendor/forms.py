@@ -298,6 +298,8 @@ class SettingsForm(Form):
     introduction = StringField(validators=[Length(0, 30)])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
 
+    logo_url = None
+
     address_attributes = ('province', 'city', 'district')
 
     def show_address(self):
@@ -315,6 +317,7 @@ class SettingsForm(Form):
         self.contact.data = vendor.contact
         self.address.data = vendor.address.address
         self.mobile.data = vendor.mobile
+        self.logo_url = current_app.config['STATIC_URL'] + vendor.logo
         self.show_address()
 
     def update_vendor_setting(self, vendor):
