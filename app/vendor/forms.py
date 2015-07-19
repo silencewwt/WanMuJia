@@ -216,7 +216,7 @@ class ItemImageForm(Form):
 
     def add_item_image(self):
         image_path, image_hash = save_image(self.item_id.data, 'item', self.image)
-        item_image = ItemImage(self.item_id.data, image_path, image_hash, 999)  # 新上传的图片默认在最后
+        item_image = ItemImage(self.item_id.data, image_path, image_hash, self.image.data.filename, 999)  # 新上传的图片默认在最后
         db.session.add(item_image)
         db.session.commit()
         return image_hash
@@ -236,7 +236,7 @@ class ItemImageSortForm(Form):
         image_list = []
         image_hashes = [image_hash.strip() for image_hash in field.data.split(',')]
         for image_hash in image_hashes:
-            item_image = ItemImage.query.filter_by(image_hash=image_hash, item_id=self.item_id.data).limit(1).first()
+            item_image = ItemImage.query.filter_by(hash=image_hash, item_id=self.item_id.data).limit(1).first()
             if not len(image_hash) == 32 or not item_image:
                 raise ValidationError(u'图片hash值错误!')
             image_list.append(image_list)

@@ -138,7 +138,7 @@ def item_detail(item_id):
     if request.method == 'GET':
         form.show_item(item)
         distributors = item.in_stock_distributors()
-        return render_template('vendor/edit.html', form=form, distributors=distributors, vendor=current_user)
+        return render_template('vendor/edit.html', form=form, item=item, distributors=distributors, vendor=current_user)
     elif request.method == 'PUT':
         if form.validate():
             form.update_item(item)
