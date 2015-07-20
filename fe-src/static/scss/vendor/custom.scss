@@ -288,6 +288,11 @@ form .form-group.required > label::before {
             }
         }
     }
+
+    &#edit-item-form .pager .return-list {
+        display: list-item;
+        margin-right: 8px;
+    }
 }
 
 /*Settings*/
