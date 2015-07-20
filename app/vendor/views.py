@@ -255,7 +255,7 @@ def revocation(distributor_id):
     form.distributor_id.data = distributor.id
     if form.validate_on_submit():
         form.revoke()
-    return redirect(url_for('.revocation'))
+    return redirect(url_for('.distributor_list'))
 
 
 @vendor_blueprint.route('/settings', methods=['GET', 'POST'])
