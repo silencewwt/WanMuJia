@@ -10,7 +10,7 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, N
 from app import db
 from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, Decoration, \
     Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, FirstCategory
-from app.utils import IO
+from app.utils import IO, convert_url
 from app.utils.forms import Form
 from app.utils.image import save_image
 from app.utils.fields import OptionGroupSelectField, SelectField
@@ -112,7 +112,7 @@ class ReconfirmForm(RegistrationForm):
         for attr in self.attributes:
             getattr(self, attr).data = getattr(current_user, attr)
         for attr in self.url_attributes:
-            setattr(self, attr + '_url', current_app.config['STATIC_URL'] + getattr(current_user, attr))
+            setattr(self, attr + '_url', convert_url(getattr(current_user, attr)))
         self.address.data = current_user.address.address
         self.district_cn_id.data = current_user.address.cn_id
         self.show_address()
@@ -317,7 +317,7 @@ class SettingsForm(Form):
         self.contact.data = vendor.contact
         self.address.data = vendor.address.address
         self.mobile.data = vendor.mobile
-        self.logo_url = current_app.config['STATIC_URL'] + vendor.logo
+        self.logo_url = convert_url(vendor.logo)
         self.show_address()
 
     def update_vendor_setting(self, vendor):
