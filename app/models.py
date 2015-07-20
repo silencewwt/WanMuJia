@@ -9,6 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
 from app.constants import VENDOR_REMINDS
+from app.utils import convert_url
 from app.utils.redis import redis_get, redis_set
 from .permission import privilege_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
 
@@ -158,7 +159,7 @@ class Vendor(BaseUser, db.Model):
 
     @property
     def logo_url(self):
-        return current_app.config['STATIC_URL'] + self.logo
+        return convert_url(self.logo)
 
     @property
     def statistic(self):

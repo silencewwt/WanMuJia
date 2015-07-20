@@ -27,3 +27,9 @@ def _data_convert(args):
     if PY3:
         return bytes(data, 'utf8')
     return data
+
+
+def convert_url(url):
+    if url:
+        return current_app.config['STATIC_URL'] + url
+    return ''
