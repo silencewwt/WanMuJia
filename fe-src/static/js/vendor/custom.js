@@ -321,7 +321,7 @@ jQuery(document).ready(function($) {
                     method: 'post',
                     data: {
                         item_id: $itemEditForm.data('item-id'),
-                        sorted: sort.join(','),
+                        images: sort.join(','),
                     },
                     success: function (data) {
                         if (data.success) {
