@@ -291,7 +291,7 @@ class ItemImageDeleteForm(Form):
 class SettingsForm(Form):
     name = StringField()
     logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
-    mobile = StringField(validators=[DataRequired(), Length(11, 11)])
+    mobile = StringField()
     telephone = StringField(validators=[DataRequired(u'电话号码必填'), Length(7, 15)])
     contact = StringField()
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
@@ -327,7 +327,7 @@ class SettingsForm(Form):
         vendor.address.address = self.address.data
         vendor.address.cn_id = self.district_cn_id.data
         if self.logo.data:
-            logo = save_image(vendor.id, 'vendor', self.logo, self.logo.data.stream)
+            logo, image_hash = save_image(vendor.id, 'vendor', self.logo, self.logo.data.stream)
             vendor.logo = logo
         db.session.add(vendor)
         db.session.add(vendor.address)

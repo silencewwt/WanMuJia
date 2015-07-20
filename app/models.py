@@ -157,6 +157,10 @@ class Vendor(BaseUser, db.Model):
         return VendorAddress.query.filter_by(vendor_id=self.id).limit(1).first()
 
     @property
+    def logo_url(self):
+        return current_app.config['STATIC_URL'] + self.logo
+
+    @property
     def statistic(self):
         class Object:
             pass

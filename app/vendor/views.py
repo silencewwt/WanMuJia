@@ -252,10 +252,10 @@ def revocation(distributor_id):
     if distributor.vendor_id != current_user.id:
         return 'forbidden', 403
     form = RevocationForm()
+    form.distributor_id.data = distributor.id
     if form.validate_on_submit():
         form.revoke()
-        return 'ok', 200
-    return '', 500
+    return redirect(url_for('.revocation'))
 
 
 @vendor_blueprint.route('/settings', methods=['GET', 'POST'])
@@ -265,8 +265,7 @@ def settings():
     if request.method == 'POST':
         if form.validate():
             form.update_vendor_setting(current_user)
-    else:
-        form.show_vendor_setting(current_user)
+    form.show_vendor_setting(current_user)
     return render_template('vendor/settings.html', form=form, vendor=current_user)
 
 
