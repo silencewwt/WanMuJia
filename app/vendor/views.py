@@ -119,7 +119,7 @@ def items_data_table():
     valid_length = [10, 25, 50, 100]
     length = length if length in valid_length else valid_length[0]
     items = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False).offset(start).limit(length)
-    data = {'draw': draw, 'recordsTotal': Item.query.filter_by(is_deleted=False).count(),
+    data = {'draw': draw, 'recordsTotal': Item.query.filter_by(vendor_id=current_user.id, is_deleted=False).count(),
             'recordsFiltered': items.count(), 'data': []}
     for item in items:
         data['data'].append({
