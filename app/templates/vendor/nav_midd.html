@@ -150,7 +150,7 @@
                 <li class="dropdown user-profile">
                     {% if vendor %}
                         <a href="#" data-toggle="dropdown">
-                            <img src="/lib/xenon/images/user-1.png" alt="user-image" class="img-circle img-inline userpic-32" width="28" />
+                            <img src="{% if vendor.logo_url %}{{ vendor.logo_url }}{% else %}/lib/xenon/images/user-1.png{% endif %}" alt="user-image" class="img-circle img-inline userpic-32" width="28" />
                             <span>
                                     {{ vendor.name }}
                                     <i class="fa-angle-down"></i>

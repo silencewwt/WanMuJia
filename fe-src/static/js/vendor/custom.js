@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
         });
 
         $.validator.addMethod('customDate', function (value, element) {
-            var dateReg = /^(\d{4})\/((0?([1-9]))|(1[1|2]))\/((0?[1-9])|([12]([1-9]))|(3[0|1]))$/;
+            var dateReg = /^(\d{4})\/((0?([1-9]))|(1[0|1|2]))\/((0?[1-9])|([12]([1-9]))|(3[0|1]))$/;
             return this.optional(element) || (dateReg.test(value));
         });
     }
@@ -431,7 +431,8 @@ jQuery(document).ready(function($) {
                         return '<a href="javascript:void(0)" data-toggle="modal" data-target="#revocation-modal" data-dist-name="' + data.name + '" data-dist-id="' + data.id + '">' + text + '</a>';
                     };
 
-                    if (data.revocation_state == 'pendding') {
+                    console.log(data.revocation_state);
+                    if (data.revocation_state == 'pending') {
                         return '<span class="text-warning">审核中</span>';
                     }
                     else if (data.revocation_state == 'revocated') {
