@@ -386,9 +386,9 @@ jQuery(document).ready(function($) {
                     }
                     else {
                         toastr.error(data.message, '提交失败');
+                        $this.removeClass('disabled');
                     }
                     $link.html(originVal);
-                    $this.removeClass('disabled');
                 },
                 error: function (xhr) {
                     toastr.error('服务器'+ xhr.status +'错误', '提交失败');
