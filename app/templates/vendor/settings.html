@@ -21,7 +21,7 @@
     <div class="panel panel-default">
 
         <div class="panel-body">
-            <form method="post" id="settings-form" role="form" action="/vendor/settings" class="validate form-horizontal">
+            <form method="post" id="settings-form" role="form" action="/vendor/settings" enctype="multipart/form-data" class="validate form-horizontal">
                 {{ form.csrf_token }}
 
                 <div class="form-group">
