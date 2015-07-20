@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
         });
 
         $.validator.addMethod('customDate', function (value, element) {
-            var dateReg = /^(\d{4})\/((0?([1-9]))|(1[1|2]))\/((0?[1-9])|([12]([1-9]))|(3[0|1]))$/;
+            var dateReg = /^(\d{4})\/((0?([1-9]))|(1[0|1|2]))\/((0?[1-9])|([12]([1-9]))|(3[0|1]))$/;
             return this.optional(element) || (dateReg.test(value));
         });
     }
@@ -197,6 +197,9 @@ jQuery(document).ready(function($) {
     if (getPageTitle() === 'item-edit') {
         var $itemEditForm = $('#edit-item-form');
         var originFormValue = $itemEditForm.serialize();
+
+        // 后台模板默认给 `.pager a` 绑定了 click 回调阻止了 <a> 的默认行为, 此处移除 click 监听。
+        $itemEditForm.find('.return-list a').off('click');
 
         // Edit-form
         $itemEditForm.delegate('.form-control', 'keydown', function () {
@@ -386,6 +389,13 @@ jQuery(document).ready(function($) {
                         });
 
                         $newItemForm.bootstrapWizard('next');
+
+                        // hide next button and show add-another, return-list buttons.
+                        $this.hide();
+                        $newItemForm.find('.add-another').show()
+                                .children('a').off('click');   // 清除模板绑定的默认事件
+                        $newItemForm.find('.return-list').show()
+                                .children('a').off('click');   // 清除模板绑定的默认事件
                     }
                     else {
                         toastr.error(data.message, '提交失败');
@@ -431,7 +441,8 @@ jQuery(document).ready(function($) {
                         return '<a href="javascript:void(0)" data-toggle="modal" data-target="#revocation-modal" data-dist-name="' + data.name + '" data-dist-id="' + data.id + '">' + text + '</a>';
                     };
 
-                    if (data.revocation_state == 'pendding') {
+                    console.log(data.revocation_state);
+                    if (data.revocation_state == 'pending') {
                         return '<span class="text-warning">审核中</span>';
                     }
                     else if (data.revocation_state == 'revocated') {
