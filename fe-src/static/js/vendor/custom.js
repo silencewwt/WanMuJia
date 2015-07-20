@@ -272,6 +272,15 @@ jQuery(document).ready(function($) {
         var $albumImages = $('.album-images');
         var deleteImgHash = '';
 
+        var getImgSort = function () {
+            var sort = [];
+            $albumImages.find('.album-image').each(function () {
+                sort.push($(this).data('hash'));
+            });
+            return sort;
+        };
+        var originSort = getImgSort();
+
         $albumImages
             // 修改 deleteImgHash 变量
             .delegate('[data-action="trash"]', 'click', function () {
@@ -300,18 +309,31 @@ jQuery(document).ready(function($) {
             });
 
         $('#sort-confirm').click(function () {
-            var sort = [];
-            $albumImages
-                .find('.album-image')
-                .each(function () {
-                    sort.push($(this).data('hash'));
-                });
+            var sort = getImgSort();
+            console.log(originSort, sort);
 
-            $.ajax({
-                url: '/vendor/items/image_sort',
-                method: 'post',
-                data: sort.join(',')
-            });
+            if (sort.toString() == originSort.toString()) {
+                toastr.success('保存顺序成功!');
+            }
+            else {
+                $.ajax({
+                    url: '/vendor/items/image_sort',
+                    method: 'post',
+                    data: sort.join(','),
+                    success: function (data) {
+                        if (data.success) {
+                            toastr.success('保存顺序成功!');
+                            originSort = sort;
+                        }
+                        else {
+                            toastr.error(data.message, '保存顺序失败! 请重新保存~');
+                        }
+                    },
+                    error: function (xhr) {
+                        toastr.error('服务器' + xhr.status + '错误...', '保存顺序失败! 请重新保存~');
+                    },
+                });
+            }
         });
     }
 
