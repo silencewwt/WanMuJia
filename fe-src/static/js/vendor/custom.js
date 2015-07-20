@@ -319,7 +319,10 @@ jQuery(document).ready(function($) {
                 $.ajax({
                     url: '/vendor/items/image_sort',
                     method: 'post',
-                    data: sort.join(','),
+                    data: {
+                        item_id: $itemEditForm.data('item-id'),
+                        sorted: sort.join(','),
+                    },
                     success: function (data) {
                         if (data.success) {
                             toastr.success('保存顺序成功!');

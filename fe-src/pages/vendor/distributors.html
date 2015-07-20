@@ -101,7 +101,7 @@
     <div class="modal fade" id="revocation-modal" data-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="contract-form" method="post" action="/vendor/distributors/0/revocation" class="validate">
+                <form id="contract-form" method="post"  enctype="multipart/form-data" action="/vendor/distributors/0/revocation" class="validate">
                     {{ form.csrf_token }}
 
                     <div class="modal-header">
