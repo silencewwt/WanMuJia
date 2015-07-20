@@ -230,21 +230,19 @@
                 var reader = new FileReader();
                 reader.readAsDataURL(files[0]);
                 reader.onloadend = function () {
-                    setTimeout(function () {
-                        imgFiles[$this[0].name] = this.result;
+                    imgFiles[$this[0].name] = this.result;
 
-                        // 当最后一个文件上传完成时更改上传状态为完成
-                        if (latestUpload.name == inputName) {
-                            latestUpload.completed = true;
-                        }
+                    // 当最后一个文件上传完成时更改上传状态为完成
+                    if (latestUpload.name == inputName) {
+                        latestUpload.completed = true;
+                    }
 
-                        $uploadState.removeClass(loadingClass).addClass(completeClass);
+                    $uploadState.removeClass(loadingClass).addClass(completeClass);
 
-                        $formGroup.find('.img-preview')
-                                .show()
-                                .children('img')
-                                .attr('src', this.result);
-                    }.bind(this), 5000);
+                    $formGroup.find('.img-preview')
+                            .show()
+                            .children('img')
+                            .attr('src', this.result);
 
                 };
             }

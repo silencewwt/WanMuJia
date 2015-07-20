@@ -132,7 +132,7 @@ a.bg-danger:hover {
 /*
  * 页面样式
  */
- 
+
 // panel
 .inline-block-clear {
     font-size: 0;
@@ -265,13 +265,30 @@ form .form-group.required > label::before {
 }
 
 /* Item page */
-#new-item-form.form-wizard {
+.form-wizard {
     .tabs a {
         cursor: default;
         text-decoration: none;
     }
-}
+    .pager {
+        .pull-right {
+            margin-left: 8px;
+        }
+        .add-another, .return-list {
+            display: none;
+        }
+        .add-another a {
+            color: #ffffff;
+            background-color: #8dc63f;
+            border-color: #80b636;
 
+            &:hover {
+                background-color: #72a230;
+                border-color: #5f8628;
+            }
+        }
+    }
+}
 
 /*Settings*/
 .logo-preview img {

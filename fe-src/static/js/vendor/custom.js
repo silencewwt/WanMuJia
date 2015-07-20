@@ -386,6 +386,13 @@ jQuery(document).ready(function($) {
                         });
 
                         $newItemForm.bootstrapWizard('next');
+
+                        // hide next button and show add-another, return-list buttons.
+                        $this.hide();
+                        $newItemForm.find('.add-another').show()
+                                .children('a').off('click');   // 清除模板绑定的默认事件
+                        $newItemForm.find('.return-list').show()
+                                .children('a').off('click');   // 清除模板绑定的默认事件
                     }
                     else {
                         toastr.error(data.message, '提交失败');
