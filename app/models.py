@@ -374,7 +374,7 @@ class Item(db.Model):
     @property
     def images(self):
         return ItemImage.query.filter_by(item_id=self.id, is_deleted=False).\
-            order_by(ItemImage.created).order_by(ItemImage.sort)
+            order_by(ItemImage.sort, ItemImage.created)
 
 
 class ItemImage(db.Model):

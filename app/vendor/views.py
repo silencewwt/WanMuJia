@@ -196,8 +196,8 @@ def update_item_image_sort():
     form = ItemImageSortForm(csrf_enabled=False)
     if form.validate():
         form.update_item_image_sort()
-        return 'success', 200
-    return 'forbidden', 403
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': form.error2str()})
 
 
 @vendor_blueprint.route('/distributors', methods=['GET', 'POST'])

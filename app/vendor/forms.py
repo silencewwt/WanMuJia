@@ -259,7 +259,7 @@ class ItemImageSortForm(Form):
             item_image = ItemImage.query.filter_by(hash=image_hash, item_id=self.item_id.data).limit(1).first()
             if not len(image_hash) == 32 or not item_image:
                 raise ValidationError(u'图片hash值错误!')
-            image_list.append(image_list)
+            image_list.append(item_image)
         self.image_list = image_list
 
     def update_item_image_sort(self):
