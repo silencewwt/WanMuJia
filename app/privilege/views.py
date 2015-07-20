@@ -19,14 +19,14 @@ def login():
             identity_changed.send(current_app._get_current_object(), Identity(privilege.get_id()))
             return 'success'
         flash(u'用户名或密码错误')
-    return render_template('privilege/login.html', form=form)
+    return render_template('admin/login.html', form=form)
 
 
 @privilege_blueprint.route('/vendor_confirm')
 @privilege_permission.require()
 def vendor_confirm():
     vendors = Vendor.query.filter_by(confirmed=False, rejected=False).all()
-    return render_template('privilege/vendor_confirm.html', vendors=vendors)
+    return render_template('admin/vendor_confirm.html', vendors=vendors)
 
 
 @privilege_blueprint.route('/vendor_confirm/reject', methods=['POST'])
@@ -57,4 +57,4 @@ def distributors_revocation():
     if form.validate_on_submit():
         form.revoke()
         return redirect(url_for('.distributors_revocation'))
-    return render_template('/privilege/distributors_revocation.html', form=form, revocations=revocations)
+    return render_template('admin/distributors_revocation.html', form=form, revocations=revocations)
