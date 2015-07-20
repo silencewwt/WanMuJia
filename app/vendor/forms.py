@@ -270,12 +270,12 @@ class ItemImageSortForm(Form):
 
 
 class ItemImageDeleteForm(Form):
-    image_hash = StringField(validators=[DataRequired(), Length(32, 32)])
+    image_hash = StringField()
 
     item_image = None
 
     def validate_image_hash(self, field):
-        item_image = ItemImage.query.filter_by(image_hash=field.data, is_deleted=False).limit(1).first()
+        item_image = ItemImage.query.filter_by(hash=field.data, is_deleted=False).limit(1).first()
         if not item_image:
             raise ValidationError()
         if not item_image.get_vendor_id() == current_user.id:
