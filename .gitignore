@@ -61,7 +61,11 @@ target/
 *.tar.gz
 dump.rdb
 
-# node
+# Node
 node_modules/
 
+# Redis
+dump.rdb
+
+# Dev
 server/

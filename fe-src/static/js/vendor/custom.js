@@ -524,6 +524,7 @@ jQuery(document).ready(function($) {
             }
         });
 
+        // validate
         $('#mobile').rules('add', {
             mobile: true,
             messages: {
@@ -535,6 +536,31 @@ jQuery(document).ready(function($) {
             messages: {
                 tel: '请填写合法的固定电话号码'
             }
+        });
+
+        // send email button
+        $('#send-email').click(function () {
+            var vendorId = $(this).data('vendor-id');
+
+            $.ajax({
+                url: '/service/send_email?type=email_confirm',
+                method: 'post',
+                data: {
+                    role: 'vendor',
+                    id: vendorId,
+                },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success('验证邮件已发送, 请查收', '发送成功!');
+                    }
+                    else {
+                        toastr.error(data.message, '发送失败!');
+                    }
+                },
+                error: function (xhr) {
+                    toastr.error('服务器' + xhr.status + '错误...', '发送失败!');
+                },
+            });
         });
     }
 
