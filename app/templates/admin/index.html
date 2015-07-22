@@ -14,7 +14,7 @@
         <div class="col-sm-3">
 
             <a href="/privilege/items">
-                <div class="xe-widget xe-vertical-counter xe-vertical-counter-danger" data-suffix="&nbsp;个" data-count=".num" data-from="0" data-to="{{ statidtic['items'] }}" data-duration="2">
+                <div class="xe-widget xe-vertical-counter xe-vertical-counter-danger" data-suffix="&nbsp;个" data-count=".num" data-from="0" data-to="{{ statistic['items'] }}" data-duration="2">
                     <div class="xe-upper">
 
                         <div class="xe-icon">
@@ -39,7 +39,7 @@
                     <div class="xe-upper">
 
                         <div class="xe-icon">
-                            <i class="linecons-user"></i>
+                            <i class="fa-shopping-cart"></i>
                         </div>
                         <div class="xe-label">
                             <strong class="num">0家</strong>
@@ -90,28 +90,33 @@
 
     <div class="row">
         <div class="col-sm-3">
-    		<div class="xe-widget xe-counter xe-counter-black" data-count=".num" data-from="1" data-to="{{ statistic['vendors_to_confirm'] }}" data-suffix="个" data-duration="2" data-easing="false">
-    			<div class="xe-icon">
-    				<i class="linecons-user"></i>
-    			</div>
-    			<div class="xe-label">
-    				<strong class="num">0个</strong>
-    				<span>待审核入驻的厂家</span>
-    			</div>
-    		</div>
+            <a href="/privilege/confirm#vendor_confirm">
+        		<div class="xe-widget xe-counter xe-counter-primary" data-count=".num" data-from="0" data-to="{{ statistic['vendors_to_confirm'] }}" data-suffix="&nbsp;家" data-duration="2" data-easing="false">
+        			<div class="xe-icon">
+        				<i class="fa-rocket"></i>
+        			</div>
+        			<div class="xe-label">
+        				<strong class="num">0家</strong>
+        				<span>待审核入驻的厂家</span>
+        			</div>
+        		</div>
+            </a>
     	</div>
 
         <div class="col-sm-3">
-    		<div class="xe-widget xe-counter xe-counter-blue" data-count=".num" data-from="1" data-to="{{ statistic['distributors_to_confirm'] }}" data-suffix="个" data-duration="2" data-easing="false">
-    			<div class="xe-icon">
-    				<i class="linecons-user"></i>
-    			</div>
-    			<div class="xe-label">
-    				<strong class="num">0个</strong>
-    				<span>待审核解约的商家</span>
-    			</div>
-    		</div>
+            <a href="/privilege/confirm#revocation">
+        		<div class="xe-widget xe-counter xe-counter-blue" data-count=".num" data-from="1" data-to="{{ statistic['distributors_to_confirm'] }}" data-suffix="&nbsp;家" data-duration="2" data-easing="false">
+        			<div class="xe-icon">
+        				<i class="fa-undo"></i>
+        			</div>
+        			<div class="xe-label">
+        				<strong class="num">0家</strong>
+        				<span>待审核解约的商家</span>
+        			</div>
+        		</div>
+            </a>
     	</div>
+
     </div>
 {% endblock %}
 

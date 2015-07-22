@@ -71,13 +71,6 @@ jQuery(document).ready(function($) {
                 {data: "contact", bSortable: false},
                 {data: "created", bSortable: false}
             ],
-            columnDefs: [{
-                targets: [6],
-                data: "id",
-                render: function (id) {
-                    return "<a data-toggle='modal' data-target='#revocation-modal' data-dist-id='" + id + "'" + " href='#'>取消授权</a>";
-                }
-            }]
         });
     }
 
@@ -173,12 +166,12 @@ jQuery(document).ready(function($) {
         };
 
         initDatatable($('#vendors'), {
-            ajax: "/privilege/vendor_confirm/datatable",
+            ajax: "/privilege/vendors/confirm/datatable",
             columns: [
                 {data: "id", bSortable: false, visible: false},
                 {data: "name", bSortable: false},
-                {data: "license_address", bSortable: false},
-                {data: "limit", bSortable: false},
+                {data: "address", bSortable: false},
+                {data: "license_limit", bSortable: false},
                 {data: "mobile", bSortable: false},
                 {data: "state"}
             ],
@@ -198,6 +191,7 @@ jQuery(document).ready(function($) {
                 {data: "name", bSortable: false},
                 {data: "address", bSortable: false},
                 {data: "contact_mobile", bSortable: false},
+                {data: "contact_telephone", bSortable: false},
                 {data: "contact", bSortable: false},
                 {data: "state"}
             ],
