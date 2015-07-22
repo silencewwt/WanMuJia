@@ -89,12 +89,13 @@ jQuery(document).ready(function($) {
             columns: [
                 {data: "id", bSortable: false, visible: false},
                 {data: "name", bSortable: false},
-                {data: "license_address", bSortable: false},
-                {data: "limit", bSortable: false},
-                {data: "mobile", bSortable: false}
+                {data: "address", bSortable: false},
+                {data: "license_limit", bSortable: false},
+                {data: "mobile", bSortable: false},
+                {data: "telephone", bSortable: false},
             ],
             columnDefs: [{
-                targets: [5],
+                targets: [6],
                 data: "id",
                 render: function (id) {
                     return "<a href='/privilege/vendors/" + id + "'>详情</a>";
