@@ -1,16 +1,27 @@
 # -*- coding: utf-8 -*-
-from flask.ext.login import current_user
-from flask.ext.wtf import Form
+from flask import current_app
+from flask.ext.login import login_user, current_user
+from flask.ext.principal import identity_changed, Identity
 from wtforms import StringField, PasswordField, IntegerField, BooleanField
 from wtforms.validators import ValidationError, DataRequired, Length
 
 from app import db
-from app.models import Vendor, Distributor, DistributorRevocation
+from app.forms import Form
+from app.models import Vendor, Distributor, DistributorRevocation, Privilege
 
 
 class LoginForm(Form):
     username = StringField(validators=[DataRequired()])
     password = PasswordField(validators=[DataRequired(), Length(32, 32)])
+
+    def login(self):
+        privilege = Privilege.query.filter_by(username=self.username.data).limit(1).first() or \
+            Privilege.query.filter_by(email=self.username.data).limit(1).first()
+        if privilege and privilege.verify_password(self.password.data):
+            login_user(privilege)
+            identity_changed.send(current_app._get_current_object(), Identity(privilege.get_id()))
+            return True
+        return False
 
 
 class VendorConfirmForm(Form):

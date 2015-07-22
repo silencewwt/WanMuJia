@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from flask import request, render_template, current_app, flash, redirect, url_for
-from flask.ext.login import login_user, current_user
-from flask.ext.principal import identity_changed, Identity
+from flask import request, render_template, current_app, flash, redirect, url_for, jsonify
 
-from app.models import Vendor, Privilege, DistributorRevocation
+from app.constants import ACCESS_GRANTED
+from app.models import Vendor, DistributorRevocation
 from app.permission import privilege_permission
 from . import privilege as privilege_blueprint
 from .forms import LoginForm, VendorConfirmForm, VendorConfirmRejectForm, DistributorRevocationForm
@@ -12,13 +11,10 @@ from .forms import LoginForm, VendorConfirmForm, VendorConfirmRejectForm, Distri
 @privilege_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        privilege = Privilege.query.filter_by(username=form.username.data).limit(1).first()
-        if privilege.verify_password(form.password.data):
-            login_user(privilege)
-            identity_changed.send(current_app._get_current_object(), Identity(privilege.get_id()))
-            return 'success'
-        flash(u'用户名或密码错误')
+    if request.method == 'POST':
+        if form.validate() and form.login():
+            return jsonify({ACCESS_GRANTED: True})
+        return jsonify({ACCESS_GRANTED: False, 'message': u'用户名或密码错误.'})
     return render_template('admin/login.html', form=form)
 
 
@@ -27,6 +23,12 @@ def login():
 def vendor_confirm():
     vendors = Vendor.query.filter_by(confirmed=False, rejected=False).all()
     return render_template('admin/vendor_confirm.html', vendors=vendors)
+
+
+@privilege_blueprint.route('vendor_confirm/datatable')
+@privilege_permission.require()
+def vendors_datatable():
+    pass
 
 
 @privilege_blueprint.route('/vendor_confirm/reject', methods=['POST'])

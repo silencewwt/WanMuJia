@@ -505,8 +505,15 @@ class Privilege(BaseUser, db.Model):
 
     id_prefix = privilege_id_prefix
 
-    def __init__(self, password, mobile, email):
+    def __init__(self, password, mobile, email, username):
+        self.username = username
         super(Privilege, self).__init__(password, mobile, email)
+
+    @staticmethod
+    def generate_fake():
+        privilege = Privilege('14e1b600b1fd579f47433b88e8d85291', 12345678901, 'a@a.com', 'admin')
+        db.session.add(privilege)
+        db.session.commit()
 
 
 class Province(db.Model):
@@ -747,3 +754,4 @@ def generate_fake_data():
     FirstScene.generate_fake()
     SecondScene.generate_fake()
     Vendor.generate_fake()
+    Privilege.generate_fake()
