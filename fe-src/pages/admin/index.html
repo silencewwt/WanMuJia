@@ -14,7 +14,7 @@
         <div class="col-sm-3">
 
             <a href="/privilege/items">
-                <div class="xe-widget xe-vertical-counter xe-vertical-counter-danger" data-suffix="&nbsp;个" data-count=".num" data-from="0" data-to="140" data-duration="2">
+                <div class="xe-widget xe-vertical-counter xe-vertical-counter-danger" data-suffix="&nbsp;个" data-count=".num" data-from="0" data-to="{{ statidtic['items'] }}" data-duration="2">
                     <div class="xe-upper">
 
                         <div class="xe-icon">
@@ -35,7 +35,7 @@
         <div class="col-sm-3">
 
             <a href="/privilege/distributors">
-                <div class="xe-widget xe-vertical-counter xe-vertical-counter-white" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="23" data-duration="2" data-easing="false">
+                <div class="xe-widget xe-vertical-counter xe-vertical-counter-white" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="{{ statistic['distributors'] }}" data-duration="2" data-easing="false">
                     <div class="xe-upper">
 
                         <div class="xe-icon">
@@ -62,7 +62,7 @@
         <div class="col-sm-3">
 
             <a href="/privilege/vendors">
-                <div class="xe-widget xe-vertical-counter xe-vertical-counter-primary" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="10" data-duration="2" data-easing="false">
+                <div class="xe-widget xe-vertical-counter xe-vertical-counter-primary" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="{{ statistic['vendors'] }}" data-duration="2" data-easing="false">
                     <div class="xe-upper">
 
                         <div class="xe-icon">
@@ -87,6 +87,32 @@
 
     </div>
 
+
+    <div class="row">
+        <div class="col-sm-3">
+    		<div class="xe-widget xe-counter xe-counter-black" data-count=".num" data-from="1" data-to="{{ statistic['vendors_to_confirm'] }}" data-suffix="个" data-duration="2" data-easing="false">
+    			<div class="xe-icon">
+    				<i class="linecons-user"></i>
+    			</div>
+    			<div class="xe-label">
+    				<strong class="num">0个</strong>
+    				<span>待审核入驻的厂家</span>
+    			</div>
+    		</div>
+    	</div>
+
+        <div class="col-sm-3">
+    		<div class="xe-widget xe-counter xe-counter-blue" data-count=".num" data-from="1" data-to="{{ statistic['distributors_to_confirm'] }}" data-suffix="个" data-duration="2" data-easing="false">
+    			<div class="xe-icon">
+    				<i class="linecons-user"></i>
+    			</div>
+    			<div class="xe-label">
+    				<strong class="num">0个</strong>
+    				<span>待审核解约的商家</span>
+    			</div>
+    		</div>
+    	</div>
+    </div>
 {% endblock %}
 
 
