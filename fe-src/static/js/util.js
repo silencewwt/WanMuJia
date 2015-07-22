@@ -69,7 +69,10 @@ function genFormData($form, files) {
     $form.find('input').each(function () {
         var value = null;
 
-        if (this.type == 'password' && this.value.length > 0) {
+        if (this.type == 'button' || this.type == 'submit' || this.type == 'reset') {
+            return;
+        }
+        else if (this.type == 'password' && this.value.length > 0) {
             value = encrypt(this.value);
         }
         else if (this.type == 'file' && files !== undefined) {

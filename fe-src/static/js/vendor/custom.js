@@ -315,11 +315,11 @@ jQuery(document).ready(function($) {
                     .remove();
 
                 deleteImage(deleteImgHash, function (data) {
-                    // if (data.success) {
+                    if (data.success) {
                         // 从图片序列中删除相应项
                         var index = originSort.indexOf(deleteImage);
                         originSort.splice(index, 1);
-                    // }
+                    }
                 });
             });
 
