@@ -368,6 +368,10 @@ class Item(db.Model):
         return distributors
 
     @property
+    def vendor(self):
+        return Vendor.query.get(self.vendor_id)
+
+    @property
     def second_category(self):
         return SecondCategory.query.get(self.second_category_id).second_category
 
