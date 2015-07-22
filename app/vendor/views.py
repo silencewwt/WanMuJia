@@ -12,7 +12,7 @@ from app.models import Vendor, Item, Distributor
 from app.permission import vendor_permission
 from app.forms import MobileRegistrationForm
 from app.constants import *
-from app.utils import md5_with_time_salt
+from app.utils import md5_with_time_salt, data_table_params
 from app.utils.redis import redis_get, redis_set
 from .import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
@@ -113,11 +113,7 @@ def item_list():
 @vendor_blueprint.route('/items/datatable')
 @vendor_permission.require()
 def items_data_table():
-    draw = request.args.get('draw', 1, type=int)
-    start = request.args.get('start', 0, type=int)
-    length = request.args.get('length', 100, type=int)
-    valid_length = [10, 25, 50, 100]
-    length = length if length in valid_length else valid_length[0]
+    draw, start, length = data_table_params()
     items = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False).offset(start).limit(length)
     data = {'draw': draw, 'recordsTotal': Item.query.filter_by(vendor_id=current_user.id, is_deleted=False).count(),
             'recordsFiltered': items.count(), 'data': []}
@@ -216,11 +212,7 @@ def distributor_list():
 @vendor_blueprint.route('/distributors/datatable')
 @vendor_permission.require()
 def distributors_data_table():
-    draw = request.args.get('draw', 1, type=int)
-    start = request.args.get('start', 0, type=int)
-    length = request.args.get('length', 100, type=int)
-    valid_length = [10, 25, 50, 100]
-    length = length if length in valid_length else valid_length[0]
+    draw, start, length = data_table_params()
     distributors = Distributor.query.filter_by(vendor_id=current_user.id).offset(start).limit(length)
     data = {'draw': draw, 'recordsTotal': Distributor.query.count(), 'recordsFiltered': distributors.count(),
             'data': []}
