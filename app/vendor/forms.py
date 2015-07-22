@@ -297,6 +297,7 @@ class SettingsForm(Form):
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
     introduction = StringField(validators=[Length(0, 30)])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
+    email = StringField(validators=[Email()])
 
     logo_url = None
 
@@ -319,6 +320,7 @@ class SettingsForm(Form):
         self.mobile.data = vendor.mobile
         self.logo_url = convert_url(vendor.logo)
         self.show_address()
+        self.email.data = vendor.email
 
     def update_vendor_setting(self, vendor):
         vendor.introduction = self.introduction.data
