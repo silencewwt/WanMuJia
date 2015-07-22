@@ -278,7 +278,8 @@
                 show_loading_bar(70); // Fill progress bar to 70% (just a given value)
 
                 $.ajax({
-                    url: "/vendor/register",
+                    url: $('body').data('page') == 'register-next' ?
+                            '/vendor/register' : '/vendor/reconfirm',
                     method: 'POST',
                     dataType: 'json',
                     data: genFormData($(form), imgFiles),

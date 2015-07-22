@@ -105,7 +105,7 @@ jQuery(document).ready(function($) {
             serverSide: true,
             ajax: opt.ajax,
             columns: opt.columns,
-            columnDefs: opt.columnDefs
+            columnDefs: opt.columnDefs,
         });
     }
 
@@ -582,7 +582,7 @@ function genDataAttrStr(data) {
 }
 
 /**
- *
+ * 该函数用于填充定义列表的内容
  * @param $el
  * 需要填充数据的 dl 元素所在的父元素
  * @param prefix
@@ -596,6 +596,14 @@ function setDlData($el, prefix, data) {
         .find('[id|="' + prefix + '"]')
         .each(function () {
             var key = this.id.split('-')[1];    // id 去掉前缀后的值
-            $(this).next().text(data[key]);
+            var value = data[key];
+            var $dd = $(this).next();
+
+            if ($dd.children('img').length > 0) {
+                $dd.children('img').attr('src', value);
+            }
+            else {
+                $dd.text(value);
+            }
         });
 }
