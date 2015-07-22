@@ -7,7 +7,7 @@ from flask.ext.principal import Principal
 
 from config import config
 from .permission import identity_config
-
+from .utils.filters import *
 
 app = Flask(__name__, static_url_path='')
 db = SQLAlchemy()
@@ -27,6 +27,8 @@ def create_app(config_name):
     login_manager.login_view = 'user.login'
     principal.init_app(app)
     identity_config(app)
+
+    app.jinja_env.filters['date'] = date
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
