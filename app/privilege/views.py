@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import datetime
-from flask import request, render_template, current_app, redirect, url_for, jsonify
+from flask import request, render_template, current_app, jsonify, redirect, url_for
+from flask.ext.login import current_user, logout_user
+from flask.ext.principal import identity_changed, AnonymousIdentity
 
 from app.constants import ACCESS_GRANTED
 from app.models import Vendor, DistributorRevocation, Item, Distributor
 from app.permission import privilege_permission
-from app.utils import data_table_params
+from app.utils import data_table_params, convert_url
 from . import privilege as privilege_blueprint
 from .forms import LoginForm, VendorConfirmForm, VendorConfirmRejectForm, DistributorRevocationForm
 
@@ -17,7 +19,15 @@ def login():
         if form.validate() and form.login():
             return jsonify({ACCESS_GRANTED: True})
         return jsonify({ACCESS_GRANTED: False, 'message': u'用户名或密码错误.'})
-    return render_template('admin/login.html', form=form)
+    return render_template('admin/login.html', form=form, privilege=current_user)
+
+
+@privilege_blueprint.route('/logout')
+@privilege_permission.require()
+def logout():
+    logout_user()
+    identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
+    return redirect(url_for('.login'))
 
 
 @privilege_blueprint.route('/')
@@ -30,13 +40,13 @@ def index():
         'vendors_to_confirm': Vendor.query.filter_by(confirmed=False, rejected=False).count(),
         'distributor_to_revoke': DistributorRevocation.query.filter_by(pending=True).count()
     }
-    return render_template('admin/index.html', statistic=statistic)
+    return render_template('admin/index.html', statistic=statistic, privilege=current_user)
 
 
 @privilege_blueprint.route('/items')
 @privilege_permission.require()
 def item_list():
-    return render_template('admin/items.html')
+    return render_template('admin/items.html', privilege=current_user)
 
 
 @privilege_blueprint.route('/items/datatable')
@@ -56,7 +66,7 @@ def items_data_table():
 @privilege_blueprint.route('/vendors')
 @privilege_permission.require()
 def vendor_list():
-    return render_template('admin/vendors.html')
+    return render_template('admin/vendors.html', privilege=current_user)
 
 
 @privilege_blueprint.route('/vendors/datatable')
@@ -74,17 +84,29 @@ def vendors_data_table():
     return jsonify(data)
 
 
-@privilege_blueprint.route('/vendor_confirm')
+@privilege_blueprint.route('/vendors/confirm')
 @privilege_permission.require()
 def vendor_confirm():
-    vendors = Vendor.query.filter_by(confirmed=False, rejected=False).all()
-    return render_template('admin/confirm.html', vendors=vendors)
+    return render_template('admin/confirm.html', privilege=current_user)
 
 
-@privilege_blueprint.route('vendor_confirm/datatable')
+@privilege_blueprint.route('/vendors/confirm/datatable')
 @privilege_permission.require()
-def vendors_datatable():
-    pass
+def vendors_confirm_data_table():
+    draw, start, length = data_table_params()
+    vendors = Vendor.query.filter_by(confirmed=False, rejected=False).offset(start).limit(length)
+    data = {'draw': draw, 'recordsTotal': Vendor.query.filter_by(confirmed=False, rejected=False).count(),
+            'recordsFiltered': vendors.count(), 'data': []}
+    for vendor in vendors:
+        data['data'].append({
+            'id': vendor.id, 'name': vendor.name, 'address': vendor.address.precise_address(), 'email': vendor.email,
+            'license_limit': vendor.license_limit, 'mobile': vendor.mobile, 'telephone': vendor.telephone,
+            'agent_name': vendor.agent_name, 'agent_identity': vendor.agent_identity,
+            'agent_identity_front': convert_url(vendor.agent_identity_front),
+            'agent_identity_back': convert_url(vendor.agent_identity_back),
+            'license_image': convert_url(vendor.license_image)
+        })
+    return jsonify(data)
 
 
 @privilege_blueprint.route('/vendor_confirm/reject', methods=['POST'])
@@ -110,16 +132,16 @@ def vendor_confirm_pass():
 @privilege_blueprint.route('/distributors')
 @privilege_permission.require()
 def distributor_list():
-    return render_template('admin/distributors.html')
+    return render_template('admin/distributors.html', privilege=current_user)
 
 
 @privilege_blueprint.route('/distributors/datatable')
 @privilege_permission.require()
 def distributors_data_table():
     draw, start, length = data_table_params()
-    distributors = Distributor.query.offset(start).limit(length)
-    data = {'draw': draw, 'recordsTotal': Distributor.query.count(), 'recordsFiltered': distributors.count(),
-            'data': []}
+    distributors = Distributor.query.filter_by(is_revoked=False).offset(start).limit(length)
+    data = {'draw': draw, 'recordsTotal': Distributor.query.filter_by(is_revoked=False).count(),
+            'recordsFiltered': distributors.count(), 'data': []}
     for distributor in distributors:
         created = datetime.datetime.fromtimestamp(distributor.created).strftime('%F')
         data['data'].append({
@@ -129,12 +151,26 @@ def distributors_data_table():
     return jsonify(data)
 
 
-@privilege_blueprint.route('/distributors/revocation', methods=['GET, POST'])
+@privilege_blueprint.route('/distributors/revocation', methods=['POST'])
 @privilege_permission.require()
 def distributors_revocation():
-    revocations = DistributorRevocation.query.filter_by(pending=True)
     form = DistributorRevocationForm()
-    if form.validate_on_submit():
+    if form.validate():
         form.revoke()
-        return redirect(url_for('.distributors_revocation'))
-    return render_template('admin/distributors_revocation.html', form=form, revocations=revocations)
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': form.error2str()})
+
+
+@privilege_blueprint.route('/distributors/revocation/datatable')
+@privilege_permission.require()
+def distributors_revocation_data_table():
+    draw, start, length = data_table_params()
+    revocations = DistributorRevocation.query.filter_by(pending=True).offset(draw).limit(length)
+    data = {'draw': draw, 'recordsTotal': DistributorRevocation.query.filter_by(is_revoked=False).count(),
+            'recordsFiltered': revocations.count(), 'data': []}
+    for revocation in revocations:
+        data['data'].append({
+            'id': revocation.id, 'name': revocation.distributor.name, 'address': revocation.address.precise_address(),
+            'contact': revocation.contact, 'contract': convert_url(revocation.contract),
+            'vendor': revocation.distributor.vendor.name})
+    return jsonify(data)
