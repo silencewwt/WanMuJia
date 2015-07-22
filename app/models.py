@@ -166,8 +166,8 @@ class Vendor(BaseUser, db.Model):
         class Object:
             pass
         stat = Object()
-        stat.items_count = Item.query.filter_by(vendor_id=self.id, is_deleted=False).count()
-        stat.distributors_count = Distributor.query.filter_by(vendor_id=self.id).count()
+        stat.items = Item.query.filter_by(vendor_id=self.id, is_deleted=False).count()
+        stat.distributors = Distributor.query.filter_by(vendor_id=self.id).count()
         return stat
 
     @property
@@ -225,10 +225,8 @@ class Distributor(BaseUser, db.Model):
     telephone = db.Column(db.String(30), nullable=False)
     # 联系人
     contact = db.Column(db.Unicode(10), nullable=False)
-    # 删除确认
-    deleted_confirmed = db.Column(db.Boolean, default=False, nullable=False)
-    # 已删除
-    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+    # 已解决
+    is_revoked = db.Column(db.Boolean, default=False, nullable=False)
 
     # 手机号码
     mobile = db.Column(db.CHAR(11), default='', nullable=False)
