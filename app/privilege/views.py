@@ -23,7 +23,14 @@ def login():
 @privilege_blueprint.route('/')
 @privilege_permission.require()
 def index():
-    return render_template('admin/index.html')
+    statistic = {
+        'items': Item.query.filter_by(is_deleted=False).count(),
+        'vendors': Vendor.query.filter_by(confirmed=True).count(),
+        'distributors': Distributor.query.filter_by(is_revoked=False).count(),
+        'vendors_to_confirm': Vendor.query.filter_by(confirmed=False, rejected=False).count(),
+        'distributor_to_revoke': DistributorRevocation.query.filter_by(pending=True).count()
+    }
+    return render_template('admin/index.html', statistic=statistic)
 
 
 @privilege_blueprint.route('/items')
