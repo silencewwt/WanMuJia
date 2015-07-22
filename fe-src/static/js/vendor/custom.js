@@ -246,35 +246,8 @@ jQuery(document).ready(function($) {
             }
         });
 
-        // init dropzone
-        dz.initDropzone($('#img-upload'), {
-            url: '/vendor/items/image?item_id=' + $itemEditForm.data('item-id'),
-            success: function (file, data) {
-                var $previewElement = $(file.previewElement);
-                if (data.success) {
-                    var image = data.image;
-                    $previewElement.data('hash', image.hash);
-
-                    var $album = $('.album-images');
-                    if ($album.length > 0) {
-                        $album.append($(genImageView({
-                            name: file.name,
-                            hash: image.hash,
-                            url: image.url,
-                            created: image.created
-                        })));
-                    }
-                }
-                else {
-                    dz.setPreviewError(file, data.message);
-                }
-            }
-        });
-
-        // Item Album page
+        // 初始化图片序列
         var $albumImages = $('.album-images');
-        var deleteImgHash = '';
-
         var getImgSort = function () {
             var sort = [];
             $albumImages.find('.album-image').each(function () {
@@ -284,10 +257,43 @@ jQuery(document).ready(function($) {
         };
         var originSort = getImgSort();
 
+        // init dropzone
+        dz.initDropzone($('#img-upload'), {
+            url: '/vendor/items/image?item_id=' + $itemEditForm.data('item-id'),
+            success: function (file, data) {
+                var $previewElement = $(file.previewElement);
+                if (data.success) {
+                    var image = data.image;
+                    $previewElement.data('hash', image.hash);
+
+                    if ($albumImages.length > 0) {
+                        $albumImages.append(
+                            $(genImageView({
+                                name: file.name,
+                                hash: image.hash,
+                                url: image.url,
+                                created: image.created
+                            },
+                            $albumImages.hasClass('ui-sortable') ? true : false
+                            ))
+                        );
+
+                        // 追加新的图片 hash 到图片序列末尾
+                        originSort.push(image.hash);
+                    }
+                }
+                else {
+                    dz.setPreviewError(file, data.message);
+                }
+            }
+        });
+
+        // Item Album page
+        var deleteImgHash = '';
+
         $albumImages
             // 修改 deleteImgHash 变量
             .delegate('[data-action="trash"]', 'click', function () {
-                console.log('delete');
                 deleteImgHash = $(this)
                     .parents('.album-image')
                     .data('hash');
@@ -308,7 +314,13 @@ jQuery(document).ready(function($) {
                     .parent()
                     .remove();
 
-                deleteImage(deleteImgHash);
+                deleteImage(deleteImgHash, function (data) {
+                    // if (data.success) {
+                        // 从图片序列中删除相应项
+                        var index = originSort.indexOf(deleteImage);
+                        originSort.splice(index, 1);
+                    // }
+                });
             });
 
         $('#sort-confirm').click(function () {
@@ -767,10 +779,10 @@ function getCookie(cookieName) {
 function convertTimeString(seconds) {
     if (typeof seconds != 'number') return '';
 
-    var time = new Date('seconds * 1000');
+    var time = new Date(seconds * 1000);
     return time.getFullYear() + '-' +
-        time.getMonth() + '-' +
-        time.getDay();
+        (time.getMonth() + 1) + '-' +
+        time.getDate();
 }
 
 
@@ -790,13 +802,14 @@ function saveInfos(options) {
     });
 }
 
-function deleteImage(hash) {
+function deleteImage(hash, cb) {
     $.ajax({
         url: '/vendor/items/image',
         method: 'delete',
         data: {
             image_hash: hash
-        }
+        },
+        success: cb,
     });
 }
 
@@ -809,8 +822,9 @@ function formDirtyCheck($form, origin) {
     };
 }
 
-function genImageView(image) {
-    return '<div class="col-md-3 col-sm-4 col-xs-6">' +
+function genImageView(image, sortable) {
+    console.log(sortable);
+    return '<div class="col-md-3 col-sm-4 col-xs-6 ' + (sortable ? 'ui-sortable-handle' : '') + '">' +
                 '<div class="album-image" data-hash="' + image.hash + '">' +
                     '<a href="#" class="thumb" data-action="edit" data-toggle="modal" data-target="#gallery-image-modal">' +
                         '<img src="' + image.url + '" class="img-responsive" />' +
