@@ -59,7 +59,7 @@ target/
 *.sql
 *.db
 *.tar.gz
-dump.rdb
+
 
 # Node
 node_modules/

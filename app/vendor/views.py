@@ -181,12 +181,12 @@ def upload_item_image():
     else:
         form = ItemImageDeleteForm(csrf_enabled=False)
         if 'image_hash' not in request.form:
-            return '', 403
+            return jsonify({'success': False})
         form.image_hash.data = request.form['image_hash']
         if form.validate():
             form.delete_image()
-            return 'ok', 200
-        return 'fail', 403
+            return jsonify({'success': True})
+        return jsonify({'success': False})
 
 
 @vendor_blueprint.route('/items/image_sort', methods=['POST'])
