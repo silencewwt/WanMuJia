@@ -39,7 +39,7 @@ def item_list():
     return render_template('admin/items.html')
 
 
-@privilege_blueprint.route('items/datatable')
+@privilege_blueprint.route('/items/datatable')
 @privilege_permission.require()
 def items_data_table():
     draw, start, length = data_table_params()
