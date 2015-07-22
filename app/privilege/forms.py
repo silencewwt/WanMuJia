@@ -19,7 +19,7 @@ class LoginForm(Form):
             Privilege.query.filter_by(email=self.username.data).limit(1).first()
         if privilege and privilege.verify_password(self.password.data):
             login_user(privilege)
-            identity_changed.send(current_app._get_current_object(), Identity(privilege.get_id()))
+            identity_changed.send(current_app._get_current_object(), identity=Identity(privilege.get_id()))
             return True
         return False
 

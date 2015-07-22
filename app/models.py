@@ -503,15 +503,19 @@ class Privilege(BaseUser, db.Model):
     # 用户名
     username = db.Column(db.String(12), nullable=False, unique=True)
 
+    mobile = None
+
     id_prefix = privilege_id_prefix
 
-    def __init__(self, password, mobile, email, username):
+    def __init__(self, password, email, username):
         self.username = username
-        super(Privilege, self).__init__(password, mobile, email)
+        self.email = email
+        self.password = password
+        super(Privilege, self).__init__(password, '', email)
 
     @staticmethod
     def generate_fake():
-        privilege = Privilege('14e1b600b1fd579f47433b88e8d85291', 12345678901, 'a@a.com', 'admin')
+        privilege = Privilege('14e1b600b1fd579f47433b88e8d85291', 'a@a.com', 'admin')
         db.session.add(privilege)
         db.session.commit()
 
