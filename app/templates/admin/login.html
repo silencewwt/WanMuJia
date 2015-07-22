@@ -89,7 +89,7 @@
                             };
 
                             $.ajax({
-                                url: "privilege/login",
+                                url: "/privilege/login",
                                 method: 'POST',
                                 dataType: 'json',
                                 data: genFormData($(form)),
@@ -107,7 +107,7 @@
                                             }
                                             else
                                             {
-                                                toastr.error("密码错误，请重试 :)", "非法登录!", opts);
+                                                toastr.error(resp.message + " 请重试 :)", "非法登录!", opts);
                                                 $('#password').select();
                                             }
                                         }
@@ -141,9 +141,10 @@
 
             <!-- Add class "fade-in-effect" for login form effect -->
             <form method="post" role="form" id="login" class="login-form fade-in-effect">
+                {{ form.csrf_token }}
 
                 <div class="login-header">
-                    <a href="/vendor/login" class="logo clearfix">
+                    <a href="/privilege/login" class="logo clearfix">
                         <img src="/img/logo_white.png" alt="" width="150" />
                         <span>后台登录</span>
                     </a>
