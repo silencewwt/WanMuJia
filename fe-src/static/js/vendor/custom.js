@@ -558,6 +558,7 @@ jQuery(document).ready(function($) {
                 url: '/service/send_email?type=email_confirm',
                 method: 'post',
                 data: {
+                    csrf_token: $('#csrf_token').val(),
                     role: 'vendor',
                     id: vendorId,
                 },
