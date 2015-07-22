@@ -18,6 +18,12 @@ def login():
     return render_template('admin/login.html', form=form)
 
 
+@privilege_blueprint.route('/')
+@privilege_permission.require()
+def index():
+    return render_template('admin/index.html')
+
+
 @privilege_blueprint.route('/vendor_confirm')
 @privilege_permission.require()
 def vendor_confirm():
