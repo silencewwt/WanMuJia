@@ -54,8 +54,8 @@ def item_list():
 def items_data_table():
     draw, start, length = data_table_params()
     items = Item.query.filter_by(is_deleted=False).offset(start).limit(length)
-    data = {'draw': draw, 'recordsTotal': Item.query.filter_by(is_deleted=False).count(),
-            'recordsFiltered': items.count(), 'data': []}
+    count = Item.query.filter_by(is_deleted=False).count()
+    data = {'draw': draw, 'recordsTotal': count, 'recordsFiltered': count, 'data': []}
     for item in items:
         data['data'].append({
             'id': item.id, 'item': item.item, 'second_category_id': item.second_category, 'vendor': item.vendor.name,
@@ -74,8 +74,8 @@ def vendor_list():
 def vendors_data_table():
     draw, start, length = data_table_params()
     vendors = Vendor.query.filter_by(confirmed=True).offset(start).limit(length)
-    data = {'draw': draw, 'recordsTotal': Vendor.query.filter_by(confirmed=True).count(),
-            'recordsFiltered': vendors.count(), 'data': []}
+    count = Vendor.query.filter_by(confirmed=True).count()
+    data = {'draw': draw, 'recordsTotal': count, 'recordsFiltered': count, 'data': []}
     for vendor in vendors:
         data['data'].append({
             'id': vendor.id, 'name': vendor.name, 'address': vendor.address.precise_address(),
@@ -95,8 +95,8 @@ def vendor_confirm():
 def vendors_confirm_data_table():
     draw, start, length = data_table_params()
     vendors = Vendor.query.filter_by(confirmed=False, rejected=False).offset(start).limit(length)
-    data = {'draw': draw, 'recordsTotal': Vendor.query.filter_by(confirmed=False, rejected=False).count(),
-            'recordsFiltered': vendors.count(), 'data': []}
+    count = Vendor.query.filter_by(confirmed=False, rejected=False).count()
+    data = {'draw': draw, 'recordsTotal': count, 'recordsFiltered': count, 'data': []}
     for vendor in vendors:
         data['data'].append({
             'id': vendor.id, 'name': vendor.name, 'address': vendor.address.precise_address(), 'email': vendor.email,
@@ -112,7 +112,7 @@ def vendors_confirm_data_table():
 @privilege_blueprint.route('/vendor_confirm/reject', methods=['POST'])
 @privilege_permission.require()
 def vendor_confirm_reject():
-    form = VendorConfirmRejectForm()
+    form = VendorConfirmRejectForm(csrf_enabled=False)
     if form.validate():
         form.reject_vendor()
         return 'rejected'
@@ -140,8 +140,8 @@ def distributor_list():
 def distributors_data_table():
     draw, start, length = data_table_params()
     distributors = Distributor.query.filter_by(is_revoked=False).offset(start).limit(length)
-    data = {'draw': draw, 'recordsTotal': Distributor.query.filter_by(is_revoked=False).count(),
-            'recordsFiltered': distributors.count(), 'data': []}
+    count = Distributor.query.filter_by(is_revoked=False).count()
+    data = {'draw': draw, 'recordsTotal': count, 'recordsFiltered': count, 'data': []}
     for distributor in distributors:
         created = datetime.datetime.fromtimestamp(distributor.created).strftime('%F')
         data['data'].append({
@@ -166,8 +166,8 @@ def distributors_revocation():
 def distributors_revocation_data_table():
     draw, start, length = data_table_params()
     revocations = DistributorRevocation.query.filter_by(pending=True).offset(draw).limit(length)
-    data = {'draw': draw, 'recordsTotal': DistributorRevocation.query.filter_by(is_revoked=False).count(),
-            'recordsFiltered': revocations.count(), 'data': []}
+    count = DistributorRevocation.query.filter_by(is_revoked=False).count()
+    data = {'draw': draw, 'recordsTotal': count, 'recordsFiltered': count, 'data': []}
     for revocation in revocations:
         data['data'].append({
             'id': revocation.id, 'name': revocation.distributor.name, 'address': revocation.address.precise_address(),
