@@ -157,24 +157,13 @@ jQuery(document).ready(function($) {
 
     // Distributors page
     if (getPageTitle() === 'distributors') {
-        $('#distributors').delegate('[data-target="#revocation-modal"]', 'click', function () {
-            var id = $(this).data('dist-id');
-            var $contractForm = $('#contract-form');
-            var actions = $contractForm
-                            .attr('action')
-                            .split('/');
-
-            actions[3] = id;    // url: /vendor/distributors/{id}/revocation
-
-            $contractForm.attr('action', actions.join('/'));
-        });
-
         initDatatable($('#distributors'), {
             ajax: "/privilege/distributors/datatable",
             columns: [
                 {data: "id", bSortable: false, visible: false},
                 {data: "name", bSortable: false},
                 {data: "address", bSortable: false},
+                {data: "contact_telephone", bSortable: false},
                 {data: "contact_mobile", bSortable: false},
                 {data: "contact", bSortable: false},
                 {data: "created", bSortable: false}
