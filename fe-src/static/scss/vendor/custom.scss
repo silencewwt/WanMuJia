@@ -241,7 +241,7 @@ form .form-group.required > label::before {
 /*invite key*/
 .invite-key-wrapper {
     margin-top: 50px;
-    padding: 0 100px;
+    padding: 0 8.5%;
 
     .alert {
         // margin-bottom: 50px;
@@ -258,8 +258,8 @@ form .form-group.required > label::before {
     }
 
     .invite-key + button {
-        padding-top: 12px;
-        padding-bottom: 12px;
+        padding: 12px 0;
+        // padding-bottom: 12px;
     }
 
 }
@@ -306,6 +306,11 @@ form .form-group.required > label::before {
         select.form-control {
             margin-bottom: 5px;
         }
+    }
+
+    #send-email {
+        margin-top: 5px;
+        margin-bottom: 0;
     }
 }
 

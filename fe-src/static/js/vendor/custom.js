@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
         });
 
         $.validator.addMethod('customDate', function (value, element) {
-            var dateReg = /^(\d{4})\/((0?([1-9]))|(1[0|1|2]))\/((0?[1-9])|([12]([1-9]))|(3[0|1]))$/;
+            var dateReg = /^(\d{4})\/((0?([1-9]))|(1[0|1|2]))\/((0?[1-9])|([12]([0-9]))|(3[0|1]))$/;
             return this.optional(element) || (dateReg.test(value));
         });
     }
@@ -555,7 +555,7 @@ jQuery(document).ready(function($) {
             var vendorId = $(this).data('vendor-id');
 
             $.ajax({
-                url: '/service/send_email?type=email_confirm',
+                url: '/service/send_email?type=VENDOR_EMAIL_CONFIRM',
                 method: 'post',
                 data: {
                     csrf_token: $('#csrf_token').val(),
