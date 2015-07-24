@@ -222,25 +222,28 @@ class Distributor(BaseUser, db.Model):
     # 商家名称
     name = db.Column(db.Unicode(30), nullable=False)
     # 联系电话
-    telephone = db.Column(db.String(30), nullable=False)
+    contact_telephone = db.Column(db.String(30), default='', nullable=False)
+    # 联系手机
+    contact_mobile = db.Column(db.CHAR(11), default='', nullable=False)
     # 联系人
     contact = db.Column(db.Unicode(10), nullable=False)
     # 已解决
     is_revoked = db.Column(db.Boolean, default=False, nullable=False)
 
     # 手机号码
-    mobile = db.Column(db.CHAR(11), default='', nullable=False)
+    mobile = None
     # 邮箱
     email = db.Column(db.String(64), default='', nullable=False)
 
     id_prefix = distributor_id_prefix
 
-    def __init__(self, username, password, vendor_id, name, mobile, telephone, contact):
-        super(Distributor, self).__init__(password, mobile=mobile, email='')
+    def __init__(self, username, password, vendor_id, name, contact_mobile, contact_telephone, contact):
+        super(Distributor, self).__init__(password, mobile='', email='')
         self.username = username
         self.vendor_id = vendor_id
         self.name = name
-        self.telephone = telephone
+        self.contact_telephone = contact_telephone
+        self.contact_mobile = contact_mobile
         self.contact = contact
 
     @property
