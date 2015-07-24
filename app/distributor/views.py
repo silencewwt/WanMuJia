@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
-from flask import current_app, render_template, request, redirect, session, url_for
+from flask import current_app, render_template, request, redirect, session, url_for, jsonify
 from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity
 
@@ -38,8 +38,8 @@ def register():
                 identity_changed.send(current_app._get_current_object(), Identity(distributor.get_id()))
                 session.pop('register_permission')
                 session.pop('vendor_id')
-                return u'success'   # TODO: redirect
-        return render_template('distributor/register.html', form=form)
+                return jsonify({'accessGranted': True})
+        return jsonify({'accessGranted': False, 'message': form.error2str()})
     return 'error', 403
 
 
