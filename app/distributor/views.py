@@ -18,9 +18,10 @@ from .forms import LoginForm, RegisterForm, StockForm
 @distributor_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        if model_login(Distributor, form):
-            return redirect('/')    # TODO: redirect
+    if request.method == 'POST':
+        if form.validate() and model_login(Distributor, form):
+            return jsonify({'accessGranted': True})
+        return jsonify({'accessGranted': False, 'message': form.error2str()})
     return render_template('distributor/login.html', form=form)
 
 
@@ -35,7 +36,7 @@ def register():
                 if distributor is False:
                     pass
                 login_user(distributor)
-                identity_changed.send(current_app._get_current_object(), Identity(distributor.get_id()))
+                identity_changed.send(current_app._get_current_object(), identity=Identity(distributor.get_id()))
                 session.pop('register_permission')
                 session.pop('vendor_id')
                 return jsonify({'accessGranted': True})
@@ -74,4 +75,4 @@ def items_stock():
         db.session.commit()
         return 'success'
     items = Item.query.filter_by(vendor_id=current_user.vendor_id).paginate(page, 100, False).items
-    return render_template('distributor/stock.html', items=items)
+    return render_template('distributor/items.html', items=items)
