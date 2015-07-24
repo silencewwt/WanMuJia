@@ -243,14 +243,9 @@ class Distributor(BaseUser, db.Model):
         self.telephone = telephone
         self.contact = contact
 
-    @staticmethod
-    def generate_username():
-        from random import randint
-        for i in range(10):
-            username = randint(10000000, 99999999)
-            if not Distributor.query.filter_by(username=username).limit(1).first():
-                return username
-        return False
+    @property
+    def vendor(self):
+        return Vendor.query.get(self.vendor_id)
 
     @property
     def address(self):
@@ -267,6 +262,15 @@ class Distributor(BaseUser, db.Model):
             return 'revoked'
         else:
             return 'rejected'
+
+    @staticmethod
+    def generate_username():
+        from random import randint
+        for i in range(10):
+            username = randint(10000000, 99999999)
+            if not Distributor.query.filter_by(username=username).limit(1).first():
+                return username
+        return False
 
 
 class DistributorRevocation(db.Model):
@@ -362,7 +366,7 @@ class Item(db.Model):
     def in_stock_distributors(self):
         distributors = db.session.query(Distributor).filter(Stock.item_id == self.id, Stock.stock > 0,
                                                             Stock.distributor_id == Distributor.id,
-                                                            Distributor.is_deleted is False)
+                                                            Distributor.is_revoked is False)
         return distributors
 
     @property
