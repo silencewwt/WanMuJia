@@ -39,7 +39,8 @@ def register():
                 session.pop('register_permission')
                 session.pop('vendor_id')
                 return jsonify({'accessGranted': True})
-        return jsonify({'accessGranted': False, 'message': form.error2str()})
+            return jsonify({'accessGranted': False, 'message': form.error2str()})
+        return render_template('distributor/register.html', form=form)
     return 'error', 403
 
 
