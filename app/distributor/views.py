@@ -21,24 +21,25 @@ def login():
     if form.validate_on_submit():
         if model_login(Distributor, form):
             return redirect('/')    # TODO: redirect
-    return render_template('distributor/login.html', login_form=form)
+    return render_template('distributor/login.html', form=form)
 
 
 @distributor_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if 'register_permission' in session and session['register_permission'] and \
-            'vendor_id' in session and Vendor.get(session['vendor_id']):
+            'vendor_id' in session and Vendor.query.get(session['vendor_id']):
         form = RegisterForm()
-        if form.validate_on_submit():
-            distributor = form.add_distributor(session['vendor_id'])
-            if distributor is False:
-                pass
-            login_user(distributor)
-            identity_changed.send(current_app._get_current_object(), Identity(distributor.get_id()))
-            session.pop('register_permission')
-            session.pop('vendor_id')
-            return u'success'   # TODO: redirect
-        return render_template('distributor/register.html', register_form=form)
+        if request.method == 'POST':
+            if form.validate():
+                distributor = form.add_distributor(session['vendor_id'])
+                if distributor is False:
+                    pass
+                login_user(distributor)
+                identity_changed.send(current_app._get_current_object(), Identity(distributor.get_id()))
+                session.pop('register_permission')
+                session.pop('vendor_id')
+                return u'success'   # TODO: redirect
+        return render_template('distributor/register.html', form=form)
     return 'error', 403
 
 
@@ -61,7 +62,7 @@ def items_stock():
     form = StockForm()
     if form.validate_on_submit():
         item_ids = re.findall('(\d+)', form.items.data)
-        items = Item.query.filter_by(vendor_id=current_user.vendor_id).filter(Item.id.in_(item_ids))
+        items = Item.query.filter_by(vendor_id=current_user.vendor_id, is_deleted=False).filter(Item.id.in_(item_ids))
         stocks = Stock.query.filter_by(distributor_id=current_user.id).filter(Item.id.in_([item.id for item in items]))
         for stock in stocks:
             if stock.stock != form.stock.data:
