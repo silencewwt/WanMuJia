@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from flask import current_app
+from flask.ext.login import login_user
+from flask.ext.principal import identity_changed, Identity
 from wtforms import StringField, PasswordField, IntegerField
 from wtforms.validators import DataRequired, Length, EqualTo, NumberRange
 
@@ -11,6 +14,14 @@ from app.utils.validator import DistrictValidator
 class LoginForm(Form):
     username = StringField(validators=[DataRequired()])
     password = PasswordField(validators=[DataRequired(), Length(32, 32)])
+
+    def login(self):
+        distributor = Distributor.query.filter_by(username=self.username.data).limit(1).first()
+        if distributor and distributor.verify_password(self.password.data):
+            login_user(distributor)
+            identity_changed.send(current_app._get_current_object(), identity=Identity(distributor.get_id()))
+            return True
+        return False
 
 
 class RegisterForm(Form):

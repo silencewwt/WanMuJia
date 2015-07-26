@@ -6,7 +6,6 @@ from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity
 
 from app import db
-from app.core import login as model_login
 from app.models import Distributor, Vendor, Stock, Item
 from app.constants import DISTRIBUTOR_REGISTER
 from app.permission import distributor_permission
@@ -19,9 +18,9 @@ from .forms import LoginForm, RegisterForm, StockForm
 def login():
     form = LoginForm()
     if request.method == 'POST':
-        if form.validate() and model_login(Distributor, form):
+        if form.validate() and form.login():
             return jsonify({'accessGranted': True})
-        return jsonify({'accessGranted': False, 'message': form.error2str()})
+        return jsonify({'accessGranted': False, 'message': u'用户名或密码错误'})
     return render_template('distributor/login.html', form=form)
 
 
