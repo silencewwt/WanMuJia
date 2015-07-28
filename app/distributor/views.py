@@ -10,7 +10,7 @@ from app.permission import distributor_permission
 from app.utils import data_table_params
 from app.utils.redis import redis_get
 from . import distributor as distributor_blueprint
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, SettingsForm
 
 
 @distributor_blueprint.route('/login', methods=['GET', 'POST'])
@@ -110,3 +110,14 @@ def item_stock(item_id):
     db.session.add(stock)
     db.session.commit()
     return jsonify({'success': True})
+
+
+@distributor_blueprint.route('/settings', methods=['GET', 'POST'])
+@distributor_permission.require()
+def settings():
+    form = SettingsForm()
+    if request.method == 'POST':
+        if form.validate():
+            form.update_settings()
+    form.show_settings()
+    return render_template('distributor/settings.html', form=form, distributor=current_user)

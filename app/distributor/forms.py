@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask import current_app
-from flask.ext.login import login_user
+from flask.ext.login import login_user, current_user
 from flask.ext.principal import identity_changed, Identity
 from wtforms import StringField, PasswordField, IntegerField
-from wtforms.validators import DataRequired, Length, EqualTo, NumberRange
+from wtforms.validators import DataRequired, Length, EqualTo, NumberRange, ValidationError
 
 from app import db
 from app.forms import Form
@@ -57,3 +57,44 @@ class RegisterForm(Form):
         db.session.add(distributor_address)
         db.session.commit()
         return distributor
+
+
+class SettingsForm(Form):
+    username = StringField()
+    name = StringField()
+    contact_telephone = StringField()
+    contact_mobile = StringField()
+    contact = StringField()
+    district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
+    address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
+
+    attributes = ('username', 'name', 'contact_mobile', 'contact', 'contact_telephone')
+
+    address_attributes = ('province', 'city', 'district')
+
+    def show_address(self):
+        grades_id = [_.cn_id for _ in current_user.address.area.grade()]
+        while len(grades_id) < 3:
+            grades_id.append(None)
+        for attr, cn_id in zip(self.address_attributes, grades_id):
+            setattr(self, attr, cn_id)
+
+    def validate_contact_info(self, field):
+        if not self.contact_mobile.data and not self.contact_telephone.data:
+            raise ValidationError(u'联系人电话与手机至少填一项')
+
+    def show_settings(self):
+        for attr in self.attributes:
+            getattr(self, attr).data = getattr(current_user, attr)
+        self.address.data = current_user.address.address
+        self.show_address()
+
+    def update_settings(self):
+        current_user.contact = self.contact.data
+        current_user.contact_telephone = self.contact_telephone.data
+        current_user.contact_mobile = self.contact_mobile.data
+        current_user.address.address = self.address.data
+        current_user.address.cn_id = self.district_cn_id.data
+        db.session.add(current_user)
+        db.session.add(current_user.address)
+        db.session.commit()
