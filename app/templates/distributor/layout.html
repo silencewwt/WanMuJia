@@ -42,7 +42,10 @@
 		{% block sidebar %}{% endblock %}
 
 		<div class="main-content">
-			{% block main_content %}{% endblock %}
+			{% block main_content %}
+				{% include "distributor/include/alert.html" %}
+			{% endblock %}
+
 			{% include "admin/include/footer.html" %}
 		</div>
 
