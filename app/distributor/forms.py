@@ -57,8 +57,3 @@ class RegisterForm(Form):
         db.session.add(distributor_address)
         db.session.commit()
         return distributor
-
-
-class StockForm(Form):
-    items = StringField(validators=[DataRequired()])
-    stock = IntegerField(validators=[DataRequired(), NumberRange(0)])
