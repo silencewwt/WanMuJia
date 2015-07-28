@@ -43,7 +43,11 @@ jQuery(document).ready(function($) {
             if ($this.hasClass('disabled')) return;
 
             var $loading = $('<span class="loading fa fa-spin fa-spinner"></span>');
-            var $errorHint = $('<span class="error-hint text-danger">服务器错误请重试</span>');
+            var $errorHint = function (message) {
+                message = message || '服务器错误请重试';
+                return $('<span class="error-hint text-danger">' + message + '</span>');
+            };
+
             var id = $this.data('id');
             var $td = $this.parent();
 
@@ -54,16 +58,32 @@ jQuery(document).ready(function($) {
             $.ajax({
                 url: '/distributor/items/' + id,
                 method: 'post',
-                data: id,
-                success: function () {
-                    setStock();
-                    $td.find('.error-hint').remove();
+                data: $this.is(':checked') ?
+                        {stock: 1}
+                        : {stock: 0},
+                success: function (data) {
+                    var $errorSpan = $td.find('.error-hint');
+
+                    if (data.success) {
+                        setStock();
+                        $errorSpan.remove();
+                    }
+                    else {
+                        toggleCheckState();
+                        setStock();
+                        if ($errorSpan.length === 0) {
+                            $td.append($errorHint(data.message));
+                        }
+                        else {
+                            $errorSpan.text(data.message);
+                        }
+                    }
                 },
                 error: function () {
                     toggleCheckState();
                     setStock();
                     if ($td.find('.error-hint').length === 0) {
-                        $td.append($errorHint);
+                        $td.append($errorHint());
                     }
                 },
             });
