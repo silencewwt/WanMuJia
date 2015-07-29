@@ -9,7 +9,7 @@ from app.models import Vendor, DistributorRevocation, Item, Distributor
 from app.permission import privilege_permission
 from app.utils import data_table_params, convert_url
 from . import privilege as privilege_blueprint
-from .forms import LoginForm, VendorConfirmForm, VendorConfirmRejectForm, DistributorRevocationForm
+from .forms import LoginForm, VendorDetailForm, VendorConfirmForm, VendorConfirmRejectForm, DistributorRevocationForm
 
 
 @privilege_blueprint.route('/login', methods=['GET', 'POST'])
@@ -82,6 +82,15 @@ def vendors_data_table():
             'license_limit': vendor.license_limit, 'mobile': vendor.mobile, 'telephone': vendor.telephone
         })
     return jsonify(data)
+
+
+@privilege_blueprint.route('/vendors/<int:vendor_id>')
+@privilege_permission.require()
+def vendor_detail(vendor_id):
+    vendor = Vendor.query.get_or_404(vendor_id)
+    form = VendorDetailForm()
+    form.show_info(vendor)
+    return render_template('admin/vendor_detail.html', privilege=current_user, form=form)
 
 
 @privilege_blueprint.route('/vendors/confirm')

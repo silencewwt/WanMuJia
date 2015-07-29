@@ -8,6 +8,7 @@ from wtforms.validators import ValidationError, DataRequired, Length
 from app import db
 from app.forms import Form
 from app.models import Vendor, Distributor, DistributorRevocation, Privilege
+from app.utils import convert_url
 
 
 class LoginForm(Form):
@@ -22,6 +23,25 @@ class LoginForm(Form):
             identity_changed.send(current_app._get_current_object(), identity=Identity(privilege.get_id()))
             return True
         return False
+
+
+class VendorDetailForm(Form):
+    name = StringField()
+    email = StringField()
+    agent_name = StringField()
+    agent_identity = StringField()
+    license_limit = StringField()
+    address = StringField()
+
+    attributes = ('name', 'email', 'agent_name', 'agent_identity', 'license_limit')
+    image_urls = ('agent_identity_front', 'agent_identity_back', 'license_image')
+
+    def show_info(self, vendor):
+        for attr in self.attributes:
+            getattr(self, attr).data = getattr(vendor, attr)
+        self.address.data = vendor.address.precise_address()
+        for url in self.image_urls:
+            setattr(self, url, convert_url(getattr(vendor, url)))
 
 
 class VendorConfirmForm(Form):
