@@ -51,7 +51,7 @@
                 <label class="col-sm-2 control-label" for="email">邮箱</label>
 
                 <div class="col-sm-9">
-                    <input name="email" id="email" type="text" class="form-control" data-validate="required, email" data-message-required="请填写指导价格" data-message-email="请填写有效邮箱地址" value="{{ vendor.email }}">
+                    {{ form.email(class='form-control') }}
                 </div>
             </div>
 
@@ -60,8 +60,7 @@
             <div class="form-group required">
                 <label class="col-sm-2 control-label" for="agent_name">代理人姓名</label>
                 <div class="col-sm-9">
-                    <input name="agent_name" type="text" class="form-control" id="agent_name"
-                           data-validate="required" data-message-required="请填写代理人姓名" value="{{ vendor.name }}">
+                    {{ form.agent_name(class='form-control') }}
                 </div>
             </div>
 
@@ -70,8 +69,7 @@
             <div class="form-group required">
                 <label class="col-sm-2 control-label" for="agent_identity">代理人身份证</label>
                 <div class="col-sm-9">
-                    <input name="agent_identity" type="text" class="form-control" id="agent_identity"
-                           data-validate="required" data-message-required="请填写代理人身份证" value="{{ vendor.agent_identity }}">
+                    {{ form.agent_identity(class='form-control') }}
                 </div>
             </div>
 
@@ -106,20 +104,9 @@
             <div class="form-group-separator"></div>
 
             <div class="form-group required">
-                <label class="col-sm-2 control-label" for="license_address">营业执照所在地</label>
-                <div class="col-sm-9">
-                    <input name="license_address" type="text" class="form-control" id="license_address"
-                           data-validate="required" data-message-required="请填写营业执照所在地" value="{{ vendor.license_address }}">
-                </div>
-            </div>
-
-            <div class="form-group-separator"></div>
-
-            <div class="form-group required">
                 <label class="col-sm-2 control-label" for="limit">营业期限</label>
                 <div class="col-sm-9">
-                    <input name="limit" type="text" class="form-control" id="limit"
-                           data-validate="required" data-message-required="请填写营业期限" value="{{ vendor.limit }}">
+                    {{ form.license_limit(class='form-control') }}
                 </div>
             </div>
 
@@ -128,8 +115,7 @@
             <div class="form-group required">
                 <label class="col-sm-2 control-label" for="address">联系地址</label>
                 <div class="col-sm-9">
-                    <input name="address" type="text" class="form-control" id="address"
-                           data-validate="required" data-message-required="请填写联系地址" value="{{ vendor.address }}">
+                    {{ form.address(class='form-control') }}
                 </div>
             </div>
 
