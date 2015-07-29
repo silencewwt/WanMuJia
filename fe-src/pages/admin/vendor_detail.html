@@ -76,13 +76,13 @@
             <div class="form-group-separator"></div>
 
             <div class="form-group required">
-                <label class="col-sm-2 control-label" for="agent_identity_photo_front">代理人身份证正面照片</label>
+                <label class="col-sm-2 control-label" for="agent_identity_front">代理人身份证正面照片</label>
                 <div class="col-sm-9">
-                    <input name="agent_identity_photo_front" type="file" class="form-control" id="agent_identity_photo_front"
+                    <input name="agent_identity_front" type="file" class="form-control" id="agent_identity_front"
                            accept="image/jpeg, image/png" data-validate="required" data-message-required="请上传代理人身份证正面照片">
 
                    <div class="logo-preview">
-                       <img src="{{ vendor.agent_identity_photo_front }}" alt="代理人身份证正面照片"/>
+                       <img src="{{ form.agent_identity_front }}" alt="代理人身份证正面照片"/>
                    </div>
                 </div>
             </div>
@@ -90,13 +90,13 @@
             <div class="form-group-separator"></div>
 
             <div class="form-group required">
-                <label class="col-sm-2 control-label" for="agent_identity_photo_back">代理人身份证反面照片</label>
+                <label class="col-sm-2 control-label" for="agent_identity_back">代理人身份证反面照片</label>
                 <div class="col-sm-9">
-                    <input name="agent_identity_photo_back" type="file" class="form-control" id="agent_identity_photo_back"
+                    <input name="agent_identity_back" type="file" class="form-control" id="agent_identity_back"
                            accept="image/jpeg, image/png" data-validate="required" data-message-required="请上传代理人身份证正面照片">
 
                    <div class="logo-preview">
-                       <img src="{{ vendor.agent_identity_photo_back }}" alt="代理人身份证反面照片"/>
+                       <img src="{{ form.agent_identity_back }}" alt="代理人身份证反面照片"/>
                    </div>
                 </div>
             </div>
