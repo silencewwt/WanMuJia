@@ -40,8 +40,7 @@
                 <label class="col-sm-2 control-label" for="name">厂家名称</label>
 
                 <div class="col-sm-9">
-                    <input name="name" type="text" class="form-control" id="name"
-                           data-validate="required" data-message-required="请填写商品名称">
+                    {{ form.name(class='form-control') }}
                 </div>
             </div>
 
@@ -97,6 +96,17 @@
 
                    <div class="logo-preview">
                        <img src="{{ form.agent_identity_back }}" alt="代理人身份证反面照片"/>
+                   </div>
+                </div>
+            </div>
+
+            <div class="form-group required">
+                <label class="col-sm-2 control-label" for="license_image">营业执照照片</label>
+                <div class="col-sm-9">
+                    <input name="license_image" type="file" class="form-control" id="license_image">
+
+                   <div class="logo-preview">
+                       <img src="{{ form.license_image }}" alt="营业执照照片"/>
                    </div>
                 </div>
             </div>
