@@ -70,7 +70,7 @@ class VendorConfirmRejectForm(VendorConfirmForm):
     def reject_vendor(self):
         self.vendor.rejected = True
         self.vendor.reject_message = self.reject_message.data
-        self.vendor.push_confirm_reminds('error', self.reject_message.data)
+        self.vendor.push_confirm_reminds('danger', self.reject_message.data)
         db.session.add(self.vendor)
         db.session.commit()
 

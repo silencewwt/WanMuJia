@@ -46,8 +46,10 @@ def login():
         if form.validate() and vendor and vendor.verify_password(form.password.data):
             login_user(vendor)
             identity_changed.send(current_app._get_current_object(), identity=Identity(vendor.get_id()))
-            if not vendor.confirmed:
-                vendor.push_confirm_reminds('danger', '233333')
+            if not vendor.confirmed and vendor.rejected:
+                vendor.push_confirm_reminds('danger', vendor.reject_message)
+            elif not vendor.confirmed and not vendor.rejected:
+                vendor.push_confirm_reminds('warning')
             return jsonify({ACCESS_GRANTED: True})
         return jsonify({ACCESS_GRANTED: False})
     return render_template('vendor/login.html', form=form)
@@ -232,7 +234,7 @@ def invite_distributor():
     if request.method == 'POST':
         token = md5_with_time_salt(current_user.id)
         redis_set(DISTRIBUTOR_REGISTER, token, current_user.id)
-        return 'http://%s/distributor/verify?token=%s' % ('www.wanmujia.com', token)   # TODO: host
+        return '%s/distributor/verify?token=%s' % (current_app.config['HOST'], token)   # TODO: host
     return render_template('vendor/invitation.html', vendor=current_user)
 
 

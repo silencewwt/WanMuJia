@@ -184,11 +184,11 @@ class Vendor(BaseUser, db.Model):
     def push_confirm_reminds(self, status, reject_message=''):
         link = None
         if status == 'success':
-            message = '您的认证信息已通过审核'
+            message = '您的认证信息已通过审核, 快来上传商品吧!'
         elif status == 'warning':
-            message = '您的认证信息正在审核中'
+            message = '您的认证信息将在3个工作日内审核'
         else:
-            message = '您的认证信息尚未能通过审核, 请重新填写.%s' % reject_message
+            message = '您的认证信息尚未能通过审核 %s' % reject_message
             link = {'text': '重新填写', 'href': '/vendor/reconfirm'}
         reminds = {'confirm': [{'message': message, 'type': status, 'link': link}]}
         redis_set(self.REMINDS, self.id, json.dumps(reminds), 3600 * 24 * 3)
