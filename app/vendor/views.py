@@ -54,7 +54,7 @@ def login():
 
 
 @vendor_blueprint.route('/logout')
-@vendor_permission.require()
+@vendor_permission.require(403)
 def logout():
     logout_user()
     identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
@@ -98,20 +98,20 @@ def reset_password():
 
 
 @vendor_blueprint.route('/')
-@vendor_permission.require()
+@vendor_permission.require(403)
 def index():
     return render_template('vendor/index.html', vendor=current_user)
 
 
 @vendor_blueprint.route('/items')
-@vendor_permission.require()
+@vendor_permission.require(403)
 @vendor_confirmed
 def item_list():
     return render_template('vendor/items.html', vendor=current_user)
 
 
 @vendor_blueprint.route('/items/datatable')
-@vendor_permission.require()
+@vendor_permission.require(403)
 def items_data_table():
     draw, start, length = data_table_params()
     items = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False).offset(start).limit(length)
@@ -125,7 +125,7 @@ def items_data_table():
 
 
 @vendor_blueprint.route('/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
-@vendor_permission.require()
+@vendor_permission.require(403)
 @vendor_confirmed
 def item_detail(item_id):
     item = Item.query.get_or_404(item_id)
@@ -151,7 +151,7 @@ def item_detail(item_id):
 
 
 @vendor_blueprint.route('/items/new_item', methods=['GET', 'POST'])
-@vendor_permission.require()
+@vendor_permission.require(403)
 @vendor_confirmed
 def new_item():
     form = ItemForm()
@@ -165,7 +165,7 @@ def new_item():
 
 
 @vendor_blueprint.route('/items/image', methods=['PUT', 'DELETE'])
-@vendor_permission.require()
+@vendor_permission.require(403)
 @vendor_confirmed
 def upload_item_image():
     if request.method == 'PUT':
@@ -186,7 +186,7 @@ def upload_item_image():
 
 
 @vendor_blueprint.route('/items/image_sort', methods=['POST'])
-@vendor_permission.require()
+@vendor_permission.require(403)
 @vendor_confirmed
 def update_item_image_sort():
     form = ItemImageSortForm(csrf_enabled=False)
@@ -197,7 +197,7 @@ def update_item_image_sort():
 
 
 @vendor_blueprint.route('/distributors', methods=['GET', 'POST'])
-@vendor_permission.require()
+@vendor_permission.require(403)
 @vendor_confirmed
 def distributor_list():
     form = RevocationForm()
@@ -210,7 +210,7 @@ def distributor_list():
 
 
 @vendor_blueprint.route('/distributors/datatable')
-@vendor_permission.require()
+@vendor_permission.require(403)
 def distributors_data_table():
     draw, start, length = data_table_params()
     distributors = Distributor.query.filter_by(vendor_id=current_user.id).offset(start).limit(length)
@@ -226,7 +226,7 @@ def distributors_data_table():
 
 
 @vendor_blueprint.route('/distributors/invitation', methods=['GET', 'POST'])
-@vendor_permission.require()
+@vendor_permission.require(403)
 @vendor_confirmed
 def invite_distributor():
     if request.method == 'POST':
@@ -237,7 +237,7 @@ def invite_distributor():
 
 
 @vendor_blueprint.route('/distributors/<int:distributor_id>/revocation', methods=['POST'])
-@vendor_permission.require()
+@vendor_permission.require(403)
 @vendor_confirmed
 def revocation(distributor_id):
     distributor = Distributor.query.get_or_404(distributor_id)
@@ -251,7 +251,7 @@ def revocation(distributor_id):
 
 
 @vendor_blueprint.route('/settings', methods=['GET', 'POST'])
-@vendor_permission.require()
+@vendor_permission.require(403)
 def settings():
     form = SettingsForm()
     if request.method == 'POST':
@@ -262,7 +262,7 @@ def settings():
 
 
 @vendor_blueprint.route('/reconfirm', methods=['GET', 'POST'])
-@vendor_permission.require()
+@vendor_permission.require(403)
 @vendor_not_confirmed
 def reconfirm():
     form = ReconfirmForm()

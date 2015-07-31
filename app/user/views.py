@@ -115,12 +115,12 @@ def reset_password():
 
 
 @user_blueprint.route('/collection', methods=['GET', 'POST', 'DELETE'])
-@user_permission.require()
+@user_permission.require(403)
 def collection():
     if request.method == 'GET':
         page = request.args.get('page', 1, type=int)
         collections = Collection.query.filter_by(user_id=current_user.id).paginate(page, 50, False).items
-        return render_template('/user/collection.html', collections=collections)
+        return render_template('user/collection.html', collections=collections)
 
     item_id = request.form.get('item', 0, type=int)
     item_collection = Collection.query.filter_by(user_id=current_user.id, item_id=item_id).first()

@@ -24,7 +24,7 @@ def login():
 
 
 @distributor_blueprint.route('/logout')
-@distributor_permission.require()
+@distributor_permission.require(403)
 def logout():
     logout_user()
     identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
@@ -52,7 +52,7 @@ def register():
 
 
 @distributor_blueprint.route('/')
-@distributor_permission.require()
+@distributor_permission.require(403)
 def index():
     statistic = {
         'in_stock': Stock.query.filter_by(distributor_id=current_user.id).count()
@@ -73,13 +73,13 @@ def verify():
 
 
 @distributor_blueprint.route('/items')
-@distributor_permission.require()
+@distributor_permission.require(403)
 def items_stock():
     return render_template('distributor/items.html', distributor=current_user)
 
 
 @distributor_blueprint.route('/items/datatable')
-@distributor_permission.require()
+@distributor_permission.require(403)
 def items_data_table():
     draw, start, length = data_table_params()
     query = Item.query.filter_by(vendor_id=current_user.vendor.id, is_deleted=False)
@@ -95,7 +95,7 @@ def items_data_table():
 
 
 @distributor_blueprint.route('/items/<int:item_id>', methods=['POST'])
-@distributor_permission.require()
+@distributor_permission.require(403)
 def item_stock(item_id):
     item = Item.query.get(item_id)
     if 'stock' not in request.form or request.form['stock'] not in ['0', '1']:
@@ -113,7 +113,7 @@ def item_stock(item_id):
 
 
 @distributor_blueprint.route('/settings', methods=['GET', 'POST'])
-@distributor_permission.require()
+@distributor_permission.require(403)
 def settings():
     form = SettingsForm()
     if request.method == 'POST':

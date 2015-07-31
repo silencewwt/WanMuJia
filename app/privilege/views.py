@@ -31,7 +31,7 @@ def logout():
 
 
 @privilege_blueprint.route('/')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def index():
     statistic = {
         'items': Item.query.filter_by(is_deleted=False).count(),
@@ -44,13 +44,13 @@ def index():
 
 
 @privilege_blueprint.route('/items')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def item_list():
     return render_template('admin/items.html', privilege=current_user)
 
 
 @privilege_blueprint.route('/items/datatable')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def items_data_table():
     draw, start, length = data_table_params()
     items = Item.query.filter_by(is_deleted=False).offset(start).limit(length)
@@ -64,13 +64,13 @@ def items_data_table():
 
 
 @privilege_blueprint.route('/vendors')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def vendor_list():
     return render_template('admin/vendors.html', privilege=current_user)
 
 
 @privilege_blueprint.route('/vendors/datatable')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def vendors_data_table():
     draw, start, length = data_table_params()
     vendors = Vendor.query.filter_by(confirmed=True).offset(start).limit(length)
@@ -85,7 +85,7 @@ def vendors_data_table():
 
 
 @privilege_blueprint.route('/vendors/<int:vendor_id>')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def vendor_detail(vendor_id):
     vendor = Vendor.query.get_or_404(vendor_id)
     form = VendorDetailForm()
@@ -94,13 +94,13 @@ def vendor_detail(vendor_id):
 
 
 @privilege_blueprint.route('/vendors/confirm')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def vendor_confirm():
     return render_template('admin/confirm.html', privilege=current_user)
 
 
 @privilege_blueprint.route('/vendors/confirm/datatable')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def vendors_confirm_data_table():
     draw, start, length = data_table_params()
     vendors = Vendor.query.filter_by(confirmed=False, rejected=False).offset(start).limit(length)
@@ -119,7 +119,7 @@ def vendors_confirm_data_table():
 
 
 @privilege_blueprint.route('/vendor_confirm/reject', methods=['POST'])
-@privilege_permission.require()
+@privilege_permission.require(404)
 def vendor_confirm_reject():
     form = VendorConfirmRejectForm(csrf_enabled=False)
     if form.validate():
@@ -129,7 +129,7 @@ def vendor_confirm_reject():
 
 
 @privilege_blueprint.route('/vendor_confirm/pass', methods=['POST'])
-@privilege_permission.require()
+@privilege_permission.require(404)
 def vendor_confirm_pass():
     form = VendorConfirmForm(csrf_enabled=False)
     if form.validate():
@@ -139,13 +139,13 @@ def vendor_confirm_pass():
 
 
 @privilege_blueprint.route('/distributors')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def distributor_list():
     return render_template('admin/distributors.html', privilege=current_user)
 
 
 @privilege_blueprint.route('/distributors/datatable')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def distributors_data_table():
     draw, start, length = data_table_params()
     distributors = Distributor.query.filter_by(is_revoked=False).offset(start).limit(length)
@@ -161,7 +161,7 @@ def distributors_data_table():
 
 
 @privilege_blueprint.route('/distributors/revocation', methods=['POST'])
-@privilege_permission.require()
+@privilege_permission.require(404)
 def distributors_revocation():
     form = DistributorRevocationForm()
     if form.validate():
@@ -171,7 +171,7 @@ def distributors_revocation():
 
 
 @privilege_blueprint.route('/distributors/revocation/datatable')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def distributors_revocation_data_table():
     draw, start, length = data_table_params()
     revocations = DistributorRevocation.query.filter_by(pending=True).offset(draw).limit(length)
