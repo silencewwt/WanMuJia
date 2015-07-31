@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from flask import current_app
 from wtforms import StringField, IntegerField
 
 from app.constants import SMS_CAPTCHA, CONFIRM_EMAIL
@@ -45,6 +46,6 @@ class EmailForm(Form):
         if (email_type == VENDOR_EMAIL_CONFIRM or email_type == USER_EMAIL_CONFIRM) and not self.email_confirmed:
             token = md5_with_time_salt(self.role.data, self.id.data)
             redis_set(CONFIRM_EMAIL, token, 86400)
-            url = '%s/service/?token=%s' % ('http://wanmujia.com', token)
+            url = '%s/service/?token=%s' % (current_app.config['HOST'], token)
             send_email(self.email, '', email_type, url=url)
 
