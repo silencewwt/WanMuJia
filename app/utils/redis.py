@@ -9,13 +9,7 @@ from app.constants import CONFIRM_EMAIL, REGISTER_ACTION, IMAGE_CAPTCHA
 
 def redis_set(content_type, key, value, expire=None, **kwargs):
     if content_type == CONFIRM_EMAIL:
-        value_dict = {
-            'email': kwargs['email'],
-            'action': kwargs['action']
-        }
-        if kwargs['action'] == REGISTER_ACTION:
-            value_dict['password'] = kwargs['password']
-        value = json.dumps(value_dict)
+        value = json.dumps(kwargs)
     key = '%s:%s' % (content_type, key)
     expire = expire if expire else current_app.config['%s_DURATION' % content_type]
     local_redis.set(key, value, expire)
