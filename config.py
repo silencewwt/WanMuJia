@@ -14,6 +14,7 @@ class Config(object):
     CSRF_ENABLED = True
     MD5_SALT = 'md5_salt'
     STATIC_URL = 'http://127.0.0.1:5000/'
+    HOST = 'http://www.wanmujia.com'
     REMEMBER_COOKIE_DURATION = timedelta(7)
     CONFIRM_EMAIL_DURATION = 86400  # seconds (24 hours)
     DISTRIBUTOR_REGISTER_DURATION = 86400
@@ -28,6 +29,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'mysql+pymysql://dev:devpassword@localhost/wmj?charset=utf8'
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    HOST = 'http://127.0.0.1:5000'
 
 
 class TestingConfig(Config):
