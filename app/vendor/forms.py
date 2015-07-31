@@ -10,6 +10,7 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, N
 from app import db
 from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, Decoration, \
     Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, FirstCategory
+from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
 from app.utils import IO, convert_url
 from app.utils.forms import Form
 from app.utils.image import save_image
@@ -78,6 +79,8 @@ class RegistrationDetailForm(RegistrationForm):
         )
         db.session.add(vendor)
         db.session.commit()
+        vendor.push_confirm_reminds('warning')  # 信息审核中
+        sms_generator(VENDOR_PENDING_TEMPLATE, vendor.mobile)
         self.save_images(vendor=vendor)
         self.save_address(vendor=vendor)
         return vendor
