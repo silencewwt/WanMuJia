@@ -49,6 +49,7 @@ class RegisterForm(Form):
         )
         db.session.add(distributor)
         db.session.commit()
+        distributor.push_register_reminds()
         distributor_address = DistributorAddress(
             distributor_id=distributor.id,
             cn_id=self.district_cn_id.data,

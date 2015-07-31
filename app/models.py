@@ -8,7 +8,7 @@ from flask.ext.login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
-from app.constants import VENDOR_REMINDS
+from app.constants import VENDOR_REMINDS, DISTRIBUTOR_REMINDS
 from app.utils import convert_url
 from app.utils.redis import redis_get, redis_set
 from .permission import privilege_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
@@ -27,6 +27,7 @@ class BaseUser(UserMixin):
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
     id_prefix = ''
+    REMINDS = None
 
     def __init__(self, password, mobile, email):
         self.password = password
@@ -46,6 +47,15 @@ class BaseUser(UserMixin):
 
     def get_id(self):
         return u'%s%s' % (self.id_prefix, self.id)
+
+    @property
+    def reminds(self):
+        reminds = redis_get(self.REMINDS, self.id)
+        if reminds:
+            reminds = json.loads(reminds)
+        else:
+            reminds = {}
+        return reminds
 
 
 class User(BaseUser, db.Model):
@@ -144,6 +154,7 @@ class Vendor(BaseUser, db.Model):
     rejected = db.Column(db.Boolean, default=False, nullable=False)
 
     id_prefix = vendor_id_prefix
+    REMINDS = VENDOR_REMINDS
 
     def __init__(self, password, mobile, email, agent_name, agent_identity, name, license_limit, telephone):
         super(Vendor, self).__init__(password, mobile, email)
@@ -170,15 +181,6 @@ class Vendor(BaseUser, db.Model):
         stat.distributors = Distributor.query.filter_by(vendor_id=self.id).count()
         return stat
 
-    @property
-    def reminds(self):
-        reminds = redis_get(VENDOR_REMINDS, self.id)
-        if reminds:
-            reminds = json.loads(reminds)
-        else:
-            reminds = {}
-        return reminds
-
     def push_confirm_reminds(self, status, reject_message=''):
         link = None
         if status == 'success':
@@ -189,7 +191,7 @@ class Vendor(BaseUser, db.Model):
             message = '您的认证信息尚未能通过审核, 请重新填写.%s' % reject_message
             link = {'text': '重新填写', 'href': '/vendor/reconfirm'}
         reminds = {'confirm': [{'message': message, 'type': status, 'link': link}]}
-        redis_set(VENDOR_REMINDS, self.id, json.dumps(reminds), 3600 * 24 * 3)
+        redis_set(self.REMINDS, self.id, json.dumps(reminds), 3600 * 24 * 3)
 
     @staticmethod
     def generate_fake():
@@ -236,6 +238,7 @@ class Distributor(BaseUser, db.Model):
     email = db.Column(db.String(64), default='', nullable=False)
 
     id_prefix = distributor_id_prefix
+    REMINDS = DISTRIBUTOR_REMINDS
 
     def __init__(self, username, password, vendor_id, name, contact_mobile, contact_telephone, contact):
         super(Distributor, self).__init__(password, mobile='', email='')
@@ -265,6 +268,12 @@ class Distributor(BaseUser, db.Model):
             return 'revoked'
         else:
             return 'rejected'
+
+    def push_register_reminds(self):
+        status = 'warning'
+        message = '请牢记您的登录用户名: %s' % self.username
+        reminds = {'confirm': [{'message': message, 'type': status, 'link': None}]}
+        redis_set(self.REMINDS, self.id, json.dumps(reminds), 3600 * 24 * 3)
 
     @staticmethod
     def generate_username():
