@@ -139,7 +139,7 @@ jQuery(document).ready(function($) {
     if (getPageTitle() === 'item-detail') {
 
         // Set form disabled
-        setFormDisabled($form);
+        setFormDisabled($('#edit-item-form'));
 
         // Item Album page
         var $albumImages = $('.album-images');
