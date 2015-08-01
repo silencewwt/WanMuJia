@@ -254,6 +254,20 @@
             // Form Processing via AJAX
             submitHandler: function(form)
             {
+                // 如果 uploadComplete 为 false，给出提示然后直接退出当前函数
+                if (latestUpload.completed == false) {
+                    toastr.warning('文件还在上传中' + " :)", "请稍后再提交", opts);
+                    return;
+                }
+
+                var $form = $(form);
+                // 如果提交还未响应时再次提交直接退出
+                if (getFormState($form)) {
+                    return;
+                }
+                // 给表单加上正在提交标记
+                setFormPending($form);
+
                 var opts = {
                     "closeButton": true,
                     "debug": false,
@@ -269,12 +283,6 @@
                     "hideMethod": "fadeOut"
                 };
 
-                // 如果 uploadComplete 为 false，给出提示然后直接退出当前函数
-                if (latestUpload.completed == false) {
-                    toastr.warning('文件还在上传中' + " :)", "请稍后再提交", opts);
-                    return;
-                }
-
                 show_loading_bar(70); // Fill progress bar to 70% (just a given value)
 
                 $.ajax({
@@ -285,15 +293,6 @@
                     data: genFormData($form, imgFiles),
                     success: function(resp)
                     {
-                        var $form = $(form);
-
-                        // 如果提交还未响应时再次提交直接退出
-                        if (getFormState($form)) {
-                            return;
-                        }
-                        // 给表单加上正在提交标记
-                        setFormPending($form);
-
                         show_loading_bar({
                             delay: .5,
                             pct: 100,
