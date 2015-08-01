@@ -9,6 +9,7 @@ from app import db
 from app.forms import Form
 from app.models import Vendor, Distributor, DistributorRevocation, Privilege
 from app.sms import sms_generator, VENDOR_ACCEPT_TEMPLATE
+from app.vendor.forms import ItemForm as BaseItemForm
 from app.utils import convert_url
 
 
@@ -97,3 +98,11 @@ class DistributorRevocationForm(Form):
             self.distributor_revocation.pending = False
         db.session.add(self.distributor_revocation)
         db.session.commit()
+
+
+class ItemForm(BaseItemForm):
+    vendor = StringField()
+
+    def show_item(self, item):
+        super(ItemForm, self).show_item(item)
+        self.vendor.data = item.vendor.name

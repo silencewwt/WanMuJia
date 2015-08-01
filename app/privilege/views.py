@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
-from flask import request, render_template, current_app, jsonify, redirect, url_for
+from flask import request, render_template, current_app, jsonify, redirect, url_for, abort
 from flask.ext.login import current_user, logout_user
 from flask.ext.principal import identity_changed, AnonymousIdentity
 
@@ -9,7 +9,8 @@ from app.models import Vendor, DistributorRevocation, Item, Distributor
 from app.permission import privilege_permission
 from app.utils import data_table_params, convert_url
 from . import privilege as privilege_blueprint
-from .forms import LoginForm, VendorDetailForm, VendorConfirmForm, VendorConfirmRejectForm, DistributorRevocationForm
+from .forms import LoginForm, VendorDetailForm, VendorConfirmForm, VendorConfirmRejectForm, DistributorRevocationForm,\
+    ItemForm
 
 
 @privilege_blueprint.route('/login', methods=['GET', 'POST'])
@@ -61,6 +62,18 @@ def items_data_table():
             'id': item.id, 'item': item.item, 'second_category_id': item.second_category, 'vendor': item.vendor.name,
             'price': item.price, 'size': '%s*%s*%s' % (item.length, item.width, item.height)})
     return jsonify(data)
+
+
+@privilege_blueprint.route('/items/<int:item_id>')
+@privilege_permission.require()
+def item_detail(item_id):
+    item = Item.query.get_or_404(item_id)
+    if item.is_deleted:
+        abort(404)
+    form = ItemForm()
+    form.generate_choices()
+    form.show_item(item)
+    return render_template('admin/item_detail.html', privilege=current_user, form=form, item=item)
 
 
 @privilege_blueprint.route('/vendors')
