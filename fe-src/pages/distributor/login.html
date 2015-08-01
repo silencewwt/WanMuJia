@@ -73,6 +73,15 @@
                         // Form Processing via AJAX
                         submitHandler: function(form)
                         {
+                            var $form = $(form);
+
+                            // 如果提交还未响应时再次提交直接退出
+                            if (getFormState($form)) {
+                                return;
+                            }
+                            // 给表单加上正在提交标记
+                            setFormPending($form);
+
                             show_loading_bar(70); // Fill progress bar to 70% (just a given value)
 
                             var opts = {
@@ -94,7 +103,7 @@
                                 url: "/distributor/login",
                                 method: 'POST',
                                 dataType: 'json',
-                                data: genFormData($(form)),
+                                data: genFormData($form),
                                 success: function(resp)
                                 {
                                     show_loading_bar({
@@ -109,9 +118,12 @@
                                             }
                                             else
                                             {
-                                                toastr.error("密码错误，请重试 :)", "非法登录!", opts);
+                                                toastr.error("用户名或密码错误，请重试 :)", "非法登录!", opts);
                                                 $('#password').select();
                                             }
+
+                                            // 设置表单可以被再次提交
+                                            setFormReady($form);
                                         }
                                     });
 
@@ -122,6 +134,9 @@
                                         pct: 100,
                                         finish: function(){
                                             toastr.error(xhr.status +"错误，请稍后重试 :)", "服务器错误", opts);
+
+                                            // 设置表单可以被再次提交
+                                            setFormReady($form);
                                         }
                                     });
                                 }

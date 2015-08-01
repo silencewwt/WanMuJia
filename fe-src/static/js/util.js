@@ -96,3 +96,13 @@ function genFormData($form, files) {
 
     return data;
 }
+
+function setFormPending($form) {
+    $form.data('pending', true);
+}
+function setFormReady($form) {
+    $form.data('pending', false);
+}
+function getFormState($form) {
+    return $form.data('pending');
+}
