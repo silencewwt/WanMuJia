@@ -174,12 +174,10 @@ class Vendor(BaseUser, db.Model):
 
     @property
     def statistic(self):
-        class Object:
-            pass
-        stat = Object()
-        stat.items = Item.query.filter_by(vendor_id=self.id, is_deleted=False).count()
-        stat.distributors = Distributor.query.filter_by(vendor_id=self.id).count()
-        return stat
+        return {
+            'items': Item.query.filter_by(vendor_id=self.id, is_deleted=False).count(),
+            'distributors': Distributor.query.filter_by(vendor_id=self.id, is_revoked=False).count()
+        }
 
     def push_confirm_reminds(self, status, reject_message=''):
         link = None
@@ -229,7 +227,7 @@ class Distributor(BaseUser, db.Model):
     contact_mobile = db.Column(db.CHAR(11), default='', nullable=False)
     # 联系人
     contact = db.Column(db.Unicode(10), nullable=False)
-    # 已解决
+    # 已解约
     is_revoked = db.Column(db.Boolean, default=False, nullable=False)
 
     # 手机号码
