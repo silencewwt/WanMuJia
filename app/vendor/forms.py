@@ -79,10 +79,10 @@ class RegistrationDetailForm(RegistrationForm):
         )
         db.session.add(vendor)
         db.session.commit()
-        vendor.push_confirm_reminds('warning')  # 信息审核中
-        sms_generator(VENDOR_PENDING_TEMPLATE, vendor.mobile)
         self.save_images(vendor=vendor)
         self.save_address(vendor=vendor)
+        vendor.push_confirm_reminds('warning')  # 信息审核中
+        sms_generator(VENDOR_PENDING_TEMPLATE, vendor.mobile)
         return vendor
 
 
