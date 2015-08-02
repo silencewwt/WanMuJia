@@ -114,6 +114,12 @@ def reset_password():
     return model_reset_password(User, 'user')
 
 
+@user_blueprint.route('/')
+@user_permission.require(403)
+def profile():
+    return render_template('user/profile.html', user=current_user)
+
+
 @user_blueprint.route('/collection', methods=['GET', 'POST', 'DELETE'])
 @user_permission.require(403)
 def collection():
