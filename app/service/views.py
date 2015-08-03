@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import request, Response
+from flask import request, Response, jsonify
 
 from app.sms import USER_REGISTER_TEMPLATE, VENDOR_REGISTER_TEMPLATE
 from app.utils.myj_captcha import get_image_captcha
@@ -18,8 +18,8 @@ def mobile_register_sms():
     form = MobileRegisterSMSForm(template, csrf_enabled=False)
     if form.validate():
         form.send_sms()
-        return 'ok', 200
-    return 'false', 401
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': form.error2str()})
 
 
 @service_blueprint.route('/send_email', methods=['POST'])
@@ -28,8 +28,8 @@ def email_service():
     form = EmailForm()
     if form.validate():
         form.send_email(email_type)
-        return {'success': True}
-    return {'success': False, 'message': form.error2str()}
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': form.error2str()})
 
 
 @service_blueprint.route('/captcha/<string:token>.jpg')
