@@ -23,6 +23,8 @@ class BaseUser(UserMixin):
     mobile = db.Column(db.CHAR(11), unique=True, nullable=False)
     # 邮箱
     email = db.Column(db.String(64), unique=True, nullable=False)
+    # 邮箱是否已验证
+    email_confirmed = db.Column(db.Boolean, default=False, nullable=False)
     # 注册时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
@@ -120,8 +122,6 @@ class Order(db.Model):
 
 class Vendor(BaseUser, db.Model):
     __tablename__ = 'vendors'
-    # 邮箱是否已验证
-    email_confirmed = db.Column(db.Boolean, default=False, nullable=False)
     # logo图片
     logo = db.Column(db.String(255), default='', nullable=False)
     # 法人真实姓名
