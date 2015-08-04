@@ -3,7 +3,7 @@ import datetime
 from base64 import b64decode
 
 from flask.ext.login import current_user, current_app
-from flask.ext.wtf.file import FileField, FileRequired, FileAllowed
+from flask.ext.wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
@@ -24,7 +24,7 @@ class LoginForm(Form):
 
 
 class RegistrationForm(Form):
-    email = StringField(validators=[Email()])   # TODO: exist email
+    email = StringField(validators=[Email()])
     agent_name = StringField(validators=[DataRequired(u'必填')])
     agent_identity = StringField(validators=[DataRequired(u'必填'), Length(18, 18, u'身份证号码不符合规范!')])
     agent_identity_front = FileField(validators=[Image(required=True, base64=True)])
@@ -87,6 +87,7 @@ class RegistrationDetailForm(RegistrationForm):
 
 
 class ReconfirmForm(RegistrationForm):
+    email = StringField()
     agent_identity_front = FileField(validators=[Image(required=False, base64=True)])
     agent_identity_back = FileField(validators=[Image(required=False, base64=True)])
     license_image = FileField(validators=[Image(required=False, base64=True)])
@@ -97,6 +98,9 @@ class ReconfirmForm(RegistrationForm):
     address_attributes = ('province', 'city', 'district')
     attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone', 'email')
     url_attributes = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
+
+    def bind_validators(self, vendor):
+        self.email.validators = [Email(model=Vendor, exist_owner=vendor)]
 
     def update_address(self):
         current_user.address.address = self.address.data
@@ -125,7 +129,7 @@ class ReconfirmForm(RegistrationForm):
         self.update_address()
         for attr in self.attributes:
             setattr(current_user, attr, getattr(self, attr).data)
-        if current_user.email is not self.email.data:
+        if current_user.email != self.email.data:
             current_user.email = self.email.data
             current_user.email_confirmed = False
         db.session.add(current_user)
@@ -300,11 +304,14 @@ class SettingsForm(Form):
     address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
     introduction = StringField(validators=[Length(0, 30)])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
-    email = StringField(validators=[Email()])
+    email = StringField()
 
     logo_url = None
 
     address_attributes = ('province', 'city', 'district')
+
+    def bind_validators(self, vendor):
+        self.email.validators = [Email(model=Vendor, exist_owner=vendor)]
 
     def show_address(self):
         grades_id = [_.cn_id for _ in current_user.address.area.grade()]
@@ -331,6 +338,9 @@ class SettingsForm(Form):
         vendor.contact = self.contact.data
         vendor.address.address = self.address.data
         vendor.address.cn_id = self.district_cn_id.data
+        if vendor.email != self.email.data:
+            vendor.email = self.email.data
+            vendor.email_confirmed = False
         if self.logo.data:
             logo, image_hash = save_image(vendor.id, 'vendor', self.logo, self.logo.data.stream)
             vendor.logo = logo

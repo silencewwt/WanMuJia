@@ -12,16 +12,17 @@ from app.utils.redis import redis_verify
 
 
 class Email(BaseEmail):
-    def __init__(self, required=True, available=True, exist_owner=None, message=u'邮箱不符合规范!'):
+    def __init__(self, required=True, available=True, model=None, exist_owner=None, message=u'邮箱不符合规范!'):
         self.required = required
         self.available = available
-        self.message = message
+        self.model = model
+        self.exist_owner = exist_owner
         super(Email, self).__init__(message)
 
     def __call__(self, form, field):
         if self.required or field.data:
             super(Email, self).__call__(form, field)
-            if self.available and not available_email(field.data):
+            if self.available and not available_email(field.data, self.model, self.exist_owner):
                 raise ValidationError(self.message)
 
 
@@ -112,9 +113,14 @@ def available_mobile(mobile):
     return True
 
 
-def available_email(email):
-    if User.query.filter_by(email=email).first() or Vendor.query.filter_by(email=email).first():
-        return False
+def available_email(email, model, exist_owner):
+    if model is None:
+        if User.query.filter_by(email=email).first() or Vendor.query.filter_by(email=email).first():
+            return False
+    else:
+        role = model.query.filter_by(email=email)
+        if role.count() > 1 or not role.first() or role.first().id != exist_owner.id:
+            return False
     return True
 
 

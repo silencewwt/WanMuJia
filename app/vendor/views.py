@@ -257,6 +257,7 @@ def revocation(distributor_id):
 def settings():
     form = SettingsForm()
     if request.method == 'POST':
+        form.bind_validators(current_user)
         if form.validate():
             form.update_vendor_setting(current_user)
     form.show_vendor_setting(current_user)
