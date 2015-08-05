@@ -5,7 +5,7 @@ from wtforms import StringField, IntegerField
 from app.constants import SMS_CAPTCHA, CONFIRM_EMAIL
 from app.models import User, Vendor
 from app.forms import Form
-from app.wmj_email import send_email, USER_EMAIL_CONFIRM, VENDOR_EMAIL_CONFIRM
+from app.wmj_email import send_email, USER_EMAIL_CONFIRM, VENDOR_EMAIL_CONFIRM, EMAIL_CONFIRM_SUBJECT
 from app.utils import md5_with_time_salt
 from app.utils.myj_captcha import send_sms_captcha
 from app.utils.redis import redis_set
@@ -45,7 +45,6 @@ class EmailForm(Form):
     def send_email(self, email_type):
         if (email_type == VENDOR_EMAIL_CONFIRM or email_type == USER_EMAIL_CONFIRM) and not self.email_confirmed:
             token = md5_with_time_salt(self.role.data, self.id.data)
-            redis_set(CONFIRM_EMAIL, token, 86400)
-            url = '%s/service/?token=%s' % (current_app.config['HOST'], token)
-            send_email(self.email, '', email_type, url=url)
-
+            redis_set(CONFIRM_EMAIL, token, 86400, role=self.role.data, id=self.id.data)
+            url = '%s/service/verify?token=%s' % (current_app.config['HOST'], token)
+            send_email(self.email, EMAIL_CONFIRM_SUBJECT, email_type, url=url)
