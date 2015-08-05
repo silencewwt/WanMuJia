@@ -21,6 +21,7 @@ class Config(object):
     SMS_CAPTCHA_DURATION = 600  # seconds
     IMAGE_CAPTCHA_DURATION = 600  # seconds
     ITEM_PER_PAGE = 40
+    WMJ_MAIL_SENDER = (u'万木家', 'notification@wanmujia.com')
 
 
 class DevelopmentConfig(Config):
@@ -51,8 +52,6 @@ class MailConfig(Config):
     MAIL_USE_SSL = True
     MAIL_USERNAME = 'notification@wanmujia.com'
     MAIL_PASSWORD = 'WMJ0241ntfc'
-    WMJ_MAIL_SUBJECT_PREFIX = '[万木家]'
-    WMJ_MAIL_SENDER = 'notification <notification@wanmujia.com>'
 
 
 config = {
