@@ -22,7 +22,7 @@ from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, It
 def vendor_confirmed(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
-        if current_user.confirmed:
+        if current_user.is_authenticated() and current_user.confirmed:
             return f(*args, **kwargs)
         return '尚未通过审核'
     return wrapped
@@ -31,7 +31,7 @@ def vendor_confirmed(f):
 def vendor_not_confirmed(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
-        if not current_user.confirmed:
+        if current_user.is_authenticated() and not current_user.confirmed:
             return f(*args, **kwargs)
         return '已通过审核, 无法修改'
     return wrapped
