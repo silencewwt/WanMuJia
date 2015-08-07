@@ -274,5 +274,5 @@ def reconfirm():
     else:
         if form.validate():
             form.reconfirm()
-            return jsonify({'success': True})
-        return jsonify({'success': False, 'message': form.error2str()})
+            return jsonify({'accessGranted': True})
+        return jsonify({'accessGranted': False, 'message': form.error2str()})
