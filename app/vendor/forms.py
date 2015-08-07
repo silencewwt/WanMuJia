@@ -99,8 +99,9 @@ class ReconfirmForm(RegistrationForm):
     attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone', 'email')
     url_attributes = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
 
-    def bind_validators(self, vendor):
-        self.email.validators = [Email(model=Vendor, exist_owner=vendor)]
+    def __init__(self, vendor, *args, **kwargs):
+        super(ReconfirmForm, self).__init__(*args, **kwargs)
+        self.email.validators = [Email(required=False, model=Vendor, exist_owner=vendor)]
 
     def update_address(self):
         current_user.address.address = self.address.data
@@ -310,7 +311,8 @@ class SettingsForm(Form):
 
     address_attributes = ('province', 'city', 'district')
 
-    def bind_validators(self, vendor):
+    def __init__(self, vendor, *args, **kwargs):
+        super(SettingsForm, self).__init__(*args, **kwargs)
         self.email.validators = [Email(model=Vendor, exist_owner=vendor)]
 
     def show_address(self):

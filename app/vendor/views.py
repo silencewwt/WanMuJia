@@ -255,9 +255,8 @@ def revocation(distributor_id):
 @vendor_blueprint.route('/settings', methods=['GET', 'POST'])
 @vendor_permission.require(403)
 def settings():
-    form = SettingsForm()
+    form = SettingsForm(current_user)
     if request.method == 'POST':
-        form.bind_validators(current_user)
         if form.validate():
             form.update_vendor_setting(current_user)
     form.show_vendor_setting(current_user)
@@ -268,12 +267,12 @@ def settings():
 @vendor_permission.require(403)
 @vendor_not_confirmed
 def reconfirm():
-    form = ReconfirmForm()
+    form = ReconfirmForm(current_user)
     if request.method == 'GET':
         form.show_info()
         return render_template('vendor/register_next.html', form=form, vendor=current_user)
     else:
         if form.validate():
             form.reconfirm()
-        flash(u'something wrong')
-        return redirect(url_for('.reconfirm'))
+            return jsonify({'success': True})
+        return jsonify({'success': False, 'message': form.error2str()})
