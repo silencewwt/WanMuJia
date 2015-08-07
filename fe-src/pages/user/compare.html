@@ -1,7 +1,7 @@
 {% extends "user/layout.html" %}
 
 {% block styles %}
-    <link rel="stylesheet" href="/css/user/compare.css"/>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/user/compare.css')}}"/>
 {% endblock %}
 
 {% block content %}
@@ -11,10 +11,10 @@
 
             <div class="compare-img clearfix">
                 <div class="first">
-                    <a href="/item?id="><img src="/img/user/item02.jpg" alt="" /></a>
+                    <a href="/item?id="><img src="{{url_for('static', filename='img/user/item02.jpg')}}" alt="" /></a>
                 </div>
                 <div class="second">
-                    <a href="/item?id="><img src="/img/user/item03.jpg" alt="" /></a>
+                    <a href="/item?id="><img src="{{url_for('static', filename='img/user/item03.jpg')}}" alt="" /></a>
                 </div>
             </div>
 

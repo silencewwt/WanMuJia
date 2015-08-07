@@ -1,7 +1,7 @@
 {% extends "user/layout.html" %}
 
 {% block styles %}
-    <link rel="stylesheet" href="/css/user/register.css"/>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/user/register.css')}}"/>
 {% endblock %}
 
 {% block content %}
@@ -51,6 +51,6 @@
         </form>
     </div>
 
-    <script src="/js/util.js"></script>
-    <script src="/js/user/register_ui.js"></script>
+    <script src="{{url_for('static', filename='js/util.js')}}"></script>
+    <script src="{{url_for('static', filename='js/user/register_ui.js')}}"></script>
 {% endblock %}

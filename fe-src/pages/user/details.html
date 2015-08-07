@@ -1,7 +1,7 @@
 {% extends "user/layout.html" %}
 
 {% block styles %}
-    <link rel="stylesheet" href="/css/user/details.css"/>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/user/details.css')}}"/>
 {% endblock %}
 
 {% block content %}
@@ -97,9 +97,9 @@
                     </ul>
 
                     <div class="photo">
-                        <img src="/img/user/item05.jpg" alt="{{ item.name }}"/>
-                        <img src="/img/user/item05.jpg" alt="{{ item.name }}"/>
-                        <img src="/img/user/item05.jpg" alt="{{ item.name }}"/>
+                        <img src="{{url_for('static', filename='img/user/item05.jpg')}}" alt="{{ item.name }}"/>
+                        <img src="{{url_for('static', filename='img/user/item05.jpg')}}" alt="{{ item.name }}"/>
+                        <img src="{{url_for('static', filename='img/user/item05.jpg')}}" alt="{{ item.name }}"/>
                     </div>
                 </div>
 
@@ -118,6 +118,6 @@
         </div>
     </div>
 
-    <script src="/js/user/tab.js"></script>
-    <script src="/js/user/details_ui.js"></script>
+    <script src="{{url_for('static', filename='js/user/tab.js')}}"></script>
+    <script src="{{url_for('static', filename='js/user/details_ui.js')}}"></script>
 {% endblock %}
