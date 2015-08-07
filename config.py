@@ -19,6 +19,8 @@ class Config(object):
     SMS_CAPTCHA_DURATION = 600
     IMAGE_CAPTCHA_DURATION = 600
     ITEM_PER_PAGE = 40
+    CDN_DOMAIN = 'static.wanmujia.com'
+    CDN_TIMESTAMP = False
 
     WMJ_MAIL_SENDER = (u'万木家', 'notification@wanmujia.com')
 
@@ -48,6 +50,7 @@ class ProductionConfig(Config):
     HOST = 'http://www.wanmujia.com'
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
     IMAGE_DIR = '/var/www/'
+    CDN_DOMAIN = 'static.wanmujia.com'
 
 
 class MailConfig(Config):
