@@ -4,7 +4,7 @@
 {% extends "user/layout.html" %}
 
 {% block styles %}
-    <link rel="stylesheet" href="/css/user/profile.css"/>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/user/profile.css')}}"/>
 {% endblock %}
 
 {% block content %}
@@ -75,7 +75,7 @@
         </div>
     </div>
 
-    <script src="/js/user/tab.js"></script>
-    <script src="/js/user/profile_ui.js"></script>
-    <script src="/js/user/paging_ui.js"></script>
+    <script src="{{url_for('static', filename='js/user/tab.js')}}"></script>
+    <script src="{{url_for('static', filename='js/user/profile_ui.js')}}"></script>
+    <script src="{{url_for('static', filename='js/user/paging_ui.js')}}"></script>
 {% endblock %}

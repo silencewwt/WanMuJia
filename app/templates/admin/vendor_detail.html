@@ -151,7 +151,7 @@
         <div class="modal-content">
 
             <div class="modal-gallery-image">
-                <img src="/lib/xenon/images/album-image-full.jpg" class="img-responsive" />
+                <img src="{{url_for('static', filename='lib/xenon/images/album-image-full.jpg')}}" class="img-responsive" />
             </div>
 
         </div>
@@ -161,6 +161,6 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="/lib/xenon/js/jquery-validate/jquery.validate.min.js"></script>
-    <script src="/lib/xenon/js/jquery-ui/jquery-ui.min.js"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/jquery-validate/jquery.validate.min.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/jquery-ui/jquery-ui.min.js')}}"></script>
 {% endblock %}

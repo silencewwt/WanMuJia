@@ -7,9 +7,9 @@
 
 
 {% block styles %}
-    <link rel="stylesheet" href="/lib/xenon/js/select2/select2.css">
-    <link rel="stylesheet" href="/lib/xenon/js/select2/select2-bootstrap.css">
-    <link rel="stylesheet" href="/lib/xenon/js/dropzone/css/dropzone.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/js/select2/select2.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/js/select2/select2-bootstrap.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/js/dropzone/css/dropzone.css')}}">
 {% endblock %}
 
 
@@ -119,9 +119,9 @@
     </script>
 
 
-    <script src="/lib/xenon/js/jquery-validate/jquery.validate.min.js"></script>
-    <script src="/lib/xenon/js/formwizard/jquery.bootstrap.wizard.min.js"></script>
-    <script src="/lib/xenon/js/select2/select2.min.js"></script>
-    <script src="/lib/xenon/js/dropzone/dropzone.min.js"></script>
-    <script src="/lib/xenon/js/toastr/toastr.min.js"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/jquery-validate/jquery.validate.min.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/formwizard/jquery.bootstrap.wizard.min.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/select2/select2.min.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/dropzone/dropzone.min.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/toastr/toastr.min.js')}}"></script>
 {% endblock %}

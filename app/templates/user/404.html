@@ -1,7 +1,7 @@
 {% extends "user/layout.html" %}
 
 {% block styles %}
-    <link rel="stylesheet" href="/css/user/404.css"/>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/user/404.css')}}"/>
 {% endblock %}
 
 {% block content %}

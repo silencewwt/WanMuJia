@@ -10,21 +10,21 @@
     <title>万木家厂家后台 - 登录</title>
 
     <link rel="stylesheet" href="http://fonts.useso.com/css?family=Arimo:400,700,400italic">
-    <link rel="stylesheet" href="/lib/xenon/css/fonts/linecons/css/linecons.css">
-    <link rel="stylesheet" href="/lib/xenon/css/fonts/fontawesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/lib/xenon/css/bootstrap.css">
-    <link rel="stylesheet" href="/lib/xenon/css/xenon-core.css">
-    <link rel="stylesheet" href="/lib/xenon/css/xenon-forms.css">
-    <link rel="stylesheet" href="/lib/xenon/css/xenon-components.css">
-    <link rel="stylesheet" href="/lib/xenon/css/xenon-skins.css">
-    <link rel="stylesheet" href="/css/vendor/custom.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/css/fonts/linecons/css/linecons.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/css/fonts/fontawesome/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/css/bootstrap.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/css/xenon-core.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/css/xenon-forms.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/css/xenon-components.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/css/xenon-skins.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/vendor/custom.css')}}">
 
-    <script src="/lib/xenon/js/jquery-1.11.1.min.js"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/jquery-1.11.1.min.js')}}"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="/lib/xenon/js/html5shiv.min.js"></script>
-    <script src="/lib/xenon/js/respond.min.js"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/html5shiv.min.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/respond.min.js')}}"></script>
     <![endif]-->
 
 
@@ -158,7 +158,7 @@
                 {{ form.csrf_token }}
                 <div class="login-header">
                     <a href="/vendor/login" class="logo clearfix">
-                        <img src="/img/logo_white.png" alt="" width="150" />
+                        <img src="{{url_for('static', filename='img/logo_white.png')}}" alt="" width="150" />
                         <span>厂家登录</span>
                     </a>
                 </div>
@@ -198,20 +198,20 @@
 
 
 <!-- Bottom Scripts -->
-<script src="/lib/xenon/js/bootstrap.min.js"></script>
-<script src="/lib/xenon/js/TweenMax.min.js"></script>
-<script src="/lib/xenon/js/resizeable.js"></script>
-<script src="/lib/xenon/js/joinable.js"></script>
-<script src="/lib/xenon/js/xenon-api.js"></script>
-<script src="/lib/xenon/js/xenon-toggles.js"></script>
-<script src="/lib/xenon/js/jquery-validate/jquery.validate.min.js"></script>
-<script src="/lib/xenon/js/toastr/toastr.min.js"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/bootstrap.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/TweenMax.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/resizeable.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/joinable.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/xenon-api.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/xenon-toggles.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/jquery-validate/jquery.validate.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/toastr/toastr.min.js')}}"></script>
 
 
 <!-- JavaScripts initializations and stuff -->
-<script src="/lib/xenon/js/xenon-custom.js"></script>
-<script src="/lib/md5.js"></script>
-<script src="/js/util.js"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
+<script src="{{url_for('static', filename='lib/md5.js')}}"></script>
+<script src="{{url_for('static', filename='js/util.js')}}"></script>
 
 </body>
 </html>

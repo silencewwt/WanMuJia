@@ -2,7 +2,7 @@
 
 
 {% block styles %}
-    <link rel="stylesheet" href="/lib/xenon/js/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/js/datatables/dataTables.bootstrap.css')}}">
 {% endblock %}
 
 
@@ -85,8 +85,8 @@
 
 
 {% block scripts %}
-    <script src="/lib/xenon/js/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="/lib/xenon/js/datatables/dataTables.bootstrap.js"></script>
-    <script src="/lib/xenon/js/datatables/yadcf/jquery.dataTables.yadcf.js"></script>
-    <script src="/lib/xenon/js/datatables/tabletools/dataTables.tableTools.min.js"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/datatables/js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/datatables/dataTables.bootstrap.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/datatables/yadcf/jquery.dataTables.yadcf.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/datatables/tabletools/dataTables.tableTools.min.js')}}"></script>
 {% endblock %}

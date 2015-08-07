@@ -11,6 +11,6 @@
     {% block content %}{% endblock %}
     {% include 'user/include/footer.html' %}
 
-    <script src="/js/user/header.js"></script>
+    <script src="{{url_for('static', filename='js/user/header.js')}}"></script>
 </body>
 </html>

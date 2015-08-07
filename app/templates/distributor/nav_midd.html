@@ -9,8 +9,8 @@
             <!-- Navbar Brand -->
             <div class="navbar-brand">
                 <a href="/distributor" class="logo">
-                    <img src="/img/logo.png" width="80" alt="" class="hidden-xs" />
-                    <img src="/img/logo.png" width="80" alt="" class="visible-xs" />
+                    <img src="{{url_for('static', filename='img/logo.png')}}" width="80" alt="" class="hidden-xs" />
+                    <img src="{{url_for('static', filename='img/logo.png')}}" width="80" alt="" class="visible-xs" />
                 </a>
                 <!-- <a href="#" data-toggle="settings-pane" data-animate="true">
                     <i class="linecons-cog"></i>
@@ -116,7 +116,7 @@
                 <li class="dropdown user-profile">
                     {% if distributor %}
                         <a href="#" data-toggle="dropdown">
-                            <img src="/lib/xenon/images/user-1.png" alt="user-image" class="img-circle img-inline userpic-32" width="28" />
+                            <img src="{{url_for('static', filename='lib/xenon/images/user-1.png')}}" alt="user-image" class="img-circle img-inline userpic-32" width="28" />
                             <span>
                                     {{ distributor.name }}
                                     <i class="fa-angle-down"></i>
