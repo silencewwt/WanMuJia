@@ -22,6 +22,7 @@ local_redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 def create_app(config_name):
     app.static_folder = 'static'
     app.template_folder = 'templates'
+    config[config_name].init_app(app)
     app.config.from_object(config[config_name])
     db.init_app(app)
     login_manager.init_app(app)

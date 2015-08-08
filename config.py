@@ -24,6 +24,10 @@ class Config(object):
 
     WMJ_MAIL_SENDER = (u'万木家', 'notification@wanmujia.com')
 
+    @classmethod
+    def init_app(cls, app):
+        pass
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -34,6 +38,11 @@ class DevelopmentConfig(Config):
     STATIC_URL = 'http://127.0.0.1:5000/'
     HOST = 'http://127.0.0.1:5000'
 
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+        pass
+
 
 class TestingConfig(Config):
     TESTING = True
@@ -41,16 +50,30 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
         'mysql+pymysql://test:testpassword@localhost/test?charset=utf8'
 
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+        pass
+
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'mysql+pymysql://dev:devpassword@localhost/wmj?charset=utf8'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     STATIC_URL = 'http://static.wanmujia.com/'
     HOST = 'http://www.wanmujia.com'
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
     IMAGE_DIR = '/var/www/'
     CDN_DOMAIN = 'static.wanmujia.com'
+
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+        import json
+        with open('config.json') as f:
+            config_dict = json.load(f)
+            cls.SECRET_KEY = config_dict['SECRET_KEY']
+            cls.MD5_SALT = config_dict['MD5_SALT']
+            cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
 
 
 class MailConfig(Config):
