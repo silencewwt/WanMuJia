@@ -59,6 +59,7 @@ target/
 *.sql
 *.db
 *.tar.gz
+config.json
 
 
 # Node
