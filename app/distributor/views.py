@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import current_app, render_template, request, redirect, session, url_for, jsonify
+from flask import current_app, render_template, request, redirect, session, url_for, jsonify, abort
 from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 
@@ -53,7 +53,7 @@ def register():
                 return jsonify({'accessGranted': True})
             return jsonify({'accessGranted': False, 'message': form.error2str()})
         return render_template('distributor/register.html', form=form)
-    return 'error', 403
+    abort(403)
 
 
 @distributor_blueprint.route('/')
