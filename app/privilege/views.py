@@ -13,7 +13,7 @@ from .forms import LoginForm, VendorDetailForm, VendorConfirmForm, VendorConfirm
     ItemForm
 
 
-@privilege_blueprint.route('/login', methods=['GET', 'POST'])
+@privilege_blueprint.route('/45f9d832-you3fA8cannot-44Z3-bd0cai8-d8fac3c12459login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if request.method == 'POST':
