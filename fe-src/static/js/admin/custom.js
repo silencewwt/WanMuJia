@@ -396,7 +396,7 @@ jQuery(document).ready(function($) {
                 id = confirm.dId;
                 $opLink = $('#distributors a[data-id="' + id + '"]');
                 url = '/privilege/distributors/revocation';
-                data.distributor_revocation_id = id;
+                data = {distributor_revocation_id: id};
 
                 if ($this.data('action') == 'accept') {
                     stateValue = '已同意';
