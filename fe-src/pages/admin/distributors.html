@@ -2,7 +2,7 @@
 
 
 {% block styles %}
-    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/js/datatables/dataTables.bootstrap.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/js/datatables/css/dataTables.bootstrap.css')}}">
 {% endblock %}
 
 {% block isDistributors -%} opened active {%- endblock %}
@@ -115,7 +115,7 @@
 {% block scripts %}
     <script src="{{url_for('static', filename='lib/xenon/js/jquery-validate/jquery.validate.min.js')}}"></script>
     <script src="{{url_for('static', filename='lib/xenon/js/datatables/js/jquery.dataTables.min.js')}}"></script>
-    <script src="{{url_for('static', filename='lib/xenon/js/datatables/dataTables.bootstrap.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/datatables/js/dataTables.bootstrap.js')}}"></script>
     <script src="{{url_for('static', filename='lib/xenon/js/datatables/yadcf/jquery.dataTables.yadcf.js')}}"></script>
     <script src="{{url_for('static', filename='lib/xenon/js/datatables/tabletools/dataTables.tableTools.min.js')}}"></script>
 {% endblock %}
