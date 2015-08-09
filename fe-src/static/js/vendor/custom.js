@@ -645,6 +645,7 @@ jQuery(document).ready(function($) {
             $('#confirm_password').rules('add', {
                 required: true,
                 equalTo: '#password',
+                password: false,
                 messages: {
                     required: '请再次输入密码',
                     equalTo: '两次密码输入不一致'

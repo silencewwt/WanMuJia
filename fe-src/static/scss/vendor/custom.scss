@@ -346,6 +346,14 @@ body.register-page .login-header {
     text-decoration: none;
 }
 
+.login-page footer {
+    margin-left: auto;
+    margin-right: auto;
+    width: 960px;
+    border-top: none;
+    background-color: inherit;
+}
+
 
 $uploadStateTop: 52px;
 $uploadStateRight: -30px;
