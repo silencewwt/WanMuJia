@@ -192,7 +192,8 @@ def distributors_revocation_data_table():
     data = {'draw': draw, 'recordsTotal': count, 'recordsFiltered': count, 'data': []}
     for revocation in revocations:
         data['data'].append({
-            'id': revocation.id, 'name': revocation.distributor.name, 'address': revocation.address.precise_address(),
+            'id': revocation.id, 'name': revocation.distributor.name,
+            'address': revocation.distributor.address.precise_address(),
             'contact': revocation.contact, 'contract': convert_url(revocation.contract),
             'vendor': revocation.distributor.vendor.name})
     return jsonify(data)
