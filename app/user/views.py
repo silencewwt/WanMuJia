@@ -14,6 +14,11 @@ from app.utils import md5_with_salt
 from app.utils.redis import redis_set, redis_get
 
 
+@user_blueprint.errorhandler(403)
+def forbid(error):
+    return redirect(url_for('main.login', next=request.url))
+
+
 @user_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm()
@@ -21,7 +26,7 @@ def login():
         if model_login(User, login_form):
             return redirect('/')    # TODO: redirect
         flash(u'用户名或密码错误')
-    return render_template('user/login.html', login_form=login_form)
+    return render_template('user/login.html', form=login_form)
 
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])

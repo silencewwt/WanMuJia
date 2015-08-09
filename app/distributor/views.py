@@ -13,6 +13,11 @@ from . import distributor as distributor_blueprint
 from .forms import LoginForm, RegisterForm, SettingsForm
 
 
+@distributor_blueprint.errorhandler(403)
+def forbid(error):
+    return redirect(url_for('.login', next=request.url))
+
+
 @distributor_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()

@@ -37,6 +37,11 @@ def vendor_not_confirmed(f):
     return wrapped
 
 
+@vendor_blueprint.errorhandler(403)
+def forbid(error):
+    return redirect(url_for('.login', next=request.url))
+
+
 @vendor_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()

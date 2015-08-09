@@ -55,17 +55,6 @@ def create_app(config_name):
     from .service import service as service_blueprint
     app.register_blueprint(service_blueprint, url_prefix='/service')
 
-    @app.errorhandler(403)
-    def forbid(error):
-        pieces = request.url.split('/')
-        if len(pieces) < 3 or 'user' == pieces[3]:
-            return redirect(url_for('user.login', next=request.url))
-        elif 'vendor' == pieces[3]:
-            return redirect(url_for('vendor.login', next=request.url))
-        elif 'distributor' == pieces[3]:
-            return redirect(url_for('distributor.login', next=request.url))
-        return error.name, 403
-
     @app.errorhandler(404)
     def page_not_found(error):
         return render_template('user/404.html'), 404
