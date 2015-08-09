@@ -167,8 +167,8 @@ def distributors_data_table():
     for distributor in distributors:
         created = datetime.datetime.fromtimestamp(distributor.created).strftime('%F')
         data['data'].append({
-            'id': distributor.id, 'name': distributor.name, 'contact_mobile': distributor.contact_mobile, 'created': created,
-            'contact_telephone': distributor.contact_telephone, 'contact': distributor.contact,
+            'id': distributor.id, 'name': distributor.name, 'contact_mobile': distributor.contact_mobile,
+            'created': created, 'contact_telephone': distributor.contact_telephone, 'contact': distributor.contact,
             'revocation_state': distributor.revocation_state, 'address': distributor.address.precise_address()})
     return jsonify(data)
 
@@ -194,6 +194,8 @@ def distributors_revocation_data_table():
         data['data'].append({
             'id': revocation.id, 'name': revocation.distributor.name,
             'address': revocation.distributor.address.precise_address(),
-            'contact': revocation.distributor.contact, 'contract': convert_url(revocation.contract),
+            'contact': revocation.distributor.contact,
+            'contact_telephone': revocation.distributor.contact_telephone,
+            'contract': convert_url(revocation.contract),
             'vendor': revocation.distributor.vendor.name})
     return jsonify(data)
