@@ -63,7 +63,7 @@ class ProductionConfig(Config):
     STATIC_URL = 'http://static.wanmujia.com/'
     HOST = 'http://www.wanmujia.com'
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
-    IMAGE_DIR = '/var/www/'
+    IMAGE_DIR = '/var/www/WanMuJia/'
     CDN_DOMAIN = 'static.wanmujia.com'
 
     @classmethod
