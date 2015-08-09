@@ -364,12 +364,12 @@ class RevocationForm(Form):
         self.distributor = distributor
 
     def revoke(self):
-        image, image_hash = save_image(current_user.id, 'vendor', self.contract, self.contract.data.stream)
+        contract, image_hash = save_image(current_user.id, 'vendor', self.contract, self.contract.data.stream)
         revocation = DistributorRevocation.query.filter_by(distributor_id=self.distributor.id).limit(1).first()
         if not revocation:
-            revocation = DistributorRevocation(self.distributor.id, image)
+            revocation = DistributorRevocation(self.distributor.id, contract)
         else:
-            revocation.image = image
+            revocation.contract = contract
             revocation.pending = True
         db.session.add(revocation)
         db.session.commit()

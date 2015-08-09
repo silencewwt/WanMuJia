@@ -291,15 +291,15 @@ class DistributorRevocation(db.Model):
     # 商家id
     distributor_id = db.Column(db.Integer, nullable=False)
     # 解约合同照片
-    image = db.Column(db.String(255), default='', nullable=False)
+    contract = db.Column(db.String(255), default='', nullable=False)
     # 待审核
     pending = db.Column(db.Boolean, default=True, nullable=False)
     # 已解约
     is_revoked = db.Column(db.Boolean, default=False, nullable=False)
 
-    def __init__(self, distributor_id, image):
+    def __init__(self, distributor_id, contract):
         self.distributor_id = distributor_id
-        self.image = image
+        self.contract = contract
 
     @property
     def distributor(self):
