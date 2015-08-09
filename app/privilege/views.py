@@ -187,7 +187,7 @@ def distributors_revocation():
 @privilege_permission.require(404)
 def distributors_revocation_data_table():
     draw, start, length = data_table_params()
-    revocations = DistributorRevocation.query.filter_by(pending=True).offset(draw).limit(length)
+    revocations = DistributorRevocation.query.filter_by(pending=True).offset(start).limit(length)
     count = DistributorRevocation.query.filter_by(is_revoked=False).count()
     data = {'draw': draw, 'recordsTotal': count, 'recordsFiltered': count, 'data': []}
     for revocation in revocations:
