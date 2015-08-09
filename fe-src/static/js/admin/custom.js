@@ -310,13 +310,21 @@ jQuery(document).ready(function($) {
                 {data: "contact_mobile", bSortable: false},
                 {data: "contact", bSortable: false},
             ],
-            columnDefs: [{
-                targets: [8],
-                data: {},
-                render: function (data) {
-                    return '<a class="dist-op" href="javascript:void(0);" ' + genDataAttrStr(data) + ' data-toggle="modal" data-target="#revocation-modal">详情/操作</a>';
+            columnDefs: [
+                {
+                    targets: [7],
+                    render: function () {
+                        return '<span class="state">未审核</span>';
+                    }
+                },
+                {
+                    targets: [8],
+                    data: {},
+                    render: function (data) {
+                        return '<a class="dist-op" href="javascript:void(0);" ' + genDataAttrStr(data) + ' data-toggle="modal" data-target="#revocation-modal">详情/操作</a>';
+                    }
                 }
-            }]
+            ]
         });
 
         $('#vendors').delegate('.vendor-op', 'click', function () {
