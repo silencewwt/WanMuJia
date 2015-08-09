@@ -24,7 +24,7 @@ def login():
 
 
 @privilege_blueprint.route('/logout')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def logout():
     logout_user()
     identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
@@ -65,7 +65,7 @@ def items_data_table():
 
 
 @privilege_blueprint.route('/items/<int:item_id>')
-@privilege_permission.require()
+@privilege_permission.require(404)
 def item_detail(item_id):
     item = Item.query.get_or_404(item_id)
     if item.is_deleted:
