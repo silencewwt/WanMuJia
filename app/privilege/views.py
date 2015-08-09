@@ -196,6 +196,7 @@ def distributors_revocation_data_table():
             'address': revocation.distributor.address.precise_address(),
             'contact': revocation.distributor.contact,
             'contact_telephone': revocation.distributor.contact_telephone,
+            'contact_mobile': revocation.distributor.contact_mobile,
             'contract': convert_url(revocation.contract),
             'vendor': revocation.distributor.vendor.name})
     return jsonify(data)
