@@ -176,7 +176,7 @@ def distributors_data_table():
 @privilege_blueprint.route('/distributors/revocation', methods=['POST'])
 @privilege_permission.require(404)
 def distributors_revocation():
-    form = DistributorRevocationForm()
+    form = DistributorRevocationForm(csrf_enabled=False)
     if form.validate():
         form.revoke()
         return jsonify({'success': True})

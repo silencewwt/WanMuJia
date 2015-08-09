@@ -78,11 +78,11 @@ class VendorConfirmRejectForm(VendorConfirmForm):
 
 class DistributorRevocationForm(Form):
     distributor_revocation_id = IntegerField(validators=[DataRequired()])
-    revocation_confirm = BooleanField(validators=[DataRequired()])
+    revocation_confirm = BooleanField()
 
     distributor_revocation = None
 
-    def validate_distributor_id(self, field):
+    def validate_distributor_revocation_id(self, field):
         distributor_revocation = DistributorRevocation.query.get(field.data)
         if not distributor_revocation:
             raise ValidationError()
@@ -90,12 +90,10 @@ class DistributorRevocationForm(Form):
 
     def revoke(self):
         if self.revocation_confirm.data:
-            self.distributor_revocation.pending = False
             self.distributor_revocation.is_revoked = True
             self.distributor_revocation.distributor.is_deleted = True
             db.session.add(self.distributor_revocation.distributor)
-        else:
-            self.distributor_revocation.pending = False
+        self.distributor_revocation.pending = False
         db.session.add(self.distributor_revocation)
         db.session.commit()
 
