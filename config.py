@@ -69,7 +69,7 @@ class ProductionConfig(Config):
     def init_app(cls, app):
         Config.init_app(app)
         import json
-        with open('config.json') as f:
+        with open('/var/www/WanMuJia/config.json') as f:
             config_dict = json.load(f)
             cls.SECRET_KEY = config_dict['SECRET_KEY']
             cls.MD5_SALT = config_dict['MD5_SALT']
