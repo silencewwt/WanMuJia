@@ -166,6 +166,13 @@ body.register-page .login-header {
 .register-next-form [type="submit"]:hover {
     background-color: rgba(55, 57, 58, 0.3);
 }
+.login-page footer {
+    margin-left: auto;
+    margin-right: auto;
+    width: 960px;
+    border-top: none;
+    background-color: inherit;
+}
 
 
 // confirm page
