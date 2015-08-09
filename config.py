@@ -58,6 +58,7 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
+    PROPAGATE_EXCEPTIONS = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     STATIC_URL = 'http://static.wanmujia.com/'
     HOST = 'http://www.wanmujia.com'
@@ -74,9 +75,11 @@ class ProductionConfig(Config):
             cls.SECRET_KEY = config_dict['SECRET_KEY']
             cls.MD5_SALT = config_dict['MD5_SALT']
             cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
+
         import logging
         file_handler = logging.FileHandler('/var/log/wmj/wmj_error.log')
         file_handler.setLevel(logging.ERROR)
+        file_handler.setFormatter(logging.Formatter('\n%s\n%s' % ('-' * 30, '%(asctime)s %(levelname)s: %(message)s')))
         app.logger.addHandler(file_handler)
 
 
