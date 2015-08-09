@@ -18,14 +18,12 @@
     <link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/css/xenon-skins.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/distributor/custom.css')}}">
 
-    <script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-    <script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-    <script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/jquery-1.11.1.min.js')}}"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-    <script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/html5shiv.min.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/xenon/js/respond.min.js')}}"></script>
     <![endif]-->
 
 
@@ -50,7 +48,7 @@
                 {{ form.csrf_token }}
                 <div class="login-header">
                     <a href="/distributor/login" class="logo clearfix">
-                        <img src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}" alt="" width="150" />
+                        <img src="{{url_for('static', filename='img/logo_white.png')}}" alt="" width="150" />
                         <span>商家注册</span>
                     </a>
                 </div>
@@ -300,20 +298,22 @@
 </script>
 
 <!-- Bottom Scripts -->
-<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
-<script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/bootstrap.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/TweenMax.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/resizeable.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/joinable.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/xenon-api.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/xenon-toggles.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/jquery-validate/jquery.validate.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/toastr/toastr.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/linkagesel-min.js')}}"></script>
+<script src="{{url_for('static', filename='js/address.js')}}"></script>
 
 
 <!-- JavaScripts initializations and stuff -->
 <script src="{{url_for('static', filename='lib/xenon/js/xenon-custom.js')}}"></script>
+<script src="{{url_for('static', filename='lib/md5.js')}}"></script>
+<script src="{{url_for('static', filename='js/util.js')}}"></script>
 <script src="{{url_for('static', filename='js/distributor/custom.js')}}"></script>
 
 </body>
