@@ -18,9 +18,10 @@ def login():
     form = LoginForm()
     if request.method == 'POST':
         if form.validate() and form.login():
+            current_app.logger.error('\nadmin login: %s %s' % (request.remote_addr, current_user.username))
             return jsonify({ACCESS_GRANTED: True})
         return jsonify({ACCESS_GRANTED: False, 'message': u'用户名或密码错误.'})
-    return render_template('admin/login.html', form=form, privilege=current_user)
+    return render_template('admin/login.html', form=form)
 
 
 @privilege_blueprint.route('/logout')
