@@ -59,7 +59,7 @@
                         <i class="linecons-note"></i>
                         <span class="title">商品管理</span>
                     </a>
-                    {% if vendor.confirmed %}
+                    {% if vendor.confirmed or vendor.item_permission %}
                         <ul>
                             <li class="{% block isItems_li %}{% endblock %}">
                                 <a href="/vendor/items">
@@ -83,7 +83,7 @@
                         <i class="linecons-shop"></i>
                         <span class="title">商家管理</span>
                     </a>
-                    {% if vendor.confirmed %}
+                    {% if vendor.confirmed or vendor.item_permission %}
                         <ul>
                             <li class="{% block isDistributors_li %}{% endblock %}">
                                 <a href="/vendor/distributors">
@@ -220,7 +220,7 @@
                         <i class="linecons-note"></i>
                         <span class="title">商品管理</span>
                     </a>
-                    {% if vendor.confirmed %}
+                    {% if vendor.confirmed or vendor.item_permission %}
                         <ul>
                             <li class="{% block s_isItems_li %}{% endblock %}">
                                 <a href="/vendor/items">
@@ -244,7 +244,7 @@
                         <i class="linecons-shop"></i>
                         <span class="title">商家管理</span>
                     </a>
-                    {% if vendor.confirmed %}
+                    {% if vendor.confirmed or vendor.item_permission %}
                         <ul>
                             <li class="{% block s_isDistributors_li %}{% endblock %}">
                                 <a href="/vendor/distributors">

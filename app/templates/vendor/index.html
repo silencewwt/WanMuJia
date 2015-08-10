@@ -18,7 +18,7 @@
 
         <div class="col-sm-3">
 
-            {% if vendor.confirmed %}
+            {% if vendor.confirmed or vendor.item_permission %}
             <a href="/vendor/items">
             {% endif %}
                 <div class="xe-widget xe-vertical-counter xe-vertical-counter-danger" data-suffix="&nbsp;个" data-count=".num" data-from="0" data-to="{{ vendor.statistic['items'] }}" data-duration="2">
@@ -43,7 +43,7 @@
 
         <div class="col-sm-3">
 
-            {% if vendor.confirmed %}
+            {% if vendor.confirmed or vendor.item_permission %}
             <a href="/vendor/distributors">
             {% endif %}
                 <div class="xe-widget xe-vertical-counter xe-vertical-counter-primary" data-suffix="&nbsp;家" data-count=".num" data-from="0" data-to="{{ vendor.statistic['distributors'] }}" data-duration="2" data-easing="false">
