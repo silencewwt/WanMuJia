@@ -83,7 +83,7 @@
                         <i class="linecons-shop"></i>
                         <span class="title">商家管理</span>
                     </a>
-                    {% if vendor.confirmed or vendor.item_permission %}
+                    {% if vendor.confirmed %}
                         <ul>
                             <li class="{% block isDistributors_li %}{% endblock %}">
                                 <a href="/vendor/distributors">
@@ -251,7 +251,7 @@
                         <i class="linecons-shop"></i>
                         <span class="title">商家管理</span>
                     </a>
-                    {% if vendor.confirmed or vendor.item_permission %}
+                    {% if vendor.confirmed %}
                         <ul>
                             <li class="{% block s_isDistributors_li %}{% endblock %}">
                                 <a href="/vendor/distributors">
