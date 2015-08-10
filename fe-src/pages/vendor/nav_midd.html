@@ -83,7 +83,7 @@
                         <i class="linecons-shop"></i>
                         <span class="title">商家管理</span>
                     </a>
-                    {% if vendor.confirmed or vendor.item_permission %}
+                    {% if vendor.confirmed %}
                         <ul>
                             <li class="{% block isDistributors_li %}{% endblock %}">
                                 <a href="/vendor/distributors">
@@ -172,10 +172,17 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="/vendor/settings">
-                                    <i class="fa-wrench"></i>
-                                    厂家设置
-                                </a>
+                                {% if vendor.confirmed %}
+                                    <a href="/vendor/settings">
+                                        <i class="fa-wrench"></i>
+                                        厂家设置
+                                    </a>
+                                {% else %}
+                                    <a href="/vendor/reconfirm">
+                                        <i class="fa-wrench"></i>
+                                        完善厂家信息
+                                    </a>
+                                {% endif %}
                             </li>
                             <li class="last">
                                 <a href="/vendor/logout">
@@ -244,7 +251,7 @@
                         <i class="linecons-shop"></i>
                         <span class="title">商家管理</span>
                     </a>
-                    {% if vendor.confirmed or vendor.item_permission %}
+                    {% if vendor.confirmed %}
                         <ul>
                             <li class="{% block s_isDistributors_li %}{% endblock %}">
                                 <a href="/vendor/distributors">
