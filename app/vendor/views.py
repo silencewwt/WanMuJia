@@ -14,6 +14,7 @@ from app.forms import MobileRegistrationForm
 from app.constants import *
 from app.utils import md5_with_time_salt, data_table_params
 from app.utils.redis import redis_get, redis_set
+from app.wmj_email import ADMIN_REMINDS, ADMIN_REMINDS_SUBJECT, send_email
 from .import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
     ItemImageDeleteForm, RevocationForm, ReconfirmForm
@@ -89,6 +90,7 @@ def register():
                     vendor.push_confirm_reminds('warning')
                     login_user(vendor)
                     identity_changed.send(current_app._get_current_object(), identity=Identity(vendor.get_id()))
+                    send_email(current_app.config['ADMIN_EMAILS'], ADMIN_REMINDS_SUBJECT, ADMIN_REMINDS)
                     session.pop(VENDOR_REGISTER_MOBILE)
                     session.pop(VENDOR_REGISTER_STEP_DONE)
                     return jsonify({ACCESS_GRANTED: True})

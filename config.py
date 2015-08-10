@@ -22,6 +22,7 @@ class Config(object):
     CDN_DOMAIN = 'static.wanmujia.com'
     CDN_TIMESTAMP = False
 
+    ADMIN_EMAILS = []
     WMJ_MAIL_SENDER = (u'万木家', 'notification@wanmujia.com')
 
     @classmethod
@@ -75,6 +76,7 @@ class ProductionConfig(Config):
             cls.SECRET_KEY = config_dict['SECRET_KEY']
             cls.MD5_SALT = config_dict['MD5_SALT']
             cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
+            cls.ADMIN_EMAILS = config_dict['ADMIN_EMAILS']
 
         import logging
         file_handler = logging.FileHandler('/var/log/wmj/wmj_error.log')
