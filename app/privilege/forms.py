@@ -59,6 +59,7 @@ class VendorConfirmForm(Form):
 
     def pass_vendor(self):
         self.vendor.confirmed = True
+        self.vendor.item_permission = True
         self.vendor.push_confirm_reminds('success')
         sms_generator(VENDOR_ACCEPT_TEMPLATE, self.vendor.mobile)
         db.session.add(self.vendor)

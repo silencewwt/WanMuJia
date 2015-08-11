@@ -2,7 +2,7 @@
 import datetime
 from functools import wraps
 
-from flask import current_app, flash, render_template, redirect, request, session, url_for, jsonify
+from flask import current_app, render_template, redirect, request, session, url_for, jsonify
 from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 
@@ -13,7 +13,7 @@ from app.permission import vendor_permission
 from app.forms import MobileRegistrationForm
 from app.constants import *
 from app.utils import md5_with_time_salt, data_table_params
-from app.utils.redis import redis_get, redis_set
+from app.utils.redis import redis_set
 from app.wmj_email import ADMIN_REMINDS, ADMIN_REMINDS_SUBJECT, send_email
 from .import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
@@ -29,12 +29,12 @@ def vendor_confirmed(f):
     return wrapped
 
 
-def vendor_not_confirmed(f):
+def vendor_item_permission(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
-        if current_user.is_authenticated() and not current_user.confirmed:
+        if current_user.is_authenticated() and current_user.item_permission:
             return f(*args, **kwargs)
-        return '已通过审核, 无法修改'
+        return '尚未通过审核, 无法上传商品'
     return wrapped
 
 
@@ -116,7 +116,7 @@ def index():
 
 @vendor_blueprint.route('/items')
 @vendor_permission.require(403)
-@vendor_confirmed
+@vendor_item_permission
 def item_list():
     return render_template('vendor/items.html', vendor=current_user)
 
@@ -137,7 +137,7 @@ def items_data_table():
 
 @vendor_blueprint.route('/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
 @vendor_permission.require(403)
-@vendor_confirmed
+@vendor_item_permission
 def item_detail(item_id):
     item = Item.query.get_or_404(item_id)
     if item.vendor_id != current_user.id:
@@ -163,7 +163,7 @@ def item_detail(item_id):
 
 @vendor_blueprint.route('/items/new_item', methods=['GET', 'POST'])
 @vendor_permission.require(403)
-@vendor_confirmed
+@vendor_item_permission
 def new_item():
     form = ItemForm()
     form.generate_choices()
@@ -177,7 +177,7 @@ def new_item():
 
 @vendor_blueprint.route('/items/image', methods=['PUT', 'DELETE'])
 @vendor_permission.require(403)
-@vendor_confirmed
+@vendor_item_permission
 def upload_item_image():
     if request.method == 'PUT':
         form = ItemImageForm(csrf_enabled=False)
@@ -198,7 +198,7 @@ def upload_item_image():
 
 @vendor_blueprint.route('/items/image_sort', methods=['POST'])
 @vendor_permission.require(403)
-@vendor_confirmed
+@vendor_item_permission
 def update_item_image_sort():
     form = ItemImageSortForm(csrf_enabled=False)
     if form.validate():
@@ -243,7 +243,7 @@ def invite_distributor():
     if request.method == 'POST':
         token = md5_with_time_salt(current_user.id)
         redis_set(DISTRIBUTOR_REGISTER, token, current_user.id)
-        return '%s/distributor/verify?token=%s' % (current_app.config['HOST'], token)   # TODO: host
+        return '%s/distributor/verify?token=%s' % (current_app.config['HOST'], token)
     return render_template('vendor/invitation.html', vendor=current_user)
 
 
@@ -286,7 +286,7 @@ def initialization():
         if form.validate():
             form.initial()
             return jsonify({'success': True})
-        return jsonify({'success': True, 'message': form.error2str()})
+        return jsonify({'success': False, 'message': form.error2str()})
 
 
 @vendor_blueprint.route('/reconfirm', methods=['GET', 'POST'])
