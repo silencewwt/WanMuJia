@@ -8,6 +8,7 @@ from wtforms import StringField, PasswordField, IntegerField, SelectMultipleFiel
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
 from app import db
+from app.constants import SMS_CAPTCHA
 from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, Decoration, \
     Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, FirstCategory
 from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
@@ -15,7 +16,7 @@ from app.utils import IO, convert_url
 from app.utils.forms import Form
 from app.utils.image import save_image
 from app.utils.fields import OptionGroupSelectField, SelectField
-from app.utils.validator import Email, Mobile, QueryID, Image, DistrictValidator
+from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, DistrictValidator
 
 
 class LoginForm(Form):
@@ -364,4 +365,18 @@ class RevocationForm(Form):
             revocation.contract = contract
             revocation.pending = True
         db.session.add(revocation)
+        db.session.commit()
+
+
+class InitializationForm(Form):
+    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
+    mobile = StringField(validators=[Mobile()])
+    password = PasswordField(validators=[Length(32, 32)])
+    name = StringField(validators=[Length(2, 30, u'品牌厂商名称不符合规范')])
+
+    def initial(self):
+        current_user.mobile = self.mobile.data
+        current_user.password = self.password.data
+        current_user.name = self.name.data
+        current_user.initialed = True
         db.session.commit()

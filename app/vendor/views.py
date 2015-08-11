@@ -17,7 +17,7 @@ from app.utils.redis import redis_get, redis_set
 from app.wmj_email import ADMIN_REMINDS, ADMIN_REMINDS_SUBJECT, send_email
 from .import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
-    ItemImageDeleteForm, RevocationForm, ReconfirmForm
+    ItemImageDeleteForm, RevocationForm, ReconfirmForm, InitializationForm
 
 
 def vendor_confirmed(f):
@@ -109,7 +109,8 @@ def reset_password():
 @vendor_blueprint.route('')
 @vendor_permission.require(403)
 def index():
-    current_user.item_permission = True
+    if not current_user.initialed:
+        return redirect(url_for('.initialization'))
     return render_template('vendor/index.html', vendor=current_user)
 
 
@@ -271,6 +272,21 @@ def settings():
             form.update_vendor_setting(current_user)
     form.show_vendor_setting(current_user)
     return render_template('vendor/settings.html', form=form, vendor=current_user)
+
+
+@vendor_blueprint.route('/initialization', methods=['GET', 'POST'])
+@vendor_permission.require(403)
+def initialization():
+    if current_user.initialized:
+        return redirect(url_for('.index'))
+    form = InitializationForm()
+    if request.method == 'GET':
+        return render_template('vendor/initialization.html', form=form, vendor=current_user)
+    else:
+        if form.validate():
+            form.initial()
+            return jsonify({'success': True})
+        return jsonify({'success': True, 'message': form.error2str()})
 
 
 @vendor_blueprint.route('/reconfirm', methods=['GET', 'POST'])
