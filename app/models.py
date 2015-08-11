@@ -186,6 +186,10 @@ class Vendor(BaseUser, db.Model, Property):
     reject_message = db.Column(db.Unicode(100), default=u'', nullable=False)
     # 审核已回绝
     rejected = db.Column(db.Boolean, default=False, nullable=False)
+    # 已初始化账号
+    initialized = db.Column(db.Boolean, default=True, nullable=False)
+    # 商品上传权限
+    item_permission = db.Column(db.Boolean, default=False, nullable=False)
 
     id_prefix = vendor_id_prefix
     REMINDS = VENDOR_REMINDS
