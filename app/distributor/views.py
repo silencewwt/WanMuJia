@@ -56,7 +56,7 @@ def register():
     abort(403)
 
 
-@distributor_blueprint.route('/')
+@distributor_blueprint.route('')
 @distributor_permission.require(403)
 def index():
     statistic = {
