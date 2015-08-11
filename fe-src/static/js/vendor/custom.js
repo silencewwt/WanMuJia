@@ -138,6 +138,8 @@ jQuery(document).ready(function($) {
 
     // =========== page init ==================
 
+    var pageTitle = null;
+
     // Items page
     if (getPageTitle() === 'items') {
         var $confirmForm = $('#delete-confirm-form');
@@ -578,12 +580,41 @@ jQuery(document).ready(function($) {
     }
 
 
-    // Register page
-    if ($('body').data('page') == 'register') {
+    // Register page or Initialize page
+    if ((pageTitle = getPageTitle(true)) == 'register' ||
+        pageTitle == 'initialization') {
         // 发送按钮倒计时
         var $send = $('.send');
+        var $form = $('#' + pageTitle);
         var DELAYTIME = 60000;  // 1min
         var originValue = $send.val() || $send.text();
+
+        // form validate
+        $('#mobile').rules('add', {
+            required: true,
+            mobile: true,
+            messages: {
+                required: '请输入您的手机号',
+                mobile: '请输入合法的手机号码'
+            }
+        });
+        $('#captcha').rules('add', {
+            required: true,
+            messages: {
+                required: '请填写手机验证码',
+            }
+        });
+        // 当为初始化页面时
+        if (pageTitle == 'initialization') {
+            $('#password').rules('add', {
+                required: true,
+                password: true,
+                messages: {
+                    required: '请设置密码',
+                    password: '密码长度必须大于等于6位且为字母和数字的组合'
+                }
+            });
+        }
 
         // 页面加载完成时获取发送按钮情况
         if (getCookie('clickTime')) {
@@ -592,7 +623,7 @@ jQuery(document).ready(function($) {
         }
 
         $send.click(function () {
-            if (!checkValidate($('#register'), '#mobile')) {
+            if (!checkValidate($form, '#mobile')) {
                 return;
             }
 
@@ -608,22 +639,30 @@ jQuery(document).ready(function($) {
                 method: 'post',
                 data: {
                     mobile: $('#mobile').val()
+                },
+                success: function (res) {
+                    if (!res.success) {
+                        toastr.error(res.message, '验证码发送失败!', toastrOpts);
+                        return;
+                    }
+                    setCountDown($this, originValue, DELAYTIME);
+                },
+                error: function (xhr) {
+                    toastr.error('服务器' + xhr.status + '错误...', '验证码发送失败!', toastrOpts);
+                    setCountDown($this, originValue, DELAYTIME);
                 }
             });
-
-            setCountDown($this, originValue, DELAYTIME);
         });
     }
 
 
     // Register_next or Reconfirm page
-    if ($('body').data('page') == 'register-next' ||
-            $('body').data('page') == 'reconfirm') {
-
+    if ((pageTitle = getPageTitle(true)) == 'register-next' ||
+        pageTitle == 'reconfirm') {
         // form validate
 
         // only in register-next page
-        if ($('body').data('page') == 'register-next') {
+        if (pageTitle == 'register-next') {
             $('#email').rules('add', {
                 required: true,
                 email: true,
@@ -790,8 +829,10 @@ function convertTimeString(seconds) {
 
 // ============= page fn ========================
 
-function getPageTitle() {
-    return $('.page-title').data('page');
+function getPageTitle(fromBody) {
+    return fromBody ?
+        $('body').data('page') :
+        $('.page-title').data('page');
 }
 
 function saveInfos(options) {
