@@ -14,6 +14,40 @@ from app.utils.redis import redis_get, redis_set
 from .permission import privilege_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
 
 
+class Property(object):
+    """
+    This class is used to flush property attributes.
+
+    class UserAddress(db.Model):
+        # other attributes
+        user_id = db.Column(db.Integer)
+
+    class User(db.Model, Property):
+        # other attributes
+
+        _flush = {'address': lambda x: UserAddress.query.filter_by(user_id=x.id).first()}
+
+        @property
+        def address(self):
+            return self.get_or_flush('address')
+
+    If sometime user._address is inconsistent with database
+    user.flush('address')
+    """
+
+    _flush = {}
+
+    def flush(self, *attrs):
+        for attr in attrs:
+            setattr(self, '_%s' % attr, self._flush[attr](self))
+
+    def get_or_flush(self, attr):
+        real_attr = '_%s' % attr
+        if not getattr(self, real_attr, None):
+            self.flush(attr)
+        return getattr(self, real_attr, None)
+
+
 class BaseUser(UserMixin):
     # id
     id = db.Column(db.Integer, primary_key=True)
@@ -120,7 +154,7 @@ class Order(db.Model):
     price_payed = db.Column(db.Boolean, default=False, nullable=False)
 
 
-class Vendor(BaseUser, db.Model):
+class Vendor(BaseUser, db.Model, Property):
     __tablename__ = 'vendors'
     # logo图片
     logo = db.Column(db.String(255), default='', nullable=False)
@@ -156,6 +190,13 @@ class Vendor(BaseUser, db.Model):
     id_prefix = vendor_id_prefix
     REMINDS = VENDOR_REMINDS
 
+    _flush = {
+        'address': lambda x: VendorAddress.query.filter_by(vendor_id=x.id).limit(1).first(),
+        'logo': lambda x: convert_url(x.logo)
+    }
+    _logo = None
+    _address = None
+
     def __init__(self, password, mobile, email, agent_name, agent_identity, name, license_limit, telephone):
         super(Vendor, self).__init__(password, mobile, email)
         self.agent_name = agent_name
@@ -166,11 +207,11 @@ class Vendor(BaseUser, db.Model):
 
     @property
     def address(self):
-        return VendorAddress.query.filter_by(vendor_id=self.id).limit(1).first()
+        return self.get_or_flush('address')
 
     @property
     def logo_url(self):
-        return convert_url(self.logo)
+        return self.get_or_flush('logo')
 
     @property
     def statistic(self):
@@ -213,7 +254,7 @@ class Vendor(BaseUser, db.Model):
         db.session.commit()
 
 
-class Distributor(BaseUser, db.Model):
+class Distributor(BaseUser, db.Model, Property):
     __tablename__ = 'distributors'
     # 登录名
     username = db.Column(db.Unicode(20), nullable=False)
@@ -238,6 +279,15 @@ class Distributor(BaseUser, db.Model):
     id_prefix = distributor_id_prefix
     REMINDS = DISTRIBUTOR_REMINDS
 
+    _flush = {
+        'vendor': lambda x: Vendor.query.get(x.vendor_id),
+        'address': lambda x: DistributorAddress.query.filter_by(distributor_id=x.id).limit(1).first(),
+        'revocation': lambda x: DistributorRevocation.query.filter_by(distributor_id=x.id).first()
+    }
+    _vendor = None
+    _address = None
+    _revocation = None
+
     def __init__(self, username, password, vendor_id, name, contact_mobile, contact_telephone, contact):
         super(Distributor, self).__init__(password, mobile='', email='')
         self.username = username
@@ -249,15 +299,19 @@ class Distributor(BaseUser, db.Model):
 
     @property
     def vendor(self):
-        return Vendor.query.get(self.vendor_id)
+        return self.get_or_flush('vendor')
 
     @property
     def address(self):
-        return DistributorAddress.query.filter_by(distributor_id=self.id).limit(1).first()
+        return self.get_or_flush('address')
+
+    @property
+    def revocation(self):
+        return self.get_or_flush('revocation')
 
     @property
     def revocation_state(self):
-        revocation = DistributorRevocation.query.filter_by(distributor_id=self.id).first()
+        revocation = self.revocation
         if not revocation:
             return ''
         elif revocation.pending:
@@ -283,7 +337,7 @@ class Distributor(BaseUser, db.Model):
         return False
 
 
-class DistributorRevocation(db.Model):
+class DistributorRevocation(db.Model, Property):
     __tablename__ = 'distributor_revocations'
     id = db.Column(db.Integer, primary_key=True)
     # 创建时间
@@ -301,12 +355,17 @@ class DistributorRevocation(db.Model):
         self.distributor_id = distributor_id
         self.contract = contract
 
+    _flush = {
+        'distributor': lambda x: Distributor.query.get(x.distributor_id)
+    }
+    _distributor = None
+
     @property
     def distributor(self):
-        return Distributor.query.get(self.distributor_id)
+        return self.get_or_flush('distributor')
 
 
-class Item(db.Model):
+class Item(db.Model, Property):
     __tablename__ = 'items'
     # 商品id
     id = db.Column(db.Integer, primary_key=True)
@@ -345,6 +404,16 @@ class Item(db.Model):
     # 已删除
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
+    _flush = {
+        'vendor': lambda x: Vendor.query.get(x.vendor_id),
+        'second_category': lambda x: SecondCategory.query.get(x.second_category_id).second_category,
+        'images': lambda x: ItemImage.query.filter_by(item_id=x.id, is_deleted=False).order_by(ItemImage.sort,
+                                                                                               ItemImage.created)
+    }
+    _vendor = None
+    _second_category = None
+    _images = None
+
     def __init__(self, vendor_id, item, price, material_id, second_category_id, second_scene_id, length, width, height,
                  stove_id, carve_id, sand_id, paint_id, decoration_id, story=u''):
         self.vendor_id = vendor_id
@@ -369,10 +438,6 @@ class Item(db.Model):
     def get_tenon_id(self):
         return [item_tenon.tenon_id for item_tenon in ItemTenon.query.filter_by(item_id=self.id)]
 
-    def get_item_images(self):
-        return Item.query.filter_by(item_id=self.id, is_deleted=False).\
-            order_by(ItemImage.created).order_by(ItemImage.sort).all()
-
     def in_stock_distributors(self):
         distributors = db.session.query(Distributor).filter(Stock.item_id == self.id, Stock.stock > 0,
                                                             Stock.distributor_id == Distributor.id,
@@ -381,19 +446,18 @@ class Item(db.Model):
 
     @property
     def vendor(self):
-        return Vendor.query.get(self.vendor_id)
+        return self.get_or_flush('vendor')
 
     @property
     def second_category(self):
-        return SecondCategory.query.get(self.second_category_id).second_category
+        return self.get_or_flush('second_category')
 
     @property
     def images(self):
-        return ItemImage.query.filter_by(item_id=self.id, is_deleted=False).\
-            order_by(ItemImage.sort, ItemImage.created)
+        return self.get_or_flush('images')
 
 
-class ItemImage(db.Model):
+class ItemImage(db.Model, Property):
     __tablename__ = 'item_images'
     id = db.Column(db.Integer, primary_key=True)
     item_id = db.Column(db.Integer, nullable=False)
@@ -411,15 +475,23 @@ class ItemImage(db.Model):
         self.filename = filename
         self.sort = sort
 
-    def get_item(self):
-        return Item.query.get(self.item_id)
+    _flush = {
+        'item': lambda x: Item.query.get(x.item_id),
+        'url': lambda x: convert_url(x.path)
+    }
+    _item = None
+    _url = None
+
+    @property
+    def item(self):
+        return self.get_or_flush('item')
 
     def get_vendor_id(self):
-        return self.get_item().vendor_id
+        return self.item.vendor_id
 
     @property
     def url(self):
-        return '%s%s' % (current_app.config['STATIC_URL'], self.path)
+        return self.get_or_flush('url')
 
 
 class Stock(db.Model):
@@ -549,12 +621,17 @@ class Province(db.Model):
         return self
 
 
-class City(db.Model):
+class City(db.Model, Property):
     __tablename__ = 'cities'
     id = db.Column(db.Integer, primary_key=True)
     cn_id = db.Column(db.Integer, nullable=False)
     city = db.Column(db.Unicode(15), nullable=False)
     province_id = db.Column(db.Integer, nullable=False)
+
+    _flush = {
+        'province': lambda x: Province.query.get(x.province_id)
+    }
+    _province = None
 
     def area_address(self):
         if self.city in [u'北京市', u'上海市', u'天津市', u'重庆市']:
@@ -563,25 +640,30 @@ class City(db.Model):
 
     @property
     def province(self):
-        return Province.query.get(self.province_id)
+        return self.get_or_flush('province')
 
     def grade(self):
         return self.province.grade(), self
 
 
-class District(db.Model):
+class District(db.Model, Property):
     __tablename__ = 'districts'
     id = db.Column(db.Integer, primary_key=True)
     cn_id = db.Column(db.Integer, nullable=False)
     district = db.Column(db.Unicode(15), nullable=False)
     city_id = db.Column(db.Integer, nullable=False)
 
+    _flush = {
+        'city': lambda x: City.query.get(x.city_id)
+    }
+    _city = None
+
     def area_address(self):
         return self.city.area_address() + self.district
 
     @property
     def city(self):
-        return City.query.get(self.city_id)
+        return self.get_or_flush('city')
 
     def grade(self):
         province, city = self.city.grade()
@@ -624,20 +706,25 @@ class District(db.Model):
                 db.session.commit()
 
 
-class Address(object):
+class Address(Property):
     id = db.Column(db.Integer, primary_key=True)
     cn_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
+    _flush = {
+        'area': lambda x: District.query.filter_by(cn_id=x.cn_id).limit(1).first() or \
+        City.query.filter_by(cn_id=x.cn_id).limit(1).first() or \
+        Province.filter_by(cn_id=x.cn_id).limit(1).first()
+    }
+    _area = None
+
     @property
     def area(self):
-        return District.query.filter_by(cn_id=self.cn_id).limit(1).first() or \
-            City.query.filter_by(cn_id=self.cn_id).limit(1).first() or \
-            Province.filter_by(cn_id=self.cn_id).limit(1).first()
+        return self.get_or_flush('area')
 
     def vague_address(self):
-        return self.area.area_address()
+        return self.area.area_address() if self.area else ''
 
     def precise_address(self):
         return '%s%s' % (self.vague_address(), self.address)
