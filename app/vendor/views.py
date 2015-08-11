@@ -109,6 +109,7 @@ def reset_password():
 @vendor_blueprint.route('/')
 @vendor_permission.require(403)
 def index():
+    current_user.item_permission = True
     return render_template('vendor/index.html', vendor=current_user)
 
 
@@ -262,6 +263,8 @@ def revocation(distributor_id):
 @vendor_blueprint.route('/settings', methods=['GET', 'POST'])
 @vendor_permission.require(403)
 def settings():
+    if not current_user.confirmed:
+        return redirect(url_for('.reconfirm'))
     form = SettingsForm(current_user)
     if request.method == 'POST':
         if form.validate():
@@ -272,9 +275,10 @@ def settings():
 
 @vendor_blueprint.route('/reconfirm', methods=['GET', 'POST'])
 @vendor_permission.require(403)
-@vendor_not_confirmed
 def reconfirm():
-    form = ReconfirmForm(current_user)
+    if current_user.confirmed:
+        return redirect(url_for('.settings'))
+    form = ReconfirmForm()
     if request.method == 'GET':
         form.show_info()
         return render_template('vendor/register_next.html', form=form, vendor=current_user)

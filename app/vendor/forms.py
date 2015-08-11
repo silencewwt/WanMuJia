@@ -87,7 +87,7 @@ class RegistrationDetailForm(RegistrationForm):
 
 
 class ReconfirmForm(RegistrationForm):
-    email = StringField()
+    email = None
     agent_identity_front = FileField(validators=[Image(required=False, base64=True)])
     agent_identity_back = FileField(validators=[Image(required=False, base64=True)])
     license_image = FileField(validators=[Image(required=False, base64=True)])
@@ -96,12 +96,8 @@ class ReconfirmForm(RegistrationForm):
     is_reconfirm = True
 
     address_attributes = ('province', 'city', 'district')
-    attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone', 'email')
+    attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone')
     url_attributes = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
-
-    def __init__(self, vendor, *args, **kwargs):
-        super(ReconfirmForm, self).__init__(*args, **kwargs)
-        self.email.validators = [Email(required=False, model=Vendor, exist_owner=vendor)]
 
     def update_address(self):
         current_user.address.address = self.address.data
@@ -130,10 +126,6 @@ class ReconfirmForm(RegistrationForm):
         self.update_address()
         for attr in self.attributes:
             setattr(current_user, attr, getattr(self, attr).data)
-        if current_user.email != self.email.data:
-            current_user.email = self.email.data
-            current_user.email_confirmed = False
-        db.session.add(current_user)
         db.session.commit()
 
 
