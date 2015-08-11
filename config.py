@@ -42,7 +42,10 @@ class DevelopmentConfig(Config):
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
-        pass
+        import json
+        with open('config.json') as f:
+            config_dict = json.load(f)
+            cls.SQLALCHEMY_DATABASE_URI = config_dict['DEV_DATABASE_URL']
 
 
 class TestingConfig(Config):
