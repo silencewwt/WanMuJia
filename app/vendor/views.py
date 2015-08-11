@@ -109,7 +109,7 @@ def reset_password():
 @vendor_blueprint.route('')
 @vendor_permission.require(403)
 def index():
-    if not current_user.initialed:
+    if not current_user.initialized:
         return redirect(url_for('.initialization'))
     return render_template('vendor/index.html', vendor=current_user)
 

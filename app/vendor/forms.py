@@ -378,5 +378,5 @@ class InitializationForm(Form):
         current_user.mobile = self.mobile.data
         current_user.password = self.password.data
         current_user.name = self.name.data
-        current_user.initialed = True
+        current_user.initialized = True
         db.session.commit()
