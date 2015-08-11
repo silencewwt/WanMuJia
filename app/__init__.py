@@ -5,6 +5,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.principal import Principal
 from flask.ext.cdn import CDN
+from flask_debugtoolbar import DebugToolbarExtension
 
 from config import config
 from .permission import identity_config
@@ -15,6 +16,7 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 principal = Principal()
 cdn = CDN()
+toolbar = DebugToolbarExtension()
 
 local_redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
@@ -30,6 +32,7 @@ def create_app(config_name):
     login_manager.login_view = 'user.login'
     principal.init_app(app)
     identity_config(app)
+    toolbar.init_app(app)
     cdn.init_app(app)
 
     app.jinja_env.filters['date'] = date
