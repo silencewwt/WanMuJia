@@ -6,6 +6,7 @@ from wtforms import StringField, PasswordField, IntegerField, BooleanField
 from wtforms.validators import ValidationError, DataRequired, Length
 
 from app import db
+from app.constants import VENDOR_REMINDS_SUCCESS, VENDOR_REMINDS_REJECTED
 from app.forms import Form
 from app.models import Vendor, Distributor, DistributorRevocation, Privilege
 from app.sms import sms_generator, VENDOR_ACCEPT_TEMPLATE
@@ -60,7 +61,7 @@ class VendorConfirmForm(Form):
     def pass_vendor(self):
         self.vendor.confirmed = True
         self.vendor.item_permission = True
-        self.vendor.push_confirm_reminds('success')
+        self.vendor.push_confirm_reminds(VENDOR_REMINDS_SUCCESS)
         sms_generator(VENDOR_ACCEPT_TEMPLATE, self.vendor.mobile)
         db.session.add(self.vendor)
         db.session.commit()
@@ -72,7 +73,7 @@ class VendorConfirmRejectForm(VendorConfirmForm):
     def reject_vendor(self):
         self.vendor.rejected = True
         self.vendor.reject_message = self.reject_message.data
-        self.vendor.push_confirm_reminds('danger', self.reject_message.data)
+        self.vendor.push_confirm_reminds(VENDOR_REMINDS_REJECTED, self.reject_message.data)
         db.session.add(self.vendor)
         db.session.commit()
 

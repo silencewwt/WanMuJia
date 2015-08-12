@@ -8,7 +8,7 @@ from flask.ext.login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
-from app.constants import VENDOR_REMINDS, DISTRIBUTOR_REMINDS
+from app.constants import *
 from app.utils import convert_url
 from app.utils.redis import redis_get, redis_set
 from .permission import privilege_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
@@ -43,7 +43,7 @@ class Property(object):
 
     def get_or_flush(self, attr):
         real_attr = '_%s' % attr
-        if not getattr(self, real_attr, None):
+        if getattr(self, real_attr, None) is None:
             self.flush(attr)
         return getattr(self, real_attr, None)
 
@@ -196,10 +196,14 @@ class Vendor(BaseUser, db.Model, Property):
 
     _flush = {
         'address': lambda x: VendorAddress.query.filter_by(vendor_id=x.id).limit(1).first(),
-        'logo': lambda x: convert_url(x.logo)
+        'logo': lambda x: convert_url(x.logo),
+        'info_completed': lambda x: x.agent_name and x.agent_identity and x.agent_identity_front and \
+        x.agent_identity_back and x.name and x.license_limit and x.license_image and x.telephone and x.address and \
+        x.address.cn_id and x.address.address
     }
     _logo = None
     _address = None
+    _info_completed = None
 
     def __init__(self, password, mobile, email, agent_name, agent_identity, name, license_limit, telephone):
         super(Vendor, self).__init__(password, mobile, email)
@@ -224,14 +228,27 @@ class Vendor(BaseUser, db.Model, Property):
             'distributors': Distributor.query.filter_by(vendor_id=self.id, is_revoked=False).count()
         }
 
-    def push_confirm_reminds(self, status, reject_message=''):
+    @property
+    def info_completed(self):
+        if self._info_completed is None:
+            self.flush('info_completed')
+        return self._info_completed
+
+    def push_confirm_reminds(self, remind_type, message=''):
         link = None
-        if status == 'success':
+        if remind_type == VENDOR_REMINDS_SUCCESS:
             message = '您的认证信息已通过审核, 快来上传商品吧!'
-        elif status == 'warning':
+            status = 'success'
+        elif remind_type == VENDOR_REMINDS_PENDING:
             message = '您的认证信息将在3个工作日内审核'
+            status = 'warning'
+        elif remind_type == VENDOR_REMINDS_COMPLETE:
+            status = 'danger'
+            message = '请完善您的认证信息'
+            link = {'text': '认证信息链接', 'href': '/vendor/reconfirm'}
         else:
-            message = '您的认证信息尚未能通过审核 %s' % reject_message
+            status = 'danger'
+            message = '您的认证信息尚未能通过审核 %s' % message
             link = {'text': '重新填写', 'href': '/vendor/reconfirm'}
         reminds = {'confirm': [{'message': message, 'type': status, 'link': link}]}
         redis_set(self.REMINDS, self.id, json.dumps(reminds), 3600 * 24 * 3)
@@ -256,6 +273,27 @@ class Vendor(BaseUser, db.Model, Property):
             vendor_address = VendorAddress(vendor.id, districts[randint(0, len(districts))].cn_id, zh_fake.address())
             db.session.add(vendor_address)
         db.session.commit()
+
+    @staticmethod
+    def generate_account(num):
+        import hashlib
+        import random
+        vendors = []
+        for i in range(num):
+            password = ''.join([random.SystemRandom().choice('ABCDEFG1234567890') for _ in range(8)])
+            password_hash = hashlib.md5(hashlib.md5(password.encode()).hexdigest().encode()).hexdigest()
+            mobile = 'WMJ%s' % random.randint(10000000, 99999999)
+            vendors.append((mobile, password))
+            vendor = Vendor(password_hash, mobile, '', '', '', '', '', '')
+            vendor.initialized = False
+            db.session.add(vendor)
+            db.session.commit()
+            vendor_address = VendorAddress(vendor.id, '', '')
+            db.session.add(vendor_address)
+            db.session.commit()
+        with open('vendor_accounts.txt', 'w') as f:
+            for account in vendors:
+                f.write('%s %s\n' % account)
 
 
 class Distributor(BaseUser, db.Model, Property):

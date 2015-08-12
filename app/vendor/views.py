@@ -53,9 +53,9 @@ def login():
             login_user(vendor)
             identity_changed.send(current_app._get_current_object(), identity=Identity(vendor.get_id()))
             if not vendor.confirmed and vendor.rejected:
-                vendor.push_confirm_reminds('danger', vendor.reject_message)
+                vendor.push_confirm_reminds(VENDOR_REMINDS_REJECTED, vendor.reject_message)
             elif not vendor.confirmed and not vendor.rejected:
-                vendor.push_confirm_reminds('warning')
+                vendor.push_confirm_reminds(VENDOR_REMINDS_PENDING)
             return jsonify({ACCESS_GRANTED: True})
         return jsonify({ACCESS_GRANTED: False})
     return render_template('vendor/login.html', form=form)
@@ -87,7 +87,7 @@ def register():
             if request.method == 'POST':
                 if detail_form.validate():
                     vendor = detail_form.add_vendor(session[VENDOR_REGISTER_MOBILE])
-                    vendor.push_confirm_reminds('warning')
+                    vendor.push_confirm_reminds(VENDOR_REMINDS_PENDING)
                     login_user(vendor)
                     identity_changed.send(current_app._get_current_object(), identity=Identity(vendor.get_id()))
                     send_email(current_app.config['ADMIN_EMAILS'], ADMIN_REMINDS_SUBJECT, ADMIN_REMINDS)
