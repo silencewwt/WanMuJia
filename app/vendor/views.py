@@ -108,7 +108,7 @@ def reset_password():
     return model_reset_password(Vendor, 'vendor')
 
 
-@vendor_blueprint.route('')
+@vendor_blueprint.route('/')
 @vendor_permission.require(403)
 def index():
     if not current_user.initialized:

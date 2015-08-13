@@ -32,7 +32,7 @@ def logout():
     return redirect(url_for('.login'))
 
 
-@privilege_blueprint.route('')
+@privilege_blueprint.route('/')
 @privilege_permission.require(404)
 def index():
     statistic = {
