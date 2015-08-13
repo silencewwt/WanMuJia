@@ -156,6 +156,8 @@ class Order(db.Model):
 
 class Vendor(BaseUser, db.Model, Property):
     __tablename__ = 'vendors'
+    # 邮箱
+    email = db.Column(db.String(64), nullable=False)
     # logo图片
     logo = db.Column(db.String(255), default='', nullable=False)
     # 法人真实姓名
@@ -167,7 +169,7 @@ class Vendor(BaseUser, db.Model, Property):
     # 法人身份证反面图片
     agent_identity_back = db.Column(db.String(255), default='', nullable=False)
     # 品牌厂家名称
-    name = db.Column(db.Unicode(30), unique=True, nullable=False)
+    name = db.Column(db.Unicode(30), nullable=False)
     # 营业执照期限
     license_limit = db.Column(db.CHAR(10), default='2035/07/19', nullable=False)
     # 营业执照副本扫描件
@@ -283,15 +285,18 @@ class Vendor(BaseUser, db.Model, Property):
             password = ''.join([random.SystemRandom().choice('ABCDEFG1234567890') for _ in range(8)])
             password_hash = hashlib.md5(hashlib.md5(password.encode()).hexdigest().encode()).hexdigest()
             mobile = 'WMJ%s' % random.randint(10000000, 99999999)
+            if Vendor.query.filter_by(mobile=mobile).first():
+                continue
             vendors.append((mobile, password))
             vendor = Vendor(password_hash, mobile, '', '', '', '', '', '')
             vendor.initialized = False
+            vendor.item_permission = True
             db.session.add(vendor)
             db.session.commit()
-            vendor_address = VendorAddress(vendor.id, '', '')
+            vendor_address = VendorAddress(vendor.id, 0, '')
             db.session.add(vendor_address)
             db.session.commit()
-        with open('vendor_accounts.txt', 'w') as f:
+        with open('vendor_accounts.txt', 'a') as f:
             for account in vendors:
                 f.write('%s %s\n' % account)
 
@@ -757,7 +762,7 @@ class Address(Property):
     _flush = {
         'area': lambda x: District.query.filter_by(cn_id=x.cn_id).limit(1).first() or \
         City.query.filter_by(cn_id=x.cn_id).limit(1).first() or \
-        Province.filter_by(cn_id=x.cn_id).limit(1).first()
+        Province.query.filter_by(cn_id=x.cn_id).limit(1).first()
     }
     _area = None
 

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import time
+
 from flask import current_app
 from flask.ext.login import login_user, current_user
 from flask.ext.principal import identity_changed, Identity
@@ -60,6 +62,7 @@ class VendorConfirmForm(Form):
 
     def pass_vendor(self):
         self.vendor.confirmed = True
+        self.vendor.confirmed_time = time.time()
         self.vendor.item_permission = True
         self.vendor.push_confirm_reminds(VENDOR_REMINDS_SUCCESS)
         sms_generator(VENDOR_ACCEPT_TEMPLATE, self.vendor.mobile)

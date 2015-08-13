@@ -52,7 +52,9 @@ def login():
         if form.validate() and vendor and vendor.verify_password(form.password.data):
             login_user(vendor)
             identity_changed.send(current_app._get_current_object(), identity=Identity(vendor.get_id()))
-            if not vendor.confirmed and vendor.rejected:
+            if not vendor.info_completed:
+                vendor.push_confirm_reminds(VENDOR_REMINDS_COMPLETE)
+            elif not vendor.confirmed and vendor.rejected:
                 vendor.push_confirm_reminds(VENDOR_REMINDS_REJECTED, vendor.reject_message)
             elif not vendor.confirmed and not vendor.rejected:
                 vendor.push_confirm_reminds(VENDOR_REMINDS_PENDING)

@@ -8,7 +8,7 @@ from wtforms import StringField, PasswordField, IntegerField, SelectMultipleFiel
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
 from app import db
-from app.constants import SMS_CAPTCHA
+from app.constants import SMS_CAPTCHA, VENDOR_REMINDS_PENDING, VENDOR_REMINDS_COMPLETE
 from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, Decoration, \
     Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, FirstCategory
 from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
@@ -107,7 +107,11 @@ class ReconfirmForm(RegistrationForm):
         db.session.commit()
 
     def show_address(self):
-        grades_id = [_.cn_id for _ in current_user.address.area.grade()]
+        area = current_user.address.area
+        if area:
+            grades_id = [_.cn_id for _ in current_user.address.area.grade()]
+        else:
+            grades_id = []
         while len(grades_id) < 3:
             grades_id.append(None)
         for attr, cn_id in zip(self.address_attributes, grades_id):
@@ -128,6 +132,11 @@ class ReconfirmForm(RegistrationForm):
         for attr in self.attributes:
             setattr(current_user, attr, getattr(self, attr).data)
         db.session.commit()
+        current_user.flush('info_completed')
+        if current_user.info_completed:
+            current_user.push_confirm_reminds(VENDOR_REMINDS_PENDING)
+        else:
+            current_user.push_confirm_reminds(VENDOR_REMINDS_COMPLETE)
 
 
 class ItemForm(Form):
