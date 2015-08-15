@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, request, render_template, redirect, flash, session, url_for
-from flask.ext.login import login_user, logout_user, login_required, current_user
-from flask.ext.principal import identity_changed, Identity
+from flask.ext.login import login_user, logout_user, current_user
+from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 
 from . import user as user_blueprint
-from . forms import *
+from . forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, EmailRegistrationForm
 from app import db
 from app.models import User, Collection
 from app.constants import *
-from app.core import login as model_login, reset_password as model_reset_password
+from app.core import reset_password as model_reset_password
 from app.permission import user_permission
 from app.utils import md5_with_salt
 from app.utils.redis import redis_set, redis_get
@@ -19,14 +19,18 @@ def forbid(error):
     return redirect(url_for('main.login', next=request.url))
 
 
-@user_blueprint.route('/login', methods=['GET', 'POST'])
+@user_blueprint.route('/login', methods=['POST'])
 def login():
-    login_form = LoginForm()
-    if login_form.validate_on_submit():
-        if model_login(User, login_form):
-            return redirect('/')    # TODO: redirect
-        flash(u'用户名或密码错误')
-    return render_template('user/login.html', form=login_form)
+    form = LoginForm()
+    if form.validate() and form.login():
+        return redirect(url_for(request.args.get('next') or '.profile'))
+
+
+@user_blueprint.route('/logout')
+def logout():
+    logout_user()
+    identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity)
+    return redirect(url_for('main.login'))
 
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])
