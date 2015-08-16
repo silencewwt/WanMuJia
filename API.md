@@ -1,5 +1,4 @@
 #WanMuJia API Doc
-
 ##User
 ###user register
 + **URL**
@@ -7,7 +6,63 @@
 + **method**
   + GET
   + POST
++ **postData**(手机注册)
+  + **csrf_token**
+  + **form**
+    + 注册类型
+    + value = "USER_REGISTER_MOBILE"
+    + type = text
+    + require
+    + hidden
+  + **mobile**
+    + 手机号码
+    + type = text
+    + length = 11
+    + require
+  + **captcha**
+    + 短信验证码
+    + type = text
+    + length = 6
+    + require
++ **postData**(邮箱注册)
+  + **csrf_token**
+  + **form**
+    + 注册类型
+    + value = "USER_REGISTER_EMAIL"
+    + type = text
+    + require
+    + hidden
+  + **email**
+    + 邮箱
+    + type = text
+    + length = [3, 64]
+    + require
+
+###user register next
++ **URL**
+  + /register
++ **method**
+  + GET
+  + POST
 + **postData**
+  + **csrf_token**
+  + **password**
+    + 密码
+    + type = password
+    + length = [6, 32]
+    + require
+    + 需将用户的密码md5两次
+  + **confirm_password**
+    + 确认密码
+    + type = password
+    + length = [6, 32]
+    + require
+    + 需将用户的密码md5两次, 且与password相等
+  + **nickname**
+    + 昵称
+    + type = text
+    + length = [4, 20]
+    + require
 
 ###user login
 + **URL**
@@ -16,9 +71,16 @@
   + GET
   + POST
 + **postData**
-  + csrf_token
-  + username
-  + password
+  + **csrf_token**
+  + **username**
+    + 用户名 (手机号码 或 邮箱)
+    + type = text
+    + require
+  + **password**
+	+ 密码
+    + type = password
+    + require
+    + 需将用户密码md5两次
 
 ###user logout
 + **URL**
@@ -47,9 +109,11 @@
   + POST
   + DELETE
 + **parameters**
-  + page
-  + item
-+ **no postData**
+  + page: 页数
+  + item: item id
++ **comment**
+  1. 无postData, post表示收藏商品, delete表示删除收藏
+  2. page >= 1 且只在get时用到, 表示收藏夹的第page页(默认每页50件商品)
 
 ###user setting
 + **URL**
@@ -101,27 +165,27 @@
 + **postData**
   + **name** 
     + 商家名称
-    + type=text
+    + type = text
     + required
   + **password**
     + 密码
-    + type=password
+    + type = password
     + required
   + **confirmed_password**
     + 确认密码
-    + type=password
+    + type = password
     + required
   + **contact**
     + 联系人姓名
-    + type=text
+    + type = text
     + required
   + **contact_mobile**
     + 联系人手机
-    + type=text
+    + type = text
     + required
   + **contact_telephone**
     + 固话
-    + type=text
+    + type = text
     + required
   + **district_cn_id**
     + 行政区号
@@ -129,7 +193,7 @@
     + required
   + **address**
     + 详细地址
-    + type=text
+    + type = text
     + required
 
         
@@ -379,3 +443,45 @@
 + **postData**
   + distributor_revocation_id
   + revocation_confirm
+
+##Service
+###mobile register sms
++ **URL**
+  + /service/mobile_register_sms
++ **method**
+  + POST
++ **postData**
+  + mobile
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
+    
+###send email
++ **URL**
+  + /service/send_email
++ **method**
+  + POST
++ **parameters**
+  + **type**(以下之一)
+    + USER_EMAIL_CONFIRM
+    + VENDOR_EMAIL_CONFIRM
++ **postData**
+  + **role**(以下之一)
+    + user
+    + vendor
+  + **id**
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
+    
+###image captcha
++ **URL**
+  + /service/<string:token>.jpg
++ **method**
+  + GET
++ **return**
+  + **img**
