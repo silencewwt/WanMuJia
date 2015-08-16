@@ -19,11 +19,15 @@ def forbid(error):
     return redirect(url_for('main.login', next=request.url))
 
 
-@user_blueprint.route('/login', methods=['POST'])
+@user_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate() and form.login():
-        return redirect(url_for(request.args.get('next') or '.profile'))
+    if form.validate_on_submit():
+        if form.login():
+            return redirect(url_for(request.args.get('next') or 'main.index'))
+        flash(u'用户名或密码错误')
+        form.password.data = ''
+    return render_template('user/login.html', form=form)
 
 
 @user_blueprint.route('/logout')
@@ -123,7 +127,7 @@ def reset_password():
     return model_reset_password(User, 'user')
 
 
-@user_blueprint.route('/')
+@user_blueprint.route('/profile')
 @user_permission.require(403)
 def profile():
     return render_template('user/profile.html', user=current_user)

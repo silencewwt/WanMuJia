@@ -41,7 +41,7 @@ def create_app(config_name):
     app.register_blueprint(main_blueprint)
 
     from .user import user as user_blueprint
-    app.register_blueprint(user_blueprint, url_prefix='/user')
+    app.register_blueprint(user_blueprint)
 
     from .vendor import vendor as vendor_blueprint
     app.register_blueprint(vendor_blueprint, url_prefix='/vendor')
