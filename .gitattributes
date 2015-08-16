@@ -1,3 +1,4 @@
 app/static/* linguist-vendored
 fe-src/server/* linguist-vendored
 fe-src/static/lib/* linguist-vendored
+migrations/* linguist-vendored
