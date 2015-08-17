@@ -113,13 +113,13 @@ jQuery(document).ready(function($) {
         $('#contact_mobile').rules('add', {
             mobile: true,
             messages: {
-                mobile: '请填写合法的手机号码'
+                mobile: '手机号码格式不正确'
             }
         });
         $('#contact_telephone').rules('add', {
             tel: true,
             messages: {
-                tel: '请填写合法的固定电话号码'
+                tel: '固定电话号码格式不正确'
             }
         });
     }

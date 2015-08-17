@@ -542,13 +542,13 @@ jQuery(document).ready(function($) {
         $('#mobile').rules('add', {
             mobile: true,
             messages: {
-                mobile: '请填写合法的手机号码'
+                mobile: '手机号码格式不正确'
             }
         });
         $('#telephone').rules('add', {
             tel: true,
             messages: {
-                tel: '请填写合法的固定电话号码'
+                tel: '固定电话号码格式不正确'
             }
         });
 
@@ -668,7 +668,7 @@ jQuery(document).ready(function($) {
                 email: true,
                 messages: {
                     required: '请输入您的邮箱',
-                    email: '请输入合法的邮箱地址'
+                    email: '邮箱地址格式不正确'
                 }
             });
 
@@ -725,7 +725,7 @@ jQuery(document).ready(function($) {
             identity: true,
             messages: {
                 required: '请输入代理人身份证',
-                identity: '不合法的身份证号码'
+                identity: '身份证号码格式不正确'
             }
         });
 
@@ -741,7 +741,7 @@ jQuery(document).ready(function($) {
             customDate: true,
             messages: {
                 required: '请填写营业期限',
-                customDate: '不合法的日期格式, 格式: 2015/07/19',
+                customDate: '日期格式不正确, 格式: 2015/07/19',
             },
         });
 
@@ -750,7 +750,7 @@ jQuery(document).ready(function($) {
             tel: true,
             messages: {
                 required: '请填写联系固话',
-                tel: '不合法的电话号码',
+                tel: '电话号码格式不正确',
             },
         });
 
