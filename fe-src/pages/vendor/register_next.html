@@ -167,7 +167,13 @@
                 </div>
             </form>
 
-            {% if not form.is_reconfirm %}
+            {% if form.is_reconfirm %}
+                <div class="external-login">
+                    <a href="/vendor" class="facebook">
+                        返回首页
+                    </a>
+                </div>
+            {% else %}
                 <div class="external-login">
                     <a href="/vendor/login" class="facebook">
                         已经入驻？点击进行登录

@@ -88,10 +88,10 @@
                                         finish: function(){
                                             // Redirect after successful register page (when progress bar reaches 100%)
                                             if(resp.success) {
-                                                var countdown = 3;
+                                                var countdown = 5;
                                                 var message = countdown +'秒后自动跳转至后台首页...';
 
-                                                toastr.success(message, '账号初始化成功 :)', opts);
+                                                toastr.success(message, '账号初始化成功 :) 之前的登录账号将不再使用，以后请使用手机号登录！', opts);
                                                 setTimeout(function () {
                                                     window.location.href = '/vendor';
                                                 }, countdown * 1000);

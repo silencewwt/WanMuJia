@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>万木家-{{ title }}</title>
+    <title>万木家-{% block title %}{% endblock %}</title>
     {% include 'user/include/source.html' %}
     {% block styles %}{% endblock %}
 </head>
