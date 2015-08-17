@@ -28,7 +28,7 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
     db.init_app(app)
     login_manager.init_app(app)
-    login_manager.session_protection = 'strong'
+    login_manager.session_protection = 'basic'
     login_manager.login_view = 'user.login'
     principal.init_app(app)
     identity_config(app)
