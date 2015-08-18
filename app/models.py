@@ -429,15 +429,13 @@ class Item(db.Model, Property):
     # 商品二级分类id
     second_category_id = db.Column(db.Integer, nullable=False)
     # 长度 cm
-    length = db.Column(db.Integer, nullable=False)
+    length = db.Column(db.Float, nullable=False)
     # 宽度 cm
-    width = db.Column(db.Integer, nullable=False)
+    width = db.Column(db.Float, nullable=False)
     # 高度 cm
-    height = db.Column(db.Integer, nullable=False)
+    height = db.Column(db.Float, nullable=False)
     # 烘干 id
     stove_id = db.Column(db.Integer, nullable=False)
-    # 雕刻 id
-    carve_id = db.Column(db.Integer, nullable=False)
     # 打磨砂纸 id
     sand_id = db.Column(db.Integer, nullable=False)
     # 涂饰 id
@@ -462,7 +460,7 @@ class Item(db.Model, Property):
     _images = None
 
     def __init__(self, vendor_id, item, price, material_id, second_category_id, second_scene_id, length, width, height,
-                 stove_id, carve_id, sand_id, paint_id, decoration_id, story=u''):
+                 stove_id, sand_id, paint_id, decoration_id, story=u''):
         self.vendor_id = vendor_id
         self.item = item
         self.price = price
@@ -473,7 +471,6 @@ class Item(db.Model, Property):
         self.width = width
         self.height = height
         self.stove_id = stove_id
-        self.carve_id = carve_id
         self.sand_id = sand_id
         self.paint_id = paint_id
         self.decoration_id = decoration_id
@@ -485,11 +482,17 @@ class Item(db.Model, Property):
     def get_tenon_id(self):
         return [item_tenon.tenon_id for item_tenon in ItemTenon.query.filter_by(item_id=self.id)]
 
+    def get_carve_id(self):
+        return [item_carve.carve_id for item_carve in ItemCarve.query.filter_by(item_id=self.id)]
+
     def in_stock_distributors(self):
         distributors = db.session.query(Distributor).filter(Stock.item_id == self.id, Stock.stock > 0,
                                                             Stock.distributor_id == Distributor.id,
                                                             Distributor.is_revoked is False)
         return distributors
+
+    def size(self):
+        return '%.2f * %.2f * %.2f' % (self.length, self.width, self.height)
 
     @property
     def vendor(self):
@@ -873,6 +876,13 @@ class Tenon(db.Model):
         for tenon in (u'燕尾榫', u'明榫', u'暗榫', u'楔钉榫', u'套榫', u'抱肩榫', u'勾挂榫', u'夹头榫', u'插肩榫', u'走马销', u'平榫'):
             db.session.add(Tenon(tenon=tenon))
         db.session.commit()
+
+
+class ItemCarve(db.Model):
+    __tablename__ = 'item_carves'
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, nullable=False)
+    carve_id = db.Column(db.Integer, nullable=False)
 
 
 class ItemTenon(db.Model):

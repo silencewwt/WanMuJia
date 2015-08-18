@@ -4,13 +4,14 @@ from base64 import b64decode
 
 from flask.ext.login import current_user, current_app
 from flask.ext.wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField
+from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField, FloatField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
 from app import db
 from app.constants import SMS_CAPTCHA, VENDOR_REMINDS_PENDING, VENDOR_REMINDS_COMPLETE
 from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, Decoration, \
-    Tenon, Item, ItemTenon, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, FirstCategory
+    Tenon, Item, ItemTenon, ItemCarve, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, \
+    FirstCategory
 from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
 from app.utils import IO, convert_url
 from app.utils.forms import Form
@@ -141,15 +142,15 @@ class ReconfirmForm(RegistrationForm):
 
 class ItemForm(Form):
     item = StringField(validators=[DataRequired(), Length(1, 20)])
-    length = IntegerField(validators=[DataRequired(), NumberRange(1)])
-    width = IntegerField(validators=[DataRequired(), NumberRange(1)])
-    height = IntegerField(validators=[DataRequired(), NumberRange(1)])
+    length = FloatField(validators=[DataRequired(), NumberRange(0)])
+    width = FloatField(validators=[DataRequired(), NumberRange(0)])
+    height = FloatField(validators=[DataRequired(), NumberRange(0)])
     price = IntegerField(validators=[DataRequired(), NumberRange(1)])
     material_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Material)])
     second_category_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondCategory)])
     second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene)])
     stove_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Stove)])
-    carve_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Carve)])
+    carve_id = SelectMultipleField(coerce=int, validators=[DataRequired(), QueryID(Carve)])
     sand_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Sand)])
     paint_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Paint)])
     decoration_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Decoration)])
@@ -157,7 +158,7 @@ class ItemForm(Form):
     story = TextAreaField(validators=[Length(0, 5000)])
 
     attributes = ('item', 'length', 'width', 'height', 'price', 'material_id', 'second_category_id', 'second_scene_id',
-                  'stove_id', 'carve_id', 'sand_id', 'decoration_id', 'paint_id', 'story')
+                  'stove_id', 'sand_id', 'decoration_id', 'paint_id', 'story')
 
     def generate_choices(self):
         self.second_scene_id.choices = []
@@ -194,7 +195,6 @@ class ItemForm(Form):
             width=self.width.data,
             height=self.height.data,
             stove_id=self.stove_id.data,
-            carve_id=self.carve_id.data,
             sand_id=self.sand_id.data,
             paint_id=self.paint_id.data,
             decoration_id=self.decoration_id.data,
@@ -202,6 +202,8 @@ class ItemForm(Form):
         )
         db.session.add(item)
         db.session.commit()
+        for carve_id in self.carve_id.data:
+            db.session.add(ItemCarve(item_id=item.id, carve_id=carve_id))
         for tenon_id in self.tenon_id.data:
             db.session.add(ItemTenon(item_id=item.id, tenon_id=tenon_id))
         db.session.commit()
@@ -211,6 +213,7 @@ class ItemForm(Form):
         for attr in self.attributes:
             getattr(self, attr).data = getattr(item, attr)
         self.tenon_id.data = item.get_tenon_id()
+        self.carve_id.data = item.get_carve_id()
 
     def update_item(self, item):
         for attr in self.attributes:
@@ -220,10 +223,17 @@ class ItemForm(Form):
         item_tenons = item.get_tenon_id()
         add_tenons = set(self.tenon_id.data) - set(item_tenons)
         del_tenons = set(item_tenons) - set(self.tenon_id.data)
+        item_carves = item.get_carve_id()
+        add_carves = set(self.carve_id.data) - set(item_carves)
+        del_carves = set(item_carves) - set(self.carve_id.data)
         for tenon_id in add_tenons:
             db.session.add(ItemTenon(item_id=item.id, tenon_id=tenon_id))
         for tenon_id in del_tenons:
             db.session.delete(ItemTenon.query.filter_by(item_id=item.id, tenon_id=tenon_id).limit(1).first())
+        for carve_id in add_carves:
+            db.session.add(ItemCarve(item_id=item.id, carve_id=carve_id))
+        for carve_id in del_carves:
+            db.session.delete(ItemCarve.query.filter_by(item_id=item.id, carve_id=carve_id).limit(1).first())
         db.session.add(item)
         db.session.commit()
 

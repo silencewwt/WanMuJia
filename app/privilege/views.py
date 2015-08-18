@@ -61,7 +61,7 @@ def items_data_table():
     for item in items:
         data['data'].append({
             'id': item.id, 'item': item.item, 'second_category_id': item.second_category, 'vendor': item.vendor.name,
-            'price': item.price, 'size': '%s*%s*%s' % (item.length, item.width, item.height)})
+            'price': item.price, 'size': item.size()})
     return jsonify(data)
 
 
