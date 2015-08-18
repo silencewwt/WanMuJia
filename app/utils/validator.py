@@ -27,7 +27,7 @@ class Email(BaseEmail):
 
 
 class Mobile(Regexp):
-    def __init__(self, available=True, message=u'手机号码不符合规范!'):
+    def __init__(self, available=True, message=u'手机号码不正确'):
         self.available = available
         self.message = message
         super(Mobile, self).__init__(r'^1[3-8]\d{9}$', message=self.message)
@@ -68,31 +68,33 @@ class DistrictValidator(object):
 
 
 class QueryID(object):
-    def __init__(self, model):
+    def __init__(self, model, message=u'参数错误'):
         self.model = model
+        self.message = message
 
     def __call__(self, form, field):
         if not isinstance(field.data, (list, tuple)):
             if not self.model.query.get(field.data):
-                raise ValidationError(u'参数错误!')
+                raise ValidationError(self.message)
         else:
             for data in field.data:
                 if not self.model.query.get(data):
-                    raise ValidationError(u'参数错误!')
+                    raise ValidationError(self.message)
 
 
 class UserName(object):
     def __call__(self, form, field):
         if not re.match(r'^\w{4,14}$', field.data, re.UNICODE) or re.match(r'^\d*$', field.data, re.UNICODE):
-            raise ValidationError(u'用户名中含有非法字符!')
+            raise ValidationError(u'用户名不正确')
         if not available_username(field.data):
             raise ValidationError(u'该用户名已被使用!')
 
 
 class Image(object):
-    def __init__(self, required=True, base64=False):
+    def __init__(self, required=True, base64=False, message=u'图片不正确'):
         self.required = required
         self.base64 = base64
+        self.message = message
 
     def __call__(self, form, field):
         if self.required or field.data:
@@ -103,7 +105,7 @@ class Image(object):
             try:
                 BaseImage.open(image_str)
             except OSError:
-                raise ValidationError(u'图片格式错误')
+                raise ValidationError(self.message)
 
 
 def available_mobile(mobile):

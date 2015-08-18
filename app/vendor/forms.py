@@ -3,7 +3,7 @@ import datetime
 from base64 import b64decode
 
 from flask.ext.login import current_user, current_app
-from flask.ext.wtf.file import FileField, FileAllowed
+from flask.ext.wtf.file import FileField
 from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField, FloatField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
@@ -21,21 +21,21 @@ from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, District
 
 
 class LoginForm(Form):
-    mobile = StringField(validators=[DataRequired()])
-    password = PasswordField(validators=[DataRequired()])
+    mobile = StringField(validators=[DataRequired(u'请填写手机或邮箱')])
+    password = PasswordField(validators=[Length(6, 32, u'密码长度不正确')])
 
 
 class RegistrationForm(Form):
-    email = StringField(validators=[Email()])
-    agent_name = StringField(validators=[DataRequired(u'必填')])
-    agent_identity = StringField(validators=[DataRequired(u'必填'), Length(18, 18, u'身份证号码不符合规范!')])
-    agent_identity_front = FileField(validators=[Image(required=True, base64=True)])
-    agent_identity_back = FileField(validators=[Image(required=True, base64=True)])
-    license_image = FileField(validators=[Image(required=True, base64=True)])
-    name = StringField(validators=[DataRequired(u'必填'), Length(2, 30, u'品牌厂商名称不符合规范')])
-    license_limit = StringField(validators=[Length(8, 10)])
-    telephone = StringField(validators=[DataRequired(u'必填'), Length(7, 15)])
-    address = StringField(validators=[DataRequired(), Length(1, 30)])
+    email = StringField(validators=[Email(message=u'邮箱不正确')])
+    agent_name = StringField(validators=[Length(1, 10, u'代理人姓名不正确')])
+    agent_identity = StringField(validators=[Length(18, 18, u'代理人身份证号码不正确')])
+    agent_identity_front = FileField(validators=[Image(required=True, base64=True, message=u'身份证正面照片不正确')])
+    agent_identity_back = FileField(validators=[Image(required=True, base64=True, message=u'身份证反面照片不正确')])
+    license_image = FileField(validators=[Image(required=True, base64=True, message=u'营业执照照片不正确')])
+    name = StringField(validators=[Length(2, 30, u'品牌厂商名称不正确')])
+    license_limit = StringField(validators=[Length(8, 10, u'营业执照期限不正确')])
+    telephone = StringField(validators=[Length(7, 15, u'固话不正确')])
+    address = StringField(validators=[Length(1, 30, u'地址不正确')])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
 
     image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image')
@@ -45,7 +45,7 @@ class RegistrationForm(Form):
             date = list(map(int, field.data.split('/')))
             limit = datetime.datetime(date[0], date[1], date[2])
         except ValueError:
-            raise ValidationError(u'营业执照期限格式错误')
+            raise ValidationError(u'营业执照期限格式不正确')
         self.license_limit.data = limit.strftime('%G/%m/%d')
 
     def save_images(self, vendor=None):
@@ -60,8 +60,8 @@ class RegistrationForm(Form):
 
 
 class RegistrationDetailForm(RegistrationForm):
-    password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password')])
-    confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
+    password = PasswordField(validators=[Length(6, 32), EqualTo('confirm_password', u'确认密码不一致')])
+    confirm_password = PasswordField(validators=[Length(6, 32)])
 
     def save_address(self, vendor):
         address = VendorAddress(vendor_id=vendor.id, cn_id=self.district_cn_id.data, address=self.address.data)
@@ -90,10 +90,9 @@ class RegistrationDetailForm(RegistrationForm):
 
 class ReconfirmForm(RegistrationForm):
     email = None
-    agent_identity_front = FileField(validators=[Image(required=False, base64=True)])
-    agent_identity_back = FileField(validators=[Image(required=False, base64=True)])
-    license_image = FileField(validators=[Image(required=False, base64=True)])
-    logo = FileField(validators=[Image(required=False, base64=True)])
+    agent_identity_front = FileField(validators=[Image(required=False, base64=True, message=u'身份证正面照片不正确')])
+    agent_identity_back = FileField(validators=[Image(required=False, base64=True, message=u'身份证反面照片不正确')])
+    license_image = FileField(validators=[Image(required=False, base64=True, message=u'营业执照照片不正确')])
 
     is_reconfirm = True
 
@@ -141,20 +140,20 @@ class ReconfirmForm(RegistrationForm):
 
 
 class ItemForm(Form):
-    item = StringField(validators=[DataRequired(), Length(1, 20)])
-    length = FloatField(validators=[DataRequired(), NumberRange(0)])
-    width = FloatField(validators=[DataRequired(), NumberRange(0)])
-    height = FloatField(validators=[DataRequired(), NumberRange(0)])
-    price = IntegerField(validators=[DataRequired(), NumberRange(1)])
-    material_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Material)])
-    second_category_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondCategory)])
-    second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene)])
-    stove_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Stove)])
-    carve_id = SelectMultipleField(coerce=int, validators=[DataRequired(), QueryID(Carve)])
-    sand_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Sand)])
-    paint_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Paint)])
-    decoration_id = SelectField(coerce=int, validators=[DataRequired(), QueryID(Decoration)])
-    tenon_id = SelectMultipleField(coerce=int, validators=[DataRequired(), QueryID(Tenon)])
+    item = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
+    length = FloatField(validators=[NumberRange(1, message=u'商品长度不正确')])
+    width = FloatField(validators=[NumberRange(1, message=u'商品宽度不正确')])
+    height = FloatField(validators=[NumberRange(1, message=u'商品高度不正确')])
+    price = IntegerField(validators=[NumberRange(1, message=u'商品价格不正确')])
+    material_id = SelectField(coerce=int, validators=[QueryID(Material, u'商品材料不正确')])
+    second_category_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondCategory, u'商品种类不正确')])
+    second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, u'商品场景不正确')])
+    stove_id = SelectField(coerce=int, validators=[QueryID(Stove, u'烘干工艺不正确')])
+    carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, u'雕刻工艺不正确')])
+    sand_id = SelectField(coerce=int, validators=[QueryID(Sand, u'打磨砂纸不正确')])
+    paint_id = SelectField(coerce=int, validators=[QueryID(Paint, u'涂饰工艺不正确')])
+    decoration_id = SelectField(coerce=int, validators=[QueryID(Decoration, u'装饰工艺不正确')])
+    tenon_id = SelectMultipleField(coerce=int, validators=[QueryID(Tenon, u'榫卯结构不正确')])
     story = TextAreaField(validators=[Length(0, 5000)])
 
     attributes = ('item', 'length', 'width', 'height', 'price', 'material_id', 'second_category_id', 'second_scene_id',
@@ -240,7 +239,7 @@ class ItemForm(Form):
 
 class ItemImageForm(Form):
     item_id = IntegerField()
-    file = FileField(validators=[Image(required=True), FileAllowed(['jpg', 'png', 'jpeg'])])
+    file = FileField(validators=[Image(required=True, message=u'商品图片不正确')])
 
     def validate_item_id(self, field):
         if field.data:
@@ -260,7 +259,7 @@ class ItemImageForm(Form):
 
 class ItemImageSortForm(Form):
     item_id = IntegerField()
-    images = StringField(validators=[])
+    images = StringField()
 
     image_list = []
 
@@ -310,12 +309,12 @@ class ItemImageDeleteForm(Form):
 
 class SettingsForm(Form):
     name = StringField()
-    logo = FileField(validators=[Image(required=False), FileAllowed(['jpg', 'png'], u'只支持jpg, png!')])
+    logo = FileField(validators=[Image(required=False, message=u'logo不正确')])
     mobile = StringField()
-    telephone = StringField(validators=[DataRequired(u'电话号码必填'), Length(7, 15)])
+    telephone = StringField(validators=[Length(7, 15, u'电话号码不正确')])
     contact = StringField()
-    address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
-    introduction = StringField(validators=[Length(0, 30)])
+    address = StringField(validators=[Length(1, 30, u'地址不正确')])
+    introduction = StringField(validators=[Length(0, 30, u'厂家简介不正确')])
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
     email = StringField()
 
@@ -391,7 +390,7 @@ class InitializationForm(Form):
     captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
     mobile = StringField(validators=[Mobile()])
     password = PasswordField(validators=[Length(32, 32)])
-    name = StringField(validators=[Length(2, 30, u'品牌厂商名称不符合规范')])
+    name = StringField(validators=[Length(2, 30, u'品牌厂商名称不正确')])
 
     def initial(self):
         current_user.mobile = self.mobile.data

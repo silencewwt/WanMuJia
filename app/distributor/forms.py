@@ -25,13 +25,13 @@ class LoginForm(Form):
 
 
 class RegisterForm(Form):
-    password = PasswordField(validators=[DataRequired(), Length(32, 32)])
-    confirm_password = PasswordField(validators=[DataRequired(), Length(32, 32), EqualTo('confirm_password', u'前后密码不一致')])
-    name = StringField(validators=[DataRequired(u'必填')])
-    contact_mobile = StringField(validators=[DataRequired(u'必填')])
-    contact_telephone = StringField(validators=[DataRequired(u'必填')])
-    contact = StringField(validators=[DataRequired(u'必填')])
-    address = StringField(validators=[DataRequired(u'必填')])
+    password = PasswordField(validators=[Length(32, 32)])
+    confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('confirm_password', u'确认密码不一致')])
+    name = StringField(validators=[Length(1, 30, u'商家名称不正确')])
+    contact_mobile = StringField(validators=[DataRequired(u'联系手机不正确')])
+    contact_telephone = StringField(validators=[DataRequired(u'联系电话不正确')])
+    contact = StringField(validators=[DataRequired(u'联系人不正确')])
+    address = StringField(validators=[DataRequired(u'地址不正确')])
     district_cn_id = StringField(validators=[DistrictValidator()])
 
     def add_distributor(self, vendor_id):
@@ -67,7 +67,7 @@ class SettingsForm(Form):
     contact_mobile = StringField()
     contact = StringField()
     district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
-    address = StringField(validators=[DataRequired(u'必填'), Length(1, 30)])
+    address = StringField(validators=[DataRequired(u'地址不正确'), Length(1, 30)])
 
     attributes = ('username', 'name', 'contact_mobile', 'contact', 'contact_telephone')
 
