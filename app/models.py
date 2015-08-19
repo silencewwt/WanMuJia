@@ -3,7 +3,6 @@ import json
 import time
 import random
 
-from flask import current_app
 from flask.ext.login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
