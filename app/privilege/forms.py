@@ -2,7 +2,7 @@
 import time
 
 from flask import current_app
-from flask.ext.login import login_user, current_user
+from flask.ext.login import login_user
 from flask.ext.principal import identity_changed, Identity
 from wtforms import StringField, PasswordField, IntegerField, BooleanField
 from wtforms.validators import ValidationError, DataRequired, Length
@@ -10,7 +10,7 @@ from wtforms.validators import ValidationError, DataRequired, Length
 from app import db
 from app.constants import VENDOR_REMINDS_SUCCESS, VENDOR_REMINDS_REJECTED
 from app.forms import Form
-from app.models import Vendor, Distributor, DistributorRevocation, Privilege
+from app.models import Vendor, DistributorRevocation, Privilege
 from app.sms import sms_generator, VENDOR_ACCEPT_TEMPLATE
 from app.vendor.forms import ItemForm as BaseItemForm
 from app.utils import convert_url
