@@ -23,7 +23,7 @@ class Email(BaseEmail):
         if self.required or field.data:
             super(Email, self).__call__(form, field)
             if self.available and not available_email(field.data, self.model, self.exist_owner):
-                raise ValidationError(self.message)
+                raise ValidationError(u'邮箱已被绑定')
 
 
 class Mobile(Regexp):
@@ -34,9 +34,8 @@ class Mobile(Regexp):
 
     def __call__(self, form, field, message=None):
         super(Mobile, self).__call__(form, field, self.message)
-        if self.available:
-            if not available_mobile(field.data):
-                raise ValidationError(u'手机号已经被绑定')
+        if self.available and not available_mobile(field.data):
+            raise ValidationError(u'手机号已经被绑定')
 
 
 class Captcha(object):
