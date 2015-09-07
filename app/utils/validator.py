@@ -81,12 +81,10 @@ class QueryID(object):
                     raise ValidationError(self.message)
 
 
-class UserName(object):
+class NickName(object):
     def __call__(self, form, field):
-        if not re.match(r'^\w{4,14}$', field.data, re.UNICODE) or re.match(r'^\d*$', field.data, re.UNICODE):
+        if not re.match(r'^\w{4,30}$', field.data, re.UNICODE) or re.match(r'^\d*$', field.data, re.UNICODE):
             raise ValidationError(u'用户名不正确')
-        if not available_username(field.data):
-            raise ValidationError(u'该用户名已被使用!')
 
 
 class Image(object):
@@ -130,7 +128,3 @@ def validate_mobile(mobile):
     if not match:
         return False
     return True
-
-
-def available_username(username):
-    return not User.query.filter_by(username=username).limit(1).first()

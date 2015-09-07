@@ -96,21 +96,18 @@ class BaseUser(UserMixin):
 class User(BaseUser, db.Model):
     __tablename__ = 'users'
     # 用户名
-    username = db.Column(db.Unicode(20), unique=True, nullable=False)
+    nickname = db.Column(db.Unicode(30), nullable=False)
 
     id_prefix = user_id_prefix
 
-    def __init__(self, password, mobile, email, username=u''):
+    def __init__(self, password, mobile, email, nickname=u''):
         super(User, self).__init__(password, mobile, email)
-        self.username = username if username else self.generate_username()
+        self.nickname = nickname if nickname else self.generate_nickname()
 
     @staticmethod
-    def generate_username():
-        prefix = u'用户'
-        while 1:
-            username = u'%s%s' % (prefix, random.randint(100000, 999999))
-            if not User.query.filter_by(username=username).first():
-                return username
+    def generate_nickname():
+        prefix = u'万木家用户'
+        return u'%s%s' % (prefix, random.randint(100000, 999999))
 
 
 class Collection(db.Model):
