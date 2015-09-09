@@ -14,7 +14,7 @@ from app.utils import md5_with_salt
 from app.utils.redis import redis_set, redis_get
 
 
-@user_blueprint.errorhandler(403)
+@user_blueprint.errorhandler(401)
 def forbid(error):
     return redirect(url_for('main.login', next=request.url))
 
@@ -135,13 +135,13 @@ def reset_password():
 
 
 @user_blueprint.route('/profile')
-@user_permission.require(403)
+@user_permission.require(401)
 def profile():
     return render_template('user/profile.html', user=current_user)
 
 
 @user_blueprint.route('/collection', methods=['GET', 'POST', 'DELETE'])
-@user_permission.require(403)
+@user_permission.require(401)
 def collection():
     if request.method == 'GET':
         page = request.args.get('page', 1, type=int)

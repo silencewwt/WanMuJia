@@ -38,7 +38,7 @@ def vendor_item_permission(f):
     return wrapped
 
 
-@vendor_blueprint.errorhandler(403)
+@vendor_blueprint.errorhandler(401)
 def forbid(error):
     return redirect(url_for('.login', next=request.url))
 
@@ -64,7 +64,7 @@ def login():
 
 
 @vendor_blueprint.route('/logout')
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 def logout():
     logout_user()
     identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
@@ -109,7 +109,7 @@ def reset_password():
 
 
 @vendor_blueprint.route('/')
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 def index():
     if not current_user.initialized:
         return redirect(url_for('.initialization'))
@@ -117,14 +117,14 @@ def index():
 
 
 @vendor_blueprint.route('/items')
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 @vendor_item_permission
 def item_list():
     return render_template('vendor/items.html', vendor=current_user)
 
 
 @vendor_blueprint.route('/items/datatable')
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 def items_data_table():
     draw, start, length = data_table_params()
     items = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False).offset(start).limit(length)
@@ -138,12 +138,12 @@ def items_data_table():
 
 
 @vendor_blueprint.route('/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 @vendor_item_permission
 def item_detail(item_id):
     item = Item.query.get_or_404(item_id)
     if item.vendor_id != current_user.id:
-        return 'forbidden', 403
+        return 'forbidden', 401
     form = ItemForm()
     form.generate_choices()
     if request.method == 'GET':
@@ -164,7 +164,7 @@ def item_detail(item_id):
 
 
 @vendor_blueprint.route('/items/new_item', methods=['GET', 'POST'])
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 @vendor_item_permission
 def new_item():
     form = ItemForm()
@@ -178,7 +178,7 @@ def new_item():
 
 
 @vendor_blueprint.route('/items/image', methods=['PUT', 'DELETE'])
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 @vendor_item_permission
 def upload_item_image():
     if request.method == 'PUT':
@@ -199,7 +199,7 @@ def upload_item_image():
 
 
 @vendor_blueprint.route('/items/image_sort', methods=['POST'])
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 @vendor_item_permission
 def update_item_image_sort():
     form = ItemImageSortForm(csrf_enabled=False)
@@ -210,7 +210,7 @@ def update_item_image_sort():
 
 
 @vendor_blueprint.route('/distributors', methods=['GET', 'POST'])
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 @vendor_confirmed
 def distributor_list():
     form = RevocationForm()
@@ -223,7 +223,7 @@ def distributor_list():
 
 
 @vendor_blueprint.route('/distributors/datatable')
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 def distributors_data_table():
     draw, start, length = data_table_params()
     distributors = Distributor.query.filter_by(vendor_id=current_user.id).offset(start).limit(length)
@@ -239,23 +239,23 @@ def distributors_data_table():
 
 
 @vendor_blueprint.route('/distributors/invitation', methods=['GET', 'POST'])
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 @vendor_confirmed
 def invite_distributor():
     if request.method == 'POST':
         token = md5_with_time_salt(current_user.id)
         redis_set(DISTRIBUTOR_REGISTER, token, current_user.id)
-        return '%s/distributor/verify?token=%s' % (current_app.config['HOST'], token)
+        return url_for('distributor.verify', token=token, _external=True)
     return render_template('vendor/invitation.html', vendor=current_user)
 
 
 @vendor_blueprint.route('/distributors/<int:distributor_id>/revocation', methods=['POST'])
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 @vendor_confirmed
 def revocation(distributor_id):
     distributor = Distributor.query.get_or_404(distributor_id)
     if distributor.vendor_id != current_user.id:
-        return 'forbidden', 403
+        return 'forbidden', 401
     form = RevocationForm()
     form.distributor_id.data = distributor.id
     if form.validate_on_submit():
@@ -264,7 +264,7 @@ def revocation(distributor_id):
 
 
 @vendor_blueprint.route('/settings', methods=['GET', 'POST'])
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 def settings():
     if not current_user.confirmed:
         return redirect(url_for('.reconfirm'))
@@ -277,7 +277,7 @@ def settings():
 
 
 @vendor_blueprint.route('/initialization', methods=['GET', 'POST'])
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 def initialization():
     if current_user.initialized:
         return redirect(url_for('.index'))
@@ -292,7 +292,7 @@ def initialization():
 
 
 @vendor_blueprint.route('/reconfirm', methods=['GET', 'POST'])
-@vendor_permission.require(403)
+@vendor_permission.require(401)
 def reconfirm():
     if current_user.confirmed:
         return redirect(url_for('.settings'))
