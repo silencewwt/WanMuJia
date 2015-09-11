@@ -53,13 +53,15 @@ docs/_build/
 # PyBuilder
 target/
 
-
+# PyCharm
 .idea/
 
+# tmp
 *.sql
 *.db
 *.tar.gz
 config.json
+tmp/
 
 
 # Node

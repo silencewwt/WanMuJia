@@ -52,7 +52,7 @@ class TestingConfig(Config):
     TESTING = True
     CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'mysql+pymysql://test:testpassword@localhost/test?charset=utf8'
+        'mysql+pymysql://@localhost/test?charset=utf8'
 
     @classmethod
     def init_app(cls, app):
