@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+from hashlib import md5
 from app import create_app, db
 from app.models import generate_fake_data
 
@@ -53,3 +54,8 @@ class WMJTestCase(unittest.TestCase):
     def assert_ok_html(self, response):
         self.assert_ok(self.assert_html(response))
         return response
+
+    def twice_md5(self, password):
+        if not isinstance(password, bytes):
+            password = bytes(password, encoding='utf8')
+        return md5(md5(password).hexdigest().encode('utf8')).hexdigest()
