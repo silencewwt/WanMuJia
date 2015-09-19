@@ -67,18 +67,20 @@ class DistrictValidator(object):
 
 
 class QueryID(object):
-    def __init__(self, model, message=u'参数错误'):
+    def __init__(self, model, required=True, message=u'参数错误'):
         self.model = model
+        self.required = required
         self.message = message
 
     def __call__(self, form, field):
-        if not isinstance(field.data, (list, tuple)):
-            if not self.model.query.get(field.data):
-                raise ValidationError(self.message)
-        else:
-            for data in field.data:
-                if not self.model.query.get(data):
+        if self.required or field.data:
+            if not isinstance(field.data, (list, tuple)):
+                if not self.model.query.get(field.data):
                     raise ValidationError(self.message)
+            else:
+                for data in field.data:
+                    if not self.model.query.get(data):
+                        raise ValidationError(self.message)
 
 
 class NickName(object):
@@ -103,6 +105,23 @@ class Image(object):
                 BaseImage.open(image_str)
             except OSError:
                 raise ValidationError(self.message)
+
+
+class Digit(object):
+    def __init__(self, required=True, min=None, max=None, default=None, message='数字不正确!'):
+        self.required = required
+        self.min = min
+        self.max = max
+        self.message = message
+        self.default = default
+
+    def __call__(self, form, field):
+        if self.required or field.data:
+            if not isinstance(field.data, (int, float)) or (self.min is not None and field.data < self.min) or\
+                    (self.max is not None and field.data > self.max):
+                raise ValidationError(self.message)
+        if self.default is not None and field.data is None:
+            field.data = self.default
 
 
 def available_mobile(mobile):
