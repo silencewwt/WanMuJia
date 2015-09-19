@@ -1,13 +1,13 @@
 """empty message
 
-Revision ID: 5a7b26aa354
+Revision ID: 18d86936565
 Revises: None
-Create Date: 2015-07-16 00:39:31.988812
+Create Date: 2015-09-19 17:14:30.743146
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '5a7b26aa354'
+revision = '18d86936565'
 down_revision = None
 
 from alembic import op
@@ -23,7 +23,9 @@ def upgrade():
     )
     op.create_table('categories',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('category', sa.Unicode(length=10), nullable=False),
+    sa.Column('category', sa.Unicode(length=20), nullable=False),
+    sa.Column('father_id', sa.Integer(), nullable=False),
+    sa.Column('level', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('cities',
@@ -57,7 +59,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('distributor_id', sa.Integer(), nullable=False),
-    sa.Column('image', sa.String(length=255), nullable=False),
+    sa.Column('contract', sa.String(length=255), nullable=False),
     sa.Column('pending', sa.Boolean(), nullable=False),
     sa.Column('is_revoked', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -65,16 +67,15 @@ def upgrade():
     op.create_table('distributors',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('password', sa.String(length=128), nullable=False),
+    sa.Column('email_confirmed', sa.Boolean(), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('username', sa.Unicode(length=20), nullable=False),
     sa.Column('vendor_id', sa.Integer(), nullable=False),
     sa.Column('name', sa.Unicode(length=30), nullable=False),
-    sa.Column('contact_mobile', sa.String(length=30), nullable=False),
     sa.Column('contact_telephone', sa.String(length=30), nullable=False),
+    sa.Column('contact_mobile', sa.CHAR(length=11), nullable=False),
     sa.Column('contact', sa.Unicode(length=10), nullable=False),
-    sa.Column('deleted_confirmed', sa.Boolean(), nullable=False),
-    sa.Column('is_deleted', sa.Boolean(), nullable=False),
-    sa.Column('mobile', sa.CHAR(length=11), nullable=False),
+    sa.Column('is_revoked', sa.Boolean(), nullable=False),
     sa.Column('email', sa.String(length=64), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -85,25 +86,31 @@ def upgrade():
     sa.Column('city_id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('first_categories',
+    op.create_table('first_materials',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('first_category', sa.Unicode(length=10), nullable=False),
+    sa.Column('first_material', sa.Unicode(length=20), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('item_categories',
+    op.create_table('first_scenes',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('first_scene', sa.Unicode(length=10), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('item_carves',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('item_id', sa.Integer(), nullable=False),
-    sa.Column('category_id', sa.Integer(), nullable=False),
+    sa.Column('carve_id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('item_images',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('item_id', sa.Integer(), nullable=False),
-    sa.Column('image', sa.String(length=255), nullable=False),
-    sa.Column('image_hash', sa.String(length=32), nullable=False),
+    sa.Column('path', sa.String(length=255), nullable=False),
+    sa.Column('hash', sa.String(length=32), nullable=False),
     sa.Column('sort', sa.Integer(), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
+    sa.Column('filename', sa.Unicode(length=30), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('item_tenons',
@@ -117,31 +124,31 @@ def upgrade():
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('vendor_id', sa.Integer(), nullable=False),
     sa.Column('item', sa.Unicode(length=20), nullable=False),
-    sa.Column('price', sa.Integer(), nullable=False),
-    sa.Column('material_id', sa.Integer(), nullable=False),
-    sa.Column('second_category_id', sa.Integer(), nullable=False),
-    sa.Column('length', sa.Integer(), nullable=False),
-    sa.Column('width', sa.Integer(), nullable=False),
-    sa.Column('height', sa.Integer(), nullable=False),
+    sa.Column('price', sa.Float(), nullable=False),
+    sa.Column('second_material_id', sa.Integer(), nullable=False),
+    sa.Column('category_id', sa.Integer(), nullable=False),
+    sa.Column('length', sa.Float(), nullable=False),
+    sa.Column('width', sa.Float(), nullable=False),
+    sa.Column('height', sa.Float(), nullable=False),
+    sa.Column('area', sa.Float(), nullable=False),
     sa.Column('stove_id', sa.Integer(), nullable=False),
-    sa.Column('carve_id', sa.Integer(), nullable=False),
-    sa.Column('sand_id', sa.Integer(), nullable=False),
+    sa.Column('outside_sand_id', sa.Integer(), nullable=False),
+    sa.Column('inside_sand_id', sa.Integer(), nullable=False),
     sa.Column('paint_id', sa.Integer(), nullable=False),
     sa.Column('decoration_id', sa.Integer(), nullable=False),
+    sa.Column('second_scene_id', sa.Integer(), nullable=False),
     sa.Column('story', sa.Unicode(length=5000), nullable=False),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('material_categories',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('material_category', sa.Unicode(length=10), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
+    sa.Column('searchable', sa.Boolean(), nullable=False),
+    sa.Column('suite_id', sa.Integer(), nullable=False),
+    sa.Column('amount', sa.Integer(), nullable=False),
+    sa.Column('is_suite', sa.Boolean(), nullable=False),
+    sa.Column('is_component', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('materials',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('material_category_id', sa.Integer(), nullable=False),
     sa.Column('material', sa.Unicode(length=10), nullable=False),
-    sa.Column('alias', sa.Unicode(length=20), nullable=False),
-    sa.Column('origin', sa.Unicode(length=30), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('orders',
@@ -165,13 +172,12 @@ def upgrade():
     op.create_table('privileges',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('password', sa.String(length=128), nullable=False),
-    sa.Column('mobile', sa.CHAR(length=11), nullable=False),
     sa.Column('email', sa.String(length=64), nullable=False),
+    sa.Column('email_confirmed', sa.Boolean(), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=12), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('mobile'),
     sa.UniqueConstraint('username')
     )
     op.create_table('provinces',
@@ -185,10 +191,16 @@ def upgrade():
     sa.Column('sand', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('second_categories',
+    op.create_table('second_materials',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('second_category', sa.Unicode(length=10), nullable=False),
-    sa.Column('first_category_id', sa.Integer(), nullable=False),
+    sa.Column('first_material_id', sa.Integer(), nullable=False),
+    sa.Column('second_material', sa.Unicode(length=20), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('second_scenes',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('first_scene_id', sa.Integer(), nullable=False),
+    sa.Column('second_scene', sa.Unicode(length=10), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('stocks',
@@ -205,7 +217,7 @@ def upgrade():
     )
     op.create_table('tenons',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('tenon', sa.Unicode(length=10), nullable=False),
+    sa.Column('tenon', sa.Unicode(length=20), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user_addresses',
@@ -223,12 +235,12 @@ def upgrade():
     sa.Column('password', sa.String(length=128), nullable=False),
     sa.Column('mobile', sa.CHAR(length=11), nullable=False),
     sa.Column('email', sa.String(length=64), nullable=False),
+    sa.Column('email_confirmed', sa.Boolean(), nullable=False),
     sa.Column('created', sa.Integer(), nullable=False),
-    sa.Column('username', sa.Unicode(length=20), nullable=False),
+    sa.Column('nickname', sa.Unicode(length=30), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('mobile'),
-    sa.UniqueConstraint('username')
+    sa.UniqueConstraint('mobile')
     )
     op.create_table('vendor_addresses',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -242,28 +254,28 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('password', sa.String(length=128), nullable=False),
     sa.Column('mobile', sa.CHAR(length=11), nullable=False),
-    sa.Column('email', sa.String(length=64), nullable=False),
-    sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('email_confirmed', sa.Boolean(), nullable=False),
+    sa.Column('created', sa.Integer(), nullable=False),
+    sa.Column('email', sa.String(length=64), nullable=False),
     sa.Column('logo', sa.String(length=255), nullable=False),
-    sa.Column('legal_person_name', sa.Unicode(length=10), nullable=False),
-    sa.Column('legal_person_identity', sa.CHAR(length=18), nullable=False),
-    sa.Column('legal_person_identity_front', sa.String(length=255), nullable=False),
-    sa.Column('legal_person_identity_back', sa.String(length=255), nullable=False),
+    sa.Column('agent_name', sa.Unicode(length=10), nullable=False),
+    sa.Column('agent_identity', sa.CHAR(length=18), nullable=False),
+    sa.Column('agent_identity_front', sa.String(length=255), nullable=False),
+    sa.Column('agent_identity_back', sa.String(length=255), nullable=False),
     sa.Column('name', sa.Unicode(length=30), nullable=False),
-    sa.Column('license_limit', sa.Integer(), nullable=False),
-    sa.Column('license_long_time_limit', sa.Boolean(), nullable=False),
+    sa.Column('license_limit', sa.CHAR(length=10), nullable=False),
     sa.Column('license_image', sa.String(length=255), nullable=False),
-    sa.Column('contact_mobile', sa.CHAR(length=11), nullable=False),
-    sa.Column('contact_telephone', sa.CHAR(length=15), nullable=False),
+    sa.Column('contact', sa.String(length=30), nullable=False),
+    sa.Column('telephone', sa.CHAR(length=15), nullable=False),
+    sa.Column('introduction', sa.Unicode(length=30), nullable=False),
     sa.Column('confirmed', sa.Boolean(), nullable=False),
     sa.Column('confirmed_time', sa.Integer(), nullable=False),
     sa.Column('reject_message', sa.Unicode(length=100), nullable=False),
     sa.Column('rejected', sa.Boolean(), nullable=False),
+    sa.Column('initialized', sa.Boolean(), nullable=False),
+    sa.Column('item_permission', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('mobile'),
-    sa.UniqueConstraint('name')
+    sa.UniqueConstraint('mobile')
     )
     ### end Alembic commands ###
 
@@ -277,19 +289,20 @@ def downgrade():
     op.drop_table('tenons')
     op.drop_table('stoves')
     op.drop_table('stocks')
-    op.drop_table('second_categories')
+    op.drop_table('second_scenes')
+    op.drop_table('second_materials')
     op.drop_table('sands')
     op.drop_table('provinces')
     op.drop_table('privileges')
     op.drop_table('paints')
     op.drop_table('orders')
     op.drop_table('materials')
-    op.drop_table('material_categories')
     op.drop_table('items')
     op.drop_table('item_tenons')
     op.drop_table('item_images')
-    op.drop_table('item_categories')
-    op.drop_table('first_categories')
+    op.drop_table('item_carves')
+    op.drop_table('first_scenes')
+    op.drop_table('first_materials')
     op.drop_table('districts')
     op.drop_table('distributors')
     op.drop_table('distributor_revocations')
