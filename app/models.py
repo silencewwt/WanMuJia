@@ -10,7 +10,7 @@ from app import db, login_manager
 from app.constants import *
 from app.utils import convert_url
 from app.utils.redis import redis_get, redis_set
-from .permission import privilege_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
+from app.permission import privilege_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
 
 
 class Property(object):
@@ -419,21 +419,24 @@ class Item(db.Model, Property):
     # 商品名称
     item = db.Column(db.Unicode(20), nullable=False)
     # 指导价格
-    price = db.Column(db.Integer, nullable=False)
-    # 材料 id
-    material_id = db.Column(db.Integer, nullable=False)
-    # 商品二级分类id
-    second_category_id = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    # 二级材料 id
+    second_material_id = db.Column(db.Integer, nullable=False)
+    # 商品分类id
+    category_id = db.Column(db.Integer, nullable=False)
     # 长度 cm
     length = db.Column(db.Float, nullable=False)
     # 宽度 cm
     width = db.Column(db.Float, nullable=False)
     # 高度 cm
     height = db.Column(db.Float, nullable=False)
+    # 适用面积 m^2
+    area = db.Column(db.Float, nullable=False)
     # 烘干 id
     stove_id = db.Column(db.Integer, nullable=False)
     # 打磨砂纸 id
-    sand_id = db.Column(db.Integer, nullable=False)
+    outside_sand_id = db.Column(db.Integer, nullable=False)
+    inside_sand_id = db.Column(db.Integer, nullable=False)
     # 涂饰 id
     paint_id = db.Column(db.Integer, nullable=False)
     # 装饰 id
@@ -444,33 +447,51 @@ class Item(db.Model, Property):
     story = db.Column(db.Unicode(5000), default=u'', nullable=False)
     # 已删除
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+    # 可搜索
+    searchable = db.Column(db.Boolean, default=False, nullable=False)
+    # 套件id
+    suite_id = db.Column(db.Integer, nullable=False)
+    # 数量
+    amount = db.Column(db.Integer, nullable=False)
+    # 套件
+    is_suite = db.Column(db.Boolean, default=False, nullable=False)
+    # 组件
+    is_component = db.Column(db.Boolean, default=False, nullable=False)
 
     _flush = {
         'vendor': lambda x: Vendor.query.get(x.vendor_id),
-        'second_category': lambda x: SecondCategory.query.get(x.second_category_id).second_category,
+        'category': lambda x: Category.query.get(x.category_id).category,
         'images': lambda x: ItemImage.query.filter_by(item_id=x.id, is_deleted=False).order_by(ItemImage.sort,
                                                                                                ItemImage.created)
     }
     _vendor = None
-    _second_category = None
+    _category = None
     _images = None
 
-    def __init__(self, vendor_id, item, price, material_id, second_category_id, second_scene_id, length, width, height,
-                 stove_id, sand_id, paint_id, decoration_id, story=u''):
+    def __init__(self, vendor_id, item, price, second_material_id, category_id, second_scene_id, length, width,
+                 height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, story, searchable,
+                 suite_id, amount, is_suite, is_component):
         self.vendor_id = vendor_id
         self.item = item
         self.price = price
-        self.material_id = material_id
-        self.second_category_id = second_category_id
+        self.second_material_id = second_material_id
+        self.category_id = category_id
         self.second_scene_id = second_scene_id
         self.length = length
         self.width = width
         self.height = height
+        self.area = area
         self.stove_id = stove_id
-        self.sand_id = sand_id
+        self.outside_sand_id = outside_sand_id
+        self.inside_sand_id = inside_sand_id
         self.paint_id = paint_id
         self.decoration_id = decoration_id
         self.story = story
+        self.searchable = searchable
+        self.suite_id = suite_id
+        self.amount = amount
+        self.is_suite = is_suite
+        self.is_component = is_component
 
     def stock_count(self):
         return sum([stock.stock for stock in Stock.query.filter(Stock.item_id == self.id, Stock.stock > 0)])
@@ -488,19 +509,24 @@ class Item(db.Model, Property):
         return distributors
 
     def size(self):
-        return '%.2f * %.2f * %.2f' % (self.length, self.width, self.height)
+        return '%f * %f * %f' % (self.length, self.width, self.height)
 
     @property
     def vendor(self):
         return self.get_or_flush('vendor')
 
     @property
-    def second_category(self):
-        return self.get_or_flush('second_category')
+    def category(self):
+        return self.get_or_flush('category')
 
     @property
     def images(self):
         return self.get_or_flush('images')
+
+    def update_suite_amount(self):
+        if self.is_suite:
+            components = Item.query.filter_by(suite_id=self.id, is_deleted=False, is_component=True)
+            self.amount = sum([component.amount for component in components])
 
 
 class ItemImage(db.Model, Property):
@@ -553,40 +579,29 @@ class Stock(db.Model):
         self.stock = stock
 
 
-class FirstCategory(db.Model):
-    __tablename__ = 'first_categories'
+class Category(db.Model):
+    __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
-    first_category = db.Column(db.Unicode(10), nullable=False)
+    category = db.Column(db.Unicode(20), nullable=False)
+    father_id = db.Column(db.Integer, nullable=False)
+    level = db.Column(db.Integer, nullable=False)
 
     @staticmethod
     def generate_fake():
-        first_categories = [u'椅凳类', u'桌案类', u'床榻类', u'柜架类', u'其他类']
-        for first_category in first_categories:
-            db.session.add(FirstCategory(first_category=first_category))
-        db.session.commit()
-
-
-class SecondCategory(db.Model):
-    __tablename__ = 'second_categories'
-    id = db.Column(db.Integer, primary_key=True)
-    second_category = db.Column(db.Unicode(10), nullable=False)
-    first_category_id = db.Column(db.Integer, nullable=False)
-
-    @staticmethod
-    def generate_fake():
-        categories = {u"椅凳类": [u'交椅', u'圈椅', u'太师椅', u'官帽椅', u'长凳', u'鼓凳', u'杌凳', u'宝座'], u"桌案类": [u'书桌', u'画案', u'条形桌案', u'方桌', u'八仙桌', u'炕桌', u'炕几'], u"床榻类": [u'拔步床', u'架子床', u'罗汉床', u'榻'], u"柜架类": [u'书柜', u'顶箱柜', u'方角柜', u'圆角柜', u'酒柜', u'书架', u'衣架', u'博古架'], u"其他类": [u'箱', u'屏风', u'挂件', u'手串', u'雕刻工艺品']}
-        for category in categories:
-            first_category = FirstCategory.query.filter_by(first_category=category).first()
-            for second_category in categories[category]:
-                db.session.add(SecondCategory(second_category=second_category, first_category_id=first_category.id))
+        from collections import OrderedDict
+        categories = OrderedDict({'椅凳类': {'椅': ['靠背条椅', '交椅式躺椅', '圆后背金漆交椅', '圆后背剔红交椅', '圆后背雕花交椅', '圆后背交椅', '直后背交椅', '鹿角椅', '后背装板圈椅', '高束腰带托泥雕花圈椅', '有束腰带托泥雕花圈椅', '仿竹材圈椅', '透雕靠背圈椅', '矮素圈椅', '素圈椅', '太师椅', '官帽椅', '玫瑰椅', '背板开透光靠背椅', '一统碑木梳背椅', '一统碑椅', '小灯挂椅', '灯挂椅', '皇宫椅', '摇椅', '卷书椅', '大班椅'], '长凳': ['夹头榫春凳', '插肩榫二人凳', '夹头榫二人凳', '四面平二人凳', '有束腰二人凳', '无束腰二人凳', '门凳', '长条凳', '小条凳', '四方凳', '古凳'], '坐墩': ['瓜棱形鼓墩', '直棂式坐墩', '海棠式开光坐墩', '五开光弦纹坐墩', '四开光弦纹坐墩', '圆凳'], '宝座': ['有束腰带托泥宝座', '列屏式有束腰马蹄足宝座', '四出头官帽椅式有束腰带托泥宝座'], '交杌': ['上折式交杌', '有踏床交杌', '无踏床交杌', '小交杌'], '杌凳': ['其他形式杌凳', '有束腰杌凳', '无束腰杌凳', '四面平杌凳']}, '桌案类': {'宽长桌案': ['画案', '画桌', '书案', '书桌'], '其他桌案': ['扇面桌', '月牙桌', '琴桌', '棋桌', '供桌、供案', '抽屉桌', '圆桌（圆台）', '花几', '茶几', '高几', '翘头案', '平台案'], '酒桌、半桌': [], '炕案': ['夹头榫撇腿翘头炕案', '夹头榫炕案', '联二橱式炕案', '插肩榫炕案', '三屉大炕案'], '炕桌': ['无束腰竹节纹方炕桌', '有束腰齐牙条炕桌', '高束腰透雕炕桌', '有束腰三弯腿炕桌', '高束腰浮雕炕桌', '高束腰加矮老装绦环板炕桌', '有束腰马蹄足鼓腿彭牙炕桌', '无束腰直足井字棂格炕桌'], '条形桌案': ['条桌', '条案', '条几'], '方桌': ['麻将桌', '四方桌', '茶桌（茶台）', '长方桌（长方台）', '霸王枨餐桌'], '香几': ['四足方香几', '五足圆香几', '三足圆香几', '五足带台座圆香几', '四足高束腰小方香几', '六足高束腰香几', '四足有束腰八方香几', '五足内翻霸王枨圆香几', '高束腰五足香几'], '炕几': ['无束腰壶门牙条炕几', '无束腰罗锅枨装牙条炕几', '无束腰直枨加矮老六方材炕几', '雕云纹炕几', '黑漆素炕几']}, '床榻类': {'拔步床': ['千工拔步床', '垂花柱式拔步床', '榉木攒海棠花围拔步床'], '架子床': ['月洞式门罩架子床', '正万字门围子架子床', '十字绦环门围子架子床', '品字栏杆围子架子床'], '罗汉床': ['三屏风斗簇围子罗汉床（四簇云纹）', '三屏风攒接围子罗汉床（双笔管式）', '三屏风攒接围子罗汉床（曲尺式）', '三屏风攒接围子罗汉床（绦环加曲尺）', '三屏风攒接围子罗汉床（正卍字式）', '三屏风绦环板围子罗汉床', '五屏风攒边装板围子插屏式罗汉床', '三屏风独板围子罗汉'], '榻': ['有束腰腰圆形脚踏', '六足折叠式榻', '无束腰直足榻', '有束腰马蹄足鼓腿彭牙榻', '有束腰直足榻'], '现代床': ['大床', '高箱床']}, '柜架类': {'闷户橱': ['柜橱', '联四橱', '联三橱', '联二橱'], '方角柜': ['大六件柜', '大四件柜', '上箱下柜', '顶箱带座小四件柜', '透格门方角柜', '方角药柜', '大方角柜', '方角炕柜'], '亮格柜': ['上格券口带栏杆万历柜', '上格双层亮格柜'], '架具类': ['火盆架', '面盆架', '书架', '衣架', '天平架', '镜架', '博古架', '花架'], '圆角柜': ['透格门圆角柜', '榉木圆角柜', '变体圆角柜', '五抹门圆角柜', '有柜膛圆角柜', '无柜膛圆角柜', '圆角炕柜'], '架格': ['直棂步步紧门透棂架格', '品字栏杆架格', '三面直棂透棂架格', '攒接十字栏杆架格', '攒接品字栏杆加卡子花架格', '透空后背架格', '四层带抽屉架格', '三面攒接棂格架格', '三层全敞带抽屉架格', '几腿式架格'], '现代柜架': ['大衣柜', '电视柜', '书柜', '多宝格', '古董柜', '酒柜', '隔厅柜', '鞋柜', '衣帽柜', '梳妆台']}, '其它类': {'箱': ['印匣', '轿箱', '小箱', '药箱', '官皮箱', '衣箱'], '甘蔗床': [], '灯台': [], '提盒': [], '屏风': [], '枕凳': [], '滚凳': [], '都承盘': [], '镜台': [], '写字台': [], '大班台': [], '首饰盒': [], '工艺品': []}})
+        for first_category in categories:
+            first = Category(category=first_category, father_id=0, level=1)
+            db.session.add(first)
             db.session.commit()
-
-
-class ItemCategory(db.Model):
-    __tablename__ = 'item_categories'
-    id = db.Column(db.Integer, primary_key=True)
-    item_id = db.Column(db.Integer, nullable=False)
-    category_id = db.Column(db.Integer, nullable=False)
+            for second_category in categories[first_category]:
+                second = Category(category=second_category, father_id=first.id, level=2)
+                db.session.add(second)
+                db.session.commit()
+                for third_category in categories[first_category][second_category]:
+                    third = Category(category=third_category, father_id=second.id, level=3)
+                    db.session.add(third)
+                db.session.commit()
 
 
 class FirstScene(db.Model):
@@ -616,6 +631,35 @@ class SecondScene(db.Model):
             first_scene = FirstScene.query.filter_by(first_scene=scene).first()
             for sec_scene in scenes[scene]:
                 db.session.add(SecondScene(first_scene_id=first_scene.id, second_scene=sec_scene))
+        db.session.commit()
+
+
+class FirstMaterial(db.Model):
+    __tablename__ = 'first_materials'
+    id = db.Column(db.Integer, primary_key=True)
+    first_material = db.Column(db.Unicode(20), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        materials = (u'紫檀木类', u'花梨木类', u'香枝木类', u'黑酸枝木类', u'红酸枝木类', u'鸡翅木类', u'乌木类（俗称黑檀）', u'条纹乌木类（黑檀、乌纹木、乌云木）')
+        for material in materials:
+            db.session.add(FirstMaterial(first_material=material))
+        db.session.commit()
+
+
+class SecondMaterial(db.Model):
+    __tablename__ = 'second_materials'
+    id = db.Column(db.Integer, primary_key=True)
+    first_material_id = db.Column(db.Integer, nullable=False)
+    second_material = db.Column(db.Unicode(20), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        materials = ((u'紫檀木类', (u'檀香紫檀（小叶紫檀）',)), (u'花梨木类', (u'越柬紫檀（老挝花梨）', u'安达曼紫檀（非洲黄花梨）', u'刺猬紫檀（非洲花梨）', u'印度紫檀', u'大果紫檀', u'囊状紫檀', u'鸟足紫檀（东南亚花梨）')), (u'香枝木类', (u'降香黄檀（海南黄花梨）',)), (u'黑酸枝木类', (u'刀状黑黄檀（缅甸黑酸枝）', u'黑黄檀（版纳黑檀）', u'阔叶黄檀（印尼黑酸枝）', u'卢氏黑黄檀（大叶紫檀）', u'东非黑黄檀（紫光檀）', u'巴西黑黄檀', u'亚马孙黄檀', u'伯利兹黄檀（洪都拉斯玫瑰木）')), (u'红酸枝木类', (u'巴里黄檀（柬埔寨红酸枝）', u'赛州黄檀', u'交趾黄檀（大红酸枝）', u'绒毛黄檀（巴西黄檀）', u'中美洲黄檀', u'奥氏黄檀（缅甸红酸枝）', u'微凹黄檀（可可波罗）')), (u'鸡翅木类', (u'非洲崖豆木（非洲鸡翅）', u'白花崖豆木（缅甸鸡翅木）', u'铁刀木')), (u'乌木类（俗称黑檀）', (u'乌木', u'厚瓣乌木', u'毛药乌木', u'蓬赛乌木（黑檀）')), (u'条纹乌木类（黑檀、乌纹木、乌云木）', (u'苏拉威西乌木', u'菲律宾乌木')))
+        for item in materials:
+            first_material = FirstMaterial.query.filter_by(first_material=item[0]).first()
+            for material in item[1]:
+                db.session.add(SecondMaterial(first_material_id=first_material.id, second_material=material))
         db.session.commit()
 
 
@@ -821,7 +865,7 @@ class Carve(db.Model):
 
     @staticmethod
     def generate_fake():
-        for carve in (u"透雕", u"浮雕", u"浅浮雕", u"镂空雕", u"圆雕(立体雕)", u"微雕", u"阴阳额雕", u"阴雕", u"通雕"):
+        for carve in (u'通雕', u'透雕', u'浮雕', u'浅浮雕', u'镂空雕', u'圆雕(立体雕)', u'微雕', u'阴阳额雕', u'阴雕(阴刻)', u'无'):
             db.session.add(Carve(carve=carve))
         db.session.commit()
 
@@ -845,7 +889,7 @@ class Paint(db.Model):
 
     @staticmethod
     def generate_fake():
-        for paint in (u"生漆", u"烫蜡"):
+        for paint in (u"生漆", u"烫蜡", u"无"):
             db.session.add(Paint(paint=paint))
         db.session.commit()
 
@@ -857,7 +901,7 @@ class Decoration(db.Model):
 
     @staticmethod
     def generate_fake():
-        for decoration in (u"白铜镶嵌", u"黄铜镶嵌", u"石料镶嵌"):
+        for decoration in (u"白铜镶嵌", u"黄铜镶嵌", u"石料镶嵌", u"玻璃镶嵌", u"金丝楠木镶嵌", u"其他", u"无"):
             db.session.add(Decoration(decoration=decoration))
         db.session.commit()
 
@@ -865,11 +909,11 @@ class Decoration(db.Model):
 class Tenon(db.Model):
     __tablename__ = 'tenons'
     id = db.Column(db.Integer, primary_key=True)
-    tenon = db.Column(db.Unicode(10), nullable=False)
+    tenon = db.Column(db.Unicode(20), nullable=False)
 
     @staticmethod
     def generate_fake():
-        for tenon in (u'燕尾榫', u'明榫', u'暗榫', u'楔钉榫', u'套榫', u'抱肩榫', u'勾挂榫', u'夹头榫', u'插肩榫', u'走马销', u'平榫'):
+        for tenon in (u'楔钉榫', u'夹头榫', u'抄手榫', u'走马销', u'霸王枨', u'柜子底枨', u'挖烟袋锅榫', u'云型插肩榫', u'扇形插肩榫', u'传统粽角榫', u'双榫粽角榫', u'带板粽角榫', u'插肩榫变形', u'高束腰抱肩榫', u'圆方结合裹腿', u'挂肩四面平榫', u'攒边打槽装板', u'三根直材交叉', u'方材丁字结合', u'直材交叉结合', u'圆柱丁字结合榫', u'圆香几攒边打槽', u'厚板闷榫角结合', u'平板明榫角结合', u'一腿三牙方桌结构', u'弧形直材十字交叉', u'弧形面直材角结合', u'圆柱二维直角交叉榫', u'方材角结合床围子攒接万字', u'厚板出透榫及榫舌拍抹头', u'方形家具腿足与方托泥的结合', u'椅盘边抹与椅子腿足的结构', u'方材丁字形结合榫卯用大格肩', u'加云子无束腰裹腿杌凳腿足与凳面结合'):
             db.session.add(Tenon(tenon=tenon))
         db.session.commit()
 
@@ -901,10 +945,10 @@ def load_user(user_id):
 
 
 def generate_fake_data():
-    FirstCategory.generate_fake()
-    SecondCategory.generate_fake()
-    Material.generate_fake()
-    District.generate_fake()
+    Category.generate_fake()
+    FirstMaterial.generate_fake()
+    SecondMaterial.generate_fake()
+    # District.generate_fake()
     Stove.generate_fake()
     Carve.generate_fake()
     Sand.generate_fake()

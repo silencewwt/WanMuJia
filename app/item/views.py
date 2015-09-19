@@ -3,13 +3,13 @@ from flask import render_template, request, current_app
 from sqlalchemy import and_
 
 from app import db
-from app.models import Item, ItemCategory
+from app.models import Item
 from . import item as item_blueprint
 
 
 @item_blueprint.route("/")
 def item_list():
-    return render_template("/item/list.html")
+    return render_template("item/list.html")
 
 
 @item_blueprint.route("/filter")
@@ -27,7 +27,7 @@ def item_filter():
     if materials:
         query = query.filter(Item.material_id.in_(materials))
     if categories:
-        query = query.filter(Item.id == ItemCategory.item_id, ItemCategory.category_id.in_(categories))
+        pass
     if price:
         price_not_in = (price_list[i] for i in range(5) if i not in price)
         # TODO: 价格筛选
@@ -40,7 +40,7 @@ def item_filter():
     elif abs(order) == 3:
         query.order_by(Item.created if order > 0 else -Item.created)
     items = query.paginate(page, current_app.config['ITEM_PER_PAGE'], False).items
-    return render_template("/item/filter.html", items=items)
+    return render_template("item/filter.html", items=items)
 
 
 @item_blueprint.route("/detail")

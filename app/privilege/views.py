@@ -60,7 +60,7 @@ def items_data_table():
     data = {'draw': draw, 'recordsTotal': count, 'recordsFiltered': count, 'data': []}
     for item in items:
         data['data'].append({
-            'id': item.id, 'item': item.item, 'second_category_id': item.second_category, 'vendor': item.vendor.name,
+            'id': item.id, 'item': item.item, 'category_id': item.category, 'vendor': item.vendor.name,
             'price': item.price, 'size': item.size()})
     return jsonify(data)
 

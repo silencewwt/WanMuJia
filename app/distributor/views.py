@@ -93,7 +93,7 @@ def items_data_table():
     for item in items:
         stock = Stock.query.filter_by(distributor_id=current_user.id, item_id=item.id).first()
         data['data'].append({
-            'id': item.id, 'item': item.item, 'second_category_id': item.second_category, 'price': item.price,
+            'id': item.id, 'item': item.item, 'category_id': item.category, 'price': item.price,
             'size': '%s*%s*%s' % (item.length, item.width, item.height), 'inventory': stock.stock if stock else 0
         })
     return jsonify(data)

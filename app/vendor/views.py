@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import datetime
+import json
 from functools import wraps
 
 from flask import current_app, render_template, redirect, request, session, url_for, jsonify
 from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
+from werkzeug.datastructures import ImmutableMultiDict
 
 from app import db
 from app.core import reset_password as model_reset_password
@@ -17,7 +19,7 @@ from app.utils.redis import redis_set
 from app.wmj_email import ADMIN_REMINDS, ADMIN_REMINDS_SUBJECT, send_email
 from .import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
-    ItemImageDeleteForm, RevocationForm, ReconfirmForm, InitializationForm
+    ItemImageDeleteForm, RevocationForm, ReconfirmForm, InitializationForm, SuiteForm
 
 
 def vendor_confirmed(f):
@@ -132,7 +134,7 @@ def items_data_table():
             'recordsFiltered': items.count(), 'data': []}
     for item in items:
         data['data'].append({
-            'id': item.id, 'item': item.item, 'second_category_id': item.second_category,
+            'id': item.id, 'item': item.item, 'category_id': item.category,
             'price': item.price, 'size': item.size()})
     return jsonify(data)
 
@@ -167,14 +169,37 @@ def item_detail(item_id):
 @vendor_permission.require(401)
 @vendor_item_permission
 def new_item():
-    form = ItemForm()
-    form.generate_choices()
-    if request.method == 'POST':
-        if form.validate():
-            item = form.add_item(current_user.id)
-            return jsonify({'success': True, 'item_id': item.id})
-        return jsonify({'success': False, 'message': form.error2str()})
-    return render_template('vendor/new_item.html', form=form, vendor=current_user)
+    item_type = request.args.get('type')
+    if item_type == 'single':
+        form = ItemForm()
+        if request.method == 'POST':
+            if form.validate():
+                item = form.add_item(current_user.id)
+                return jsonify({'success': True, 'item_id': item.id})
+            return jsonify({'success': False, 'message': form.error2str()})
+        form.generate_choices()
+        return render_template('vendor/new_item_single.html', form=form, vendor=current_user)
+    elif item_type == 'suite':
+        suite_form = SuiteForm()
+        if request.method == 'POST':
+            if not suite_form.validate():
+                return jsonify({'success': False, 'message': suite_form.error2str()})
+
+            component_forms = []
+            if 'components' in request.form['components']:
+                json_components = json.loads(request.form['components'])
+                for json_component in json_components:
+                    component_form = ItemForm(formdata=ImmutableMultiDict(json_component))
+                    if not component_form.validate():
+                        return jsonify({'success': False, 'message': component_form.error2str()})
+                    component_forms.append(component_form)
+
+            suite = suite_form.add_suite(current_user.id)
+            for component_form in component_forms:
+                component_form.add_component(current_user.id, suite.id)
+            suite.update_suite_amount()
+            return jsonify({'success': True, 'item_id': suite.id})
+        return render_template('vendor/new_item_suite.html', form=suite_form, vendor=current_user)
 
 
 @vendor_blueprint.route('/items/image', methods=['PUT', 'DELETE'])

@@ -9,15 +9,15 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, N
 
 from app import db
 from app.constants import SMS_CAPTCHA, VENDOR_REMINDS_PENDING, VENDOR_REMINDS_COMPLETE
-from app.models import Vendor, VendorAddress, Material, SecondCategory, Stove, Carve, Sand, Paint, Decoration, \
+from app.models import Vendor, VendorAddress, Material, Stove, Carve, Sand, Paint, Decoration, \
     Tenon, Item, ItemTenon, ItemCarve, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, \
-    FirstCategory
+    FirstMaterial, SecondMaterial
 from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
 from app.utils import IO, convert_url
 from app.utils.forms import Form
 from app.utils.image import save_image
 from app.utils.fields import OptionGroupSelectField, SelectField
-from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, DistrictValidator
+from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, DistrictValidator, Digit
 
 
 class LoginForm(Form):
@@ -141,23 +141,30 @@ class ReconfirmForm(RegistrationForm):
 
 class ItemForm(Form):
     item = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
-    length = FloatField(validators=[NumberRange(1, message=u'商品长度不正确')])
-    width = FloatField(validators=[NumberRange(1, message=u'商品宽度不正确')])
-    height = FloatField(validators=[NumberRange(1, message=u'商品高度不正确')])
-    price = IntegerField(validators=[NumberRange(1, message=u'商品价格不正确')])
-    material_id = SelectField(coerce=int, validators=[QueryID(Material, u'商品材料不正确')])
-    second_category_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondCategory, u'商品种类不正确')])
+    length = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品长度不正确')])
+    width = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品宽度不正确')])
+    height = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品高度不正确')])
+    area = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品适用面积不正确')])
+    price = FloatField(validators=[NumberRange(1, message=u'商品价格不正确')])
+    second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, u'商品材料不正确')])
+    category_id = StringField()
     second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, u'商品场景不正确')])
     stove_id = SelectField(coerce=int, validators=[QueryID(Stove, u'烘干工艺不正确')])
     carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, u'雕刻工艺不正确')])
-    sand_id = SelectField(coerce=int, validators=[QueryID(Sand, u'打磨砂纸不正确')])
+    outside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=True, message=u'打磨砂纸不正确')])
+    inside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=False, message=u'打磨砂纸不正确')])
     paint_id = SelectField(coerce=int, validators=[QueryID(Paint, u'涂饰工艺不正确')])
     decoration_id = SelectField(coerce=int, validators=[QueryID(Decoration, u'装饰工艺不正确')])
     tenon_id = SelectMultipleField(coerce=int, validators=[QueryID(Tenon, u'榫卯结构不正确')])
     story = TextAreaField(validators=[Length(0, 5000)])
+    amount = IntegerField(validators=[Digit(required=False, min=0, message='商品数量不正确')])
 
-    attributes = ('item', 'length', 'width', 'height', 'price', 'material_id', 'second_category_id', 'second_scene_id',
-                  'stove_id', 'sand_id', 'decoration_id', 'paint_id', 'story')
+    attributes = ('item', 'length', 'width', 'height', 'price', 'second_material_id', 'category_id', 'second_scene_id',
+                  'stove_id', 'outside_sand_id', 'inside_sand_id', 'decoration_id', 'paint_id', 'story')
+
+    def validate_area(self, field):
+        if not (field.data or (self.length.data and self.width.data and self.height.data)):
+            raise ValidationError(u'适用面积与长宽高至少需填一项')
 
     def generate_choices(self):
         self.second_scene_id.choices = []
@@ -167,17 +174,17 @@ class ItemForm(Form):
                  SecondScene.query.filter_by(first_scene_id=first_scene.id)]
             self.second_scene_id.choices.append((first_scene.first_scene, l))
 
-        self.second_category_id.choices = []
-        first_categories = FirstCategory.query.order_by(FirstCategory.id)
-        for first_category in first_categories:
-            l = [(choice.id, choice.second_category) for choice in
-                 SecondCategory.query.filter_by(first_category_id=first_category.id)]
-            self.second_category_id.choices.append((first_category.first_category, l))
+        self.second_material_id.choices = []
+        first_materials = FirstMaterial.query.order_by(FirstMaterial.id)
+        for first_material in first_materials:
+            l = [(choice.id, choice.second_material) for choice in
+                 SecondMaterial.query.filter_by(first_material_id=first_material.id)]
+            self.second_material_id.choices.append((first_material.first_material, l))
 
-        self.material_id.choices = [(choice.id, choice.material) for choice in Material.query.all()]
         self.stove_id.choices = [(choice.id, choice.stove) for choice in Stove.query.all()]
         self.carve_id.choices = [(choice.id, choice.carve) for choice in Carve.query.all()]
-        self.sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
+        self.outside_sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
+        self.inside_sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
         self.paint_id.choices = [(choice.id, choice.paint) for choice in Paint.query.all()]
         self.decoration_id.choices = [(choice.id, choice.decoration) for choice in Decoration.query.all()]
         self.tenon_id.choices = [(choice.id, choice.tenon) for choice in Tenon.query.all()]
@@ -187,32 +194,82 @@ class ItemForm(Form):
             vendor_id=vendor_id,
             item=self.item.data,
             price=self.price.data,
-            material_id=self.material_id.data,
-            second_category_id=self.second_category_id.data,
+            second_material_id=self.second_material_id.data,
+            category_id=self.category_id.data,
             second_scene_id=self.second_scene_id.data,
             length=self.length.data,
             width=self.width.data,
             height=self.height.data,
+            area=self.area.data,
             stove_id=self.stove_id.data,
-            sand_id=self.sand_id.data,
+            outside_sand_id=self.outside_sand_id.data,
+            inside_sand_id=self.inside_sand_id.data if self.inside_sand_id.data else 0,
             paint_id=self.paint_id.data,
             decoration_id=self.decoration_id.data,
-            story=self.story.data
+            story=self.story.data,
+            searchable=True,
+            suite_id=0,
+            amount=1,
+            is_suite=False,
+            is_component=False
         )
         db.session.add(item)
         db.session.commit()
-        for carve_id in self.carve_id.data:
-            db.session.add(ItemCarve(item_id=item.id, carve_id=carve_id))
-        for tenon_id in self.tenon_id.data:
-            db.session.add(ItemTenon(item_id=item.id, tenon_id=tenon_id))
-        db.session.commit()
+        self.add_attach(item.id)
         return item
+
+    def add_component(self, vendor_id, suite_id):
+        component = Item(
+            vendor_id=vendor_id,
+            item=self.item.data,
+            price=0,
+            second_material_id=self.second_material_id.data,
+            category_id=self.category_id.data,
+            second_scene_id=self.second_scene_id.data,
+            length=self.length.data,
+            width=self.width.data,
+            height=self.height.data,
+            area=self.area.data,
+            stove_id=self.stove_id.data,
+            outside_sand_id=self.outside_sand_id.data,
+            inside_sand_id=self.inside_sand_id.data if self.inside_sand_id.data else 0,
+            paint_id=self.paint_id.data,
+            decoration_id=self.decoration_id.data,
+            story=self.story.data,
+            searchable=False,
+            suite_id=suite_id,
+            amount=self.amount.data,
+            is_suite=False,
+            is_component=True
+        )
+        db.session.add(component)
+        db.session.commit()
+        self.add_attach(component.id)
+        return component
+
+    def add_attach(self, item_id):
+        for carve_id in self.carve_id.data:
+            db.session.add(ItemCarve(item_id=item_id, carve_id=carve_id))
+        for tenon_id in self.tenon_id.data:
+            db.session.add(ItemTenon(item_id=item_id, tenon_id=tenon_id))
+        db.session.commit()
 
     def show_item(self, item):
         for attr in self.attributes:
             getattr(self, attr).data = getattr(item, attr)
         self.tenon_id.data = item.get_tenon_id()
         self.carve_id.data = item.get_carve_id()
+
+    def show_component(self, component):
+        for attr in ('item', 'price', 'amount', 'second_material_id', 'category_id', 'stove_id', 'outside_sand_id',
+                     'decoration_id', 'paint_id', 'story'):
+            getattr(self, attr).data = getattr(component, attr)
+        self.tenon_id.data = component.get_tenon_id()
+        self.carve_id.data = component.get_carve_id()
+
+        for attr in ('length', 'width', 'height', 'area', 'inside_sand_id'):
+            if getattr(component, attr) is not 0:
+                getattr(self, attr).data = getattr(component, attr)
 
     def update_item(self, item):
         for attr in self.attributes:
@@ -235,6 +292,85 @@ class ItemForm(Form):
             db.session.delete(ItemCarve.query.filter_by(item_id=item.id, carve_id=carve_id).limit(1).first())
         db.session.add(item)
         db.session.commit()
+
+    def update_component(self, component):
+        component.amount = self.amount.data
+        self.update_item(component)
+
+
+class SuiteForm(Form):
+    item = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
+    area = FloatField(validators=[Digit(required=True, min=0, message='商品适用面积不正确')])
+    price = FloatField(validators=[NumberRange(1, message=u'商品价格不正确')])
+    second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, u'商品材料不正确')])
+    category_id = StringField()
+    second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, u'商品场景不正确')])
+    stove_id = SelectField(coerce=int, validators=[QueryID(Stove, u'烘干工艺不正确')])
+    outside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=True, message=u'外打磨砂纸不正确')])
+    inside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=False, message=u'内打磨砂纸不正确')])
+    story = TextAreaField(validators=[Length(0, 5000)])
+
+    attributes = ('item', 'area', 'price', 'second_material_id', 'category_id', 'second_scene_id', 'stove_id',
+                  'outside_sand_id', 'story')
+
+    def generate_choices(self):
+        self.second_scene_id.choices = []
+        first_scenes = FirstScene.query.order_by(FirstScene.id)
+        for first_scene in first_scenes:
+            l = [(choice.id, choice.second_scene) for choice in
+                 SecondScene.query.filter_by(first_scene_id=first_scene.id)]
+            self.second_scene_id.choices.append((first_scene.first_scene, l))
+
+        self.second_material_id.choices = []
+        first_materials = FirstMaterial.query.order_by(FirstMaterial.id)
+        for first_material in first_materials:
+            l = [(choice.id, choice.second_material) for choice in
+                 SecondMaterial.query.filter_by(first_material_id=first_material.id)]
+            self.second_material_id.choices.append((first_material.first_material, l))
+
+        self.stove_id.choices = [(choice.id, choice.stove) for choice in Stove.query.all()]
+        self.outside_sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
+        self.inside_sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
+
+    def add_suite(self, vendor_id):
+        suite = Item(
+            vendor_id=vendor_id,
+            item=self.item.data,
+            price=self.price.data,
+            second_material_id=self.second_material_id.data,
+            category_id=self.category_id.data,
+            second_scene_id=self.second_scene_id.data,
+            length=0,
+            width=0,
+            height=0,
+            area=self.area.data,
+            stove_id=self.stove_id.data,
+            outside_sand_id=self.outside_sand_id.data,
+            inside_sand_id=self.inside_sand_id.data,
+            paint_id=0,
+            decoration_id=0,
+            story=self.story.data,
+            searchable=True,
+            suite_id=0,
+            amount=1,
+            is_suite=True,
+            is_component=False
+        )
+        db.session.add(suite)
+        db.session.commit()
+        return suite
+
+    def show_suite(self, suite):
+        for attr in self.attributes:
+            getattr(self, attr).data = getattr(suite, attr)
+        if self.inside_sand_id is not 0:
+            self.inside_sand_id.data = suite.inside_sand_id
+
+    def update_suite(self, suite):
+        for attr in self.attributes:
+            setattr(suite, attr, getattr(self, attr).data)
+        suite.inside_sand_id = self.inside_sand_id.data
+        suite.update_suite_amount()
 
 
 class ItemImageForm(Form):
