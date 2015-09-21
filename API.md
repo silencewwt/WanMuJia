@@ -203,7 +203,7 @@
   + /vendor/register
 + **method**
   + GET, POST
-+ **postData**   
++ **postData**
   + **password**
     + 密码
     + type = text
@@ -211,7 +211,7 @@
   + **confirm_password**
     + 确认密码
     + type = text
-    + require  
+    + required
   + **email**
     + 邮箱
     + type = text
@@ -277,21 +277,182 @@
 + **method**
   + GET
   + POST
-
-###vendor item list
-+ **URL**
-  + /vendor/items?page=&per_page
-+ **method**
-  + GET
-+ **parameters**
-  + page: list 
-  + per_page: item numbers per page
-
-###vendor add item
+  
+###vendor item page
 + **URL**
   + /vendor/items
 + **method**
+  + GET
+
+###vendor items datatable
++ **URL**
+  + /vendor/items?draw=&start=&length=
++ **method**
+  + GET
++ **paramaters**
+  + draw
+  + start
+  + length
+
+###vendor add single item
++ **URL**
+  + /vendor/items/new_item?type=single
++ **method**
+  + GET, POST
++ **postData**
+  + **item**
+    + 商品名称
+    + type = text
+    + required
+  + **length**
+    + 商品长度
+    + type = text
+    + 商品长宽高与适用面积二选其一
+    + 商品长宽高只能全部填写或全不填写
+  + **width**
+    + 商品宽度
+    + type = text
+  + **heigth**
+    + 商品高度
+    + type = text
+  + **area**
+    + 商品适用面积
+    + type = text
+    + 商品适用面积与长宽高二选其一
+  + **price**
+    + 商品指导价格
+    + type = text
+    + required
+  + **second_material_id**
+    + 商品二级材料id
+    + type = text
+    + required
+  + **category_id**
+    + 商品分类id
+    + type = text
+    + required
+  + **stove_id**
+    + 烘干工艺id
+    + type = text
+    + required
+  + **carve_id**
+    + 雕刻工艺id
+    + type = text
+    + required
+  + **outside_sand_id**
+    + 外表面打磨砂纸id
+    + type = text
+    + required
+  + **inside_sand_id**
+    + 内表面打磨砂纸id
+    + type = text
+  + **paint_id**
+    + 涂饰工艺id
+    + type = text
+    + required
+  + **decoration_id**
+    + 装饰工艺id
+    + type = text
+    + required
+  + **tenon_id**
+    + 榫卯结构id
+    + type = text
+    + required
+  + **story**
+    + 商品寓意
+    + type = text
+
+###vendor add suite
++ **URL**
+  + /vendor/items/new_item?type=suite
++ **method**
   + POST
++ **postData**
+  + **item**
+    + 套件名称
+    + type = text
+    + required
+  + **area**
+    + 商品适用面积
+    + type = text
+  + **price**
+    + 商品指导价格
+    + type = text
+    + required
+  + **second_material_id**
+    + 商品二级材料id
+    + type = text
+    + required
+  + **category_id**
+    + 商品分类id
+    + type = text
+    + required
+  + **second_scene_id**
+    + 二级场景id
+    + type = text
+    + required
+  + **stove_id**
+    + 烘干工艺id
+    + type = text
+    + required
+  + **carve_id**
+    + 雕刻工艺id
+    + type = text
+    + required
+  + **outside_sand_id**
+    + 外表面打磨砂纸id
+    + type = text
+    + required
+  + **inside_sand_id**
+    + 内表面打磨砂纸id
+    + type = text
+  + **story**
+    + 商品寓意
+    + type = text
+  + **components**
+    + 包含组件信息列表的字符串
+    + "{'components': ['component': '', 'length': '', 'width': '', 'height': '', 'area': '', 'category_id': '', 'carve_id': '', 'paint_id': '', 'decoration_id':　'', 'tenon_id': '', 'amount': '']}"
+    + required
+    + **component**
+      + 组件名称
+      + type = text
+      + required
+    + **length**
+      + 组件长度
+      + type = text
+      + 组件长宽高与适用面积二选其一
+      + 组件长宽高只能全部填写或全不填写
+    + **width**
+      + 组件宽度
+      + type = text
+    + **height**
+      + 组件高度
+      + type = text
+    + **area**
+      + 组件适用面积
+      + type = text
+      + 组件适用面积与长宽高二选其一
+    + **category_id**
+      + 组件种类id
+      + type = text
+      + required
+    + **carve_id**
+      + 雕刻id
+      + type = text
+      + required
+    + **decoration_id**
+      + 装饰工艺id
+      + type = text
+      + required
+    + **tenon_id**
+      + 榫卯结构id
+      + type = text
+      + required
+    + **amount**
+      + 组件数量
+      + type = text
+      + required
+
 
 ###vendor item detail
 + **URL**
@@ -474,7 +635,7 @@
   + **id**
 + **return**
   + 成功
-    + `{"success": true}`
+    + ```{"success": true}```
   + 失败
     + `{"success": false, "message": ""}`
     
