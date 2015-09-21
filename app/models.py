@@ -447,8 +447,6 @@ class Item(db.Model, Property):
     story = db.Column(db.Unicode(5000), default=u'', nullable=False)
     # 已删除
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
-    # 可搜索
-    searchable = db.Column(db.Boolean, default=False, nullable=False)
     # 套件id
     suite_id = db.Column(db.Integer, nullable=False)
     # 数量
@@ -469,7 +467,7 @@ class Item(db.Model, Property):
     _images = None
 
     def __init__(self, vendor_id, item, price, second_material_id, category_id, second_scene_id, length, width,
-                 height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, story, searchable,
+                 height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, story,
                  suite_id, amount, is_suite, is_component):
         self.vendor_id = vendor_id
         self.item = item
@@ -487,7 +485,6 @@ class Item(db.Model, Property):
         self.paint_id = paint_id
         self.decoration_id = decoration_id
         self.story = story
-        self.searchable = searchable
         self.suite_id = suite_id
         self.amount = amount
         self.is_suite = is_suite

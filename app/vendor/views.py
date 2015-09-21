@@ -19,7 +19,7 @@ from app.utils.redis import redis_set
 from app.wmj_email import ADMIN_REMINDS, ADMIN_REMINDS_SUBJECT, send_email
 from .import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
-    ItemImageDeleteForm, RevocationForm, ReconfirmForm, InitializationForm, SuiteForm
+    ItemImageDeleteForm, RevocationForm, ReconfirmForm, InitializationForm, SuiteForm, ComponentForm
 
 
 def vendor_confirmed(f):
@@ -189,7 +189,7 @@ def new_item():
             if 'components' in request.form['components']:
                 json_components = json.loads(request.form['components'])
                 for json_component in json_components:
-                    component_form = ItemForm(formdata=ImmutableMultiDict(json_component))
+                    component_form = ComponentForm(formdata=ImmutableMultiDict(json_component))
                     if not component_form.validate():
                         return jsonify({'success': False, 'message': component_form.error2str()})
                     component_forms.append(component_form)
@@ -200,7 +200,7 @@ def new_item():
             suite.update_suite_amount()
             return jsonify({'success': True, 'item_id': suite.id})
         suite_form.generate_choices()
-        component_form = ItemForm()
+        component_form = ComponentForm()
         component_form.generate_choices()
         return render_template('vendor/new_item_suite.html',
                                form=suite_form, com_form=component_form, vendor=current_user)

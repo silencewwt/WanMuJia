@@ -11,7 +11,7 @@ from app import db
 from app.constants import SMS_CAPTCHA, VENDOR_REMINDS_PENDING, VENDOR_REMINDS_COMPLETE
 from app.models import Vendor, VendorAddress, Material, Stove, Carve, Sand, Paint, Decoration, \
     Tenon, Item, ItemTenon, ItemCarve, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, \
-    FirstMaterial, SecondMaterial
+    FirstMaterial, SecondMaterial, Category
 from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
 from app.utils import IO, convert_url
 from app.utils.forms import Form
@@ -147,7 +147,7 @@ class ItemForm(Form):
     area = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品适用面积不正确')])
     price = FloatField(validators=[NumberRange(1, message=u'商品价格不正确')])
     second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, u'商品材料不正确')])
-    category_id = StringField()
+    category_id = StringField(validators=[QueryID(Category, '商品种类不正确')])
     second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, u'商品场景不正确')])
     stove_id = SelectField(coerce=int, validators=[QueryID(Stove, u'烘干工艺不正确')])
     carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, u'雕刻工艺不正确')])
@@ -157,7 +157,6 @@ class ItemForm(Form):
     decoration_id = SelectField(coerce=int, validators=[QueryID(Decoration, u'装饰工艺不正确')])
     tenon_id = SelectMultipleField(coerce=int, validators=[QueryID(Tenon, u'榫卯结构不正确')])
     story = TextAreaField(validators=[Length(0, 5000)])
-    amount = IntegerField(validators=[Digit(required=False, min=0, message='商品数量不正确')])
 
     attributes = ('item', 'length', 'width', 'height', 'price', 'second_material_id', 'category_id', 'second_scene_id',
                   'stove_id', 'outside_sand_id', 'inside_sand_id', 'decoration_id', 'paint_id', 'story')
@@ -207,7 +206,6 @@ class ItemForm(Form):
             paint_id=self.paint_id.data,
             decoration_id=self.decoration_id.data,
             story=self.story.data,
-            searchable=True,
             suite_id=0,
             amount=1,
             is_suite=False,
@@ -217,35 +215,6 @@ class ItemForm(Form):
         db.session.commit()
         self.add_attach(item.id)
         return item
-
-    def add_component(self, vendor_id, suite_id):
-        component = Item(
-            vendor_id=vendor_id,
-            item=self.item.data,
-            price=0,
-            second_material_id=self.second_material_id.data,
-            category_id=self.category_id.data,
-            second_scene_id=self.second_scene_id.data,
-            length=self.length.data,
-            width=self.width.data,
-            height=self.height.data,
-            area=self.area.data,
-            stove_id=self.stove_id.data,
-            outside_sand_id=self.outside_sand_id.data,
-            inside_sand_id=self.inside_sand_id.data if self.inside_sand_id.data else 0,
-            paint_id=self.paint_id.data,
-            decoration_id=self.decoration_id.data,
-            story=self.story.data,
-            searchable=False,
-            suite_id=suite_id,
-            amount=self.amount.data,
-            is_suite=False,
-            is_component=True
-        )
-        db.session.add(component)
-        db.session.commit()
-        self.add_attach(component.id)
-        return component
 
     def add_attach(self, item_id):
         for carve_id in self.carve_id.data:
@@ -259,17 +228,6 @@ class ItemForm(Form):
             getattr(self, attr).data = getattr(item, attr)
         self.tenon_id.data = item.get_tenon_id()
         self.carve_id.data = item.get_carve_id()
-
-    def show_component(self, component):
-        for attr in ('item', 'price', 'amount', 'second_material_id', 'category_id', 'stove_id', 'outside_sand_id',
-                     'decoration_id', 'paint_id', 'story'):
-            getattr(self, attr).data = getattr(component, attr)
-        self.tenon_id.data = component.get_tenon_id()
-        self.carve_id.data = component.get_carve_id()
-
-        for attr in ('length', 'width', 'height', 'area', 'inside_sand_id'):
-            if getattr(component, attr) is not 0:
-                getattr(self, attr).data = getattr(component, attr)
 
     def update_item(self, item):
         for attr in self.attributes:
@@ -293,9 +251,102 @@ class ItemForm(Form):
         db.session.add(item)
         db.session.commit()
 
+
+class ComponentForm(Form):
+    component = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
+    length = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品长度不正确')])
+    width = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品宽度不正确')])
+    height = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品高度不正确')])
+    area = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品适用面积不正确')])
+    price = FloatField(validators=[NumberRange(1, message=u'商品价格不正确')])
+    category_id = StringField(validators=[QueryID(Category, message='商品种类不正确')])
+    carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, u'雕刻工艺不正确')])
+    paint_id = SelectField(coerce=int, validators=[QueryID(Paint, u'涂饰工艺不正确')])
+    decoration_id = SelectField(coerce=int, validators=[QueryID(Decoration, u'装饰工艺不正确')])
+    tenon_id = SelectMultipleField(coerce=int, validators=[QueryID(Tenon, u'榫卯结构不正确')])
+    amount = IntegerField(validators=[Digit(required=True, min=1, message='商品数量不正确')])
+
+    attributes = ('length', 'width', 'height', 'price', 'category_id', 'decoration_id', 'paint_id')
+
+    def validate_area(self, field):
+        if not (field.data or (self.length.data and self.width.data and self.height.data)):
+            raise ValidationError(u'适用面积与长宽高至少需填一项')
+
+    def generate_choices(self):
+        self.carve_id.choices = [(choice.id, choice.carve) for choice in Carve.query.all()]
+        self.paint_id.choices = [(choice.id, choice.paint) for choice in Paint.query.all()]
+        self.decoration_id.choices = [(choice.id, choice.decoration) for choice in Decoration.query.all()]
+        self.tenon_id.choices = [(choice.id, choice.tenon) for choice in Tenon.query.all()]
+
+    def add_component(self, vendor_id, suite_id):
+        component = Item(
+            vendor_id=vendor_id,
+            item=self.component.data,
+            price=0,
+            second_material_id=0,
+            category_id=self.category_id.data,
+            second_scene_id=0,
+            length=self.length.data,
+            width=self.width.data,
+            height=self.height.data,
+            area=self.area.data,
+            stove_id=0,
+            outside_sand_id=0,
+            inside_sand_id=0,
+            paint_id=self.paint_id.data,
+            decoration_id=self.decoration_id.data,
+            story='',
+            suite_id=suite_id,
+            amount=self.amount.data,
+            is_suite=False,
+            is_component=True
+        )
+        db.session.add(component)
+        db.session.commit()
+        self.add_attach(component.id)
+        return component
+
+    def add_attach(self, item_id):
+        for carve_id in self.carve_id.data:
+            db.session.add(ItemCarve(item_id=item_id, carve_id=carve_id))
+        for tenon_id in self.tenon_id.data:
+            db.session.add(ItemTenon(item_id=item_id, tenon_id=tenon_id))
+        db.session.commit()
+
+    def show_component(self, component):
+        for attr in ('price', 'amount', 'category_id', 'decoration_id', 'paint_id'):
+            getattr(self, attr).data = getattr(component, attr)
+        self.component.data = component.item
+        self.tenon_id.data = component.get_tenon_id()
+        self.carve_id.data = component.get_carve_id()
+
+        for attr in ('length', 'width', 'height', 'area'):
+            if getattr(component, attr) is not 0:
+                getattr(self, attr).data = getattr(component, attr)
+
     def update_component(self, component):
+        component.item = self.component.data
         component.amount = self.amount.data
-        self.update_item(component)
+        for attr in self.attributes:
+            if not getattr(self, attr).data == getattr(component, attr):
+                setattr(component, attr, getattr(self, attr).data)
+
+        component_tenons = component.get_tenon_id()
+        add_tenons = set(self.tenon_id.data) - set(component_tenons)
+        del_tenons = set(component_tenons) - set(self.tenon_id.data)
+        component_carves = component.get_carve_id()
+        add_carves = set(self.carve_id.data) - set(component_carves)
+        del_carves = set(component_carves) - set(self.carve_id.data)
+        for tenon_id in add_tenons:
+            db.session.add(ItemTenon(item_id=component.id, tenon_id=tenon_id))
+        for tenon_id in del_tenons:
+            db.session.delete(ItemTenon.query.filter_by(item_id=component.id, tenon_id=tenon_id).limit(1).first())
+        for carve_id in add_carves:
+            db.session.add(ItemCarve(item_id=component.id, carve_id=carve_id))
+        for carve_id in del_carves:
+            db.session.delete(ItemCarve.query.filter_by(item_id=component.id, carve_id=carve_id).limit(1).first())
+        db.session.add(component)
+        db.session.commit()
 
 
 class SuiteForm(Form):
@@ -350,7 +401,6 @@ class SuiteForm(Form):
             paint_id=0,
             decoration_id=0,
             story=self.story.data,
-            searchable=True,
             suite_id=0,
             amount=1,
             is_suite=True,
