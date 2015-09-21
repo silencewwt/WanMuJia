@@ -199,6 +199,7 @@ def new_item():
                 component_form.add_component(current_user.id, suite.id)
             suite.update_suite_amount()
             return jsonify({'success': True, 'item_id': suite.id})
+        suite_form.generate_choices()
         return render_template('vendor/new_item_suite.html', form=suite_form, vendor=current_user)
 
 
