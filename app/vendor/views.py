@@ -200,7 +200,10 @@ def new_item():
             suite.update_suite_amount()
             return jsonify({'success': True, 'item_id': suite.id})
         suite_form.generate_choices()
-        return render_template('vendor/new_item_suite.html', form=suite_form, vendor=current_user)
+        component_form = ItemForm()
+        component_form.generate_choices()
+        return render_template('vendor/new_item_suite.html',
+                               form=suite_form, com_form=component_form, vendor=current_user)
 
 
 @vendor_blueprint.route('/items/image', methods=['PUT', 'DELETE'])
