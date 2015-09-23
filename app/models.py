@@ -460,11 +460,13 @@ class Item(db.Model, Property):
         'vendor': lambda x: Vendor.query.get(x.vendor_id),
         'category': lambda x: Category.query.get(x.category_id).category,
         'images': lambda x: ItemImage.query.filter_by(item_id=x.id, is_deleted=False).order_by(ItemImage.sort,
-                                                                                               ItemImage.created)
+                                                                                               ItemImage.created),
+        'components': lambda x: Item.query.filter_by(suite_id=x.id, is_deleted=False, is_component=True)
     }
     _vendor = None
     _category = None
     _images = None
+    _components = None
 
     def __init__(self, vendor_id, item, price, second_material_id, category_id, second_scene_id, length, width,
                  height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, story,
@@ -520,9 +522,15 @@ class Item(db.Model, Property):
     def images(self):
         return self.get_or_flush('images')
 
+    @property
+    def components(self):
+        if self.is_suite:
+            return self.get_or_flush('components')
+        return []
+
     def update_suite_amount(self):
         if self.is_suite:
-            components = Item.query.filter_by(suite_id=self.id, is_deleted=False, is_component=True)
+            components = self.components
             self.amount = sum([component.amount for component in components])
 
 

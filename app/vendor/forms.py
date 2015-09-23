@@ -4,7 +4,7 @@ from base64 import b64decode
 
 from flask.ext.login import current_user, current_app
 from flask.ext.wtf.file import FileField
-from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField, FloatField
+from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField, FloatField, HiddenField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
 from app import db
@@ -253,6 +253,7 @@ class ItemForm(Form):
 
 
 class ComponentForm(Form):
+    component_id = HiddenField()
     component = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
     length = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品长度不正确')])
     width = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品宽度不正确')])
@@ -268,9 +269,20 @@ class ComponentForm(Form):
 
     attributes = ('length', 'width', 'height', 'price', 'category_id', 'decoration_id', 'paint_id')
 
+    def __init__(self, suite_id=None, *args, **kwargs):
+        self.suite_id = suite_id
+        super(ComponentForm, self).__init__(*args, **kwargs)
+
     def validate_area(self, field):
         if not (field.data or (self.length.data and self.width.data and self.height.data)):
             raise ValidationError(u'适用面积与长宽高至少需填一项')
+
+    def validate_component_id(self, field):
+        if field.data and self.suite_id is not None:
+            component = Item.query.get(field.data)
+            if component is None or component.is_deleted or component.suite_id != self.suite_id:
+                raise ValidationError('组件id错误')
+            self.component = component
 
     def generate_choices(self):
         self.carve_id.choices = [(choice.id, choice.carve) for choice in Carve.query.all()]
@@ -317,6 +329,7 @@ class ComponentForm(Form):
         for attr in ('price', 'amount', 'category_id', 'decoration_id', 'paint_id'):
             getattr(self, attr).data = getattr(component, attr)
         self.component.data = component.item
+        self.component_id.data = component.id
         self.tenon_id.data = component.get_tenon_id()
         self.carve_id.data = component.get_carve_id()
 
@@ -347,6 +360,12 @@ class ComponentForm(Form):
             db.session.delete(ItemCarve.query.filter_by(item_id=component.id, carve_id=carve_id).limit(1).first())
         db.session.add(component)
         db.session.commit()
+
+    def update(self, component=None):
+        if component is not None:
+            self.update_component(component)
+        elif self.component is not None:
+            self.update_component(self.component)
 
 
 class SuiteForm(Form):

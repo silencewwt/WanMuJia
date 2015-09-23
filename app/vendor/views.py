@@ -3,7 +3,7 @@ import datetime
 import json
 from functools import wraps
 
-from flask import current_app, render_template, redirect, request, session, url_for, jsonify
+from flask import current_app, render_template, redirect, request, session, url_for, jsonify, abort
 from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 from werkzeug.datastructures import ImmutableMultiDict
@@ -145,23 +145,71 @@ def items_data_table():
 def item_detail(item_id):
     item = Item.query.get_or_404(item_id)
     if item.vendor_id != current_user.id:
-        return 'forbidden', 401
-    form = ItemForm()
-    form.generate_choices()
-    if request.method == 'GET':
-        form.show_item(item)
-        distributors = item.in_stock_distributors()
-        return render_template('vendor/edit.html', form=form, item=item, distributors=distributors, vendor=current_user)
-    elif request.method == 'PUT':
-        if form.validate():
-            form.update_item(item)
-            return jsonify({'success': True})
-        else:
-            return jsonify({'success': False, 'message': form.error2str()})
-    elif request.method == 'DELETE':
-        item.is_deleted = True
-        db.session.add(item)
+        return 'forbidden', 403
+    elif item.is_deleted:
+        abort(404)
+
+    item_type = request.args.get('type')
+    if item_type == 'single':
+        form = ItemForm()
+        if request.method == 'GET':
+            form.generate_choices()
+            form.show_item(item)
+            return render_template('vendor/edit_single.html', form=form, item=item, vendor=current_user)
+
+        elif request.method == 'PUT':
+            if form.validate():
+                form.update_item(item)
+            else:
+                return jsonify({'success': False, 'message': form.error2str()})
+
+        elif request.method == 'DELETE':
+            item.is_deleted = True
         db.session.commit()
+        return jsonify({'success': True})
+
+    elif item_type == 'suite':
+        suite = item
+        form = SuiteForm()
+        if request.method == 'GET':
+            form.show_suite(suite)
+            form.generate_choices()
+            component_forms = []
+            for component in suite.components:
+                component_form = ComponentForm()
+                component_form.generate_choices()
+                component_form.show_component(component)
+                component_forms.append(component_form)
+            return render_template('vendor/edit_suite.html', form=form, com_forms=component_forms, vendor=current_user)
+
+        elif request.method == 'PUT':
+            if not form.validate():
+                return jsonify({'success': False, 'message': form.error2str()})
+            component_forms = []
+            if 'components' in request.form['components']:
+                json_components = json.loads(request.form['components'])
+                for json_component in json_components:
+                    component_form = ComponentForm(suite_id=suite.id, formdata=ImmutableMultiDict(json_component))
+                    if not component_form.validate():
+                        return jsonify({'success': False, 'message': component_form.error2str()})
+                    component_forms.append(component_form)
+            form.update_suite(suite)
+            for component_form in component_forms:
+                component_form.update()
+            if 'del_components' in request.form:
+                for del_component_id in request.form['del_components']:
+                    component = Item.query.get(del_component_id)
+                    if component is not None and not component.is_deleted and component.suite_id == suite.id:
+                        component.is_deleted = True
+            suite.update_suite_amount()
+
+        elif request.method == 'DELETE':
+            suite.is_deleted = True
+            for component in suite.components:
+                component.is_deleted = True
+        db.session.commit()
+        return jsonify({'success': True})
+    else:
         return jsonify({'success': True})
 
 
@@ -193,7 +241,8 @@ def new_item():
                     if not component_form.validate():
                         return jsonify({'success': False, 'message': component_form.error2str()})
                     component_forms.append(component_form)
-
+            if not component_forms:
+                return jsonify({'success': False, 'message': '请添加至少一个组件'})
             suite = suite_form.add_suite(current_user.id)
             for component_form in component_forms:
                 component_form.add_component(current_user.id, suite.id)
