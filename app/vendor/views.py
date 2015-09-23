@@ -211,7 +211,7 @@ def item_detail(item_id):
         db.session.commit()
         return jsonify({'success': True})
     else:
-        return jsonify({'success': True})
+        abort(404)
 
 
 @vendor_blueprint.route('/items/new_item', methods=['GET', 'POST'])
@@ -255,6 +255,8 @@ def new_item():
         component_form.generate_choices()
         return render_template('vendor/new_item_suite.html',
                                form=suite_form, com_form=component_form, vendor=current_user)
+    else:
+        abort(404)
 
 
 @vendor_blueprint.route('/items/image', methods=['PUT', 'DELETE'])
