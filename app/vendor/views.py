@@ -171,9 +171,9 @@ def item_detail(item_id):
     elif item_type == 'suite':
         suite = item
         form = SuiteForm()
+        form.generate_choices()
         if request.method == 'GET':
             form.show_suite(suite)
-            form.generate_choices()
             component_forms = []
             for component in suite.components:
                 component_form = ComponentForm()
@@ -190,6 +190,7 @@ def item_detail(item_id):
                 json_components = json.loads(request.form['components'])
                 for json_component in json_components:
                     component_form = ComponentForm(suite_id=suite.id, formdata=ImmutableMultiDict(json_component))
+                    component_form.generate_choices()
                     if not component_form.validate():
                         return jsonify({'success': False, 'message': component_form.error2str()})
                     component_forms.append(component_form)
@@ -229,6 +230,7 @@ def new_item():
         return render_template('vendor/new_item_single.html', form=form, vendor=current_user)
     elif item_type == 'suite':
         suite_form = SuiteForm()
+        suite_form.generate_choices()
         if request.method == 'POST':
             if not suite_form.validate():
                 return jsonify({'success': False, 'message': suite_form.error2str()})
@@ -238,6 +240,7 @@ def new_item():
                 json_components = json.loads(request.form['components'])
                 for json_component in json_components:
                     component_form = ComponentForm(formdata=ImmutableMultiDict(json_component))
+                    component_form.generate_choices()
                     if not component_form.validate():
                         return jsonify({'success': False, 'message': component_form.error2str()})
                     component_forms.append(component_form)
@@ -248,7 +251,6 @@ def new_item():
                 component_form.add_component(current_user.id, suite.id)
             suite.update_suite_amount()
             return jsonify({'success': True, 'item_id': suite.id})
-        suite_form.generate_choices()
         component_form = ComponentForm()
         component_form.generate_choices()
         return render_template('vendor/new_item_suite.html',
