@@ -403,7 +403,6 @@ class SuiteForm(Form):
     area = FloatField(validators=[Digit(required=True, min=0, message='商品适用面积不正确')])
     price = FloatField(validators=[NumberRange(1, message=u'商品价格不正确')])
     second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, u'商品材料不正确')])
-    category_id = StringField()
     second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, u'商品场景不正确')])
     stove_id = SelectField(coerce=int, validators=[QueryID(Stove, u'烘干工艺不正确')])
     outside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=True, message=u'外打磨砂纸不正确')])
@@ -438,7 +437,7 @@ class SuiteForm(Form):
             item=self.item.data,
             price=self.price.data,
             second_material_id=self.second_material_id.data,
-            category_id=self.category_id.data,
+            category_id=0,
             second_scene_id=self.second_scene_id.data,
             length=0,
             width=0,
