@@ -42,18 +42,16 @@ class DevelopmentConfig(Config):
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
-        import json
-        with open('config.json') as f:
-            config_dict = json.load(f)
-            cls.SQLALCHEMY_DATABASE_URI = config_dict['DEV_DATABASE_URL']
 
 
 class TestingConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
+    DEBUG_TB_ENABLED = False
     SERVER_NAME = 'localhost'
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
         'mysql+pymysql://@localhost/test?charset=utf8'
+    IMAGE_DIR = os.path.join(basedir, 'tmp/')
 
     @classmethod
     def init_app(cls, app):
