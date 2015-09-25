@@ -75,11 +75,11 @@ class QueryID(object):
     def __call__(self, form, field):
         if self.required or field.data:
             if not isinstance(field.data, (list, tuple)):
-                if not self.model.query.get(field.data):
+                if field.data is None or not self.model.query.get(field.data):
                     raise ValidationError(self.message)
             else:
                 for data in field.data:
-                    if not self.model.query.get(data):
+                    if field.data is None or not self.model.query.get(data):
                         raise ValidationError(self.message)
 
 

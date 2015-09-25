@@ -88,6 +88,8 @@ class DistributorRevocationForm(Form):
     distributor_revocation = None
 
     def validate_distributor_revocation_id(self, field):
+        if field.data is None:
+            raise ValidationError('参数错误')
         distributor_revocation = DistributorRevocation.query.get(field.data)
         if not distributor_revocation:
             raise ValidationError()

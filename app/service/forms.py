@@ -37,6 +37,8 @@ class EmailForm(Form):
 
     def validate_id(self, field):
         role = None
+        if field.data is None:
+            raise ValidationError(u'没有此用户')
         if self.role.data == 'user':
             role = User.query.get(field.data)
         elif self.role.data == 'vendor':
