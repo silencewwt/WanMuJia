@@ -226,6 +226,7 @@ jQuery(document).ready(function($) {
     if (getPageTitle() === 'item-edit') {
         var $itemEditForm = $('#edit-item-form');
         var originFormValue = $itemEditForm.serialize();
+        var urlSearch = window.location.search;    // 初始的 url query 参数
 
         // 后台模板默认给 `.pager a` 绑定了 click 回调阻止了 <a> 的默认行为, 此处移除 click 监听。
         $itemEditForm.find('.return-list a').off('click');
@@ -250,7 +251,7 @@ jQuery(document).ready(function($) {
                 setButtonLoading($this);
 
                 saveInfos({
-                    url: '/vendor/items' + window.location.search,
+                    url: '/vendor/items' + urlSearch,
                     method: 'put',
                     form: $itemEditForm,
                     success: function (data) {
@@ -288,7 +289,7 @@ jQuery(document).ready(function($) {
 
         // init dropzone
         dz.initDropzone($('#img-upload'), {
-            url: '/vendor/items/image?item_id=' + $itemEditForm.data('item-id'),
+            url: '/vendor/items/image?item_id=' + $itemEditForm.data('item-id') + '&' + urlSearch.slice(1),    // 去掉 '?'
             success: function (file, data) {
                 var $previewElement = $(file.previewElement);
                 if (data.success) {
@@ -401,12 +402,13 @@ jQuery(document).ready(function($) {
 
             var $link = $this.children('a');
             var originVal = $link.html();
+            var urlSearch = window.location.search;    // 初始的 url query 参数
 
             $this.addClass('disabled');
             $link.html('<i><span class="fa fa-spin fa-spinner"></span></i>');
 
             saveInfos({
-                url: '/vendor/items/new_item' + window.location.search,
+                url: '/vendor/items/new_item' + urlSearch,
                 method: 'post',
                 form: $('#new-item-form'),
                 success: function (data) {
@@ -416,7 +418,7 @@ jQuery(document).ready(function($) {
 
                         // init dropzone
                         dz.initDropzone($('#img-upload'), {
-                            url: '/vendor/items/image?item_id=' + data.item_id,
+                            url: '/vendor/items/image?item_id=' + data.item_id + '&' + urlSearch.slice(1),    // 去掉 '?'
                             success: function (file, data) {
                                 var $previewElement = $(file.previewElement);
                                 if (data.success) {
