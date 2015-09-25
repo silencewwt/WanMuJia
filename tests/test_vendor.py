@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json
+import base64
 from flask import url_for
 from tests import WMJTestCase
 from app import db
@@ -19,13 +19,53 @@ class VendorTestCase(WMJTestCase):
         response = self.client.post(url_for('vendor.login'),
                                     data={'mobile': '18345678901', 'password': 'wrong password'})
         self.assert_ok_json(response)
-        json_response = json.loads(response.data.decode('utf8'))
+        json_response = self.load_json(response)
         self.assertFalse(json_response['accessGranted'])
 
         # login success
         response = self.client.post(url_for('vendor.login'), data={'mobile': '18345678901', 'password': password_hash})
         self.assert_ok_json(response)
-        json_response = json.loads(response.data.decode('utf8'))
+        json_response = self.load_json(response)
         self.assertTrue(json_response['accessGranted'])
         response = self.client.get(url_for('vendor.index'))
-        self.assert_ok(response)
+        self.assert_ok_html(response)
+
+    def test_register(self):
+        # wrong captcha
+        self.client.get(url_for('vendor.register'))
+        response = self.client.post(url_for('vendor.register'), data={'mobile': '13100000000', 'captcha': '000000'})
+        self.assert_ok_json(response)
+        json_response = self.load_json(response)
+        self.assertFalse(json_response['accessGranted'])
+        self.assertIn('message', json_response)
+
+        # right captcha
+        self.client.get(url_for('vendor.register'))
+        self.redis.set('SMS_CAPTCHA:13100000000', '000000', 1)
+        response = self.client.post(url_for('vendor.register'), data={'mobile': '13100000000', 'captcha': '000000'})
+        self.assert_ok_json(response)
+        json_response = self.load_json(response)
+        self.assertTrue(json_response['accessGranted'])
+
+        # register detail
+        data = {
+            'email': 'test@wanmujia.com',
+            'password': self.twice_md5('123456'),
+            'confirm_password': self.twice_md5('123456'),
+            'agent_name': 'agent',
+            'agent_identity': '123456789012345678',
+            'agent_identity_front': b'*' * 23 + base64.b64encode(open('test.jpg', 'rb').read()),
+            'agent_identity_back': b'*' * 23 + base64.b64encode(open('test.jpg', 'rb').read()),
+            'license_image': b'*' * 23 + base64.b64encode(open('test.jpg', 'rb').read()),
+            'name': 'wanmujia',
+            'license_limit':  '2035/10/19',
+            'telephone': '01012345678',
+            'address': 'vendor address',
+            'district_cn_id': '110111'
+        }
+        response = self.client.post(url_for('vendor.register'), data=data)
+        self.assert_ok_json(response)
+        json_response = self.load_json(response)
+        self.assertTrue(json_response['accessGranted'])
+        response = self.client.get(url_for('vendor.index'))
+        self.assert_ok_html(response)

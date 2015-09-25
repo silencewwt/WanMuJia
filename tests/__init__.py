@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+import redis
 import unittest
 from hashlib import md5
 from app import create_app, db
@@ -10,7 +12,9 @@ class WMJTestCase(unittest.TestCase):
         self.app = create_app('testing')
         self.app_context = self.app.app_context()
         self.app_context.push()
-        db.drop_all()
+        self.client = self.app.test_client()
+        self.redis = redis.StrictRedis(host='localhost', port=6379, db=0)
+
         db.create_all()
         connection = db.engine.connect()
         sql_files = ['cities.sql', 'districts.sql', 'provinces.sql']
@@ -18,7 +22,6 @@ class WMJTestCase(unittest.TestCase):
             with open(sql_file, encoding='utf8') as f:
                 connection.execute(f.read())
         generate_fake_data()
-        self.client = self.app.test_client()
 
     def tearDown(self):
         db.session.remove()
@@ -59,3 +62,6 @@ class WMJTestCase(unittest.TestCase):
         if not isinstance(password, bytes):
             password = bytes(password, encoding='utf8')
         return md5(md5(password).hexdigest().encode('utf8')).hexdigest()
+
+    def load_json(self, response):
+        return json.loads(response.data.decode('utf8'))
