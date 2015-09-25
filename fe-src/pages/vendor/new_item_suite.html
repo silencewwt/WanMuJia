@@ -1,0 +1,225 @@
+{% extends "vendor/nav_midd.html" %}
+{% from 'vendor/macro/item_detail_form.html' import item_detail_form %}
+{% from 'vendor/macro/com_base.html' import com_base %}
+
+{% block isItems -%} opened active {%- endblock %}
+{% block isItems_new -%} active {%- endblock %}
+{% block isItems_new_suite -%} active {%- endblock %}
+{% block s_isItems -%} opened active {%- endblock %}
+{% block s_isItems_new_suite -%} active {%- endblock %}
+
+
+{% block styles %}
+<link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/js/select2/select2.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/js/select2/select2-bootstrap.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='lib/xenon/js/dropzone/css/dropzone.css')}}">
+{% endblock %}
+
+
+{% block main_content %}
+<div class="page-title" data-page="item-new">
+
+    <div class="title-env">
+        <h1 class="title">添加商品-套件</h1>
+    </div>
+
+    <div class="breadcrumb-env">
+
+        <ol class="breadcrumb bc-1">
+            <li>
+                <a href="/vendor"><i class="fa-home"></i>概览</a>
+            </li>
+            <li>
+                <a href="/vendor/items">商品管理</a>
+            </li>
+            <li class="active">
+                <strong>添加商品</strong>
+            </li>
+        </ol>
+
+    </div>
+
+</div>
+
+<!-- alert -->
+<div class="row">
+    <div class="col-sm-12">
+        {{ super() }}
+    </div>
+</div>
+
+<form role="form" id="new-item-form" class="form-wizard form-horizontal validate">
+    {{ form.csrf_token }}
+
+    <ul class="tabs">
+        <li class="active">
+            <a href="#details" data-toggle="tab">
+                填写商品详细信息
+                <span>1</span>
+            </a>
+        </li>
+        <li>
+            <a href="#images" data-toggle="tab">
+                上传商品图片
+                <span>2</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="progress-indicator">
+        <span></span>
+    </div>
+
+    <div class="tab-content no-margin">
+
+        <!-- Tabs Content -->
+        <div class="tab-pane with-bg active" id="details">
+            <div class="suite-info">
+                {{ item_detail_form(form, true) }}
+            </div>
+
+            <div class="form-group-separator"></div>
+
+            {{ com_base(com_form, 1) }}
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-9">
+                    <button type="button" class="btn btn-secondary pull-right" name="add-com" id="add-com">添加组件</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane with-bg" id="images">
+            <div id="img-upload" class="dropzone">
+                <p class="dz-message">
+                    拖动文件到此以上传(或点击)
+                </p>
+                <div class="fallback">
+                    <input name="file" type="file" multiple />
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Tabs Pager -->
+
+        <ul class="pager wizard">
+            <li class="next">
+                <a href="javascript:void(0)">下一步 <i class="entypo-right-open"></i></a>
+            </li>
+
+            <li class="add-another pull-right">
+                <a class="btn btn-success" href="/vendor/items/new_item">继续添加 <i class="fa fa-plus"></i></a>
+            </li>
+
+            <li class="return-list pull-right">
+                <a class="" href="/vendor/items"><i class="fa fa-list-ul"></i> 返回列表</a>
+            </li>
+        </ul>
+
+    </div>
+
+</form>
+{% endblock %}
+
+
+{% block scripts %}
+<!-- For adding components -->
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        var comInfoPlaceholders = {
+            carve_id: '雕刻工艺',
+            paint_id: '涂饰工艺',
+            decoration_id: '装饰工艺',
+            tenon_id: '榫卯结构'
+        };
+        var formElemSelector = ['input', 'select', 'textarea'];
+        var comCount = 0;
+        var $comBaseElems = $('.com-base');
+        var initSelect2 = function ($elem, placeholder) {
+            $elem.select2({
+                placeholder: '选择' + placeholder + '...',
+                allowClear: true
+            }).on('select2-open', function() {
+                // Adding Custom Scrollbar
+                $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+            });
+        };
+
+        var $comBase = $comBaseElems.eq(0).clone();
+        // 初始化页面中已渲染的组件的 select2
+        Object.keys(comInfoPlaceholders).forEach(function (com_name) {
+            initSelect2($('[name="' + com_name + '"]'), comInfoPlaceholders[com_name]);
+        });
+
+        // 改写页面内已渲染的表单控件的 name 值，以保证其唯一
+        $comBaseElems.each(function (index) {
+            var $com = $(this);
+            $com.find(formElemSelector.map(function (selector) {
+                        return selector + '.form-control';
+                    }).join(','))
+                    .each(function () {
+                        var $comAttr = $(this);
+                        $comAttr.attr('name', $comAttr.attr('name') + '-' + (index + 1));
+                    });
+            comCount++;
+        });
+
+        var genNewCom = function (num) {
+            var $newCom = $comBase.clone();
+            // 改写组件标题为相应编号
+            $newCom.find('[data-com-id]').text(num < 10 ? '0' + num : num);
+            $newCom.find(formElemSelector.map(function (selector) {
+                        return selector + '.form-control';
+                    }).join(','))
+                    .each(function () {
+                        var $this = $(this);
+                        var newId = $this.attr('id').replace(/-.*$/, '-' + num);
+                        // 改写 id 和 name
+                        $this.attr('id', newId).attr('name', newId);
+                        // 改写 label 标签 for 属性
+                        $this.parents('.form-group')
+                                .children('label[for]').attr('for', newId);
+                    });
+            return $newCom;
+        };
+
+        $('#add-com').click(function () {
+            genNewCom(++comCount)
+                    .insertBefore($(this).parents('.form-group'))
+                    .find(formElemSelector.map(function (selector) {
+                        return selector + '.form-control';
+                    }).join(','))
+                    .each(function () {
+                        var $this = $(this);
+                        var originName = $this.attr('name').replace(/-.*$/, '');
+                        var rules = $this.data('validate');
+                        // rules 调用必须在节点插入 DOM 之后
+                        // 为了便于操作，将 select2 初始化放在这之后
+                        if (rules) {
+                            var rulesArr = rules.split(/,\s*/);
+                            $this.rules('add', rulesArr.reduce(function (opt, rule) {
+                                opt[rule] = true;
+                                opt.messages[rule] = $this.data('message' + '-' + rule);
+                                return opt;
+                            }, {messages: {}}));
+                        }
+                        if ($this.is('select')) {
+                            initSelect2($this, comInfoPlaceholders[originName]);
+                        }
+                    });
+        });
+
+        $('#details').delegate('[data-com-remove]', 'click', function () {
+            $(this).parents('.com-base').remove();
+        });
+    });
+</script>
+
+
+<script src="{{url_for('static', filename='lib/xenon/js/jquery-validate/jquery.validate.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/formwizard/jquery.bootstrap.wizard.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/select2/select2.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/dropzone/dropzone.min.js')}}"></script>
+<script src="{{url_for('static', filename='lib/xenon/js/toastr/toastr.min.js')}}"></script>
+{% endblock %}

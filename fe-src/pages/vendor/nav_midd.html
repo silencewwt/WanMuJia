@@ -68,10 +68,24 @@
                                 </a>
                             </li>
                             <li class="{% block isItems_new %}{% endblock %}">
-                                <a href="/vendor/items/new_item">
+                                <a href="/vendor/items/new_item?type=single">
                                     <i class="fa-plus-square"></i>
                                     <span class="title">添加商品</span>
                                 </a>
+                                <ul>
+                                    <li class="{% block isItems_new_single %}{% endblock %}">
+                                        <a href="/vendor/items/new_item?type=single">
+                                            <i class="fa-rocket"></i>
+                                            <span class="title">添加单件</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% block isItems_new_suite %}{% endblock %}">
+                                        <a href="/vendor/items/new_item?type=suite">
+                                            <i class="fa-undo"></i>
+                                            <span class="title">添加套件</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     {% else %}
@@ -236,10 +250,24 @@
                                 </a>
                             </li>
                             <li class="{% block s_isItems_new %}{% endblock %}">
-                                <a href="/vendor/items/new_item">
+                                <a href="/vendor/items/new_item?type=single">
                                     <i class="fa-plus-square"></i>
                                     <span class="title">添加商品</span>
                                 </a>
+                                <ul>
+                                    <li class="{% block s_isItems_new_single %}{% endblock %}">
+                                        <a href="/vendor/items/new_item?type=single">
+                                            <i class="fa-rocket"></i>
+                                            <span class="title">添加单件</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% block s_isItems_new_suite %}{% endblock %}">
+                                        <a href="/vendor/items/new_item?type=suite">
+                                            <i class="fa-undo"></i>
+                                            <span class="title">添加套件</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     {% else %}

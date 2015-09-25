@@ -1,9 +1,11 @@
 {% extends "vendor/nav_midd.html" %}
+{% from 'vendor/macro/item_detail_form.html' import item_detail_form %}
 
 {% block isItems -%} opened active {%- endblock %}
 {% block isItems_new -%} active {%- endblock %}
+{% block isItems_new_single -%} active {%- endblock %}
 {% block s_isItems -%} opened active {%- endblock %}
-{% block s_isItems_new -%} active {%- endblock %}
+{% block s_isItems_new_single -%} active {%- endblock %}
 
 
 {% block styles %}
@@ -17,7 +19,7 @@
     <div class="page-title" data-page="item-new">
 
         <div class="title-env">
-            <h1 class="title">添加商品</h1>
+            <h1 class="title">添加商品-单件</h1>
         </div>
 
         <div class="breadcrumb-env">
@@ -47,7 +49,7 @@
         </div>
     </div>
 
-    <form role="forl" id="new-item-form" class="form-wizard form-horizontal validate">
+    <form role="form" id="new-item-form" class="form-wizard form-horizontal validate">
         {{ form.csrf_token }}
 
         <ul class="tabs">
@@ -74,7 +76,7 @@
             <!-- Tabs Content -->
             <div class="tab-pane with-bg active" id="details">
 
-                {% include "vendor/include/item_detail_form.html" %}
+                {{ item_detail_form(form) }}
 
             </div>
 
