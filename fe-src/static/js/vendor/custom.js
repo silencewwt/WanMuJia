@@ -44,6 +44,33 @@ jQuery(document).ready(function($) {
             var dateReg = /^(\d{4})\/((0?([1-9]))|(1[0|1|2]))\/((0?[1-9])|([12]([0-9]))|(3[0|1]))$/;
             return this.optional(element) || (dateReg.test(value));
         });
+
+        // 针对商品尺寸和适用面积的二者选一的特殊 required
+        $.validator.addMethod('sizeRequired', function (value, element) {
+            var $el = $(element);
+            var serials = $el.attr('id').split('-');
+            var len = serials.length;
+            var serialId = len > 1 ? '-' + serials[len - 1] : '';
+            var $areaField = $('#area' + serialId);
+            // 只要适用面积有值，则商品尺寸可不填
+            return $areaField.length < 1 ?
+                !!$el.val() :
+                !!$areaField.val() || !!$el.val();
+        });
+        $.validator.addMethod('areaRequired', function (value, element) {
+            var $el = $(element);
+            var serials = $el.attr('id').split('-');
+            var len = serials.length;
+            var serialId = len > 1 ? '-' + serials[len - 1] : '';
+            var $lengthField = $('#length' + serialId);
+            // 只要商品尺寸中任意一项有值，则适用面积可不填
+            return $lengthField.length < 1 ?
+                !!$el.val() :
+                !!$lengthField.val() ||
+                !!$('#width' + serialId).val() ||
+                !!$('#height' + serialId).val() ||
+                !!$el.val();
+        });
     }
 
     // Dropzone
@@ -223,7 +250,7 @@ jQuery(document).ready(function($) {
                 setButtonLoading($this);
 
                 saveInfos({
-                    url: window.location.pathname,
+                    url: '/vendor/items' + window.location.search,
                     method: 'put',
                     form: $itemEditForm,
                     success: function (data) {
@@ -379,7 +406,7 @@ jQuery(document).ready(function($) {
             $link.html('<i><span class="fa fa-spin fa-spinner"></span></i>');
 
             saveInfos({
-                url: '/vendor/items/new_item',
+                url: '/vendor/items/new_item' + window.location.search,
                 method: 'post',
                 form: $('#new-item-form'),
                 success: function (data) {
@@ -428,6 +455,40 @@ jQuery(document).ready(function($) {
         $('.wizard .next')
             .off('click')
             .click(nextHandler);
+
+        // validate for area and size
+        $('[id|="length"]').each(function () {
+            $(this).rules('add', {
+                sizeRequired: true,
+                messages: {
+                    sizeRequired: '请填写商品长度'
+                }
+            });
+        });
+        $('[id|="width"]').each(function () {
+            $(this).rules('add', {
+                sizeRequired: true,
+                messages: {
+                    sizeRequired: '请填写商品宽度'
+                }
+            });
+        });
+        $('[id|="height"]').each(function () {
+            $(this).rules('add', {
+                sizeRequired: true,
+                messages: {
+                    sizeRequired: '请填写商品高度'
+                }
+            });
+        });
+        $('[id|="area"]').each(function () {
+            $(this).rules('add', {
+                areaRequired: true,
+                messages: {
+                    areaRequired: '请填写商品适用面积'
+                }
+            });
+        });
     }
 
 
@@ -836,10 +897,76 @@ function getPageTitle(fromBody) {
 }
 
 function saveInfos(options) {
+    var formElemSelector = ['input', 'select', 'textarea'];
+    var categorySelectName = ['first_category_id', 'second_category_id', 'third_category_id'];
+    var data = {};
+    var isCategorySelect = function (name) {
+        return categorySelectName.some(function (selectName) {
+            return selectName === name;
+        });
+    };
+    var getCategoryId = function ($el) {
+        var $selectElems = $el.find('.category-select select');
+        return $selectElems.eq($selectElems.length - 1).val();
+    };
+
+    // CSRF token
+    data.csrf_token = options.form.find('[name="csrf_token"]').val();
+    // 待删除组件
+    data.del_components = options.form.data('del-coms');
+    // category_id
+    data.category_id = getCategoryId(options.form.find('.suite-info'));
+
+    // 商品(套件)信息
+    options.form.find(formElemSelector.map(function (selector) {
+        return '.suite-info ' + selector + '.form-control';
+    }).join(','))
+    .each(function () {
+        var $this = $(this);
+        var name = $this.attr('name');
+        if (isCategorySelect(name)) {
+            return;
+        }
+        data[name] = $this.val();
+    });
+
+    // 套件信息
+    var $coms = options.form.find('.com-base');
+    if ($coms.length > 0) {
+        data.components = [];
+        $coms.each(function () {
+            var com = {};
+            var $that = $(this);
+            $that.find(formElemSelector.map(function (selector) {
+                return selector + '.form-control';
+            }).join(','))
+            .each(function () {
+                var $this = $(this);
+                var originName = $this.attr('name');
+                var name = originName;
+                var nameTempArr = originName.split('-');
+                var len = nameTempArr.length;
+                if (len > 1) {
+                    name = nameTempArr.slice(0, len - 1).join('-');
+                }
+                if (isCategorySelect(name)) {
+                    return;
+                }
+                com[name] = $this.val();
+            });
+
+            // category_id
+            com.category_id = getCategoryId($that);
+
+            data.components.push(com);
+        });
+        data.components = JSON.stringify(data.components);
+    }
+
     $.ajax({
         url: options.url,
         method: options.method,
-        data: options.form.serialize(),
+        data: data,
         success: options.success,
         error: options.error
     });
@@ -866,7 +993,6 @@ function formDirtyCheck($form, origin) {
 }
 
 function genImageView(image, sortable) {
-    console.log(sortable);
     return '<div class="col-md-3 col-sm-4 col-xs-6 ' + (sortable ? 'ui-sortable-handle' : '') + '">' +
                 '<div class="album-image" data-hash="' + image.hash + '">' +
                     '<a href="#" class="thumb" data-action="edit" data-toggle="modal" data-target="#gallery-image-modal">' +

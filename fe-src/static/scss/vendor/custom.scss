@@ -295,6 +295,24 @@ form .form-group.required > label::before {
     }
 }
 
+#details .com-base .com-head {
+  h3 {
+    margin: 50px 0 20px 30px;
+    display: inline-block;
+  }
+  a {
+    color: #a94442;
+    font-size: 1.1em;
+  }
+}
+
+#details .category-select {
+    select {
+        color: #555555;
+        margin-bottom: 4px;
+    }
+}
+
 /*Settings*/
 .logo-preview img {
     margin-top: 8px;
