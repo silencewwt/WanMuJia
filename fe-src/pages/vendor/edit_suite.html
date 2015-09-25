@@ -300,6 +300,7 @@
             tenon_id: '榫卯结构'
         };
         var formElemSelector = ['input', 'select', 'textarea'];
+        var categorySelect = ['#first_category_id', '#second_category_id', '#third_category_id'];
         var $comBaseElems = $('.com-base');
         var comCount = 0;
         var initSelect2 = function ($elem, placeholder) {
@@ -318,8 +319,15 @@
             initSelect2($('[name="' + com_name + '"]'), comInfoPlaceholders[com_name]);
         });
 
-        // 改写页面内已渲染的表单控件的 name 值，以保证其唯一
+        // 初始化 category 级联选择，并改写页面内已渲染的表单控件的 name 值，以保证其唯一
         $comBaseElems.each(function (index) {
+            var categoryIdSel = new LinkageSel({
+                data: category,
+                select: categorySelect.map(function (selector) {
+                    return selector + '-' + (index + 1);
+                })
+            });
+
             var $com = $(this);
             $com.find(formElemSelector.map(function (selector) {
                     return selector + '.form-control';
@@ -370,10 +378,18 @@
                                 return opt;
                             }, {messages: {}}));
                         }
-                        if ($this.is('select')) {
+                        if ($this.is('[data-select2-elem]')) {
                             initSelect2($this, comInfoPlaceholders[originName]);
                         }
                     });
+
+            // 初始化级联选择
+            var categoryIdSel = new LinkageSel({
+                data: category,
+                select: categorySelect.map(function (selector) {
+                    return selector + '-' + comCount;
+                })
+            });
         });
 
         var delComs = {};   // 删除的组件列表，此处使用对象为了去重

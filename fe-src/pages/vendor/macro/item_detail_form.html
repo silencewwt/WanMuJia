@@ -131,12 +131,22 @@
     <div class="form-group-separator"></div>
 
     {% if not isSuite %}
-        <div class="form-group address-select required">
-            <label class="col-sm-2 control-label" for="category_id">商品种类</label>
+        <div class="form-group category-select required">
+            <label class="col-sm-2 control-label" for="first_category_id">商品种类</label>
+
             <div class="col-sm-9">
-                <select class="form-control" name="first_category_id" id="first_category_id" data-province-default="{{ form.first_category_id }}"></select>
-                <select class="form-control" name="second_category_id" id="second_category_id" data-city-default="{{ form.second_category_id }}"></select>
-                <select class="form-control" name="third_category_id" id="third_category_id" data-district-default="{{ form.third_category_id }}"></select>
+                <script type="text/javascript">
+                    jQuery(document).ready(function ($) {
+                        var categoryIdSel = new LinkageSel({
+                            data: category,
+                            select: ['#first_category_id', '#second_category_id', '#third_category_id']
+                        });
+                    });
+                </script>
+
+                <select class="form-control" name="first_category_id" id="first_category_id" data-first_category_id-default="{{ form.first_category_id }}" data-validate="required" data-message-required="请选择一级种类"></select>
+                <select class="form-control" name="second_category_id" id="second_category_id" data-second_category_id-default="{{ form.second_category_id }}" data-validate="required" data-message-required="请选择二级种类"></select>
+                <select class="form-control" name="third_category_id" id="third_category_id" data-third_category_id-default="{{ form.third_category_id }}" data-validate="required" data-message-required="请选择三级种类"></select>
             </div>
         </div>
         <div class="form-group-separator"></div>

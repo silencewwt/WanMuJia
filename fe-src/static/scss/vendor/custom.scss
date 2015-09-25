@@ -306,6 +306,13 @@ form .form-group.required > label::before {
   }
 }
 
+#details .category-select {
+    select {
+        color: #555555;
+        margin-bottom: 4px;
+    }
+}
+
 /*Settings*/
 .logo-preview img {
     margin-top: 8px;

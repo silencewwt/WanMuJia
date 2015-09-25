@@ -109,11 +109,12 @@
 
         <div class="form-group-separator"></div>
 
-        <div class="form-group required">
-            <label class="col-sm-2 control-label" for="category_id">组件种类</label>
-
+        <div class="form-group category-select required">
+            <label class="col-sm-2 control-label" for="first_category_id">组件种类</label>
             <div class="col-sm-9">
-                {{ form.category_id(id=genSerialId('category_id', num), class='form-control', **{'data-validate': 'required', 'data-message-required': '请选择组件种类'}) }}
+                <select class="form-control" name="first_category_id" id={{genSerialId('first_category_id', num)}} data-first_category_id-default="{{ form.first_category_id }}" data-validate="required" data-message-required="请选择一级种类"></select>
+                <select class="form-control" name="second_category_id" id={{genSerialId('second_category_id', num)}} data-second_category_id-default="{{ form.second_category_id }}" data-validate="required" data-message-required="请选择二级种类"></select>
+                <select class="form-control" name="third_category_id" id={{genSerialId('third_category_id', num)}} data-third_category_id-default="{{ form.third_category_id }}" data-validate="required" data-message-required="请选择三级种类"></select>
             </div>
         </div>
 
@@ -123,7 +124,7 @@
             <label class="col-sm-2 control-label" for="paint_id">涂饰工艺</label>
 
             <div class="col-sm-9">
-                {{ form.paint_id(id=genSerialId('paint_id', num), class='form-control', **{'data-validate': 'required', 'data-message-required': '选择涂饰工艺'}) }}
+                {{ form.paint_id(id=genSerialId('paint_id', num), class='form-control', **{'data-validate': 'required', 'data-message-required': '选择涂饰工艺', 'data-select2-elem': 'true'}) }}
             </div>
         </div>
 
@@ -133,7 +134,7 @@
             <label class="col-sm-2 control-label" for="decoration_id">装饰工艺</label>
 
             <div class="col-sm-9">
-                {{ form.decoration_id(id=genSerialId('decoration_id', num), class='form-control', **{'data-validate': 'required', 'data-message-required': '选择装饰工艺'}) }}
+                {{ form.decoration_id(id=genSerialId('decoration_id', num), class='form-control', **{'data-validate': 'required', 'data-message-required': '选择装饰工艺', 'data-select2-elem': 'true'}) }}
             </div>
         </div>
 
@@ -143,7 +144,7 @@
             <label class="col-sm-2 control-label" for="carve_id">雕刻工艺</label>
 
             <div class="col-sm-9">
-                {{ form.carve_id(id=genSerialId('carve_id', num), class='form-control', **{'data-validate': 'required', 'data-message-required': '选择雕刻工艺'}) }}
+                {{ form.carve_id(id=genSerialId('carve_id', num), class='form-control', **{'data-validate': 'required', 'data-message-required': '选择雕刻工艺', 'data-select2-elem': 'true'}) }}
             </div>
         </div>
 
@@ -153,7 +154,7 @@
             <label class="col-sm-2 control-label" for="tenon_id">榫卯结构</label>
 
             <div class="col-sm-9">
-                {{ form.tenon_id(id=genSerialId('tenon_id', num), class='form-control', **{'data-validate': 'required', 'data-message-required': '选择榫卯结构', 'multiple': 'multiple'}) }}
+                {{ form.tenon_id(id=genSerialId('tenon_id', num), class='form-control', **{'data-validate': 'required', 'data-message-required': '选择榫卯结构', 'multiple': 'multiple', 'data-select2-elem': 'true'}) }}
             </div>
         </div>
 
