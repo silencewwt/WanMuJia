@@ -223,11 +223,26 @@ class ItemForm(Form):
             db.session.add(ItemTenon(item_id=item_id, tenon_id=tenon_id))
         db.session.commit()
 
+    def show_category(self, item):
+        attrs = ('first_category_id', 'second_category_id', 'third_category_id')
+        categories_id = []
+        category = Category.query.get(item.category_id)
+        while category is not None:
+            categories_id.append(category.id)
+            category = Category.query.get(category.father_id)
+        categories_id.reverse()
+        if len(categories_id) < 3:
+            categories_id.append('')
+        for attr, category_id in zip(attrs, categories_id):
+            setattr(self, attr, category_id)
+
     def show_item(self, item):
         for attr in self.attributes:
             getattr(self, attr).data = getattr(item, attr)
         self.tenon_id.data = item.get_tenon_id()
         self.carve_id.data = item.get_carve_id()
+
+        self.show_category(item)
 
     def update_item(self, item):
         for attr in self.attributes:
@@ -325,6 +340,19 @@ class ComponentForm(Form):
             db.session.add(ItemTenon(item_id=item_id, tenon_id=tenon_id))
         db.session.commit()
 
+    def show_category(self, component):
+        attrs = ('first_category_id', 'second_category_id', 'third_category_id')
+        categories_id = []
+        category = Category.query.get(component.category_id)
+        while category is not None:
+            categories_id.append(category.id)
+            category = Category.query.get(category.father_id)
+        categories_id.reverse()
+        if len(categories_id) < 3:
+            categories_id.append('')
+        for attr, category_id in zip(attrs, categories_id):
+            setattr(self, attr, category_id)
+
     def show_component(self, component):
         for attr in ('price', 'amount', 'category_id', 'decoration_id', 'paint_id'):
             getattr(self, attr).data = getattr(component, attr)
@@ -336,6 +364,8 @@ class ComponentForm(Form):
         for attr in ('length', 'width', 'height', 'area'):
             if getattr(component, attr) is not 0:
                 getattr(self, attr).data = getattr(component, attr)
+
+        self.show_category(component)
 
     def update_component(self, component):
         component.item = self.component.data
