@@ -137,9 +137,15 @@
             <div class="col-sm-9">
                 <script type="text/javascript">
                     jQuery(document).ready(function ($) {
+                        var defVal = {
+                            first_category_id: parseInt($('#first_category_id').data('first_category-default')),
+                            second_category_id: parseInt($('#second_category_id').data('second_category-default')),
+                            third_category_id: parseInt($('#third_category_id').data('third_category-default')),
+                        };
                         var categoryIdSel = new LinkageSel({
                             data: category,
-                            select: ['#first_category_id', '#second_category_id', '#third_category_id']
+                            select: ['#first_category_id', '#second_category_id', '#third_category_id'],
+                            defVal: [defVal.first_category_id, defVal.second_category_id, defVal.third_category_id],
                         });
                     });
                 </script>

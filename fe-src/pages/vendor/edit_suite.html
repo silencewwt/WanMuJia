@@ -312,6 +312,22 @@
                 $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
             });
         };
+        var initLinkageSel = function (serial) {
+            var defVal = categorySelect.reduce(function (ret, selector) {
+                var name = selector.slice(1);   // 去掉 '#'
+                ret[name] = parseInt($(selector + '-' + serial).data(name + '-default'));
+                return ret;
+            }, {});
+            var categoryIdSel = new LinkageSel({
+                data: category,
+                select: categorySelect.map(function (selector) {
+                    return selector + '-' + serial;
+                }),
+                defVal: categorySelect.map(function (selector) {
+                    return defVal[selector.slice(1)];
+                })
+            });
+        };
 
         var $comBase = $comBaseElems.eq(0).clone();
         // 初始化页面中已渲染的组件的 select2
@@ -321,12 +337,7 @@
 
         // 初始化 category 级联选择，并改写页面内已渲染的表单控件的 name 值，以保证其唯一
         $comBaseElems.each(function (index) {
-            var categoryIdSel = new LinkageSel({
-                data: category,
-                select: categorySelect.map(function (selector) {
-                    return selector + '-' + (index + 1);
-                })
-            });
+            initLinkageSel(index + 1);
 
             var $com = $(this);
             $com.find(formElemSelector.map(function (selector) {
@@ -384,12 +395,7 @@
                     });
 
             // 初始化级联选择
-            var categoryIdSel = new LinkageSel({
-                data: category,
-                select: categorySelect.map(function (selector) {
-                    return selector + '-' + comCount;
-                })
-            });
+            initLinkageSel(comCount);
         });
 
         var delComs = {};   // 删除的组件列表，此处使用对象为了去重
