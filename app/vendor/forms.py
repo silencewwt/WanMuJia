@@ -141,10 +141,10 @@ class ReconfirmForm(RegistrationForm):
 
 class ItemForm(Form):
     item = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
-    length = StringField(validators=[Digit(required=False, min=0, default=0, message='商品长度不正确')])
-    width = StringField(validators=[Digit(required=False, min=0, default=0, message='商品宽度不正确')])
-    height = StringField(validators=[Digit(required=False, min=0, default=0, message='商品高度不正确')])
-    area = StringField(validators=[Digit(required=False, min=0, default=0, message='商品适用面积不正确')])
+    length = StringField(validators=[Digit(required=False, min=0, message='商品长度不正确')])
+    width = StringField(validators=[Digit(required=False, min=0, message='商品宽度不正确')])
+    height = StringField(validators=[Digit(required=False, min=0, message='商品高度不正确')])
+    area = StringField(validators=[Digit(required=False, min=0, message='商品适用面积不正确')])
     price = StringField(validators=[Digit(required=True, min=0, message='商品价格不正确')])
     second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, u'商品材料不正确')])
     category_id = StringField(validators=[QueryID(Category, '商品种类不正确')])
@@ -158,8 +158,8 @@ class ItemForm(Form):
     tenon_id = SelectMultipleField(coerce=int, validators=[QueryID(Tenon, u'榫卯结构不正确')])
     story = TextAreaField(validators=[Length(0, 5000)])
 
-    attributes = ('item', 'length', 'width', 'height', 'price', 'second_material_id', 'category_id', 'second_scene_id',
-                  'stove_id', 'outside_sand_id', 'decoration_id', 'paint_id', 'story')
+    attributes = ('item', 'length', 'width', 'height', 'price', 'area', 'second_material_id', 'category_id',
+                  'second_scene_id', 'stove_id', 'outside_sand_id', 'decoration_id', 'paint_id', 'story')
 
     def validate_area(self, field):
         if not (field.data or (self.length.data and self.width.data and self.height.data)):
@@ -271,10 +271,10 @@ class ItemForm(Form):
 class ComponentForm(Form):
     component_id = HiddenField()
     component = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
-    length = StringField(validators=[Digit(required=False, min=0, default=0, message='商品长度不正确')])
-    width = StringField(validators=[Digit(required=False, min=0, default=0, message='商品宽度不正确')])
-    height = StringField(validators=[Digit(required=False, min=0, default=0, message='商品高度不正确')])
-    area = StringField(validators=[Digit(required=False, min=0, default=0, message='商品适用面积不正确')])
+    length = StringField(validators=[Digit(required=False, min=0, message='商品长度不正确')])
+    width = StringField(validators=[Digit(required=False, min=0, message='商品宽度不正确')])
+    height = StringField(validators=[Digit(required=False, min=0, message='商品高度不正确')])
+    area = StringField(validators=[Digit(required=False, min=0, message='商品适用面积不正确')])
     category_id = StringField(validators=[QueryID(Category, message='商品种类不正确')])
     carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, u'雕刻工艺不正确')])
     paint_id = SelectField(coerce=int, validators=[QueryID(Paint, u'涂饰工艺不正确')])
@@ -354,16 +354,12 @@ class ComponentForm(Form):
             setattr(self, attr, category_id)
 
     def show_component(self, component):
-        for attr in ('amount', 'category_id', 'decoration_id', 'paint_id'):
+        for attr in ('amount', 'category_id', 'decoration_id', 'paint_id', 'length', 'width', 'height', 'area'):
             getattr(self, attr).data = getattr(component, attr)
         self.component.data = component.item
         self.component_id.data = component.id
         self.tenon_id.data = component.get_tenon_id()
         self.carve_id.data = component.get_carve_id()
-
-        for attr in ('length', 'width', 'height', 'area'):
-            if getattr(component, attr) is not 0:
-                getattr(self, attr).data = getattr(component, attr)
 
         self.show_category(component)
 
