@@ -24,6 +24,25 @@ class SelectField(BaseSelectField):
     widget = Select()
 
 
+class SelectNotRequiredField(BaseSelectField):
+    widget = Select()
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                self.data = self.coerce(valuelist[0])
+            except ValueError:
+                self.data = 0
+
+    def pre_validate(self, form):
+        if self.data:
+            for v, _ in self.choices:
+                if self.data == v:
+                    break
+            else:
+                raise ValueError(self.gettext('Not a valid choice'))
+
+
 class OptionGroupSelectWidget(Select):
     """
     Add support of choices with ``optgroup`` to the ``Select`` widget.

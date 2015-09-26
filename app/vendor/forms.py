@@ -16,7 +16,7 @@ from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
 from app.utils import IO, convert_url
 from app.utils.forms import Form
 from app.utils.image import save_image
-from app.utils.fields import OptionGroupSelectField, SelectField
+from app.utils.fields import OptionGroupSelectField, SelectField, SelectNotRequiredField
 from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, DistrictValidator, Digit
 
 
@@ -145,21 +145,21 @@ class ItemForm(Form):
     width = StringField(validators=[Digit(required=False, min=0, default=0, message='商品宽度不正确')])
     height = StringField(validators=[Digit(required=False, min=0, default=0, message='商品高度不正确')])
     area = StringField(validators=[Digit(required=False, min=0, default=0, message='商品适用面积不正确')])
-    price = StringField(validators=[NumberRange(1, message=u'商品价格不正确')])
+    price = StringField(validators=[Digit(required=True, min=0, message='商品价格不正确')])
     second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, u'商品材料不正确')])
     category_id = StringField(validators=[QueryID(Category, '商品种类不正确')])
     second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, u'商品场景不正确')])
     stove_id = SelectField(coerce=int, validators=[QueryID(Stove, u'烘干工艺不正确')])
     carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, u'雕刻工艺不正确')])
-    outside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=True, message=u'打磨砂纸不正确')])
-    inside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=False, message=u'打磨砂纸不正确')])
+    outside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=True, message=u'内打磨砂纸不正确')])
+    inside_sand_id = SelectNotRequiredField(coerce=int, validators=[QueryID(model=Sand, required=False, message=u'外打磨砂纸不正确')])
     paint_id = SelectField(coerce=int, validators=[QueryID(Paint, u'涂饰工艺不正确')])
     decoration_id = SelectField(coerce=int, validators=[QueryID(Decoration, u'装饰工艺不正确')])
     tenon_id = SelectMultipleField(coerce=int, validators=[QueryID(Tenon, u'榫卯结构不正确')])
     story = TextAreaField(validators=[Length(0, 5000)])
 
     attributes = ('item', 'length', 'width', 'height', 'price', 'second_material_id', 'category_id', 'second_scene_id',
-                  'stove_id', 'outside_sand_id', 'inside_sand_id', 'decoration_id', 'paint_id', 'story')
+                  'stove_id', 'outside_sand_id', 'decoration_id', 'paint_id', 'story')
 
     def validate_area(self, field):
         if not (field.data or (self.length.data and self.width.data and self.height.data)):
@@ -241,7 +241,8 @@ class ItemForm(Form):
             getattr(self, attr).data = getattr(item, attr)
         self.tenon_id.data = item.get_tenon_id()
         self.carve_id.data = item.get_carve_id()
-
+        if self.inside_sand_id is not 0:
+            self.inside_sand_id.data = item.inside_sand_id
         self.show_category(item)
 
     def update_item(self, item):
@@ -405,7 +406,7 @@ class SuiteForm(Form):
     second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, u'商品场景不正确')])
     stove_id = SelectField(coerce=int, validators=[QueryID(Stove, u'烘干工艺不正确')])
     outside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=True, message=u'外打磨砂纸不正确')])
-    inside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=False, message=u'内打磨砂纸不正确')])
+    inside_sand_id = SelectNotRequiredField(coerce=int, validators=[QueryID(model=Sand, required=False, message=u'内打磨砂纸不正确')])
     story = TextAreaField(validators=[Length(0, 5000)])
 
     attributes = ('item', 'area', 'price', 'second_material_id', 'second_scene_id', 'stove_id', 'outside_sand_id',
