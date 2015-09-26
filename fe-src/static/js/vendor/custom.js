@@ -929,8 +929,8 @@ function saveInfos(options) {
             return;
         }
         var value = $this.val();
-        data[name] = typeof value == 'object' ?
-            JSON.stringify(value) :
+        data[name] = Array.isArray(value) ?
+            value.join(',') :
             value;
     });
 
