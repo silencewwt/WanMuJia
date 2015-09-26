@@ -44,8 +44,7 @@ class DataTableHandler(object):
         self.parse_request_params()
 
     def parse_request_params(self):
-        draw = request.args.get('draw', 1, type=int)
-        self.data['draw'] = draw + 1
+        self.data['draw'] = request.args.get('draw', 1, type=int)
         self.start = request.args.get('start', 0, type=int)
         length = request.args.get('length', 10, type=int)
         valid_length = [10, 25, 50, 100]
@@ -54,9 +53,9 @@ class DataTableHandler(object):
     def query_params(self, query):
         self.data['recordsTotal'] = query.count()
         order_column = request.args.get('order[0][column]', '')
-        order_key = request.args.get('columns[%s][data]' % order_column)
+        order_key = request.args.get('columns[%s][data]' % order_column, '')
         order_dir = request.args.get('order[0][dir]')
-        if order_key is not None and order_key in self.params and self.params[order_key]['orderable']:
+        if order_key and order_key in self.params and self.params[order_key]['orderable']:
             if order_dir == 'desc':
                 query = query.order_by(-self.params[order_key]['order_key'])
             else:

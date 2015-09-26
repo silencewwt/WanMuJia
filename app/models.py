@@ -419,19 +419,19 @@ class Item(db.Model, Property):
     # 商品名称
     item = db.Column(db.Unicode(20), nullable=False)
     # 指导价格
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.String(10), nullable=False)
     # 二级材料 id
     second_material_id = db.Column(db.Integer, nullable=False)
     # 商品分类id
     category_id = db.Column(db.Integer, nullable=False)
     # 长度 cm
-    length = db.Column(db.Float, nullable=False)
+    length = db.Column(db.String(10), nullable=False)
     # 宽度 cm
-    width = db.Column(db.Float, nullable=False)
+    width = db.Column(db.String(10), nullable=False)
     # 高度 cm
-    height = db.Column(db.Float, nullable=False)
+    height = db.Column(db.String(10), nullable=False)
     # 适用面积 m^2
-    area = db.Column(db.Float, nullable=False)
+    area = db.Column(db.String(10), nullable=False)
     # 烘干 id
     stove_id = db.Column(db.Integer, nullable=False)
     # 打磨砂纸 id
@@ -458,7 +458,8 @@ class Item(db.Model, Property):
 
     _flush = {
         'vendor': lambda x: Vendor.query.get(x.vendor_id),
-        'category': lambda x: Category.query.get(x.category_id).category,
+        'category': lambda x: [category.category if category is not None else '' for category in
+                               (Category.query.get(x.category_id),)][0],
         'images': lambda x: ItemImage.query.filter_by(item_id=x.id, is_deleted=False).order_by(ItemImage.sort,
                                                                                                ItemImage.created),
         'components': lambda x: Item.query.filter_by(suite_id=x.id, is_deleted=False, is_component=True)
@@ -508,7 +509,7 @@ class Item(db.Model, Property):
         return distributors
 
     def size(self):
-        return '%f * %f * %f' % (self.length, self.width, self.height)
+        return '%s * %s * %s' % (self.length, self.width, self.height)
 
     @property
     def vendor(self):

@@ -141,11 +141,11 @@ class ReconfirmForm(RegistrationForm):
 
 class ItemForm(Form):
     item = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
-    length = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品长度不正确')])
-    width = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品宽度不正确')])
-    height = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品高度不正确')])
-    area = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品适用面积不正确')])
-    price = FloatField(validators=[NumberRange(1, message=u'商品价格不正确')])
+    length = StringField(validators=[Digit(required=False, min=0, default=0, message='商品长度不正确')])
+    width = StringField(validators=[Digit(required=False, min=0, default=0, message='商品宽度不正确')])
+    height = StringField(validators=[Digit(required=False, min=0, default=0, message='商品高度不正确')])
+    area = StringField(validators=[Digit(required=False, min=0, default=0, message='商品适用面积不正确')])
+    price = StringField(validators=[NumberRange(1, message=u'商品价格不正确')])
     second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, u'商品材料不正确')])
     category_id = StringField(validators=[QueryID(Category, '商品种类不正确')])
     second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, u'商品场景不正确')])
@@ -270,11 +270,10 @@ class ItemForm(Form):
 class ComponentForm(Form):
     component_id = HiddenField()
     component = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
-    length = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品长度不正确')])
-    width = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品宽度不正确')])
-    height = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品高度不正确')])
-    area = FloatField(validators=[Digit(required=False, min=0, default=0, message='商品适用面积不正确')])
-    price = FloatField(validators=[NumberRange(1, message=u'商品价格不正确')])
+    length = StringField(validators=[Digit(required=False, min=0, default=0, message='商品长度不正确')])
+    width = StringField(validators=[Digit(required=False, min=0, default=0, message='商品宽度不正确')])
+    height = StringField(validators=[Digit(required=False, min=0, default=0, message='商品高度不正确')])
+    area = StringField(validators=[Digit(required=False, min=0, default=0, message='商品适用面积不正确')])
     category_id = StringField(validators=[QueryID(Category, message='商品种类不正确')])
     carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, u'雕刻工艺不正确')])
     paint_id = SelectField(coerce=int, validators=[QueryID(Paint, u'涂饰工艺不正确')])
@@ -354,7 +353,7 @@ class ComponentForm(Form):
             setattr(self, attr, category_id)
 
     def show_component(self, component):
-        for attr in ('price', 'amount', 'category_id', 'decoration_id', 'paint_id'):
+        for attr in ('amount', 'category_id', 'decoration_id', 'paint_id'):
             getattr(self, attr).data = getattr(component, attr)
         self.component.data = component.item
         self.component_id.data = component.id
@@ -400,8 +399,8 @@ class ComponentForm(Form):
 
 class SuiteForm(Form):
     item = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
-    area = FloatField(validators=[Digit(required=True, min=0, message='商品适用面积不正确')])
-    price = FloatField(validators=[NumberRange(1, message=u'商品价格不正确')])
+    area = StringField(validators=[Digit(required=True, min=0, message='商品适用面积不正确')])
+    price = StringField(validators=[Digit(required=True, min=0, message='商品适用面积不正确')])
     second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, u'商品材料不正确')])
     second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, u'商品场景不正确')])
     stove_id = SelectField(coerce=int, validators=[QueryID(Stove, u'烘干工艺不正确')])
@@ -409,8 +408,8 @@ class SuiteForm(Form):
     inside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=False, message=u'内打磨砂纸不正确')])
     story = TextAreaField(validators=[Length(0, 5000)])
 
-    attributes = ('item', 'area', 'price', 'second_material_id', 'category_id', 'second_scene_id', 'stove_id',
-                  'outside_sand_id', 'story')
+    attributes = ('item', 'area', 'price', 'second_material_id', 'second_scene_id', 'stove_id', 'outside_sand_id',
+                  'story')
 
     def generate_choices(self):
         self.second_scene_id.choices = []
@@ -603,6 +602,8 @@ class RevocationForm(Form):
     distributor = None
 
     def validate_distributor_id(self, field):
+        if field.data is None:
+            raise ValidationError('无此商家')
         distributor = Distributor.query.get(field.data)
         if not distributor or distributor.vendor_id is not current_user.id:
             raise ValidationError()

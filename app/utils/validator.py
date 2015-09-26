@@ -108,19 +108,26 @@ class Image(object):
 
 
 class Digit(object):
-    def __init__(self, required=True, min=None, max=None, default=None, message='数字不正确!'):
+    def __init__(self, required=True, min=None, max=None, default=None, type=float, message='数字不正确!'):
         self.required = required
         self.min = min
         self.max = max
+        self.type = type
         self.message = message
         self.default = default
 
     def __call__(self, form, field):
-        if self.required or field.data:
-            if not isinstance(field.data, (int, float)) or (self.min is not None and field.data < self.min) or\
-                    (self.max is not None and field.data > self.max):
+        data = field.data
+        if self.required or data:
+            if isinstance(data, str):
+                try:
+                    data = self.type(data)
+                except:
+                    raise ValidationError(self.message)
+            if not isinstance(data, (int, float)) or (self.min is not None and data < self.min) or\
+                    (self.max is not None and data > self.max):
                 raise ValidationError(self.message)
-        if self.default is not None and field.data is None:
+        if self.default is not None and data is None:
             field.data = self.default
 
 
