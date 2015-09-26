@@ -14,11 +14,11 @@ from app.models import Vendor, Item, Distributor
 from app.permission import vendor_permission
 from app.forms import MobileRegistrationForm
 from app.constants import *
-from app.utils import md5_with_time_salt, data_table_params
+from app.utils import md5_with_time_salt, DataTableHandler
 from app.utils.redis import redis_set
 from app.wmj_email import ADMIN_REMINDS, ADMIN_REMINDS_SUBJECT, send_email
-from .import vendor as vendor_blueprint
-from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
+from . import vendor as vendor_blueprint
+from vendor.forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
     ItemImageDeleteForm, RevocationForm, ReconfirmForm, InitializationForm, SuiteForm, ComponentForm
 
 
@@ -128,14 +128,15 @@ def item_list():
 @vendor_blueprint.route('/items/datatable')
 @vendor_permission.require(401)
 def items_data_table():
-    draw, start, length = data_table_params()
-    items = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False).offset(start).limit(length)
-    data = {'draw': draw, 'recordsTotal': Item.query.filter_by(vendor_id=current_user.id, is_deleted=False).count(),
-            'recordsFiltered': items.count(), 'data': []}
-    for item in items:
-        data['data'].append({
-            'id': item.id, 'item': item.item, 'category_id': item.category,
-            'price': item.price, 'size': item.size()})
+    params = {
+        'id': {'orderable': False, 'data': lambda x: x.id},
+        'item': {'orderable': True, 'order_key': Item.item, 'data': lambda x: x.item},
+        'category_id': {'orderable': False, 'data': lambda x: x.category},
+        'price': {'orderable': True, 'order_key': Item.price, 'data': lambda x: x.price},
+        'size': {'orderable': False, 'data': lambda x: x.size()}}
+    query = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False)
+    data_table_handler = DataTableHandler(params)
+    data = data_table_handler.query_params(query)
     return jsonify(data)
 
 
@@ -180,7 +181,8 @@ def item_detail(item_id):
                 component_form.generate_choices()
                 component_form.show_component(component)
                 component_forms.append(component_form)
-            return render_template('vendor/edit_suite.html', form=form, com_forms=component_forms, vendor=current_user)
+            return render_template('vendor/edit_suite.html',
+                                   form=form, item=suite, com_forms=component_forms, vendor=current_user)
 
         elif request.method == 'PUT':
             if not form.validate():
@@ -221,12 +223,12 @@ def new_item():
     item_type = request.args.get('type')
     if item_type == 'single':
         form = ItemForm()
+        form.generate_choices()
         if request.method == 'POST':
             if form.validate():
                 item = form.add_item(current_user.id)
                 return jsonify({'success': True, 'item_id': item.id})
             return jsonify({'success': False, 'message': form.error2str()})
-        form.generate_choices()
         return render_template('vendor/new_item_single.html', form=form, vendor=current_user)
     elif item_type == 'suite':
         suite_form = SuiteForm()
@@ -236,10 +238,10 @@ def new_item():
                 return jsonify({'success': False, 'message': suite_form.error2str()})
 
             component_forms = []
-            if 'components' in request.form['components']:
+            if 'components' in request.form:
                 json_components = json.loads(request.form['components'])
                 for json_component in json_components:
-                    component_form = ComponentForm(formdata=ImmutableMultiDict(json_component))
+                    component_form = ComponentForm(csrf_enabled=False, formdata=ImmutableMultiDict(json_component))
                     component_form.generate_choices()
                     if not component_form.validate():
                         return jsonify({'success': False, 'message': component_form.error2str()})
@@ -307,16 +309,19 @@ def distributor_list():
 @vendor_blueprint.route('/distributors/datatable')
 @vendor_permission.require(401)
 def distributors_data_table():
-    draw, start, length = data_table_params()
-    distributors = Distributor.query.filter_by(vendor_id=current_user.id).offset(start).limit(length)
-    data = {'draw': draw, 'recordsTotal': Distributor.query.count(), 'recordsFiltered': distributors.count(),
-            'data': []}
-    for distributor in distributors:
-        created = datetime.datetime.fromtimestamp(distributor.created).strftime('%F')
-        data['data'].append({
-            'id': distributor.id, 'name': distributor.name, 'contact_mobile': distributor.contact_mobile,
-            'created': created, 'contact_telephone': distributor.contact_telephone, 'contact': distributor.contact,
-            'revocation_state': distributor.revocation_state, 'address': distributor.address.precise_address()})
+    params = {
+        'id': {'orderable': False, 'data': lambda x: x.id},
+        'name': {'orderable': False, 'data': lambda x: x.name},
+        'contact_mobile': {'orderable': False, 'data': lambda x: x.contact_mobile},
+        'created': {'orderable': False, 'data': lambda x: datetime.datetime.fromtimestamp(x.created).strftime('%F')},
+        'contact_telephone': {'orderable': False, 'data': lambda x: x.contact_telephone},
+        'contact': {'orderable': False, 'data': lambda x: x.contact},
+        'revocation_state': {'orderable': False, 'data': lambda x: x.revocation_state},
+        'address': {'orderable': False, 'data': lambda x: x.address.precise_address()}
+    }
+    query = Distributor.query.filter_by(vendor_id=current_user.id)
+    data_table_handler = DataTableHandler(params)
+    data = data_table_handler.query_params(query)
     return jsonify(data)
 
 
