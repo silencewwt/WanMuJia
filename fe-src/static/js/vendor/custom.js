@@ -967,7 +967,7 @@ function saveInfos(options) {
     $.ajax({
         url: options.url,
         method: options.method,
-        data: data.param(),
+        data: $.param(data),
         success: options.success,
         error: options.error
     });
