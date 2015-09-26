@@ -511,7 +511,10 @@ class Item(db.Model, Property):
         return distributors
 
     def size(self):
-        return '%s * %s * %s' % (self.length, self.width, self.height)
+        if self.length and self.width and self.height:
+            return '%s * %s * %s' % (self.length, self.width, self.height)
+        else:
+            return '——'
 
     @property
     def vendor(self):
