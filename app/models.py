@@ -462,12 +462,14 @@ class Item(db.Model, Property):
                                (Category.query.get(x.category_id),)][0],
         'images': lambda x: ItemImage.query.filter_by(item_id=x.id, is_deleted=False).order_by(ItemImage.sort,
                                                                                                ItemImage.created),
-        'components': lambda x: Item.query.filter_by(suite_id=x.id, is_deleted=False, is_component=True)
+        'components': lambda x: Item.query.filter_by(suite_id=x.id, is_deleted=False, is_component=True),
+        'second_scene': lambda x: SecondScene.query.get(x.second_scene_id).second_scene
     }
     _vendor = None
     _category = None
     _images = None
     _components = None
+    _second_scene = None
 
     def __init__(self, vendor_id, item, price, second_material_id, category_id, second_scene_id, length, width,
                  height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, story,
@@ -518,6 +520,10 @@ class Item(db.Model, Property):
     @property
     def category(self):
         return self.get_or_flush('category')
+
+    @property
+    def second_scene(self):
+        return self.get_or_flush('second_scene')
 
     @property
     def images(self):

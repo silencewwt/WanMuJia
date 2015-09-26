@@ -131,10 +131,10 @@ def items_data_table():
     params = {
         'id': {'orderable': False, 'data': lambda x: x.id},
         'item': {'orderable': True, 'order_key': Item.item, 'data': lambda x: x.item},
-        'category_id': {'orderable': False, 'data': lambda x: x.category},
+        'second_scene_id': {'orderable': False, 'data': lambda x: x.second_scene},
         'price': {'orderable': True, 'order_key': Item.price, 'data': lambda x: x.price},
         'size': {'orderable': False, 'data': lambda x: x.size()}}
-    query = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False)
+    query = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False, is_component=False)
     data_table_handler = DataTableHandler(params)
     data = data_table_handler.query_params(query)
     return jsonify(data)
@@ -150,8 +150,7 @@ def item_detail(item_id):
     elif item.is_deleted:
         abort(404)
 
-    item_type = request.args.get('type')
-    if item_type == 'single':
+    if not item.is_suite and not item.is_component:
         form = ItemForm()
         if request.method == 'GET':
             form.generate_choices()
@@ -169,7 +168,7 @@ def item_detail(item_id):
         db.session.commit()
         return jsonify({'success': True})
 
-    elif item_type == 'suite':
+    elif item.is_suite and not item.is_component:
         suite = item
         form = SuiteForm()
         form.generate_choices()
