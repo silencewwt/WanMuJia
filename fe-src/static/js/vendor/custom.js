@@ -928,10 +928,7 @@ function saveInfos(options) {
         if (isCategorySelect(name)) {
             return;
         }
-        var value = $this.val();
-        data[name] = Array.isArray(value) ?
-            value.join(',') :
-            value;
+        data[name] = $this.val();
     });
 
     // 套件信息
@@ -970,7 +967,7 @@ function saveInfos(options) {
     $.ajax({
         url: options.url,
         method: options.method,
-        data: data,
+        data: data.param(),
         success: options.success,
         error: options.error
     });
