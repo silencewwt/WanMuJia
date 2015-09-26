@@ -176,7 +176,7 @@ jQuery(document).ready(function($) {
             columns: [
                 {data: "id", bSortable: false, visible: false},
                 {data: "item", bSortable: false},
-                {data: "second_category_id", bSortable: false},
+                {data: "second_scene_id", bSortable: false},
                 {data: "price"},
                 {data: "size", bSortable: false}
             ],
@@ -917,11 +917,11 @@ function saveInfos(options) {
     // 待删除组件
     data.del_components = options.form.data('del-coms');
     // category_id
-    data.category_id = getCategoryId(options.form.find('.suite-info'));
+    data.category_id = getCategoryId(options.form.find('.item-info'));
 
     // 商品(套件)信息
     options.form.find(formElemSelector.map(function (selector) {
-        return '.suite-info ' + selector + '.form-control';
+        return '.item-info ' + selector + '.form-control';
     }).join(','))
     .each(function () {
         var $this = $(this);
@@ -929,7 +929,10 @@ function saveInfos(options) {
         if (isCategorySelect(name)) {
             return;
         }
-        data[name] = $this.val();
+        var value = $this.val();
+        data[name] = typeof value == 'object' ?
+            JSON.stringify(value) :
+            value;
     });
 
     // 套件信息
