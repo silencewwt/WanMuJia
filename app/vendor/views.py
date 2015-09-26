@@ -152,8 +152,8 @@ def item_detail(item_id):
 
     if not item.is_suite and not item.is_component:
         form = ItemForm()
+        form.generate_choices()
         if request.method == 'GET':
-            form.generate_choices()
             form.show_item(item)
             return render_template('vendor/edit_single.html', form=form, item=item, vendor=current_user)
 
