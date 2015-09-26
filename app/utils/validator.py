@@ -78,6 +78,8 @@ class QueryID(object):
                 if field.data is None or not self.model.query.get(field.data):
                     raise ValidationError(self.message)
             else:
+                if not field.data:
+                    raise ValidationError(self.message)
                 for data in field.data:
                     if field.data is None or not self.model.query.get(data):
                         raise ValidationError(self.message)
