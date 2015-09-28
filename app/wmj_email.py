@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+from flask import current_app
 from flask.ext.mail import Message
 
-from app import app
 from app.tasks import send_email as async_email
 
 
@@ -16,11 +16,11 @@ EMAIL_CONFIRM_TEMPLATE = '<p>尊敬的万木家用户:</p><p>感谢注册万木�
 
 def send_email(to, subject, email_type, **kwargs):
     if email_type == VENDOR_EMAIL_CONFIRM or email_type == USER_EMAIL_CONFIRM:
-        msg = Message(subject, sender=app.config['WMJ_MAIL_SENDER'], recipients=[to])
+        msg = Message(subject, sender=current_app.config['WMJ_MAIL_SENDER'], recipients=[to])
         msg.body = '万木家'
         msg.html = EMAIL_CONFIRM_TEMPLATE % (kwargs['url'], kwargs['url'])
         async_email.delay(msg)
     elif email_type == ADMIN_REMINDS:
-        msg = Message(subject, sender=app.config['WMJ_MAIL_SENDER'], recipients=to)
+        msg = Message(subject, sender=current_app.config['WMJ_MAIL_SENDER'], recipients=to)
         msg.html = '<p>有新的厂家注册了, 快去审核!</p>'
         async_email.delay(msg)

@@ -11,7 +11,6 @@ from config import config
 from .permission import identity_config
 from .utils.filters import *
 
-app = Flask(__name__, static_url_path='')
 db = SQLAlchemy()
 login_manager = LoginManager()
 principal = Principal()
@@ -22,6 +21,7 @@ local_redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
 def create_app(config_name):
+    app = Flask(__name__, static_url_path='')
     app.static_folder = 'static'
     app.template_folder = 'templates'
     config[config_name].init_app(app)
