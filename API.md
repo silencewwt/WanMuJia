@@ -263,13 +263,22 @@
 + **method**
   + GET
   + POST
++ **postData**
+  + **mobile**
+    + 手机号码
+    + type = text
+    + required
+  + **password**
+    + 密码
+    + type = text
+    + required
+    + 需要md5两次
 
 ###vendor logout
 + **URL**
   + /vendor/logout
 + **method**
   + GET
-  + POST
 
 ###vendor reset password
 + **URL**
@@ -277,6 +286,12 @@
 + **method**
   + GET
   + POST
+  
+###vendor index
++ **URL**
+  + /vendor
++ **method**
+  + GET
   
 ###vendor item page
 + **URL**
@@ -452,7 +467,6 @@
       + 组件数量
       + type = text
       + required
-
 
 ###vendor item detail
 + **URL**
