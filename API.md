@@ -1,6 +1,6 @@
-#WanMuJia API Doc
-##User
-###user register
+# WanMuJia API Doc
+## User
+### user register
 + **URL**
   + /register
 + **method**
@@ -38,7 +38,7 @@
     + length = [3, 64]
     + require
 
-###user register next
+### user register next
 + **URL**
   + /register
 + **method**
@@ -64,7 +64,7 @@
     + length = [4, 20]
     + require
 
-###user login
+### user login
 + **URL**
   + /login
 + **method**
@@ -82,26 +82,26 @@
     + require
     + 需将用户密码md5两次
 
-###user logout
+### user logout
 + **URL**
   + /logout
 + **method**
   + GET
 
-###reset password
+### reset password
 + **URL**
   + /reset_password
 + **method**
   + GET
   + POST
 
-###user home page
+### user home page
 + **URL**
   + /profile
 + **method**
   + GET
 
-###user collection
+### user collection
 + **URL**
   + /collection
 + **method**
@@ -115,7 +115,7 @@
   1. 无postData, post表示收藏商品, delete表示删除收藏
   2. page >= 1 且只在get时用到, 表示收藏夹的第page页(默认每页50件商品)
 
-###user setting
+### user setting
 + **URL**
   + /setting
 + **method**
@@ -123,14 +123,14 @@
   + POST
 
 
-##Item
-###item list
+## Item
+### item list
 + **URL**
   + /item
 + **method**
   + GET
 
-###item filter
+### item filter
 + **URL**:
   +	/item/filter
 + **method**:
@@ -139,7 +139,7 @@
   +	page
   +	brand
 
-###item compare
+### item compare
 + **URL**
   + /item/compare
 + **method**
@@ -148,15 +148,15 @@
   + first
   + second
 
-###item detail
+### item detail
 + **URL**
   + /item/<int: id> 
 + **method**
   + GET
 
 
-##Distributor
-###distributor register
+## Distributor
+### distributor register
 + **URL**
   + /distributor/register
 + **method**
@@ -197,8 +197,8 @@
     + required
 
         
-##Vendor
-###vendor register
+## Vendor
+### vendor register
 + **URL**
   + /vendor/register
 + **method**
@@ -257,7 +257,7 @@
     + type = text
     + required
 
-###vendor login
+### vendor login
 + **URL**
   + /vendor/login
 + **method**
@@ -274,32 +274,32 @@
     + required
     + 需要md5两次
 
-###vendor logout
+### vendor logout
 + **URL**
   + /vendor/logout
 + **method**
   + GET
 
-###vendor reset password
+### vendor reset password
 + **URL**
   + /vendor/reset_password
 + **method**
   + GET
   + POST
   
-###vendor index
+### vendor index
 + **URL**
   + /vendor
 + **method**
   + GET
   
-###vendor item page
+### vendor item page
 + **URL**
   + /vendor/items
 + **method**
   + GET
 
-###vendor items datatable
+### vendor items datatable
 + **URL**
   + /vendor/items?draw=&start=&length=
 + **method**
@@ -309,7 +309,7 @@
   + start
   + length
 
-###vendor add single item
+### vendor add single item
 + **URL**
   + /vendor/items/new_item?type=single
 + **method**
@@ -377,7 +377,7 @@
     + 商品寓意
     + type = text
 
-###vendor add suite
+### vendor add suite
 + **URL**
   + /vendor/items/new_item?type=suite
 + **method**
@@ -468,7 +468,7 @@
       + type = text
       + required
 
-###vendor item detail
+### vendor item detail
 + **URL**
   + /vendor/items?item=
 + **method**
@@ -476,7 +476,7 @@
 + **parameters**
   + item: item id
 
-###vendor edit item
+### vendor edit item
 + **URL**
   + /vendor/items/<int:id>
 + **method**
@@ -484,7 +484,7 @@
 + **parameters**
   + : item id
 
-###vendor delete item
+### vendor delete item
 + **URL**
   + /vendor/items?item=
 + **method**
@@ -536,38 +536,38 @@
 	  + 商品寓意
 	  + length: [0, 5000]
     
-###vendor distributors
+### vendor distributors
 + **URL**
   + /vendor/distributors
 + **method**
   + GET
 
-###vendor distributor detail
+### vendor distributor detail
 + **URL**
   + /vendor/distributors/<distributor_id>
 + **method**
   + GET
 
-###vendor distributor invitation
+### vendor distributor invitation
 + **URL**
   + /vendor/distributors/invitation
 + **method**
   + GET, POST
 
-###vendor distributors revocation
+### vendor distributors revocation
 + **URL**
   + /distributors/<int:distributor_id>/revocation
 + **method**
   + POST
     
-###vendor settings
+### vendor settings
 + **URL**
   + /vendor/settings
 + **method**
   + GET
   + POST
 
-###vendor reconfirm
+### vendor reconfirm
 + **URL**
   + /vendor/reconfirm
 + **method**
@@ -575,9 +575,9 @@
   + POST
 
 
-##privilege
+## privilege
 
-###login
+### login
 + **URL**
   + /privilege/login
 + **method**
@@ -586,13 +586,13 @@
   + username
   + password
     
-###vendor_confirm
+### vendor_confirm
 + **URL**
   + /privilege/vendor_confirm
 + **method**
   + GET
     
-###vendor_confirm reject
+### vendor_confirm reject
 + **URL**
   + /privilege/vendor_confirm/reject
 + **method**
@@ -601,7 +601,7 @@
   + vendor_id
   + reject_message
     
-###vendor_confirm pass
+### vendor_confirm pass
 + **URL**
   + /privilege/vendor_confirm/pass
 + **method**
@@ -609,7 +609,7 @@
 + **postData**
   + vendor_id
     
-###distributors revocation
+### distributors revocation
 + **URL**
   + /privilege/distributors/revocation
 + **method**
@@ -619,8 +619,8 @@
   + distributor_revocation_id
   + revocation_confirm
 
-##Service
-###mobile register sms
+## Service
+### mobile register sms
 + **URL**
   + /service/mobile_register_sms
 + **method**
@@ -633,7 +633,7 @@
   + 失败
     + `{"success": false, "message": ""}`
     
-###send email
+### send email
 + **URL**
   + /service/send_email
 + **method**
@@ -653,7 +653,7 @@
   + 失败
     + `{"success": false, "message": ""}`
     
-###image captcha
+### image captcha
 + **URL**
   + /service/<string:token>.jpg
 + **method**
