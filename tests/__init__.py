@@ -15,6 +15,7 @@ class WMJTestCase(unittest.TestCase):
         self.client = self.app.test_client()
         self.redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
+        db.drop_all()
         db.create_all()
         connection = db.engine.connect()
         sql_files = ['cities.sql', 'districts.sql', 'provinces.sql']
