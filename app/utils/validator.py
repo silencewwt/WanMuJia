@@ -102,6 +102,8 @@ class Image(object):
             if self.base64:
                 image_str = IO(b64decode(field.data[23:]))
             else:
+                if field.data is None:
+                    raise ValidationError(self.message)
                 image_str = field.data.stream
             try:
                 BaseImage.open(image_str)
