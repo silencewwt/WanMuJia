@@ -2,6 +2,7 @@
 import time
 
 from flask import current_app
+from flask.ext.cdn import url_for
 from flask.ext.login import login_user
 from flask.ext.principal import identity_changed, Identity
 from wtforms import StringField, PasswordField, IntegerField, BooleanField
@@ -13,7 +14,6 @@ from app.forms import Form
 from app.models import Vendor, DistributorRevocation, Privilege
 from app.sms import sms_generator, VENDOR_ACCEPT_TEMPLATE
 from app.vendor.forms import ItemForm as BaseItemForm
-from app.utils import convert_url
 
 
 class LoginForm(Form):
@@ -46,7 +46,7 @@ class VendorDetailForm(Form):
             getattr(self, attr).data = getattr(vendor, attr)
         self.address.data = vendor.address.precise_address()
         for url in self.image_urls:
-            setattr(self, url, convert_url(getattr(vendor, url)))
+            setattr(self, url, url_for('static', filename=getattr(vendor, url)))
 
 
 class VendorConfirmForm(Form):

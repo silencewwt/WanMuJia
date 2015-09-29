@@ -36,7 +36,6 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'mysql+pymysql://dev:devpassword@localhost/wmj?charset=utf8'
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
-    STATIC_URL = 'http://127.0.0.1:5000/'
     HOST = 'http://127.0.0.1:5000'
 
     @classmethod
@@ -51,7 +50,7 @@ class TestingConfig(Config):
     SERVER_NAME = 'localhost'
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
         'mysql+pymysql://@localhost/test?charset=utf8'
-    IMAGE_DIR = os.path.join(basedir, 'tmp/')
+    IMAGE_DIR = os.path.join(basedir, 'app/static/')
 
     @classmethod
     def init_app(cls, app):
@@ -63,7 +62,6 @@ class ProductionConfig(Config):
     DEBUG = False
     PROPAGATE_EXCEPTIONS = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    STATIC_URL = 'http://static.wanmujia.com/'
     HOST = 'http://www.wanmujia.com'
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
     IMAGE_DIR = '/var/www/WanMuJia/'

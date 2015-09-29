@@ -4,11 +4,11 @@ import time
 import random
 
 from flask.ext.login import UserMixin
+from flask.ext.cdn import url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db, login_manager
 from app.constants import *
-from app.utils import convert_url
 from app.utils.redis import redis_get, redis_set
 from app.permission import privilege_id_prefix, vendor_id_prefix, distributor_id_prefix, user_id_prefix
 
@@ -194,7 +194,7 @@ class Vendor(BaseUser, db.Model, Property):
 
     _flush = {
         'address': lambda x: VendorAddress.query.filter_by(vendor_id=x.id).limit(1).first(),
-        'logo': lambda x: convert_url(x.logo),
+        'logo': lambda x: url_for('static', filename=x.logo),
         'info_completed': lambda x: x.agent_name and x.agent_identity and x.agent_identity_front and \
         x.agent_identity_back and x.name and x.license_limit and x.license_image and x.telephone and x.address and \
         x.address.cn_id and x.address.address
@@ -564,7 +564,7 @@ class ItemImage(db.Model, Property):
 
     _flush = {
         'item': lambda x: Item.query.get(x.item_id),
-        'url': lambda x: convert_url(x.path)
+        'url': lambda x: url_for('static', filename=x.path)
     }
     _item = None
     _url = None
@@ -972,5 +972,5 @@ def generate_fake_data():
     Tenon.generate_fake()
     FirstScene.generate_fake()
     SecondScene.generate_fake()
-    Vendor.generate_fake()
-    Privilege.generate_fake()
+    # Vendor.generate_fake()
+    # Privilege.generate_fake()

@@ -2,6 +2,7 @@
 import datetime
 from base64 import b64decode
 
+from flask.ext.cdn import url_for
 from flask.ext.login import current_user, current_app
 from flask.ext.wtf.file import FileField
 from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField, FloatField, HiddenField
@@ -13,7 +14,7 @@ from app.models import Vendor, VendorAddress, Material, Stove, Carve, Sand, Pain
     Tenon, Item, ItemTenon, ItemCarve, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, \
     FirstMaterial, SecondMaterial, Category
 from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
-from app.utils import IO, convert_url
+from app.utils import IO
 from app.utils.forms import Form
 from app.utils.image import save_image
 from app.utils.fields import OptionGroupSelectField, SelectField, SelectNotRequiredField
@@ -121,7 +122,7 @@ class ReconfirmForm(RegistrationForm):
         for attr in self.attributes:
             getattr(self, attr).data = getattr(current_user, attr)
         for attr in self.url_attributes:
-            setattr(self, attr + '_url', convert_url(getattr(current_user, attr)))
+            setattr(self, attr + '_url', url_for('static', filename=getattr(current_user, attr)))
         self.address.data = current_user.address.address
         self.district_cn_id.data = current_user.address.cn_id
         self.show_address()
@@ -571,7 +572,7 @@ class SettingsForm(Form):
         self.contact.data = vendor.contact
         self.address.data = vendor.address.address
         self.mobile.data = vendor.mobile
-        self.logo_url = convert_url(vendor.logo)
+        self.logo_url = url_for('static', filename=vendor.logo)
         self.show_address()
         self.email.data = vendor.email
 

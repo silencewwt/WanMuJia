@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import datetime
-from flask import request, render_template, current_app, jsonify, redirect, url_for, abort
+from flask import request, render_template, current_app, jsonify, redirect, abort
+from flask.ext.cdn import url_for
 from flask.ext.login import current_user, logout_user
 from flask.ext.principal import identity_changed, AnonymousIdentity
 
 from app.constants import ACCESS_GRANTED
 from app.models import Vendor, DistributorRevocation, Item, Distributor
 from app.permission import privilege_permission
-from app.utils import data_table_params, convert_url
+from app.utils import data_table_params
 from . import privilege as privilege_blueprint
 from .forms import LoginForm, VendorDetailForm, VendorConfirmForm, VendorConfirmRejectForm, DistributorRevocationForm,\
     ItemForm
@@ -125,9 +126,9 @@ def vendors_confirm_data_table():
             'id': vendor.id, 'name': vendor.name, 'address': vendor.address.precise_address(), 'email': vendor.email,
             'license_limit': vendor.license_limit, 'mobile': vendor.mobile, 'telephone': vendor.telephone,
             'agent_name': vendor.agent_name, 'agent_identity': vendor.agent_identity,
-            'agent_identity_front': convert_url(vendor.agent_identity_front),
-            'agent_identity_back': convert_url(vendor.agent_identity_back),
-            'license_image': convert_url(vendor.license_image)
+            'agent_identity_front': url_for('static', filename=vendor.agent_identity_front),
+            'agent_identity_back': url_for('static', filename=vendor.agent_identity_back),
+            'license_image': url_for('static', filename=vendor.license_image)
         })
     return jsonify(data)
 
@@ -198,6 +199,6 @@ def distributors_revocation_data_table():
             'contact': revocation.distributor.contact,
             'contact_telephone': revocation.distributor.contact_telephone,
             'contact_mobile': revocation.distributor.contact_mobile,
-            'contract': convert_url(revocation.contract),
+            'contract': url_for('static', filename=revocation.contract),
             'vendor': revocation.distributor.vendor.name})
     return jsonify(data)
