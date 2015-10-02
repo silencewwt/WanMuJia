@@ -18,7 +18,7 @@ from app.utils import md5_with_time_salt, DataTableHandler
 from app.utils.redis import redis_set
 from app.wmj_email import ADMIN_REMINDS, ADMIN_REMINDS_SUBJECT, send_email
 from . import vendor as vendor_blueprint
-from vendor.forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
+from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
     ItemImageDeleteForm, RevocationForm, ReconfirmForm, InitializationForm, SuiteForm, ComponentForm
 
 
