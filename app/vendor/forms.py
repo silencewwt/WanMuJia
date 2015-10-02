@@ -283,7 +283,8 @@ class ComponentForm(Form):
     tenon_id = SelectMultipleField(coerce=int, validators=[QueryID(Tenon, u'榫卯结构不正确')])
     amount = IntegerField(validators=[Digit(required=True, min=1, message='商品数量不正确')])
 
-    attributes = ('length', 'width', 'height', 'price', 'category_id', 'decoration_id', 'paint_id')
+    component_obj = None
+    attributes = ('length', 'width', 'height', 'category_id', 'decoration_id', 'paint_id')
 
     def __init__(self, suite_id=None, *args, **kwargs):
         self.suite_id = suite_id
@@ -298,7 +299,7 @@ class ComponentForm(Form):
             component = Item.query.get(field.data)
             if component is None or component.is_deleted or component.suite_id != self.suite_id:
                 raise ValidationError('组件id错误')
-            self.component = component
+            self.component_obj = component
 
     def generate_choices(self):
         self.carve_id.choices = [(choice.id, choice.carve) for choice in Carve.query.all()]
@@ -391,8 +392,8 @@ class ComponentForm(Form):
     def update(self, component=None):
         if component is not None:
             self.update_component(component)
-        elif self.component is not None:
-            self.update_component(self.component)
+        elif self.component_obj is not None:
+            self.update_component(self.component_obj)
 
 
 class SuiteForm(Form):
@@ -436,9 +437,9 @@ class SuiteForm(Form):
             second_material_id=self.second_material_id.data,
             category_id=0,
             second_scene_id=self.second_scene_id.data,
-            length=0,
-            width=0,
-            height=0,
+            length='',
+            width='',
+            height='',
             area=self.area.data,
             stove_id=self.stove_id.data,
             outside_sand_id=self.outside_sand_id.data,

@@ -187,22 +187,28 @@ def item_detail(item_id):
             if not form.validate():
                 return jsonify({'success': False, 'message': form.error2str()})
             component_forms = []
-            if 'components' in request.form['components']:
+            if 'components' in request.form:
                 json_components = json.loads(request.form['components'])
                 for json_component in json_components:
-                    component_form = ComponentForm(suite_id=suite.id, formdata=ImmutableMultiDict(json_component))
+                    component_form = ComponentForm(suite_id=suite.id, formdata=ImmutableMultiDict(json_component), csrf_enabled=False)
                     component_form.generate_choices()
                     if not component_form.validate():
                         return jsonify({'success': False, 'message': component_form.error2str()})
                     component_forms.append(component_form)
+            if not component_forms:
+                return jsonify({'success': False, 'message': '请添加至少一个组件'})
             form.update_suite(suite)
             for component_form in component_forms:
                 component_form.update()
             if 'del_components' in request.form:
-                for del_component_id in request.form['del_components']:
-                    component = Item.query.get(del_component_id)
-                    if component is not None and not component.is_deleted and component.suite_id == suite.id:
-                        component.is_deleted = True
+                del_components = set()
+                for component in suite.components:
+                    if str(component.id) in request.form['del_components']:
+                        del_components.add(component)
+                if len(del_components) == suite.components.count():
+                    return jsonify({'success': False, 'message': '不能删除所有组件!'})
+                for component in del_components:
+                    component.is_deleted = True
             suite.update_suite_amount()
 
         elif request.method == 'DELETE':
