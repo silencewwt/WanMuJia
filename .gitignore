@@ -56,13 +56,18 @@ target/
 # PyCharm
 .idea/
 
+# vagrant
+Vagrantfile
+.vagrant/
+*.box
+
 # tmp
 *.sql
 *.db
 *.tar.gz
 config.json
 tmp/
-
+app/static/images
 
 # Node
 node_modules/
