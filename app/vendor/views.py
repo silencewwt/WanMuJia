@@ -25,7 +25,7 @@ from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, It
 def vendor_confirmed(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
-        if current_user.is_authenticated() and current_user.confirmed:
+        if current_user.is_authenticated and current_user.confirmed:
             return f(*args, **kwargs)
         return '尚未通过审核'
     return wrapped
@@ -34,7 +34,7 @@ def vendor_confirmed(f):
 def vendor_item_permission(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
-        if current_user.is_authenticated() and current_user.item_permission:
+        if current_user.is_authenticated and current_user.item_permission:
             return f(*args, **kwargs)
         return '尚未通过审核, 无法上传商品'
     return wrapped
