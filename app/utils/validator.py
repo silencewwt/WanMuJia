@@ -99,11 +99,11 @@ class Image(object):
 
     def __call__(self, form, field):
         if self.required or field.data:
+            if not field.data:
+                raise ValidationError(self.message)
             if self.base64:
                 image_str = IO(b64decode(field.data[23:]))
             else:
-                if field.data is None:
-                    raise ValidationError(self.message)
                 image_str = field.data.stream
             try:
                 BaseImage.open(image_str)
