@@ -49,7 +49,7 @@ class TestingConfig(Config):
     DEBUG_TB_ENABLED = False
     SERVER_NAME = 'localhost'
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'mysql+pymysql://@localhost/test?charset=utf8'
+        'mysql+pymysql://test:testpassword@localhost/test?charset=utf8'
     IMAGE_DIR = os.path.join(basedir, 'app/static/')
 
     @classmethod
