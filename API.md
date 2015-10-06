@@ -659,4 +659,13 @@
 + **method**
   + GET
 + **return**
-  + **img**
+  + img
+  
+### cities list
++ **URL**
+  + /service/cities
++ **mehtod**
+  + GET
++ **return**
+  + json
+  + {"A": {"ankang": {"city": "安康", "dist_count": "5"}}}
