@@ -113,7 +113,7 @@
   + item: item id
 + **comment**
   1. 无postData, post表示收藏商品, delete表示删除收藏
-  2. page >= 1 且只在get时用到, 表示收藏夹的第page页(默认每页50件商品)
+  2. page \>= 1 且只在get时用到, 表示收藏夹的第page页(默认每页50件商品)
 
 ### user setting
 + **URL**
@@ -147,7 +147,7 @@
 
 ### item detail
 + **URL**
-  + /item/<int: id> 
+  + /item/\<int: id\>
 + **method**
   + GET
 + **parameters**
@@ -155,7 +155,7 @@
     + 如果format == json, 返回json, 否则为html
 + **return**
   + format == json
-    + {"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "length": "", "width": "", "height": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": ""}
+    + {"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "length": "", "width": "", "height": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": ""}
     + **item**
       + 商品名称
     + **price**
@@ -190,6 +190,8 @@
       + 榫卯结构
     + **story**
       + 商品寓意
+    + **image_url**
+      + 图片url
 
 ## Distributor
 ### distributor register
@@ -514,7 +516,7 @@
 
 ### vendor edit item
 + **URL**
-  + /vendor/items/<int:id>
+  + /vendor/items/\<int:id\>
 + **method**
   + PUT
 + **parameters**
@@ -580,7 +582,7 @@
 
 ### vendor distributor detail
 + **URL**
-  + /vendor/distributors/<distributor_id>
+  + /vendor/distributors/\<distributor_id\>
 + **method**
   + GET
 
@@ -592,7 +594,7 @@
 
 ### vendor distributors revocation
 + **URL**
-  + /distributors/<int:distributor_id>/revocation
+  + /distributors/\<int:distributor_id\>/revocation
 + **method**
   + POST
     
@@ -691,7 +693,7 @@
     
 ### image captcha
 + **URL**
-  + /service/<string:token>.jpg
+  + /service/\<string:token\>.jpg
 + **method**
   + GET
 + **return**
