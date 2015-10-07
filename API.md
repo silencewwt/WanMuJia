@@ -93,7 +93,7 @@
   + /reset_password
 + **method**
   + GET
-  + POST
+  + POST`
 
 ### user home page
 + **URL**
@@ -131,11 +131,11 @@
   + GET
 
 ### item filter
-+ **URL**:
++ **URL**
   +	/item/filter
-+ **method**:
++ **method**
   + POST
-+ **parameters**:
++ **parameters**
   +	page
   +	brand
 
@@ -144,16 +144,52 @@
   + /item/compare
 + **method**
   + GET
-+ **parameters**
-  + first
-  + second
 
 ### item detail
 + **URL**
   + /item/<int: id> 
 + **method**
   + GET
-
++ **parameters**
+  + format
+    + 如果format == json, 返回json, 否则为html
++ **return**
+  + format == json
+    + {"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "length": "", "width": "", "height": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": ""}
+    + **item**
+      + 商品名称
+    + **price**
+      + 指导价格
+    + **second_material**
+      + 二级材料
+    + **category**
+      + 商品分类
+    + **second_scene**
+      + 二级场景分类
+    + **outside_sand**
+      + 外表面打磨砂纸
+    + **inside_sand**
+      + 内表面打磨砂纸
+    + **length**
+      + 长度
+    + **width**
+      + 宽度
+    + **height**
+      + 高度
+    + **area**
+      + 适用面积
+    + **stove**
+      + 烘干工艺
+    + **paint**
+      + 涂饰工艺
+    + **decoration**
+      + 装饰工艺
+    + **carve**
+      + 雕刻工艺
+    + **tenon**
+      + 榫卯结构
+    + **story**
+      + 商品寓意
 
 ## Distributor
 ### distributor register
