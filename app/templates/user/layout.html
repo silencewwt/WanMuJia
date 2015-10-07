@@ -12,5 +12,7 @@
     {% include 'user/include/footer.html' %}
 
     <script src="{{url_for('static', filename='js/user/header.js')}}"></script>
+
+    {% block scripts %}{% endblock %}
 </body>
 </html>
