@@ -58,4 +58,4 @@ def compare():
         pass  # TODO: 提示？
     first = Item.query.get_or_404(first_id)
     second = Item.query.get_or_404(second_id)
-    return render_template("/item/compare.html", first=first, second=second)
+    return render_template("user/compare.html", first=first, second=second)
