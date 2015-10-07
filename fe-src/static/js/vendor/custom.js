@@ -907,7 +907,7 @@ function saveInfos(options) {
         });
     };
     var getCategoryId = function ($el) {
-        var $selectElems = $el.find('.category-select select');
+        var $selectElems = $el.find('.category-select select').not(':hidden');
         return $selectElems.eq($selectElems.length - 1).val();
     };
 

@@ -9,9 +9,9 @@ var $ = require('gulp-load-plugins')({
 });
 
 var conf = {
-    pojName: 'myj',
+    pojName: 'wmj',
     version: '0.0.0',
-    serverPath: '../MuYiJia/app/',
+    serverPath: '../WanMuJia/app/',
     staticPath: './fe-src/static/',
     pagePath: './fe-src/pages/',
     distPath: './app/'

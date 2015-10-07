@@ -303,7 +303,7 @@
         var categorySelect = ['#first_category_id', '#second_category_id', '#third_category_id'];
         var $comBaseElems = $('.com-base');
         var comCount = 0;
-        var initSelect2 = function ($elem, placeholder) {
+        var initSelect2 = function ($elem, placeholder, haveToEmpty) {
             $elem.select2({
                 placeholder: '选择' + placeholder + '...',
                 allowClear: true
@@ -311,25 +311,42 @@
                 // Adding Custom Scrollbar
                 $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
             });
+            if (haveToEmpty) {
+                $elem.val(null).trigger('change');
+            }
         };
-        var initLinkageSel = function (serial) {
+        var initLinkageSel = function (serial, isEmpty) {
             var defVal = categorySelect.reduce(function (ret, selector) {
                 var name = selector.slice(1);   // 去掉 '#'
                 ret[name] = parseInt($(selector + '-' + serial).data(name + '-default'));
                 return ret;
             }, {});
-            var categoryIdSel = new LinkageSel({
-                data: category,
-                select: categorySelect.map(function (selector) {
-                    return selector + '-' + serial;
-                }),
-                defVal: categorySelect.map(function (selector) {
-                    return defVal[selector.slice(1)];
-                })
-            });
+            var categoryIdSel = null;
+            if (isEmpty) {
+                categoryIdSel = new LinkageSel({
+                    data: category,
+                    select: categorySelect.map(function (selector) {
+                        return selector + '-' + serial;
+                    })
+                });
+            }
+            else {
+                categoryIdSel = new LinkageSel({
+                    data: category,
+                    select: categorySelect.map(function (selector) {
+                        return selector + '-' + serial;
+                    }),
+                    defVal: categorySelect.map(function (selector) {
+                        return defVal[selector.slice(1)];
+                    })
+                });
+            }
         };
 
+        // 获取单个组件的表单选项并清空其 value，便于用于添加组件
         var $comBase = $comBaseElems.eq(0).clone();
+        $comBase.find('.form-control').val('');
+
         // 初始化页面中已渲染的组件的 select2
         Object.keys(comInfoPlaceholders).forEach(function (com_name) {
             initSelect2($('[name="' + com_name + '"]'), comInfoPlaceholders[com_name]);
@@ -390,12 +407,12 @@
                             }, {messages: {}}));
                         }
                         if ($this.is('[data-select2-elem]')) {
-                            initSelect2($this, comInfoPlaceholders[originName]);
+                            initSelect2($this, comInfoPlaceholders[originName], true);
                         }
                     });
 
             // 初始化级联选择
-            initLinkageSel(comCount);
+            initLinkageSel(comCount, true);
         });
 
         var delComs = {};   // 删除的组件列表，此处使用对象为了去重
