@@ -163,6 +163,6 @@ def collection():
         return 'ok', 200
 
 
-@user_blueprint.route('/address', method=['GET'])
+@user_blueprint.route('/address', methods=['GET'])
 def address():
     return render_template('user/address.html')
