@@ -161,3 +161,8 @@ def collection():
             db.session.delete(item_collection)
             db.session.commit()
         return 'ok', 200
+
+
+@user_blueprint.route('/address', method=['GET'])
+def address():
+    return render_template('user/address.html')
