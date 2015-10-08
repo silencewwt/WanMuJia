@@ -5,7 +5,8 @@
 {% endblock %}
 
 {% block content %}
-    <div class="compare">
+    <div id="compare"></div>
+    <!-- <div class="compare">
         <div class="wrapper-cmp">
             <h3>产品对比</h3>
 
@@ -80,5 +81,7 @@
                 </tr>
             </table>
         </div>
-    </div>
+    </div> -->
+    <script src="{{url_for('static', filename='js/util.js')}}"></script>
+    <script src="{{url_for('static', filename='js/user/compare.js')}}"></script>
 {% endblock %}

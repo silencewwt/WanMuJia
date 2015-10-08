@@ -106,3 +106,61 @@ function setFormReady($form) {
 function getFormState($form) {
     return $form.data('pending');
 }
+
+// compareItem Cookie option : addItemCookie 、 deleteItemCookie 、 getItemCookie.
+var setCompareItem = {
+    getCookie: function(name) {
+        var strCookie=document.cookie;
+        var arrCookie=strCookie.split("; ");
+        for(var i = 0 ;i < arrCookie.length; i++) {
+            var arr = arrCookie[i].split("=");
+            if(name == arr[0]) {
+                return arr[1];
+            }
+        }
+        return false;
+    },
+    addItem: function(cookieId) {
+        if(this.getCookie('compareItem1')==cookieId||this.getCookie('compareItem2')==cookieId) {
+            return {status: false,msg: "重复添加"};
+        }
+        if(!this.getCookie('compareItem1')) {
+            document.cookie  = 'compareItem1=' + cookieId;
+            return {status: true,msg: "添加成功"};
+        } else if(!this.getCookie('compareItem2')) {
+            document.cookie  = 'compareItem2=' + cookieId;
+            return {status: true,msg: "添加成功"};
+        } else {
+            return {status: false,msg: "添加上限2个"};
+        }
+    },
+    deleteItem: function(cookieId) {
+        var date=new Date();
+        date.setTime(date.getTime()-10000);
+        var strCookie=document.cookie;
+        var arrCookie=strCookie.split("; ");
+        for(var i = 0 ;i < arrCookie.length; i++) {
+            var arr = arrCookie[i].split("=");
+            if("compareItem1" == arr[0]&&cookieId == arr[1]) {
+                document.cookie="compareItem1=0; expires="+date.toGMTString();
+            }
+            if("compareItem2" == arr[0]&&cookieId == arr[1]) {
+                document.cookie="compareItem2=0; expires="+date.toGMTString();
+            }
+        }
+    },
+    getItem: function() {
+        var itemIds = [];
+        var i = 0;
+        if(this.getCookie('compareItem1')) {
+            itemIds[i] = this.getCookie('compareItem1');
+            i++;
+        } if(this.getCookie('compareItem2')) {
+            itemIds[i] = this.getCookie('compareItem2');
+        }
+        return itemIds;
+    }
+};
+// console.log(setCompareItem.addItem(2));
+// console.log(setCompareItem.getItem());
+// setCompareItem.deleteItem(1);
