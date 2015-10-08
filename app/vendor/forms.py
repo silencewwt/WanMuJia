@@ -18,7 +18,7 @@ from app.utils import IO
 from app.utils.forms import Form
 from app.utils.image import save_image
 from app.utils.fields import OptionGroupSelectField, SelectField, SelectNotRequiredField
-from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, DistrictValidator, Digit
+from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, AreaValidator, Digit
 
 
 class LoginForm(Form):
@@ -37,7 +37,7 @@ class RegistrationForm(Form):
     license_limit = StringField(validators=[Length(8, 10, u'营业执照期限不正确')])
     telephone = StringField(validators=[Length(7, 15, u'固话不正确')])
     address = StringField(validators=[Length(1, 30, u'地址不正确')])
-    district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
+    district_cn_id = StringField(validators=[AreaValidator(), Length(6, 6)])
 
     image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image')
 
@@ -547,7 +547,7 @@ class SettingsForm(Form):
     contact = StringField()
     address = StringField(validators=[Length(1, 30, u'地址不正确')])
     introduction = StringField(validators=[Length(0, 30, u'厂家简介不正确')])
-    district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
+    district_cn_id = StringField(validators=[AreaValidator(), Length(6, 6)])
     email = StringField()
 
     logo_url = None

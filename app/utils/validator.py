@@ -5,7 +5,7 @@ from flask import session
 from wtforms.validators import Regexp, Email as BaseEmail, ValidationError
 from PIL import Image as BaseImage
 
-from app.models import User, Vendor, Distributor, Privilege, Province, City, District
+from app.models import User, Vendor, Distributor, Privilege, Area
 from app.constants import IMAGE_CAPTCHA_CODE
 from app.utils import IO
 from app.utils.redis import redis_verify
@@ -55,14 +55,13 @@ class Captcha(object):
                 raise ValidationError(self.message)
 
 
-class DistrictValidator(object):
+class AreaValidator(object):
     def __init__(self, message=u'地址信息有误'):
         self.message = message
 
     def __call__(self, form, field):
-        if not District.query.filter_by(cn_id=field.data).limit(1).first() or \
-                City.query.filter_by(cn_id=field.data).limit(1).first() or \
-                Province.query.filter_by(cn_id=field.data).limit(1).first():
+        area = Area.query.filter_by(cn_id=field.data).limit(1).first()
+        if not area or Area.query.filter_by(father_id=area.id).count() > 0:
             raise ValidationError(self.message)
 
 

@@ -8,7 +8,7 @@ from wtforms.validators import DataRequired, Length, EqualTo, NumberRange, Valid
 from app import db
 from app.forms import Form
 from app.models import Distributor, DistributorAddress
-from app.utils.validator import DistrictValidator
+from app.utils.validator import AreaValidator
 
 
 class LoginForm(Form):
@@ -32,7 +32,7 @@ class RegisterForm(Form):
     contact_telephone = StringField(validators=[DataRequired(u'联系电话不正确')])
     contact = StringField(validators=[DataRequired(u'联系人不正确')])
     address = StringField(validators=[DataRequired(u'地址不正确')])
-    district_cn_id = StringField(validators=[DistrictValidator()])
+    district_cn_id = StringField(validators=[AreaValidator()])
 
     def add_distributor(self, vendor_id):
         username = Distributor.generate_username()
@@ -66,7 +66,7 @@ class SettingsForm(Form):
     contact_telephone = StringField()
     contact_mobile = StringField()
     contact = StringField()
-    district_cn_id = StringField(validators=[DistrictValidator(), Length(6, 6)])
+    district_cn_id = StringField(validators=[AreaValidator(), Length(6, 6)])
     address = StringField(validators=[DataRequired(u'地址不正确'), Length(1, 30)])
 
     attributes = ('username', 'name', 'contact_mobile', 'contact', 'contact_telephone')
