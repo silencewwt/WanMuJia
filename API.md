@@ -155,7 +155,7 @@
     + 如果format == json, 返回json, 否则为html
 + **return**
   + format == json
-    + {"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": ""}
+    + `{"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": ""}`
     + **item**
       + 商品名称
     + **price**
@@ -188,6 +188,15 @@
       + 商品寓意
     + **image_url**
       + 图片url
+
+### item distributors
++ **URL**
+  + /item/\<int:item_id\>/distributors
++ **method**
+  + GET
++ **return**
+  + json
+  + `{"distributors": [""]}`
 
 ## Distributor
 ### distributor register
@@ -702,4 +711,4 @@
   + GET
 + **return**
   + json
-  + {"A": {"ankang": {"city": "安康", "dist_count": "5"}}}
+  + `{"A": {"ankang": {"city": "安康", "dist_count": "5"}}}`
