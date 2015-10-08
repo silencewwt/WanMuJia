@@ -23,7 +23,7 @@ function setCookie(cookieName, coockieValue, expiredays) {
         encodeURIComponent(coockieValue);
 
     if (expiredays instanceof Date) {
-        cookieText += "; expires=" + expiredays.toGMTString();
+        cookieText += "; expires=" + expiredays.toUTCString();
     }
 
     return (document.cookie = cookieText);
