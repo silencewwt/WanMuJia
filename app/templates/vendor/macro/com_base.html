@@ -10,7 +10,13 @@
     <div class="com-base">
         <div class="com-head">
             <h3>
-                <span>组件 <span data-com-id>01</span></span>
+                <span>组件 <span data-com-id>
+                    {% if num < 10 -%}
+                        {{ '0%s' % (num) }}
+                    {%- else -%}
+                        {{ num }}
+                    {%- endif %}
+                </span></span>
             </h3>
             <span>-</span>
             <a href="javascript:void(0);" data-com-remove>删除</a>
