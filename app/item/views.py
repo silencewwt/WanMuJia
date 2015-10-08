@@ -9,7 +9,7 @@ from . import item as item_blueprint
 
 @item_blueprint.route("/")
 def item_list():
-    return render_template("item/list.html")
+    return render_template("user/list.html")
 
 
 @item_blueprint.route("/filter")
@@ -40,7 +40,7 @@ def item_filter():
     elif abs(order) == 3:
         query.order_by(Item.created if order > 0 else -Item.created)
     items = query.paginate(page, current_app.config['ITEM_PER_PAGE'], False).items
-    return render_template("item/filter.html", items=items)
+    return render_template("user/filter.html", items=items)
 
 
 @item_blueprint.route("/<int:item_id>")
@@ -73,7 +73,16 @@ def detail(item_id):
             'tenon': item.tenon
         }
         return jsonify(item_dict)
-    return render_template("item/detail.html", item=item)
+    return render_template("user/detail.html", item=item)
+
+
+@item_blueprint.route('/<int:item_id>/distributors')
+def distributors(item_id):
+    item = Item.query.get_or_404(item_id)
+    if item.is_deleted or not item.is_component:
+        abort(404)
+    distributor_id = {'distributors': [distributor.id for distributor in item.in_stock_distributors()]}
+    return jsonify(distributor_id)
 
 
 @item_blueprint.route("/compare")

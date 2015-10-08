@@ -2,7 +2,7 @@
 from flask import request, Response, jsonify, redirect, url_for, session
 
 from app.constants import CONFIRM_EMAIL, USER_REGISTER_STEP_DONE, USER_REGISTER_EMAIL
-from app.models import User, Vendor
+from app.models import User, Vendor, Area
 from app.sms import USER_REGISTER_TEMPLATE, VENDOR_REGISTER_TEMPLATE
 from app.wmj_email import VENDOR_EMAIL_CONFIRM, USER_EMAIL_CONFIRM, USER_REGISTER
 from app.utils.redis import redis_get
@@ -63,3 +63,14 @@ def verify():
 def serve_captcha(token):
     captcha = get_image_captcha(token)
     return Response(captcha, mimetype='image/jpeg')
+
+
+@service_blueprint.route('/cities')
+def city_list():
+    cities = Area.query.filter(Area.distributor_amount > 0, Area.level == 2)
+    city_dict = {}
+    for city in cities:
+        if city.pinyin_index not in city_dict:
+            city_dict[city.pinyin_index] = {}
+        city_dict[city.pinyin_index][city.pinyin] = {'city': city.area, 'dist_amount': city.distributor_amount}
+    return jsonify(city_dict)
