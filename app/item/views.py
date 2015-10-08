@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, request, current_app
+from flask import render_template, request, current_app, abort, jsonify
 from sqlalchemy import and_
 
 from app import db
@@ -43,19 +43,39 @@ def item_filter():
     return render_template("item/filter.html", items=items)
 
 
-@item_blueprint.route("/detail")
-def detail():
-    item_id = request.args.get('id', 0, type=int)
+@item_blueprint.route("/<int:item_id>")
+def detail(item_id):
     item = Item.query.get_or_404(item_id)
-    return render_template("/item/detail.html", item=item)
+    if item.is_deleted:
+        abort(404)
+    format = request.args.get('format', '', type=str)
+    if format == 'json':
+        if item.is_suite or item.is_component:
+            return '套件商品无法对比'
+        image = item.images.first()
+        image_url = image.url if image else ''
+        item_dict = {
+            'item': item.item,
+            'price': item.price,
+            'second_material': item.second_material,
+            'category': item.category,
+            'second_scene': item.second_scene,
+            'outside_sand': item.outside_sand,
+            'inside_sand': item.inside_sand,
+            'size': item.size(),
+            'area': item.area if item.area else '——',
+            'stove': item.stove,
+            'paint': item.paint,
+            'decoration': item.decoration,
+            'story': item.story,
+            'image_url': image_url,
+            'carve': item.carve,
+            'tenon': item.tenon
+        }
+        return jsonify(item_dict)
+    return render_template("item/detail.html", item=item)
 
 
 @item_blueprint.route("/compare")
 def compare():
-    first_id = request.args.get('first', 0, type=int)
-    second_id = request.args.get('second', 0, type=int)
-    if first_id == second_id:
-        pass  # TODO: 提示？
-    first = Item.query.get_or_404(first_id)
-    second = Item.query.get_or_404(second_id)
-    return render_template("user/compare.html", first=first, second=second)
+    return render_template("user/compare.html")

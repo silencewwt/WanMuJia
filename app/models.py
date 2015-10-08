@@ -463,13 +463,29 @@ class Item(db.Model, Property):
         'images': lambda x: ItemImage.query.filter_by(item_id=x.id, is_deleted=False).order_by(ItemImage.sort,
                                                                                                ItemImage.created),
         'components': lambda x: Item.query.filter_by(suite_id=x.id, is_deleted=False, is_component=True),
-        'second_scene': lambda x: SecondScene.query.get(x.second_scene_id).second_scene
+        'second_scene': lambda x: SecondScene.query.get(x.second_scene_id).second_scene,
+        'second_material': lambda x: SecondMaterial.query.get(x.second_scene_id).second_material,
+        'outside_sand': lambda x: Sand.query.get(x.outside_sand_id).sand,
+        'inside_sand': lambda x: Sand.query.get(x.inside_sand_id).sand if x.inside_sand_id else '——',
+        'stove': lambda x: Stove.query.get(x.stove_id).stove,
+        'paint': lambda x: Paint.query.get(x.paint_id).paint,
+        'decoration': lambda x: Decoration.query.get(x.decoration_id).decoration,
+        'carve': lambda x: [carve.carve for carve in Carve.query.filter(Carve.id.in_(x.get_carve_id()))],
+        'tenon': lambda x: [tenon.tenon for tenon in Tenon.query.filter(Tenon.id.in_(x.get_tenon_id()))]
     }
     _vendor = None
     _category = None
     _images = None
     _components = None
     _second_scene = None
+    _second_material = None
+    _outside_sand = None
+    _inside_sand = None
+    _stove = None
+    _paint = None
+    _decoration = None
+    _carve = None
+    _tenon = None
 
     def __init__(self, vendor_id, item, price, second_material_id, category_id, second_scene_id, length, width,
                  height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, story,
@@ -527,6 +543,38 @@ class Item(db.Model, Property):
     @property
     def second_scene(self):
         return self.get_or_flush('second_scene')
+
+    @property
+    def second_material(self):
+        return self.get_or_flush('second_material')
+
+    @property
+    def outside_sand(self):
+        return self.get_or_flush('outside_sand')
+
+    @property
+    def inside_sand(self):
+        return self.get_or_flush('inside_sand')
+
+    @property
+    def stove(self):
+        return self.get_or_flush('stove')
+
+    @property
+    def paint(self):
+        return self.get_or_flush('paint')
+
+    @property
+    def decoration(self):
+        return self.get_or_flush('decoration')
+
+    @property
+    def carve(self):
+        return self.get_or_flush('carve')
+
+    @property
+    def tenon(self):
+        return self.get_or_flush('tenon')
 
     @property
     def images(self):
