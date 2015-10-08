@@ -30,6 +30,40 @@
     & img {
       height: 300px;
     }
+    & .add-compare {
+        height: 300px;
+        width: 300px;
+        display: block;
+    }
+    & .add-compare-btn {
+        text-align: center;
+        display: block;
+        font-size: 120px;
+        background: #170b09;
+        color: #979292;
+        width: 130px;
+        height: 130px;
+        border-radius: 130px;
+        margin: 85px auto;
+        line-height: 130px;
+        font-weight: normal;
+    }
+    & .add-compare-btn:hover {
+        color: #fff;
+    }
+    & .delete-compare-btn {
+        text-align: center;
+        display: inline-block;
+        color: #979292;
+        line-height: 32px;
+        height: 32px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 3em;
+    }
+    & .delete-compare-btn:hover {
+        color: #fff;
+    }
   }
 
   & .first {
