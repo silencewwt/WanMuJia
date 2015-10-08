@@ -105,6 +105,16 @@ class User(BaseUser, db.Model):
         self.nickname = nickname if nickname else self.generate_nickname()
 
     @staticmethod
+    def generate_fake():
+        from faker import Factory
+        zh_fake = Factory.create('zh-CN')
+        fake = Factory.create()
+        for i in range(100):
+            user = User('14e1b600b1fd579f47433b88e8d85291', zh_fake.phone_number(), fake.email(), zh_fake.name())
+            db.session.add(user)
+        db.session.commit()
+
+    @staticmethod
     def generate_nickname():
         prefix = u'万木家用户'
         return u'%s%s' % (prefix, random.randint(100000, 999999))
@@ -253,7 +263,7 @@ class Vendor(BaseUser, db.Model, Property):
 
     @staticmethod
     def generate_fake():
-        from faker.factory import Factory
+        from faker import Factory
         from random import randint
         zh_fake = Factory.create('zh-CN')
         fake = Factory.create()
@@ -903,6 +913,8 @@ class Address(Property):
     cn_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
+    longitude = db.Column(db.Float, default=0, nullable=False)
+    latitude = db.Column(db.Float, default=0, nullable=False)
 
     _flush = {
         'area': lambda x: Area.query.filter_by(cn_id=x.cn_id).limit(1).first()
