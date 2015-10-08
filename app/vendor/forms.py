@@ -389,10 +389,8 @@ class ComponentForm(Form):
         db.session.add(component)
         db.session.commit()
 
-    def update(self, component=None):
-        if component is not None:
-            self.update_component(component)
-        elif self.component_obj is not None:
+    def update(self):
+        if self.component_obj is not None:
             self.update_component(self.component_obj)
 
 

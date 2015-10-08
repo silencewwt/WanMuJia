@@ -199,7 +199,10 @@ def item_detail(item_id):
                 return jsonify({'success': False, 'message': '请添加至少一个组件'})
             form.update_suite(suite)
             for component_form in component_forms:
-                component_form.update()
+                if component_form.component_id.data:
+                    component_form.update()
+                else:
+                    component_form.add_component(current_user.id, suite.id)
             if 'del_components' in request.form:
                 del_components = set()
                 for component in suite.components:
