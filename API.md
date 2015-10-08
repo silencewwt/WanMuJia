@@ -155,7 +155,7 @@
     + 如果format == json, 返回json, 否则为html
 + **return**
   + format == json
-    + {"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "length": "", "width": "", "height": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": ""}
+    + {"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": ""}
     + **item**
       + 商品名称
     + **price**
@@ -170,12 +170,8 @@
       + 外表面打磨砂纸
     + **inside_sand**
       + 内表面打磨砂纸
-    + **length**
-      + 长度
-    + **width**
-      + 宽度
-    + **height**
-      + 高度
+    + **size**
+      + 长 * 宽 * 高
     + **area**
       + 适用面积
     + **stove**
