@@ -5,7 +5,7 @@ from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 
 from . import user as user_blueprint
-from . forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, EmailRegistrationForm
+from .forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, EmailRegistrationForm, RegistrationForm
 from app import db
 from app.models import User, Collection, Item
 from app.constants import *
@@ -38,8 +38,8 @@ def logout():
     return redirect(url_for('user.login'))
 
 
-@user_blueprint.route('/register', methods=['GET', 'POST'])
-def register():
+@user_blueprint.route('/register2', methods=['GET', 'POST'])
+def register2():
     form_type = request.args.get('form', '', type=str)
     mobile_form = MobileRegistrationForm()
     email_form = EmailRegistrationForm()
@@ -93,6 +93,36 @@ def register():
             return render_template('user/register_next.html', form=detail_form)
     session[USER_REGISTER_STEP_DONE] = 0
     return render_template('user/register.html', form=mobile_form)
+
+
+@user_blueprint.route('/register', methods=['GET', 'POST'])
+def register():
+    if USER_REGISTER_STEP_DONE in session and session[USER_REGISTER_STEP_DONE] == 1:
+        return redirect(url_for('user.register_next'))
+    if request.method == 'POST':
+        form = MobileRegistrationForm()
+        if form.validate():
+            session[USER_REGISTER_MOBILE] = form.mobile.data
+            session[USER_REGISTER_STEP_DONE] = 1
+            return jsonify({'status': True})
+        else:
+            return jsonify({'status': False, 'message': form.error2str()})
+    return render_template('user/register.html', form=RegistrationForm())
+
+
+@user_blueprint.route('/register_next', methods=['GET', 'POST'])
+def register_next():
+    if USER_REGISTER_STEP_DONE not in session or \
+                            USER_REGISTER_MOBILE not in session and USER_REGISTER_EMAIL not in session:
+        return redirect(url_for('user.register'))
+    if request.method == 'POST':
+        form = RegistrationDetailForm()
+        if form.validate():
+            form.register()
+            session.pop(USER_REGISTER_STEP_DONE)
+            return jsonify({'success': True})
+        return jsonify({'success': False, 'message': form.error2str()})
+    return render_template('user/register_next.html', form=RegistrationDetailForm())
 
 
 @user_blueprint.route('/reg_email', methods=['POST'])

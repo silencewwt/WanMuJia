@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-from flask import current_app
+from flask import current_app, session
 from flask.ext.login import login_user
 from flask.ext.principal import identity_changed, Identity
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, Length, EqualTo
 
+from app import db
 from app.constants import *
 from app.models import User
 from app.utils.forms import Form
@@ -33,14 +34,8 @@ class RegistrationForm(Form):
 
 
 class MobileRegistrationForm(RegistrationForm):
-    def __init__(self, *args, **kwargs):
-        self.mobile.validators = [Mobile(), Length(11, 11)]
-        self.captcha.validators = [Captcha(SMS_CAPTCHA, 'mobile')]
-        super(MobileRegistrationForm, self).__init__(*args, **kwargs)
-
-    def validate_form(self, field):
-        if field.data != USER_REGISTER_MOBILE:
-            raise ValidationError()
+    mobile = StringField(validators=[Mobile()])
+    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
 
 
 class EmailRegistrationForm(RegistrationForm):
@@ -54,6 +49,37 @@ class EmailRegistrationForm(RegistrationForm):
 
 
 class RegistrationDetailForm(Form):
-    password = PasswordField(validators=[DataRequired(), Length(6, 32), EqualTo('confirm_password', u'前后密码不一致哦!')])
-    confirm_password = PasswordField(validators=[DataRequired(), Length(6, 32)])
+    password = PasswordField(validators=[Length(6, 32, '请填写密码'), EqualTo('confirm_password', u'前后密码不一致哦!')])
+    confirm_password = PasswordField(validators=[Length(6, 32, '请填写确认密码')])
     nickname = StringField(validators=[NickName()])
+    mobile = StringField()
+    email = StringField()
+
+    def __init__(self, *args, **kwargs):
+        if USER_REGISTER_MOBILE in session:
+            self.mobile.data = session[USER_REGISTER_MOBILE]
+        else:
+            self.mobile.data = ''
+        if USER_REGISTER_EMAIL in session:
+            self.email.data = session[USER_REGISTER_EMAIL]
+        else:
+            self.email.data = ''
+        super(RegistrationDetailForm, self).__init__(*args, **kwargs)
+
+    def validate_mobile(self, field):
+        if not field.data and not self.email.data:
+            session.pop(USER_REGISTER_STEP_DONE)
+            raise ValidationError('参数错误, 注册失败!')
+
+    def register(self):
+        user = User(
+            password=self.password.data,
+            mobile=self.mobile.data,
+            email=self.mobile.data,
+            nickname=self.nickname.data
+        )
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
+        return user
