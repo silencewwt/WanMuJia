@@ -2,8 +2,8 @@
 from flask import current_app
 from flask.ext.login import login_user, current_user
 from flask.ext.principal import identity_changed, Identity
-from wtforms import StringField, PasswordField, IntegerField
-from wtforms.validators import DataRequired, Length, EqualTo, NumberRange, ValidationError
+from wtforms import StringField, PasswordField
+from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 
 from app import db
 from app.forms import Form

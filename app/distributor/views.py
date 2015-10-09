@@ -4,10 +4,10 @@ from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 
 from app import db
-from app.models import Distributor, Vendor, Stock, Item
+from app.models import Vendor, Stock, Item
 from app.constants import DISTRIBUTOR_REGISTER
 from app.permission import distributor_permission
-from app.utils import data_table_params
+from app.utils import DataTableHandler
 from app.utils.redis import redis_get
 from . import distributor as distributor_blueprint
 from .forms import LoginForm, RegisterForm, SettingsForm
@@ -86,16 +86,22 @@ def items_stock():
 @distributor_blueprint.route('/items/datatable')
 @distributor_permission.require(401)
 def items_data_table():
-    draw, start, length = data_table_params()
-    query = Item.query.filter_by(vendor_id=current_user.vendor.id, is_deleted=False)
-    items = query.offset(start).limit(length)
-    data = {'draw': draw, 'recordsTotal': query.count(), 'recordsFiltered': query.count(), 'data': []}
-    for item in items:
+    def handle_stock(item):
         stock = Stock.query.filter_by(distributor_id=current_user.id, item_id=item.id).first()
-        data['data'].append({
-            'id': item.id, 'item': item.item, 'category_id': item.category, 'price': item.price,
-            'size': '%s*%s*%s' % (item.length, item.width, item.height), 'inventory': stock.stock if stock else 0
-        })
+        return stock.stock if stock else 0
+
+    params = {
+        'id': {'orderable': False, 'data': lambda x: x.id},
+        'item': {'orderable': False, 'data': lambda x: x.item},
+        'second_material_id': {'orderable': False, 'data': lambda x: x.second_material},
+        'second_scene_id': {'orderable': False, 'data': lambda x: x.second_scene},
+        'size': {'orderable': False, 'data': lambda x: x.size()},
+        'price': {'orderable': True, 'data': lambda x: x.price},
+        'inventory': {'orderable': False, 'data': handle_stock}
+    }
+    query = Item.query.filter_by(vendor_id=current_user.vendor.id, is_deleted=False, is_component=False)
+    data_table_handler = DataTableHandler(params)
+    data = data_table_handler.query_params(query)
     return jsonify(data)
 
 
