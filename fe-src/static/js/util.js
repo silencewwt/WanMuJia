@@ -16,6 +16,14 @@ function isFunction(fn) {
     return fn instanceof Function;
 }
 
+// RegExps
+var REG_EXP = {
+    mobile: /^((1[3-8][0-9])+\d{8})$/,
+    tel: /^\d{3,4}-?\d{7,9}$/,
+    identity: /^\d{15}(\d\d[0-9xX])?$/,
+    password: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/,
+    date: /^(\d{4})\/((0?([1-9]))|(1[0|1|2]))\/((0?[1-9])|([12]([0-9]))|(3[0|1]))$/
+};
 
 // Cookies
 function setCookie(cookieName, coockieValue, expiredays) {
