@@ -96,7 +96,7 @@ def items_data_table():
         'second_material_id': {'orderable': False, 'data': lambda x: x.second_material},
         'second_scene_id': {'orderable': False, 'data': lambda x: x.second_scene},
         'size': {'orderable': False, 'data': lambda x: x.size()},
-        'price': {'orderable': True, 'data': lambda x: x.price},
+        'price': {'orderable': True, 'order_key': Item.price, 'data': lambda x: x.price},
         'inventory': {'orderable': False, 'data': handle_stock}
     }
     query = Item.query.filter_by(vendor_id=current_user.vendor.id, is_deleted=False, is_component=False)

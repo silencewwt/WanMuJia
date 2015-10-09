@@ -130,7 +130,7 @@ def item_list():
 def items_data_table():
     params = {
         'id': {'orderable': False, 'data': lambda x: x.id},
-        'item': {'orderable': True, 'order_key': Item.item, 'data': lambda x: x.item},
+        'item': {'orderable': False, 'data': lambda x: x.item},
         'second_scene_id': {'orderable': False, 'data': lambda x: x.second_scene},
         'price': {'orderable': True, 'order_key': Item.price, 'data': lambda x: x.price},
         'size': {'orderable': False, 'data': lambda x: x.size()}}
