@@ -65,7 +65,7 @@ def items_data_table():
         'size': {'orderable': False, 'data': lambda x: x.size()}
     }
     data_table_handler = DataTableHandler(params)
-    query = Item.query.filter_by(is_deleted=False)
+    query = Item.query.filter_by(is_deleted=False, is_component=False)
     data = data_table_handler.query_params(query)
     return jsonify(data)
 
