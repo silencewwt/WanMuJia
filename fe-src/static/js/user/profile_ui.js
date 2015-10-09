@@ -23,6 +23,47 @@ function init() {
 
         // 发送删除收藏的ajax请求
     });
+
+    $('.verified').on('input', function() {
+      var id = $(this).attr('id');
+      var checkTip = checkInfo(id);
+      if(checkTip) {
+        $('.form-tip').text(checkTip);
+      } else {
+        $('.form-tip').text("");
+      }
+    });
+
+    $('#settingSubmit').click(function(e) {
+      var checkTip = checkInfo();
+      if(checkTip) {
+        $('.form-tip').text(checkTip);
+        e.preventDefault();
+      }
+    });
+}
+
+function checkInfo(id) {
+  var regExps = getRegs();
+  var idHash = {
+    mobile: "手机号码",
+    email: "邮箱"
+  };
+  if(id) {
+    var value = $('#'+id).val();
+    if(value && !regExps[id].test(value)) {
+      return idHash[id] + "格式不正确，请重新输入";
+    }
+    return;
+  } else {
+    for(var k in idHash) {
+      var checkTip = checkInfo(k);
+      if(checkTip) {
+        return checkTip;
+        break;
+      }
+    }
+  }
 }
 
 $(function () {

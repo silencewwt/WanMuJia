@@ -11,11 +11,11 @@
     <div class="wrapper-personal">
         <div class="overview">
             <ul class="info">
-                <li>昵称：{{ info.nickname }}</li>
-                <li>真实姓名：{{ info.name }}</li>
-                <li>邮箱：{{ info.email }}</li>
-                <li>联系方式：{{ info.mobile_phone }}</li>
-                <li>居住地：{{ info.address }}</li>
+                <li>昵称：{{ user.nickname }}</li>
+                <li>真实姓名：{{ user.name }}</li>
+                <li>邮箱：{{ user.email }}</li>
+                <li>联系方式：{{ user.mobile }}</li>
+                <li>居住地：{{ user.address }}</li>
             </ul>
         </div>
 
@@ -38,35 +38,35 @@
                             <div class="wrapper-label">
                                 <label class="control-label" for="nickname">昵称</label>
                             </div>
-                            <input name="nickname" type="text" id="nickname"/>
+                            <input name="nickname" type="text" id="nickname" placeholder="{{ user.nickname }}" />
                         </div>
                         <div class="form-group">
                             <div class="wrapper-label">
                                 <label class="control-label" for="name">真实姓名</label>
                             </div>
-                            <input name="name" type="text" id="name"/>
+                            <input name="name" type="text" id="name" placeholder="{{user.name}}" />
                         </div>
                         <div class="form-group">
                             <div class="wrapper-label">
-                                <label class="control-label" for="mbp">联系方式</label>
+                                <label class="control-label" for="mobile">联系方式</label>
                             </div>
-                            <input name="mbp" type="text" id="mbp"/>
+                            <input class="verified" name="mobile" type="text" id="mobile" placeholder="{{ user.mobile }}" />
                         </div>
                         <div class="form-group">
                             <div class="wrapper-label">
                                 <label class="control-label" for="email">邮箱</label>
                             </div>
-                            <input name="email" type="text" id="email"/>
+                            <input class="verified" name="email" type="text" id="email" placeholder="{{ user.email }}" />
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <div class="wrapper-label">
                                 <label class="control-label" for="password">密码</label>
                             </div>
-                            <input name="password" type="password" id="password"/>
-                        </div>
-
+                            <input name="password" type="password" id="password" placeholder="*******" />
+                        </div> -->
+                        <div class="form-tip {{ user.success }}"></div>
                         <div class="form-group offset action">
-                            <input type="submit" value="完成"/>
+                            <input id="settingSubmit" type="submit" value="完成"/>
                         </div>
                     </form>
                 </div>
@@ -75,6 +75,7 @@
         </div>
     </div>
 
+    <script src="{{url_for('static', filename='js/util.js')}}"></script>
     <script src="{{url_for('static', filename='js/user/tab.js')}}"></script>
     <script src="{{url_for('static', filename='js/user/profile_ui.js')}}"></script>
     <script src="{{url_for('static', filename='js/user/paging_ui.js')}}"></script>

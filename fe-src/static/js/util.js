@@ -19,6 +19,7 @@ function isFunction(fn) {
 // RegExps
 function getRegs() {
     return {
+        email: /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,5}$/,
         mobile: /^((1[3-8][0-9])+\d{8})$/,
         tel: /^\d{3,4}-?\d{7,9}$/,
         identity: /^\d{15}(\d\d[0-9xX])?$/,

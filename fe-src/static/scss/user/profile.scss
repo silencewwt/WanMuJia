@@ -93,6 +93,7 @@ $left-width: 270px;
     }
 
     .profile {
+      position: relative;
       .wrapper-label {
         width: $left-width;
       }
@@ -103,6 +104,16 @@ $left-width: 270px;
 
       .offset {
         padding-left: $left-width;
+      }
+
+      .form-tip {
+        position: absolute;
+        left: 270px;
+        margin-top: -14px;
+        color: #E74C3C;
+        &.success {
+          color: #fff;
+        }
       }
     }
 
