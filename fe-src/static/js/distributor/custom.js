@@ -1,130 +1,6 @@
 // custom.js
 
 jQuery(document).ready(function($) {
-
-    // =========== page init ==================
-
-    // Items page
-    if (getPageTitle() === 'items') {
-
-        initDatatable($('#items'), {
-            ajax: "/distributor/items/datatable",
-            columns: [
-                {data: "id", visible: false},
-                {data: "item", bSortable: false},
-                {data: "second_category_id", bSortable: false},
-                {data: "price"},
-                {data: "size", bSortable: false},
-                {data: "inventory", visible: false},
-            ],
-            columnDefs: [{
-                targets: [6],
-                data: {},
-                render: function (data) {
-                    var text = null, checked = null;
-                    if (data.inventory === 1) {
-                        text = '有货';
-                        checked = 'checked';
-                    }
-                    else {
-                        text = '无货';
-                        checked = '';
-                    }
-
-                    return '<label class="inventory-info">' + text + '</label>' +
-                            '<input type="checkbox" ' + checked + ' class="inventory-checkbox iswitch iswitch-secondary" data-id="' + data.id + '">' +
-                            '<div class="disable-div"></div>';
-                }
-            }]
-        });
-
-        $('#items').delegate('.inventory-checkbox', 'click', function () {
-            var $this = $(this);
-            if ($this.hasClass('disabled')) return;
-
-            var $loading = $('<span class="loading fa fa-spin fa-spinner"></span>');
-            var $errorHint = function (message) {
-                message = message || '服务器错误请重试';
-                return $('<span class="error-hint text-danger">' + message + '</span>');
-            };
-
-            var id = $this.data('id');
-            var $td = $this.parent();
-
-            // Set waiting state
-            $this.prop('disabled', true);
-            $td.append($loading);
-
-            $.ajax({
-                url: '/distributor/items/' + id,
-                method: 'post',
-                data: $this.is(':checked') ?
-                        {stock: 1}
-                        : {stock: 0},
-                success: function (data) {
-                    var $errorSpan = $td.find('.error-hint');
-
-                    if (data.success) {
-                        setStock();
-                        $errorSpan.remove();
-                    }
-                    else {
-                        toggleCheckState();
-                        setStock();
-                        if ($errorSpan.length === 0) {
-                            $td.append($errorHint(data.message));
-                        }
-                        else {
-                            $errorSpan.text(data.message);
-                        }
-                    }
-                },
-                error: function () {
-                    toggleCheckState();
-                    setStock();
-                    if ($td.find('.error-hint').length === 0) {
-                        $td.append($errorHint());
-                    }
-                },
-            });
-
-            function setStock() {
-                var $info = $this.prev('.inventory-info');
-                if ($this.is(':checked')) {
-                    $info.text('有货');
-                }
-                else {
-                    $info.text('无货');
-                }
-                $this.prop('disabled', false);
-                $td.find('.loading').remove();
-            }
-
-            function toggleCheckState() {
-                if ($this.is(':checked')) $this.prop('checked', false);
-                else $this.prop('checked', true);
-            }
-        });
-    }
-
-
-    // Settings page
-    if (getPageTitle() === 'settings') {
-        $('#contact_mobile').rules('add', {
-            mobile: true,
-            messages: {
-                mobile: '手机号码格式不正确'
-            }
-        });
-        $('#contact_telephone').rules('add', {
-            tel: true,
-            messages: {
-                tel: '固定电话号码格式不正确'
-            }
-        });
-    }
-
-
     // =============== plugins config ===============
 
     // jQuery validate
@@ -232,7 +108,210 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // toastr
+    var toastrOpts = {
+        "closeButton": true,
+        "debug": false,
+        "positionClass": "toast-top-full-width",
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+
+    // =========== page init ==================
+
+    // Items page
+    if (getPageTitle() === 'items') {
+
+        initDatatable($('#items'), {
+            ajax: "/distributor/items/datatable",
+            columns: [
+                {data: "id", visible: false},
+                {data: "item", bSortable: false},
+                {data: "price"},
+                {data: "size", bSortable: false},
+                {data: "second_scene_id", bSortable: false},
+                {data: "second_material_id", bSortable: false},
+                {data: "inventory", visible: false},
+            ],
+            columnDefs: [{
+                targets: [7],
+                data: {},
+                render: function (data) {
+                    var text = null, checked = null;
+                    if (data.inventory === 1) {
+                        text = '有货';
+                        checked = 'checked';
+                    }
+                    else {
+                        text = '无货';
+                        checked = '';
+                    }
+
+                    return '<label class="inventory-info">' + text + '</label>' +
+                        '<input type="checkbox" ' + checked + ' class="inventory-checkbox iswitch iswitch-secondary" data-id="' + data.id + '">' +
+                        '<div class="disable-div"></div>';
+                }
+            }]
+        });
+
+        $('#items').delegate('.inventory-checkbox', 'click', function () {
+            var $this = $(this);
+            if ($this.hasClass('disabled')) return;
+
+            var $loading = $('<span class="loading fa fa-spin fa-spinner"></span>');
+            var $errorHint = function (message) {
+                message = message || '服务器错误请重试';
+                return $('<span class="error-hint text-danger">' + message + '</span>');
+            };
+
+            var id = $this.data('id');
+            var $td = $this.parent();
+
+            // Set waiting state
+            $this.prop('disabled', true);
+            $td.append($loading);
+
+            $.ajax({
+                url: '/distributor/items/' + id,
+                method: 'post',
+                data: $this.is(':checked') ?
+                {stock: 1}
+                    : {stock: 0},
+                success: function (data) {
+                    var $errorSpan = $td.find('.error-hint');
+
+                    if (data.success) {
+                        setStock();
+                        $errorSpan.remove();
+                    }
+                    else {
+                        toggleCheckState();
+                        setStock();
+                        if ($errorSpan.length === 0) {
+                            $td.append($errorHint(data.message));
+                        }
+                        else {
+                            $errorSpan.text(data.message);
+                        }
+                    }
+                },
+                error: function () {
+                    toggleCheckState();
+                    setStock();
+                    if ($td.find('.error-hint').length === 0) {
+                        $td.append($errorHint());
+                    }
+                },
+            });
+
+            function setStock() {
+                var $info = $this.prev('.inventory-info');
+                if ($this.is(':checked')) {
+                    $info.text('有货');
+                }
+                else {
+                    $info.text('无货');
+                }
+                $this.prop('disabled', false);
+                $td.find('.loading').remove();
+            }
+
+            function toggleCheckState() {
+                if ($this.is(':checked')) $this.prop('checked', false);
+                else $this.prop('checked', true);
+            }
+        });
+    }
+
+
+    // Settings page
+    if (getPageTitle() === 'settings') {
+        $('#contact_mobile').rules('add', {
+            mobile: true,
+            messages: {
+                mobile: '手机号码格式不正确'
+            }
+        });
+        $('#contact_telephone').rules('add', {
+            tel: true,
+            messages: {
+                tel: '固定电话号码格式不正确'
+            }
+        });
+    }
+
+
+    // Register page
+    if (getPageTitle(true) == 'register') {
+        // 发送按钮倒计时
+        var $send = $('.send');
+        var $form = $('#register');
+        var DELAYTIME = 60000;  // 1min
+        var originValue = $send.val() || $send.text();
+
+        // form validate
+        $('#mobile').rules('add', {
+            required: true,
+            mobile: true,
+            messages: {
+                required: '请输入您的手机号',
+                mobile: '请输入合法的手机号码'
+            }
+        });
+        $('#captcha').rules('add', {
+            required: true,
+            messages: {
+                required: '请填写手机验证码',
+            }
+        });
+
+        // 页面加载完成时获取发送按钮情况
+        if (getCookie('clickTime')) {
+            sendDisable($send, Date.now(), DELAYTIME);
+            setCountDown($send, originValue, DELAYTIME);
+        }
+
+        $send.click(function () {
+            if (!checkValidate($form, '#mobile')) {
+                return;
+            }
+
+            var $this = $(this);
+
+            if ($this.hasClass('disabled')) return;
+
+            setCookie('clickTime', Date.now());
+
+            // 发送请求
+            $.ajax({
+                url: '/service/mobile_register_sms',
+                method: 'post',
+                data: {
+                    mobile: $('#mobile').val()
+                },
+                success: function (res) {
+                    if (!res.success) {
+                        toastr.error(res.message, '验证码发送失败!', toastrOpts);
+                        return;
+                    }
+                    setCountDown($this, originValue, DELAYTIME);
+                },
+                error: function (xhr) {
+                    toastr.error('服务器' + xhr.status + '错误...', '验证码发送失败!', toastrOpts);
+                    setCountDown($this, originValue, DELAYTIME);
+                }
+            });
+        });
+    }
 });
+
 
 // ========= util fn ===============
 
@@ -274,8 +353,10 @@ function convertTimeString(seconds) {
 
 // ============= page fn ========================
 
-function getPageTitle() {
-    return $('.page-title').data('page');
+function getPageTitle(fromBody) {
+    return fromBody ?
+        $('body').data('page') :
+        $('.page-title').data('page');
 }
 
 function saveInfos(options) {
@@ -357,4 +438,31 @@ function setCountDown($send, originValue, DELAYTIME) {
 
 function setFormDisabled($form) {
     $form.find('.form-control').attr('disabled', true);
+}
+
+function checkValidate($form, selector) {
+    if($form.hasClass('validate')) {
+        var valid = null,
+            $el = $form.find(selector);
+
+        if (selector) {
+            if ($el.length > 0) {
+                valid = $el.valid();
+            }
+            else {
+                return;
+            }
+        }
+        else {
+            valid = $form.valid();
+        }
+
+
+        if(!valid) {
+            $form.data('validator').focusInvalid();
+            return false;
+        }
+    }
+
+    return true;
 }

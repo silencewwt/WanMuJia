@@ -198,3 +198,16 @@ table {
 .modal dd img {
     max-width: 90%;
 }
+
+
+// item details page
+#details .category-select {
+    select {
+        color: #555555;
+        margin-bottom: 4px;
+    }
+}
+
+.com-base .com-del {
+    display: none;
+}

@@ -657,7 +657,7 @@ jQuery(document).ready(function($) {
             mobile: true,
             messages: {
                 required: '请输入您的手机号',
-                mobile: '请输入合法的手机号码'
+                mobile: '手机号码格式不正确'
             }
         });
         $('#captcha').rules('add', {
