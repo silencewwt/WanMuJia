@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-from flask import current_app, request, render_template, redirect, flash, session, url_for
+from math import ceil
+from flask import current_app, request, render_template, redirect, flash, session, url_for, jsonify
 from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 
 from . import user as user_blueprint
 from . forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, EmailRegistrationForm
 from app import db
-from app.models import User, Collection
+from app.models import User, Collection, Item
 from app.constants import *
 from app.core import reset_password as model_reset_password
 from app.permission import user_permission
@@ -16,7 +17,7 @@ from app.utils.redis import redis_set, redis_get
 
 @user_blueprint.errorhandler(401)
 def forbid(error):
-    return redirect(url_for('main.login', next=request.url))
+    return redirect(url_for('user.login', next=request.url))
 
 
 @user_blueprint.route('/login', methods=['GET', 'POST'])
@@ -34,7 +35,7 @@ def login():
 def logout():
     logout_user()
     identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity)
-    return redirect(url_for('main.login'))
+    return redirect(url_for('user.login'))
 
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])
@@ -145,22 +146,39 @@ def profile():
 def collection():
     if request.method == 'GET':
         page = request.args.get('page', 1, type=int)
-        collections = Collection.query.filter_by(user_id=current_user.id).paginate(page, 50, False).items
-        return render_template('user/collection.html', collections=collections)
+        per_page = 18
+        query = Collection.query.filter_by(user_id=current_user.id)
+        amount = query.count()
+        collections = query.paginate(page, per_page, False).items
+        collection_dict = {'collections': [], 'amout': amount, 'page': page, 'pages': ceil(amount / per_page)}
+        for collection in collections:
+            image = collection.item.images.first()
+            image_url = image.url if image else ''
+            collection_dict['collections'].append({
+                'item': collection.item.item,
+                'price': collection.item.price,
+                'deleted': collection.item.is_deleted,
+                'item_id': collection.item.id,
+                'image_url': image_url
+            })
+        return jsonify(collection_dict)
 
     item_id = request.form.get('item', 0, type=int)
+    item = Item.query.get(item_id)
     item_collection = Collection.query.filter_by(user_id=current_user.id, item_id=item_id).first()
     if request.method == 'POST':
-        if not item_collection:
+        if not item or item.is_deleted or item.is_component:
+            return jsonify({'success': False, 'message': '该商品不存在'})
+        elif not item_collection:
             item_collection = Collection(current_user.id, item_id)
             db.session.add(item_collection)
             db.session.commit()
-        return 'ok', 200
+        return jsonify({'success': True})
     else:  # DELETE
         if item_collection:
             db.session.delete(item_collection)
             db.session.commit()
-        return 'ok', 200
+        return jsonify({'success': True})
 
 
 @user_blueprint.route('/address', methods=['GET'])

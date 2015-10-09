@@ -109,11 +109,23 @@
   + POST
   + DELETE
 + **parameters**
-  + page: 页数
-  + item: item id
-+ **comment**
-  1. 无postData, post表示收藏商品, delete表示删除收藏
-  2. page \>= 1 且只在get时用到, 表示收藏夹的第page页(默认每页50件商品)
+  + page
+    + 页数, 从1开始, 仅GET方式需要
+  + item: item id, 仅POST, DELETE方式需要
++ **return**
+  + GET
+    + `{"collections": [{"item": "", "price": "", "item_id": "", "deleted": "", "image_url": ""}], "amount": "", "page": "", "pages": ""}`
+    + **amount**
+      + 收藏总数
+    + **page**
+      + 当前页数
+    + **pages**
+      + 总页数
+  + POST
+    + `{"success": false, "message": "该商品不存在"}`
+    + `{"success": true}`
+  + DELETE
+    + `{"success": true}`
 
 ### user setting
 + **URL**
