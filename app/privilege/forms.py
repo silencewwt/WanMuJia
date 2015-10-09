@@ -13,7 +13,7 @@ from app.constants import VENDOR_REMINDS_SUCCESS, VENDOR_REMINDS_REJECTED
 from app.forms import Form
 from app.models import Vendor, DistributorRevocation, Privilege
 from app.sms import sms_generator, VENDOR_ACCEPT_TEMPLATE
-from app.vendor.forms import ItemForm as BaseItemForm
+from app.vendor.forms import ItemForm as BaseItemForm, SuiteForm as BaseSuiteForm
 
 
 class LoginForm(Form):
@@ -111,3 +111,11 @@ class ItemForm(BaseItemForm):
     def show_item(self, item):
         super(ItemForm, self).show_item(item)
         self.vendor.data = item.vendor.name
+
+
+class SuiteForm(BaseSuiteForm):
+    vendor = StringField()
+
+    def show_suite(self, suite):
+        super(SuiteForm, self).show_suite(suite)
+        self.vendor.data = suite.vendor.name

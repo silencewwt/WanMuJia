@@ -8,10 +8,11 @@ from flask.ext.principal import identity_changed, AnonymousIdentity
 from app.constants import ACCESS_GRANTED
 from app.models import Vendor, DistributorRevocation, Item, Distributor
 from app.permission import privilege_permission
-from app.utils import data_table_params
+from app.utils import data_table_params, DataTableHandler
+from app.vendor.forms import ComponentForm
 from . import privilege as privilege_blueprint
 from .forms import LoginForm, VendorDetailForm, VendorConfirmForm, VendorConfirmRejectForm, DistributorRevocationForm,\
-    ItemForm
+    ItemForm, SuiteForm
 
 
 @privilege_blueprint.route('/45f9d832-you3fA8cannot-44Z3-bd0cai8-d8fac3c12459login', methods=['GET', 'POST'])
@@ -55,14 +56,17 @@ def item_list():
 @privilege_blueprint.route('/items/datatable')
 @privilege_permission.require(404)
 def items_data_table():
-    draw, start, length = data_table_params()
-    items = Item.query.filter_by(is_deleted=False).offset(start).limit(length)
-    count = Item.query.filter_by(is_deleted=False).count()
-    data = {'draw': draw, 'recordsTotal': count, 'recordsFiltered': count, 'data': []}
-    for item in items:
-        data['data'].append({
-            'id': item.id, 'item': item.item, 'category_id': item.category, 'vendor': item.vendor.name,
-            'price': item.price, 'size': item.size()})
+    params = {
+        'id': {'orderable': False, 'data': lambda x: x.id},
+        'item': {'orderable': False, 'data': lambda x: x.item},
+        'vendor': {'orderable': False, 'data': lambda x: x.vendor.name},
+        'second_scene_id': {'orderable': False, 'data': lambda x: x.second_scene},
+        'price': {'orderable': False, 'order_key': Item.price, 'data': lambda x: x.price},
+        'size': {'orderable': False, 'data': lambda x: x.size()}
+    }
+    data_table_handler = DataTableHandler(params)
+    query = Item.query.filter_by(is_deleted=False)
+    data = data_table_handler.query_params(query)
     return jsonify(data)
 
 
@@ -70,12 +74,26 @@ def items_data_table():
 @privilege_permission.require(404)
 def item_detail(item_id):
     item = Item.query.get_or_404(item_id)
-    if item.is_deleted:
+    if item.is_deleted or item.is_component:
         abort(404)
-    form = ItemForm()
-    form.generate_choices()
-    form.show_item(item)
-    return render_template('admin/item_detail.html', privilege=current_user, form=form, item=item)
+    if not item.is_suite:
+        form = ItemForm()
+        form.generate_choices()
+        form.show_item(item)
+        return render_template('admin/item_detail.html', privilege=current_user, form=form, item=item)
+    else:
+        suite = item
+        form = SuiteForm()
+        form.generate_choices()
+        form.show_suite(suite)
+        component_forms = []
+        for component in suite.components:
+            component_form = ComponentForm()
+            component_form.generate_choices()
+            component_form.show_component(component)
+            component_forms.append(component_form)
+        return render_template('vendor/edit_suite.html', privilege=current_user,
+                               form=form, item=suite, com_forms=component_forms)
 
 
 @privilege_blueprint.route('/vendors')
@@ -87,15 +105,17 @@ def vendor_list():
 @privilege_blueprint.route('/vendors/datatable')
 @privilege_permission.require(404)
 def vendors_data_table():
-    draw, start, length = data_table_params()
-    vendors = Vendor.query.filter_by(confirmed=True).offset(start).limit(length)
-    count = Vendor.query.filter_by(confirmed=True).count()
-    data = {'draw': draw, 'recordsTotal': count, 'recordsFiltered': count, 'data': []}
-    for vendor in vendors:
-        data['data'].append({
-            'id': vendor.id, 'name': vendor.name, 'address': vendor.address.precise_address(),
-            'license_limit': vendor.license_limit, 'mobile': vendor.mobile, 'telephone': vendor.telephone
-        })
+    params = {
+        'id': {'orderable': False, 'data': lambda x: x.id},
+        'name': {'orderable': False, 'data': lambda x: x.name},
+        'address': {'orderable': False, 'data': lambda x: x.address.precise_address()},
+        'license_limit': {'orderable': False, 'data': lambda x: x.license_limit},
+        'mobile': {'orderable': False, 'data': lambda x: x.mobile},
+        'telephone': {'orderable': False, 'data': lambda x: x.telephone}
+    }
+    data_table_handler = DataTableHandler(params)
+    query = Vendor.query.filter_by(confirmed=True)
+    data = data_table_handler.query_params(query)
     return jsonify(data)
 
 
