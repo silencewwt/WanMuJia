@@ -8,12 +8,6 @@
   + POST
 + **postData**(手机注册)
   + **csrf_token**
-  + **form**
-    + 注册类型
-    + value = "USER_REGISTER_MOBILE"
-    + type = text
-    + require
-    + hidden
   + **mobile**
     + 手机号码
     + type = text
@@ -25,13 +19,8 @@
     + length = 6
     + require
 + **postData**(邮箱注册)
+  + 邮箱注册的API见 send email, 注意接口地址不是/register
   + **csrf_token**
-  + **form**
-    + 注册类型
-    + value = "USER_REGISTER_EMAIL"
-    + type = text
-    + require
-    + hidden
   + **email**
     + 邮箱
     + type = text
@@ -61,8 +50,13 @@
   + **nickname**
     + 昵称
     + type = text
-    + length = [4, 20]
+    + length = [4, 30]
     + require
++ **return**
+  + 成功
+    + `{"status": true}`
+  + 失败
+    + `{"status": false, "message": ""}`
 
 ### user login
 + **URL**
@@ -81,7 +75,12 @@
     + type = password
     + require
     + 需将用户密码md5两次
-
++ **return**
+  + 成功
+    + `{"status": true}`
+  + 失败
+    + `{"status": false, "message": ""}`
+    
 ### user logout
 + **URL**
   + /logout
@@ -695,13 +694,30 @@
   + POST
 + **parameters**
   + **type**(以下之一)
+    + USER_REGISTER
     + USER_EMAIL_CONFIRM
     + VENDOR_EMAIL_CONFIRM
 + **postData**
-  + **role**(以下之一)
-    + user
-    + vendor
-  + **id**
+  + USER_REGISTER
+    + **csrf_token**
+    + **email**
+      + 用户邮箱
+      + require
+  + USER_EMAIL_CONFIRM
+    + **csrf_token**
+    + **role**
+      + 身份
+      + value = user
+    + **id**
+      + 用户id
+  + VENDOR_EMAIL_CONFIRM
+    + **csrf_token**
+    + **role**
+      + 身份
+      + value = vendor
+    + **id**  
+      + 用户id
+      + require
 + **return**
   + 成功
     + ```{"success": true}```
