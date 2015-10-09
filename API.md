@@ -34,7 +34,7 @@
 
 ### user register next
 + **URL**
-  + /register
+  + /register_next
 + **method**
   + GET
   + POST
