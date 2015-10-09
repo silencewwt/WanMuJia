@@ -120,7 +120,7 @@ class User(BaseUser, db.Model):
         return u'%s%s' % (prefix, random.randint(100000, 999999))
 
 
-class Collection(db.Model):
+class Collection(db.Model, Property):
     __tablename__ = 'collections'
     # id
     id = db.Column(db.Integer, primary_key=True)
@@ -131,9 +131,18 @@ class Collection(db.Model):
     # 创建时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
+    _flush = {
+        'item': lambda x: Item.query.get(x.item_id)
+    }
+    _item = None
+
     def __init__(self, user_id, item_id):
         self.user_id = user_id
         self.item_id = item_id
+
+    @property
+    def item(self):
+        return self.get_or_flush('item')
 
 
 class Order(db.Model):
