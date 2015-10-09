@@ -38,7 +38,7 @@ def logout():
 @privilege_permission.require(404)
 def index():
     statistic = {
-        'items': Item.query.filter_by(is_deleted=False).count(),
+        'items': Item.query.filter_by(is_deleted=False, is_component=False).count(),
         'vendors': Vendor.query.filter_by(confirmed=True).count(),
         'distributors': Distributor.query.filter_by(is_revoked=False).count(),
         'vendors_to_confirm': Vendor.query.filter_by(confirmed=False, rejected=False).count(),

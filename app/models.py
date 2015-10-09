@@ -241,7 +241,7 @@ class Vendor(BaseUser, db.Model, Property):
     @property
     def statistic(self):
         return {
-            'items': Item.query.filter_by(vendor_id=self.id, is_deleted=False).count(),
+            'items': Item.query.filter_by(vendor_id=self.id, is_deleted=False, is_component=False).count(),
             'distributors': Distributor.query.filter_by(vendor_id=self.id, is_revoked=False).count()
         }
 
