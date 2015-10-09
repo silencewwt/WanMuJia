@@ -80,7 +80,7 @@ def item_detail(item_id):
         form = ItemForm()
         form.generate_choices()
         form.show_item(item)
-        return render_template('admin/item_detail.html', privilege=current_user, form=form, item=item)
+        return render_template('admin/item_detail_single.html', privilege=current_user, form=form, item=item)
     else:
         suite = item
         form = SuiteForm()
@@ -92,7 +92,7 @@ def item_detail(item_id):
             component_form.generate_choices()
             component_form.show_component(component)
             component_forms.append(component_form)
-        return render_template('vendor/edit_suite.html', privilege=current_user,
+        return render_template('admin/item_detail_suite.html', privilege=current_user,
                                form=form, item=suite, com_forms=component_forms)
 
 
