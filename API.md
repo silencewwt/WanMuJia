@@ -26,6 +26,11 @@
     + type = text
     + length = [3, 64]
     + require
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
 
 ### user register next
 + **URL**
