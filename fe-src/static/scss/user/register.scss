@@ -30,6 +30,7 @@
     .another-way {
       margin-left: 50px;
     }
+
   }
 
   .another-way {
@@ -40,5 +41,22 @@
     height: 40px;
     line-height: 40px;
     font-size: 18px;
+  }
+
+  .err-tip {
+      display: none;
+      line-height: 40px;
+      padding-right: 0.4em;
+      overflow: visible;
+      color: #fff;
+      position: absolute;
+      right: 0;
+  }
+  .err-tip.agreement {
+      line-height: 1em;
+      vertical-align: top;
+  }
+  .form-group {
+      position: relative;
   }
 }
