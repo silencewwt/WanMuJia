@@ -147,7 +147,7 @@ def available_email(email, model, exist_owner):
             return False
     else:
         role = model.query.filter_by(email=email)
-        if role.count() > 1 or not role.first() or role.first().id != exist_owner.id:
+        if role.count() > 1 or (role.first() and role.first().id != exist_owner.id):
             return False
     return True
 
