@@ -56,6 +56,7 @@ class RegistrationDetailForm(Form):
     email = StringField()
 
     def __init__(self, *args, **kwargs):
+        super(RegistrationDetailForm, self).__init__(*args, **kwargs)
         if USER_REGISTER_MOBILE in session:
             self.mobile.data = session[USER_REGISTER_MOBILE]
         else:
@@ -64,7 +65,6 @@ class RegistrationDetailForm(Form):
             self.email.data = session[USER_REGISTER_EMAIL]
         else:
             self.email.data = ''
-        super(RegistrationDetailForm, self).__init__(*args, **kwargs)
 
     def validate_mobile(self, field):
         if not field.data and not self.email.data:
