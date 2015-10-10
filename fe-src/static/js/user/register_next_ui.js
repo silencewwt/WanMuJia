@@ -1,5 +1,6 @@
 $(function () {
-    var RESULTURL = "";
+    
+    var RESULTURL = "/register_finish";
 
     var submitlUrl = "/register_next";
 
