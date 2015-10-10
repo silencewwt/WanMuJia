@@ -89,7 +89,7 @@ $(function () {
     $mobilephone.blur(function() {
         checkMP();
     });
-    // 发送验证码
+    // 发送验证码。
     $send.click(function () {
         if(!checkMP()) return;
         var $this = $(this);
