@@ -95,6 +95,10 @@ class BaseUser(UserMixin):
 
 class User(BaseUser, db.Model):
     __tablename__ = 'users'
+    # 手机号码
+    mobile = db.Column(db.CHAR(11), nullable=False)
+    # 邮箱
+    email = db.Column(db.String(64), nullable=False)
     # 用户名
     nickname = db.Column(db.Unicode(30), nullable=False)
 
@@ -965,6 +969,10 @@ class DistributorAddress(Address, db.Model):
         self.distributor_id = distributor_id
         self.cn_id = cn_id
         self.address = address
+
+    @property
+    def distributor(self):
+        return Distributor.query.get(self.distributor_id)
 
 
 class Stove(db.Model):
