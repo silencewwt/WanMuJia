@@ -122,9 +122,19 @@ def register_next():
         if form.validate():
             form.register()
             session.pop(USER_REGISTER_STEP_DONE)
+            session[USER_REGISTER_RESULT] = 1
             return jsonify({'success': True})
         return jsonify({'success': False, 'message': form.error2str()})
     return render_template('user/register_next.html', form=RegistrationDetailForm())
+
+
+@user_blueprint.route('/register_result')
+def register_result():
+    if USER_REGISTER_RESULT in session:
+        session.pop(USER_REGISTER_RESULT)
+        return render_template('user/register_result.html', user=current_user)
+    else:
+        return redirect(url_for('main.index'))
 
 
 @user_blueprint.route('/reg_email', methods=['POST'])
