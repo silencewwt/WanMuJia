@@ -1,6 +1,6 @@
 $(function () {
-    
-    var RESULTURL = "/register_finish";
+
+    var RESULTURL = "/register_result";
 
     var submitlUrl = "/register_next";
 
@@ -46,7 +46,7 @@ $(function () {
                 if(data.success) {
                     //
                     $resultErrTip.fadeIn('100').text("注册成功");
-                    window.href.location = RESULTURL;
+                    window.location.href = RESULTURL;
                 } else {
                     $resultErrTip.fadeIn('100').text(data.message);
                 }

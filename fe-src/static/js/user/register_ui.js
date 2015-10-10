@@ -110,7 +110,7 @@ $(function () {
                 }
             },
             error: function(xhr, status, err) {
-		        console.error(gurl, status, err.toString());
+		        console.error(sendVerUrl, status, err.toString());
 		    }
         });
         //
@@ -140,7 +140,6 @@ $(function () {
             success: function(data) {
                 if(data.success) {
                     // 发送验证码成功
-                    console.log('000');
                     window.location.href = NEXTURL;
                 } else {
                     $mpErrTip.fadeIn('100').text(data.message);
