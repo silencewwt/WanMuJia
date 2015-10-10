@@ -104,9 +104,9 @@ def register():
         if form.validate():
             session[USER_REGISTER_MOBILE] = form.mobile.data
             session[USER_REGISTER_STEP_DONE] = 1
-            return jsonify({'status': True})
+            return jsonify({'success': True})
         else:
-            return jsonify({'status': False, 'message': form.error2str()})
+            return jsonify({'success': False, 'message': form.error2str()})
     return render_template('user/register.html', form=RegistrationForm())
 
 
