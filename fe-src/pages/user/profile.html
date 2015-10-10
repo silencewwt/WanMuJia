@@ -27,10 +27,7 @@
             </ul>
 
             <div class="tab-content">
-                <div class="collections">
-                    {{ recommend.items(items, true) }}
-                    {{ paging(5) }}
-                </div>
+                <div id="collections"></div>
 
                 <div class="profile hide">
                     <form action="/register/result" method="post">
