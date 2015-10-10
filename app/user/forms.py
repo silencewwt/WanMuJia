@@ -75,7 +75,7 @@ class RegistrationDetailForm(Form):
         user = User(
             password=self.password.data,
             mobile=self.mobile.data,
-            email=self.mobile.data,
+            email=self.email.data,
             nickname=self.nickname.data
         )
         db.session.add(user)
