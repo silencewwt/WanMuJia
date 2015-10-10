@@ -23,11 +23,13 @@ def forbid(error):
 @user_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        if form.login():
-            return redirect(url_for(request.args.get('next') or 'main.index'))
-        flash(u'用户名或密码错误')
-        form.password.data = ''
+    if request.method == 'POST':
+        if form.validate():
+            if form.login():
+                return jsonify({'success': True})
+        if 'csrf_token' in form.errors:
+            return jsonify({'success': False, 'message': '登录失败, 请刷新页面重试'})
+        return jsonify({'success': False, 'message': '用户名或密码错误'})
     return render_template('user/login.html', form=form)
 
 
