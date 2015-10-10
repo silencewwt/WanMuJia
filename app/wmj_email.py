@@ -24,3 +24,9 @@ def send_email(to, subject, email_type, **kwargs):
         msg = Message(subject, sender=current_app.config['WMJ_MAIL_SENDER'], recipients=to)
         msg.html = '<p>有新的厂家注册了, 快去审核!</p>'
         async_email.delay(msg)
+    elif email_type == USER_REGISTER:
+        msg = Message(subject, sender=current_app.config['WMJ_MAIL_SENDER'], recipients=[to])
+        msg.body = '万木家'
+        msg.html = EMAIL_CONFIRM_TEMPLATE % (kwargs['url'], kwargs['url'])
+        async_email.delay(msg)
+
