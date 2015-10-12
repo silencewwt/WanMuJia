@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-
+import json
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -21,6 +21,7 @@ class Config(object):
     ITEM_PER_PAGE = 40
     CDN_DOMAIN = 'static.wanmujia.com'
     CDN_TIMESTAMP = False
+    CONFIG_PATH = os.path.join(basedir, 'config.json')
 
     ADMIN_EMAILS = []
     WMJ_MAIL_SENDER = (u'万木家', 'notification@wanmujia.com')
@@ -71,12 +72,12 @@ class ProductionConfig(Config):
     def init_app(cls, app):
         Config.init_app(app)
         import json
-        with open('/var/www/WanMuJia/config.json') as f:
-            config_dict = json.load(f)
-            cls.SECRET_KEY = config_dict['SECRET_KEY']
-            cls.MD5_SALT = config_dict['MD5_SALT']
-            cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
-            cls.ADMIN_EMAILS = config_dict['ADMIN_EMAILS']
+        with open(cls.CONFIG_PATH) as f:
+            config_dict = json.load(f)['production']
+        cls.SECRET_KEY = config_dict['SECRET_KEY']
+        cls.MD5_SALT = config_dict['MD5_SALT']
+        cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
+        cls.ADMIN_EMAILS = config_dict['ADMIN_EMAILS']
 
         import logging
         file_handler = logging.FileHandler('/var/log/wmj/wmj_error.log')
@@ -85,12 +86,20 @@ class ProductionConfig(Config):
         app.logger.addHandler(file_handler)
 
 
-class MailConfig(Config):
-    MAIL_SERVER = 'smtp.exmail.qq.com'
-    MAIL_PORT = 465
-    MAIL_USE_SSL = True
-    MAIL_USERNAME = 'notification@wanmujia.com'
-    MAIL_PASSWORD = 'WMJ0241ntfc'
+class CeleryConfig(Config):
+
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+        with open(cls.CONFIG_PATH) as f:
+            config_dict = json.load(f)['celery']
+        print(config_dict)
+        cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
+        cls.MAIL_SERVER = config_dict['MAIL_SERVER']
+        cls.MAIL_PORT = config_dict['MAIL_PORT']
+        cls.MAIL_USE_SSL = config_dict['MAIL_USE_SSL']
+        cls.MAIL_USERNAME = config_dict['MAIL_USERNAME']
+        cls.MAIL_PASSWORD = config_dict['MAIL_PASSWORD']
 
 
 config = {
@@ -98,5 +107,5 @@ config = {
     'testing': TestingConfig,
     'production': ProductionConfig,
     'default': DevelopmentConfig,
-    'mail': MailConfig
+    'celery': CeleryConfig
 }

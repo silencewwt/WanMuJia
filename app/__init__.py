@@ -5,6 +5,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.principal import Principal
 from flask.ext.cdn import CDN
+from flask.ext.mail import Mail
 from flask_debugtoolbar import DebugToolbarExtension
 
 from config import config
@@ -16,7 +17,7 @@ login_manager = LoginManager()
 principal = Principal()
 cdn = CDN()
 toolbar = DebugToolbarExtension()
-
+mail = Mail()
 local_redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
@@ -65,7 +66,10 @@ def create_app(config_name):
     return app
 
 
-def create_mail_app():
-    mail_app = Flask(__name__)
-    mail_app.config.from_object(config['mail'])
-    return mail_app
+def create_celery_app():
+    app = Flask(__name__)
+    config['celery'].init_app(app)
+    app.config.from_object(config['celery'])
+    db.init_app(app)
+    mail.init_app(app)
+    return app
