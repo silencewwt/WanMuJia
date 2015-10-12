@@ -79,7 +79,7 @@ def detail(item_id):
 @item_blueprint.route('/<int:item_id>/distributors')
 def distributors(item_id):
     item = Item.query.get_or_404(item_id)
-    if item.is_deleted or not item.is_component:
+    if item.is_deleted or item.is_component:
         abort(404)
     distributor_id = {'distributors': [distributor.id for distributor in item.in_stock_distributors()]}
     return jsonify(distributor_id)

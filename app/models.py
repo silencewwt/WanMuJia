@@ -562,9 +562,10 @@ class Item(db.Model, Property):
         return [item_carve.carve_id for item_carve in ItemCarve.query.filter_by(item_id=self.id)]
 
     def in_stock_distributors(self):
-        distributors = db.session.query(Distributor).filter(Stock.item_id == self.id, Stock.stock > 0,
+        distributors = db.session.query(Distributor).filter(Stock.item_id == self.id,
                                                             Stock.distributor_id == Distributor.id,
-                                                            Distributor.is_revoked is False)
+                                                            Stock.stock > 0,
+                                                            Distributor.is_revoked == False)
         return distributors
 
     def size(self):
