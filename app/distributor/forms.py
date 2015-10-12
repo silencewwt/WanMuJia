@@ -9,6 +9,7 @@ from app import db
 from app.forms import Form
 from app.models import Distributor, DistributorAddress
 from app.utils.validator import AreaValidator
+from app.tasks import distributor_geo_coding
 
 
 class LoginForm(Form):
@@ -57,6 +58,7 @@ class RegisterForm(Form):
         )
         db.session.add(distributor_address)
         db.session.commit()
+        distributor_geo_coding.delay(distributor.id, distributor_address.id)
         return distributor
 
 
@@ -80,7 +82,7 @@ class SettingsForm(Form):
         for attr, cn_id in zip(self.address_attributes, grades_id):
             setattr(self, attr, cn_id)
 
-    def validate_contact_info(self, field):
+    def validate_contact_mobile(self, field):
         if not self.contact_mobile.data and not self.contact_telephone.data:
             raise ValidationError(u'联系人电话与手机至少填一项')
 
@@ -94,8 +96,11 @@ class SettingsForm(Form):
         current_user.contact = self.contact.data
         current_user.contact_telephone = self.contact_telephone.data
         current_user.contact_mobile = self.contact_mobile.data
-        current_user.address.address = self.address.data
-        current_user.address.cn_id = self.district_cn_id.data
-        db.session.add(current_user)
-        db.session.add(current_user.address)
+        geo_coding = False
+        if current_user.address.address != self.address.data or current_user.address.cn_id != self.district_cn_id.data:
+            geo_coding = True
+            current_user.address.address = self.address.data
+            current_user.address.cn_id = self.district_cn_id.data
         db.session.commit()
+        if geo_coding:
+            distributor_geo_coding.delay(current_user.id, current_user.address.id)
