@@ -402,6 +402,24 @@ class Distributor(BaseUser, db.Model, Property):
                 return username
         return False
 
+    @staticmethod
+    def generate_fake():
+        from faker import Factory
+        from random import randint
+        from app.tasks import distributor_geo_coding
+        zh_fake = Factory.create('zh-CN')
+        beijing_address = ['清华大学', '北京大学', '中国人民大学', '北京交通大学', '后海公园', '圆明园', '天安门', '天坛', '北海公园', '地坛', '三里屯', '工人体育场', '国贸中心', '北京妇产医院', '宁夏大厦', '江苏大厦', '协和医院', '王府井', '全聚德', '宣武医院']
+        for i in range(20):
+            distributor = Distributor(
+                randint(10000000, 99999999) , '14e1b600b1fd579f47433b88e8d85291', 1, beijing_address[i],
+                zh_fake.phone_number(), zh_fake.phone_number(), zh_fake.name())
+            db.session.add(distributor)
+            db.session.commit()
+            distributor_address = DistributorAddress(distributor_id=distributor.id, cn_id=110101, address=beijing_address[i])
+            db.session.add(distributor_address)
+            db.session.commit()
+            distributor_geo_coding.delay(distributor.id, distributor_address.id)
+
 
 class DistributorRevocation(db.Model, Property):
     __tablename__ = 'distributor_revocations'
@@ -926,8 +944,10 @@ class Address(Property):
     cn_id = db.Column(db.Integer, nullable=False)
     address = db.Column(db.Unicode(30), nullable=False)
     created = db.Column(db.Integer, default=time.time, nullable=False)
-    longitude = db.Column(db.Float, default=0, nullable=False)
-    latitude = db.Column(db.Float, default=0, nullable=False)
+    longitude = db.Column(db.Float(precision=32), default=0, nullable=False)
+    latitude = db.Column(db.Float(precision=32), default=0, nullable=False)
+    # 百度地图poi id
+    poi_id = db.Column(db.Integer, default=0, nullable=False)
 
     _flush = {
         'area': lambda x: Area.query.filter_by(cn_id=x.cn_id).limit(1).first()
@@ -1077,7 +1097,6 @@ def generate_fake_data():
     Category.generate_fake()
     FirstMaterial.generate_fake()
     SecondMaterial.generate_fake()
-    # District.generate_fake()
     Stove.generate_fake()
     Carve.generate_fake()
     Sand.generate_fake()
