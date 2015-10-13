@@ -18,7 +18,7 @@ from app.utils import IO
 from app.utils.forms import Form
 from app.utils.image import save_image
 from app.utils.fields import OptionGroupSelectField, SelectField, SelectNotRequiredField
-from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, AreaValidator, Digit
+from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, AreaValidator, Digit, Brand
 
 
 class LoginForm(Form):
@@ -38,6 +38,7 @@ class RegistrationForm(Form):
     telephone = StringField(validators=[Length(7, 15, u'固话不正确')])
     address = StringField(validators=[Length(1, 30, u'地址不正确')])
     district_cn_id = StringField(validators=[AreaValidator(), Length(6, 6)])
+    brand = StringField(validators=[Brand()])
 
     image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image')
 
@@ -79,6 +80,7 @@ class RegistrationDetailForm(RegistrationForm):
             license_limit=self.license_limit.data,
             name=self.name.data,
             telephone=self.telephone.data,
+            brand=self.brand.data
         )
         db.session.add(vendor)
         db.session.commit()
@@ -98,7 +100,7 @@ class ReconfirmForm(RegistrationForm):
     is_reconfirm = True
 
     address_attributes = ('province', 'city', 'district')
-    attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone')
+    attributes = ('agent_name', 'agent_identity', 'name', 'license_limit', 'telephone', 'brand')
     url_attributes = ('agent_identity_front', 'agent_identity_back', 'license_image', 'logo')
 
     def update_address(self):
@@ -538,7 +540,6 @@ class ItemImageDeleteForm(Form):
 
 
 class SettingsForm(Form):
-    name = StringField()
     logo = FileField(validators=[Image(required=False, message=u'logo不正确')])
     mobile = StringField()
     telephone = StringField(validators=[Length(7, 15, u'电话号码不正确')])
@@ -547,6 +548,7 @@ class SettingsForm(Form):
     introduction = StringField(validators=[Length(0, 30, u'厂家简介不正确')])
     district_cn_id = StringField(validators=[AreaValidator(), Length(6, 6)])
     email = StringField()
+    brand = StringField()
 
     logo_url = None
 
@@ -567,13 +569,13 @@ class SettingsForm(Form):
         self.telephone.data = vendor.telephone
         self.introduction.data = vendor.introduction
         self.district_cn_id.data = vendor.address.cn_id
-        self.name.data = vendor.name
         self.contact.data = vendor.contact
         self.address.data = vendor.address.address
         self.mobile.data = vendor.mobile
         self.logo_url = url_for('static', filename=vendor.logo)
         self.show_address()
         self.email.data = vendor.email
+        self.brand.data = vendor.brand
 
     def update_vendor_setting(self, vendor):
         vendor.introduction = self.introduction.data
@@ -622,7 +624,7 @@ class InitializationForm(Form):
     captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
     mobile = StringField(validators=[Mobile()])
     password = PasswordField(validators=[Length(32, 32)])
-    name = StringField(validators=[Length(2, 30, u'品牌厂商名称不正确')])
+    name = StringField(validators=[Length(2, 30, u'厂家名称不正确')])
 
     def initial(self):
         current_user.mobile = self.mobile.data
