@@ -5,7 +5,7 @@
         <div class="wrapper">
             <ul class="nav basic-info">
                 <li class="user-info">
-                    <a href="/login" class="login">请登录</a>
+                    <a href="/login" class="login" id="login">请登录</a>
                     <a href="/register" class="login">注册</a>
                 </li>
             </ul>
@@ -40,12 +40,10 @@
     <div class="brand">
         <div class="wrapper">
             <h1 class="logo">
-                <a href="/">LOGO</a>
+                <a href="/">
+                    <img src="{{url_for('static', filename='img/logo_white.png')}}" alt="logo"/>
+                </a>
             </h1>
-            <a href="#" class="city">
-                北京
-                <span class="caret"></span>
-            </a>
 
             <div class="search-box">
                 <form action="" method="get">
