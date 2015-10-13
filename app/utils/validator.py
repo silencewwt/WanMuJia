@@ -134,6 +134,20 @@ class Digit(object):
             field.data = self.default
 
 
+class Brand(object):
+    def __init__(self, exist_owner=None, message='品牌名已被注册'):
+        self.exist_owner = exist_owner
+        self.message = message
+
+    def __call__(self, form, field):
+        vendor = Vendor.query.filter_by(brand=field.data).first()
+        if self.exist_owner is not None:
+            if vendor and vendor.id != self.exist_owner.id:
+                raise ValidationError(self.message)
+        elif vendor:
+            raise ValidationError(self.message)
+
+
 def available_mobile(mobile):
     if User.query.filter_by(mobile=mobile).first() or \
             Vendor.query.filter_by(mobile=mobile).first():
