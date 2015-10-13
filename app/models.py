@@ -187,8 +187,10 @@ class Vendor(BaseUser, db.Model, Property):
     agent_identity_front = db.Column(db.String(255), default='', nullable=False)
     # 法人身份证反面图片
     agent_identity_back = db.Column(db.String(255), default='', nullable=False)
-    # 品牌厂家名称
+    # 厂家名
     name = db.Column(db.Unicode(30), nullable=False)
+    # 品牌名
+    brand = db.Column(db.Unicode(10), default='', nullable=False)
     # 营业执照期限
     license_limit = db.Column(db.CHAR(10), default='2035/07/19', nullable=False)
     # 营业执照副本扫描件
@@ -226,13 +228,14 @@ class Vendor(BaseUser, db.Model, Property):
     _address = None
     _info_completed = None
 
-    def __init__(self, password, mobile, email, agent_name, agent_identity, name, license_limit, telephone):
+    def __init__(self, password, mobile, email, agent_name, agent_identity, name, license_limit, telephone, brand):
         super(Vendor, self).__init__(password, mobile, email)
         self.agent_name = agent_name
         self.agent_identity = agent_identity
         self.name = name
         self.license_limit = license_limit
         self.telephone = telephone
+        self.brand = brand
 
     @property
     def address(self):
@@ -682,6 +685,17 @@ class Stock(db.Model):
         self.item_id = item_id
         self.distributor_id = distributor_id
         self.stock = stock
+
+
+class Style(db.Model):
+    __tablename__ = 'styles'
+    id = db.Column(db.Integer, primary_key=True)
+    style_id = db.Column(db.Integer, nullable=False)
+    style = db.Column(db.Unicode(10), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        pass
 
 
 class Category(db.Model):
