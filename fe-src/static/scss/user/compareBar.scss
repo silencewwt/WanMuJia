@@ -1,0 +1,15 @@
+.compare-bar {
+    position: relative;
+    display: inline-block;
+}
+.compare-bar-cont {
+    position: absolute;
+    width: 200px;
+    background-color: #1E1513;
+    z-index: 999;
+    left: -80px;
+    padding: 15px 10px;
+}
+.compare-bar .tip-to-add {
+    line-height: 24px;
+}
