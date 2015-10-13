@@ -113,7 +113,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="name">品牌厂家名称</label>
+                    <label class="control-label" for="brand">品牌名称</label>
+                    {{ form.name(class='form-control input-dark', maxLength='20', **{
+                    'autocomplete': 'off',
+                    }) }}
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" for="name">公司名称</label>
                     {{ form.name(class='form-control input-dark', maxLength='20', **{
                         'autocomplete': 'off',
                     }) }}
