@@ -119,8 +119,8 @@ jQuery(document).ready(function($) {
             columns: [
                 {data: "id", bSortable: false, visible: false},
                 {data: "item", bSortable: false},
-                {data: "vendor"},
-                {data: "second_category_id", bSortable: false},
+                {data: "vendor", bSortable: false},
+                {data: "second_scene_id", bSortable: false},
                 {data: "price"},
                 {data: "size", bSortable: false}
             ],

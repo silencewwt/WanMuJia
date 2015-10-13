@@ -34,7 +34,7 @@ function setCookie(cookieName, coockieValue, expiredays) {
         encodeURIComponent(coockieValue);
 
     if (expiredays instanceof Date) {
-        cookieText += "; expires=" + expiredays.toGMTString();
+        cookieText += "; expires=" + expiredays.toUTCString();
     }
 
     return (document.cookie = cookieText);
@@ -132,42 +132,38 @@ var setCompareItem = {
         return false;
     },
     addItem: function(cookieId) {
-        if(this.getCookie('compareItem1')==cookieId||this.getCookie('compareItem2')==cookieId) {
-            return {status: false,msg: "重复添加"};
+        if(getCookie('compareItem1')==cookieId||getCookie('compareItem2')==cookieId) {
+            return {success: false, msg: "该商品已在对比栏，无法重复添加"};
         }
-        if(!this.getCookie('compareItem1')) {
-            document.cookie  = 'compareItem1=' + cookieId;
-            return {status: true,msg: "添加成功"};
-        } else if(!this.getCookie('compareItem2')) {
-            document.cookie  = 'compareItem2=' + cookieId;
-            return {status: true,msg: "添加成功"};
+        if(!getCookie('compareItem1')) {
+            setCookie("compareItem1", cookieId);
+            return {success: true, msg: "添加成功"};
+        } else if(!getCookie('compareItem2')) {
+            setCookie("compareItem2", cookieId);
+            return {success: true, msg: "添加成功"};
         } else {
-            return {status: false,msg: "添加上限2个"};
+            return {success: false, msg: "对比栏最多只能添加两个商品，请从上方对比栏处进入对比页或重新设置对比商品"};
         }
     },
     deleteItem: function(cookieId) {
         var date=new Date();
         date.setTime(date.getTime()-10000);
-        var strCookie=document.cookie;
-        var arrCookie=strCookie.split("; ");
-        for(var i = 0 ;i < arrCookie.length; i++) {
-            var arr = arrCookie[i].split("=");
-            if("compareItem1" == arr[0]&&cookieId == arr[1]) {
-                document.cookie="compareItem1=0; expires="+date.toGMTString();
-            }
-            if("compareItem2" == arr[0]&&cookieId == arr[1]) {
-                document.cookie="compareItem2=0; expires="+date.toGMTString();
-            }
+        if (getCookie('compareItem1') === cookieId) {
+            setCookie("compareItem1", 0, date);
+        }
+        else if (getCookie('compareItem2') === cookieId) {
+            setCookie("compareItem2", 0, date);
         }
     },
     getItem: function() {
         var itemIds = [];
         var i = 0;
-        if(this.getCookie('compareItem1')) {
-            itemIds[i] = this.getCookie('compareItem1');
+        if (getCookie('compareItem1')) {
+            itemIds[i] = getCookie('compareItem1');
             i++;
-        } if(this.getCookie('compareItem2')) {
-            itemIds[i] = this.getCookie('compareItem2');
+        }
+        if (getCookie('compareItem2')) {
+            itemIds[i] = getCookie('compareItem2');
         }
         return itemIds;
     }

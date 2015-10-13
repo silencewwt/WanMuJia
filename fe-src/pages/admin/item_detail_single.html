@@ -1,4 +1,5 @@
 {% extends "admin/nav_midd.html" %}
+{% from 'macro/item_detail_form.html' import item_detail_form %}
 
 {% block isItems -%} opened active {%- endblock %}
 
@@ -37,7 +38,7 @@
 
 </div>
 
-<form role="forl" id="edit-item-form" class="form-wizard form-horizontal disabled">
+<form role="form" id="edit-item-form" class="form-wizard form-horizontal disabled">
     {{ form.csrf_token }}
 
     <ul class="tabs">
@@ -63,9 +64,9 @@
 
         <!-- Tabs Content -->
         <div class="tab-pane with-bg active" id="details">
-
-            {% include "admin/include/item_detail_form.html" %}
-
+            <div class="item-info">
+                {{ item_detail_form(form) }}
+            </div>
         </div>
 
         <div class="tab-pane with-bg" id="images">
@@ -174,4 +175,6 @@
     <script src="{{url_for('static', filename='lib/xenon/js/select2/select2.min.js')}}"></script>
     <script src="{{url_for('static', filename='lib/xenon/js/dropzone/dropzone.min.js')}}"></script>
     <script src="{{url_for('static', filename='lib/xenon/js/jquery-ui/jquery-ui.min.js')}}"></script>
+    <script src="{{url_for('static', filename='lib/linkagesel-min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/category.js')}}"></script>
 {% endblock %}
