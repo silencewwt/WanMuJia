@@ -29,3 +29,21 @@ $input-width: 600px;
     height: $input-height;
   }
 }
+
+ul, ol, li {
+  padding: 0;
+  margin: 0;
+}
+
+.address-picker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -308px;
+  border-color: rgba(255, 255, 255, .05);
+  transition: top .4s ease, left .4s ease;
+}
+
+footer {
+  margin-top: 560px;
+}
