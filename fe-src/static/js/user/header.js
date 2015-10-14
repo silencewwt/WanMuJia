@@ -75,5 +75,4 @@ $(function () {
         }
     });
 
-    var CompareBarCom = React.render(<CompareBar /> , document.getElementById("compareBar"));
 });
