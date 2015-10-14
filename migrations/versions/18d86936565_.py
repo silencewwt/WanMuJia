@@ -124,7 +124,7 @@ def upgrade():
     sa.Column('created', sa.Integer(), nullable=False),
     sa.Column('vendor_id', sa.Integer(), nullable=False),
     sa.Column('item', sa.Unicode(length=20), nullable=False),
-    sa.Column('price', sa.String(length=10), nullable=False),
+    sa.Column('price', sa.Integer(), nullable=False),
     sa.Column('second_material_id', sa.Integer(), nullable=False),
     sa.Column('category_id', sa.Integer(), nullable=False),
     sa.Column('length', sa.String(length=10), nullable=False),

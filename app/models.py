@@ -463,7 +463,7 @@ class Item(db.Model, Property):
     # 商品名称
     item = db.Column(db.Unicode(20), nullable=False)
     # 指导价格
-    price = db.Column(db.String(10), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     # 二级材料 id
     second_material_id = db.Column(db.Integer, nullable=False)
     # 商品分类id
