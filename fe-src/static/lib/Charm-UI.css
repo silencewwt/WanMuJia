@@ -359,6 +359,49 @@
   border-radius: 10px; }
 
 /*==================================================
+  Component: ProgressBar
+==================================================*/
+.pagination {
+  display: inline-block; }
+  .pagination .item {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    margin-left: -1px;
+    border: 1px solid #E2E2E2;
+    background-color: #FFF;
+    line-height: 35px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.1s ease, color 0.1s ease; }
+    .pagination .item:not(.dot):not(.active):not(.disabled):hover {
+      color: #FD605B;
+      border-color: #FD605B; }
+      .pagination .item:not(.dot):not(.active):not(.disabled):hover:not(.page) + .item:not(.page) {
+        border-left-color: #FD605B; }
+    .pagination .item.active {
+      border-color: #FD605B;
+      background-color: #FD605B;
+      color: #FFF;
+      cursor: default; }
+    .pagination .item.disabled {
+      color: #BBB; }
+    .pagination .item.page {
+      width: auto;
+      padding: 0 8px; }
+    .pagination .item.dot {
+      margin: 0;
+      border: none;
+      cursor: default; }
+      .pagination .item.dot + .page {
+        margin-left: 0; }
+    .pagination .item.first, .pagination .item.prev {
+      margin-left: 0;
+      margin-right: 5px; }
+    .pagination .item.next, .pagination .item.last {
+      margin-left: 5px; }
+
+/*==================================================
     Component: ProgressBar
   ==================================================*/
 /* main */
