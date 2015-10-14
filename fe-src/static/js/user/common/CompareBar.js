@@ -9,6 +9,10 @@
 // 	}
 // ]}
 
+/*
+* TODO: 添加对比项时的 result 返回值 呈现在对比栏 ， 对比栏隐藏显示状态与样式与函数
+*/
+
 var CompareBar = React.createClass({
 	getInitialState: function () {
 		return {
@@ -29,6 +33,11 @@ var CompareBar = React.createClass({
 			success: function(data) {
 				// 预处理之前已存在的data
 				var cantData = [];
+				// 如果只有一个data
+				cantData[0] = {
+					id: id,
+					data: data
+				};
 				// 如果已存在一个data
 				if(this.state.itemData.length == 1) {
 					cantData[0] = this.state.itemData[0];
@@ -38,10 +47,6 @@ var CompareBar = React.createClass({
 						data: data
 					};
 				}
-				cantData[0] = {
-					id: id,
-					data: data
-				};
 				this.setState({
 					itemData: cantData,
 				});
@@ -75,6 +80,7 @@ var CompareBar = React.createClass({
 		this.setState({addResult: result});
 		// todo: show result
 		// ...................................
+
 		if(!result.success) {
 			return ;
 		}
@@ -82,7 +88,7 @@ var CompareBar = React.createClass({
 	},
 	componentWillMount: function() {
 		// get cookie
-		var idGroup = this.props.setCompareItem.getItem(id);
+		var idGroup = this.props.setCompareItem.getItem();
 		// add item
 		for(var i = 0; i < idGroup.length; i++) {
 			this.getData(idGroup[i]);
@@ -118,6 +124,7 @@ var CompareBarCont = React.createClass({
 		} else if(itemData.length == 2) {
 			contNodes[0] = <CompareBarItem data={itemData[0]} deleteItem={this.props.deleteItem}/>;
 			contNodes[1] = <CompareBarItem data={itemData[1]} deleteItem={this.props.deleteItem}/>;
+			contNodes[2] = <a className="compare-link" href="/compare" target="_blank">对比</a>;
 		}
         return (
             <div className="compare-bar-cont">
@@ -135,20 +142,18 @@ var CompareBarItem = React.createClass({
         return (
             <div className="compare-bar-item">
                 <img alt={this.props.data.data.item} src={this.props.data.data.image_url}/>
-                <div>
+                <div className="desc">
                     <h2>{this.props.data.data.item}</h2>
-                    <div>{"¥" + this.props.data.data.price}</div>
+                    <div className="price">{"¥" + this.props.data.data.price}</div>
                 </div>
-				<span onClick={this.handleDelClick}>删除</span>
+				<span onClick={this.handleDelClick} className="delete">删除</span>
             </div>
         );
     }
 });
- 
-
-
-
-
-
 
 var CompareBarCom = React.render(<CompareBar setCompareItem={setCompareItem}/> , document.getElementById("compareBar"));
+
+// CompareBarCom.addItem(1);
+// CompareBarCom.addItem(2);
+// CompareBarCom.deleteItem(2);
