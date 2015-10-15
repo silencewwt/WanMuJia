@@ -45,12 +45,10 @@ var Compare = React.createClass({
 		// 清除 cookie,清除组件内数据
 		if(w == "first") {
             this.props.setCompareItem.deleteItem(this.state.firstID);
-            this.props.CompareBarDel(this.state.firstID);
 			this.setState({firstData: null});
 			this.setState({firstID: null});
 		} else if(w == "second") {
             this.props.setCompareItem.deleteItem(this.state.secondID);
-            this.props.CompareBarDel(this.state.secondID);
 			this.setState({secondData: null});
 			this.setState({secondID: null});
 		}
@@ -154,4 +152,5 @@ var CompareTableItem = React.createClass({
     }
 });
 
-var Compare = React.render(<Compare CompareBarDel={CompareBarCom.deleteItem} setCompareItem={setCompareItem}/>,document.getElementById('compare'));
+React.render(<Compare setCompareItem={setCompareItem}/>,document.getElementById('compare'));
+// console.log(setCompareItem.addItem(1));

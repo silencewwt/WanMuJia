@@ -67,12 +67,11 @@ $(function () {
         $this.find('.dropdown-menu').slideUp(slideTime);
         $this.removeClass('open');
         $this.find('.dropdown-toggle').attr('aria-expanded', false);
-
+        
         if ($('#banner')) {
             dialogTimeout = setTimeout(function () {
                 $('.slide-wrapper .dialog:not(:animated)').fadeOut(fadeTime);
             }, slideTime);
         }
     });
-
 });

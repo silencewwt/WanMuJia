@@ -21,9 +21,7 @@
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="/profile">账户设置</a></li>
                     </ul>
                 </li>
-                <li class="user-cart">
-                    <div id="compareBar"></div>
-                </li>
+                <li class="user-cart"><a href="/compare" target="_blank">对比</a></li>
                 <li class="dropdown-qr">
                     <a href="#" class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">
                         <img src="{{url_for('static', filename='img/user/qr.jpg')}}" alt="二维码"/>
@@ -76,5 +74,4 @@
             </ul>
         </div>
     </nav>
-    <script src="{{url_for('static', filename='js/user/common/CompareBar.js')}}"></script>
 </header>
