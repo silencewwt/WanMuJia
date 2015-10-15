@@ -85,6 +85,20 @@ class RegistrationDetailForm(Form):
         return user
 
 
+class ResetPasswordForm(Form):
+    mobile = StringField(validators=[Mobile(available=False)])
+    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
+
+
+class ResetPasswordNextForm(Form):
+    password = PasswordField(validators=[Length(32, 32)])
+    confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('password', '前后密码不一致')])
+
+    def reset_password(self):
+        current_user.password = self.password.data
+        db.session.commit()
+
+
 class SettingForm(Form):
     nickname = StringField(validators=[NickName()])
     mobile = StringField(validators=[Mobile(model=User, exist_owner=current_user)])
@@ -101,9 +115,9 @@ class SettingForm(Form):
 
 
 class PasswordForm(Form):
-    old_password = StringField(validators=[Length(32, 32)])
-    new_password = StringField(validators=[Length(32, 32)])
-    confirm_password = StringField(validators=[Length(32, 32), EqualTo('new_password', '两次密码不一致')])
+    old_password = PasswordField(validators=[Length(32, 32)])
+    new_password = PasswordField(validators=[Length(32, 32)])
+    confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('new_password', '两次密码不一致')])
 
     def verify_old_password(self, field):
         if not current_user.verify_password(field.data):

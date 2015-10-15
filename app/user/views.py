@@ -13,7 +13,7 @@ from app.utils import md5_with_salt
 from app.utils.redis import redis_set, redis_get
 from . import user as user_blueprint
 from .forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, EmailRegistrationForm, RegistrationForm, \
-    SettingForm, PasswordForm
+    SettingForm, PasswordForm, ResetPasswordForm, ResetPasswordNextForm
 
 
 @user_blueprint.errorhandler(401)
@@ -118,7 +118,29 @@ def verify_email():
 
 @user_blueprint.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
-    return model_reset_password(User, 'user')
+    if RESET_PASSWORD_STEP_DONE in session:
+        return redirect(url_for('user.reset_password_next'))
+    form = ResetPasswordForm()
+    if request.method == 'POST':
+        if form.validate():
+            session[RESET_PASSWORD_STEP_DONE] = 1
+            return jsonify({'success': True})
+        return jsonify({'success': False, 'message': form.error2str()})
+    return render_template('user/reset_password.html', form=form)
+
+
+@user_blueprint.route('/reset_password_next', methods=['GET', 'POST'])
+def reset_password_next():
+    if RESET_PASSWORD_STEP_DONE not in session:
+        return redirect(url_for('user.reset_password'))
+    form = ResetPasswordNextForm()
+    if request.method == 'POST':
+        if form.validate():
+            form.reset_password()
+            session.pop(RESET_PASSWORD_STEP_DONE)
+            return jsonify({'success': True})
+        return jsonify({'success': False, 'message': form.error2str()})
+    return render_template('user/reset_password_next.html', form=form)
 
 
 @user_blueprint.route('/profile')
