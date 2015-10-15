@@ -199,7 +199,7 @@ def settings():
     return jsonify({'success': False, 'message': form.error2str()})
 
 
-@user_permission.route('/change_password', methods=['POST'])
+@user_blueprint.route('/change_password', methods=['POST'])
 @user_permission.require(401)
 def change_password():
     form = PasswordForm()
