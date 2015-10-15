@@ -109,6 +109,11 @@
     + `{"success": true}`
   + 失败
     + `{"success": false, "message": ""}`
++ **API**
+  + mobile
+    + mobile sms
+  + email
+    + send email
 
 ### reset password next
 + **URL**
@@ -742,6 +747,19 @@
   + 失败
     + `{"success": false, "message": ""}`
     
+### mobile sms
++ **URL**
+  + /service/mobile_sms
++ **method**
+  + POST
++ **parametes**
+  + **type**
+    + USER_RESET_PASSWORD
++ **postData**
+  + **csrf_token**
+  + **mobile**
+    + required
+    
 ### send email
 + **URL**
   + /service/send_email
@@ -765,6 +783,10 @@
       + value = user
     + **id**
       + 用户id
+  + USER_RESET_PASSWORD
+    + **csrf_token**
+    + **email**
+      + required
   + VENDOR_EMAIL_CONFIRM
     + **csrf_token**
     + **role**
