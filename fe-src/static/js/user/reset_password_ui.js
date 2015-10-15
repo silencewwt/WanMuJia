@@ -53,9 +53,9 @@ $(function () {
 
     var NEXTURL = "/reset_password_next";
 
-    var sendVerUrl = "/service/mobile_register_sms";
-    var mobileNextUrl = "/register";
-    var sendEmailUrl = "/service/send_email?type=USER_REGISTER";
+    var sendVerUrl = "/service/mobile_sms?type=USER_RESET_PASSWORD";
+    var mobileNextUrl = "/reset_password";
+    var sendEmailUrl = "/service/send_email?type=USER_RESET_PASSWORD";
 
     var $mobilephone = $("#mp");
     var $verify = $("#verify");
@@ -104,7 +104,7 @@ $(function () {
         $.ajax({
             type: "POST",
             url: sendVerUrl,
-            data: {mobile: $mobilephone.val()},
+            data: {mobile: $mobilephone.val(),csrf_token: $csrf_token.val()},
             success: function(data) {
                 if(data.success) {
                     // 发送验证码成功

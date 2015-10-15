@@ -11,7 +11,7 @@ $(function () {
 
     var RESULTURL = "/login";
 
-    var submitlUrl = "/register_next";
+    var submitlUrl = "/reset_password_next";
 
     var $password = $("#password");
     var $confirmPwd = $("#confirm_pwd");
