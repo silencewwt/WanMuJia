@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from flask import current_app, url_for
+from flask import current_app, url_for, request
+from flask.ext.login import current_user
 from wtforms import StringField, IntegerField
 
 from app.constants import SMS_CAPTCHA, CONFIRM_EMAIL
@@ -27,13 +28,19 @@ class MobileRegisterSMSForm(Form):
 class EmailForm(Form):
     role = StringField()
     id = IntegerField()
+    email = StringField(validators=[Email(required=False, available=False)])
 
-    email = None
     email_confirmed = False
 
     def __init__(self, email_type, *args, **kwargs):
         self.email_type = email_type
         super(EmailForm, self).__init__(*args, **kwargs)
+        if current_user.is_authenticated:
+            self.id.data = current_user.id
+            if current_user.id_prefix == 'v':
+                self.role.data = 'vendor'
+            elif current_user.id_prefix == 'u':
+                self.role.data = 'user'
 
     def validate_id(self, field):
         role = None
@@ -45,14 +52,15 @@ class EmailForm(Form):
             role = Vendor.query.get(field.data)
         if not role:
             raise ValidationError(u'没有此用户')
-        self.email = role.email
+        if not self.email.data:
+            self.email.data = role.email
         self.email_confirmed = role.email_confirmed
 
     def send_email(self):
         if (self.email_type == VENDOR_EMAIL_CONFIRM or self.email_type == USER_EMAIL_CONFIRM) \
                 and not self.email_confirmed:
             token = md5_with_time_salt(self.role.data, self.id.data)
-            redis_set(CONFIRM_EMAIL, token, '', role=self.role.data, id=self.id.data, action='confirm')
+            redis_set(CONFIRM_EMAIL, token, '', role=self.role.data, id=self.id.data, email=self.email.data, action='confirm')
             url = url_for('service.verify', token=token, _external=True)
             send_email(self.email, EMAIL_CONFIRM_SUBJECT, self.email_type, url=url)
 

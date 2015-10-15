@@ -50,10 +50,12 @@ def verify():
         if info['action'] == 'register':
             session[USER_REGISTER_STEP_DONE] = 1
             session[USER_REGISTER_EMAIL] = info['email']
-            return redirect(url_for('user.register'))
+            return redirect(url_for('user.register_next'))
         elif info['action'] == 'confirm':
             role = models[info['role']].query.get(info['id'])
             if role:
+                if 'email' in info and info['email'] != role.email:
+                    role.email = info['email']
                 role.email_confirmed = True
                 return redirect(url_for('%s.settings' % info['role']))
     return u'此链接已失效'
