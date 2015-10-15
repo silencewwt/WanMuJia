@@ -111,7 +111,7 @@ class Image(object):
 
 
 class Digit(object):
-    def __init__(self, required=True, min=None, max=None, default=None, type=float, message='数字不正确!'):
+    def __init__(self, required=True, min=None, max=None, default=None, type=int, message='数字不正确!'):
         self.required = required
         self.min = min
         self.max = max

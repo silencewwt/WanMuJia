@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-from wtforms.fields import SelectField as BaseSelectField
+from wtforms.fields import SelectField as BaseSelectField, IntegerField as BaseIntegerField
 from wtforms.validators import ValidationError
 from wtforms.widgets import HTMLString, html_params, Select as BaseSelect
 from html import escape
-
-
-__all__ = ('OptionGroupSelectField', 'OptionGroupSelectWidget')
 
 
 class Select(BaseSelect):
@@ -129,3 +126,13 @@ class OptionGroupSelectField(SelectField):
             return False
 
         raise ValidationError(self.gettext(u'Not a valid choice'))
+
+
+class IntegerField(BaseIntegerField):
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                self.data = int(valuelist[0])
+            except ValueError:
+                self.data = None
+                raise ValueError('')

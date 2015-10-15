@@ -5,7 +5,7 @@ from base64 import b64decode
 from flask.ext.cdn import url_for
 from flask.ext.login import current_user, current_app
 from flask.ext.wtf.file import FileField
-from wtforms import StringField, PasswordField, IntegerField, SelectMultipleField, TextAreaField, FloatField, HiddenField
+from wtforms import StringField, PasswordField, SelectMultipleField, TextAreaField, FloatField, HiddenField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
 
 from app import db
@@ -17,7 +17,7 @@ from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
 from app.utils import IO
 from app.utils.forms import Form
 from app.utils.image import save_image
-from app.utils.fields import OptionGroupSelectField, SelectField, SelectNotRequiredField
+from app.utils.fields import OptionGroupSelectField, SelectField, SelectNotRequiredField, IntegerField
 from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, AreaValidator, Digit, Brand
 
 
@@ -144,11 +144,11 @@ class ReconfirmForm(RegistrationForm):
 
 class ItemForm(Form):
     item = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
-    length = StringField(validators=[Digit(required=False, min=0, message='商品长度不正确')])
-    width = StringField(validators=[Digit(required=False, min=0, message='商品宽度不正确')])
-    height = StringField(validators=[Digit(required=False, min=0, message='商品高度不正确')])
-    area = StringField(validators=[Digit(required=False, min=0, message='商品适用面积不正确')])
-    price = StringField(validators=[Digit(required=True, min=0, message='商品价格不正确')])
+    length = StringField(validators=[Digit(required=False, min=0, message='商品长度不正确, 单位: cm')])
+    width = StringField(validators=[Digit(required=False, min=0, message='商品宽度不正确, 单位: cm')])
+    height = StringField(validators=[Digit(required=False, min=0, message='商品高度不正确, 单位: cm')])
+    area = StringField(validators=[Digit(required=False, min=0, type=float, message='商品适用面积不正确')])
+    price = IntegerField(validators=[Digit(required=True, min=1, message='商品价格不正确, 单位: 元')])
     second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, message=u'商品材料不正确')])
     category_id = StringField(validators=[QueryID(Category, message='商品种类不正确')])
     second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, message=u'商品场景不正确')])
@@ -274,10 +274,10 @@ class ItemForm(Form):
 class ComponentForm(Form):
     component_id = HiddenField()
     component = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
-    length = StringField(validators=[Digit(required=False, min=0, message='商品长度不正确')])
-    width = StringField(validators=[Digit(required=False, min=0, message='商品宽度不正确')])
-    height = StringField(validators=[Digit(required=False, min=0, message='商品高度不正确')])
-    area = StringField(validators=[Digit(required=False, min=0, message='商品适用面积不正确')])
+    length = StringField(validators=[Digit(required=False, min=0, message='商品长度不正确, 单位: cm')])
+    width = StringField(validators=[Digit(required=False, min=0, message='商品宽度不正确, 单位: cm')])
+    height = StringField(validators=[Digit(required=False, min=0, message='商品高度不正确, 单位: cm')])
+    area = StringField(validators=[Digit(required=False, min=0, type=float, message='商品适用面积不正确')])
     category_id = StringField(validators=[QueryID(Category, message='商品种类不正确')])
     carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, message=u'雕刻工艺不正确')])
     paint_id = SelectField(coerce=int, validators=[QueryID(Paint, message=u'涂饰工艺不正确')])
@@ -295,6 +295,9 @@ class ComponentForm(Form):
     def validate_area(self, field):
         if not (field.data or (self.length.data and self.width.data and self.height.data)):
             raise ValidationError(u'适用面积与长宽高至少需填一项')
+        if self.length.data or self.width.data or self.height.data:
+            if not (self.length.data and self.width.data and self.height.data):
+                raise ValidationError('商品长宽高都需要填写')
 
     def validate_component_id(self, field):
         if field.data and self.suite_id is not None:
@@ -398,8 +401,8 @@ class ComponentForm(Form):
 
 class SuiteForm(Form):
     item = StringField(validators=[Length(1, 20, u'商品名称格式不正确')])
-    area = StringField(validators=[Digit(required=True, min=0, message='商品适用面积不正确')])
-    price = StringField(validators=[Digit(required=True, min=0, message='商品适用面积不正确')])
+    area = StringField(validators=[Digit(required=True, min=0, type=float, message='商品适用面积不正确')])
+    price = IntegerField(validators=[Digit(required=True, min=1, message='商品价格不正确, 单位: 元')])
     second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, message=u'商品材料不正确')])
     second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, message=u'商品场景不正确')])
     stove_id = SelectField(coerce=int, validators=[QueryID(Stove, message=u'烘干工艺不正确')])
