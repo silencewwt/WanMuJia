@@ -18,7 +18,7 @@ var Item = React.createClass({
     };
     return (
       <div class="item">
-        <a href={"/item?id=" + this.props.item.item_id}>
+        <a href={"/item?id=" + this.props.item.item_id}></a>
         <img src={this.props.image_url} alt={this.props.item.item} />
         <span class="del glyphicon glyphicon-trash"></span>
         <div class="dialog" style={dialogStyle}>
@@ -46,13 +46,13 @@ var Items = React.createClass({
         {
           item_id: 10,
           item: "名字1",
-          image_url: ""
+          image_url: "",
           price: "2300",
           deleted: 0
         }, {
           item_id: 20,
           item: "名字2",
-          image_url: ""
+          image_url: "",
           price: "2000",
           deleted: 0
         }
@@ -68,7 +68,7 @@ var Items = React.createClass({
     return (
       <div class="item-wrapper clearfix">
         this.state.collections.map(function (item, i) {
-          return <Item item={item} />
+            <Item item={item} />
         })
       </div>
     );
@@ -106,6 +106,7 @@ function init() {
     // 发送删除收藏的ajax请求
   });
 
+  // 验证
   $('.verified').on('input', function() {
     var id = $(this).attr('id');
     var checkTip = checkInfo(id);
@@ -116,12 +117,33 @@ function init() {
     }
   });
 
+  // 账户设置提交
   $('#settingSubmit').click(function(e) {
     var checkTip = checkInfo();
     if (checkTip) {
       $('.form-tip').text(checkTip);
       e.preventDefault();
     }
+  });
+
+  // 修改密码
+  $('#pwdSubmit').click(function() {
+    console.log(this);
+  });
+
+  // 发送验证码
+  $('.send-verify').click(function() {
+
+  });
+
+  // 绑定手机
+  $('#phoneSubmit').click(function() {
+
+  });
+
+  // 绑定邮箱
+  $('#emailSubmit').click(function() {
+
   });
 }
 
@@ -142,10 +164,21 @@ function checkInfo(id) {
       var checkTip = checkInfo(k);
       if (checkTip) {
         return checkTip;
-        break;
       }
     }
   }
+}
+
+function checkPWd() {
+
+}
+
+function checkMobile() {
+
+}
+
+function checkEmail() {
+
 }
 
 $(function() {
