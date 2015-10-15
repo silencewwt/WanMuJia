@@ -40,63 +40,6 @@ def logout():
     return redirect(url_for('user.login'))
 
 
-@user_blueprint.route('/register2', methods=['GET', 'POST'])
-def register2():
-    form_type = request.args.get('form', '', type=str)
-    mobile_form = MobileRegistrationForm()
-    email_form = EmailRegistrationForm()
-    detail_form = RegistrationDetailForm()
-    if USER_REGISTER_STEP_DONE in session:
-        if session[USER_REGISTER_STEP_DONE] == 0 and request.method == 'POST':
-            if form_type == USER_REGISTER_MOBILE:
-                if mobile_form.validate():
-                    session[USER_REGISTER_STEP_DONE] = 1
-                    session[USER_REGISTER_MOBILE] = mobile_form.mobile.data
-                    return render_template('user/register_next.html', form=detail_form)
-                flash(mobile_form.error2str())
-            elif form_type == USER_REGISTER_EMAIL:
-                if email_form.validate():
-                    return render_template('user/email.html')
-                flash(email_form.error2str())
-            return render_template('user/register.html', form=mobile_form)
-        elif session[USER_REGISTER_STEP_DONE] == 1:
-            if request.method == 'POST':
-                if detail_form.validate():
-                    if USER_REGISTER_MOBILE in session and session[USER_REGISTER_MOBILE]:
-                        mobile = session[USER_REGISTER_MOBILE]
-                        email = ''
-                    elif USER_REGISTER_EMAIL in session and session[USER_REGISTER_EMAIL]:
-                        mobile = ''
-                        email = session[USER_REGISTER_EMAIL]
-                    else:
-                        session.pop(USER_REGISTER_STEP_DONE)
-                        return render_template('user/register_next.html', form=detail_form)
-                    user = User(
-                        password=detail_form.password.data,
-                        mobile=mobile,
-                        email=email,
-                        nickname=detail_form.nickname.data
-                    )
-                    db.session.add(user)
-                    db.session.commit()
-                    login_user(user)
-                    identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
-                    flash(u'注册成功!')
-                    session.pop(USER_REGISTER_STEP_DONE)
-                    if mobile:
-                        username = mobile
-                        session.pop(USER_REGISTER_MOBILE)
-                    else:
-                        username = email
-                        session.pop(USER_REGISTER_EMAIL)
-                    return render_template('user/register_result.html', username=username,
-                                           nickname=detail_form.nickname.data)
-                flash(detail_form.error2str())
-            return render_template('user/register_next.html', form=detail_form)
-    session[USER_REGISTER_STEP_DONE] = 0
-    return render_template('user/register.html', form=mobile_form)
-
-
 @user_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     if USER_REGISTER_STEP_DONE in session and session[USER_REGISTER_STEP_DONE] == 1:
