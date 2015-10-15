@@ -1,18 +1,3 @@
-// {itemData: [
-// 	{
-// 		id: 1,
-// 		data: {
-// 			item: "九龙堂长椅",
-// 			price: 10000,
-// 			image_url: /img/1.jpg
-// 		}
-// 	}
-// ]}
-
-/*
-* TODO: 添加对比项时的 result 返回值 呈现在对比栏 ， 对比栏隐藏显示状态与样式与函数
-*/
-
 var CompareBar = React.createClass({
 	getInitialState: function () {
 		return {
@@ -20,6 +5,7 @@ var CompareBar = React.createClass({
 
 			],
 			addResult: null,
+			contShow: false,
 		};
 	},
 	// get & set data , need id & num
@@ -78,8 +64,12 @@ var CompareBar = React.createClass({
 		// set cookie and get result
 		var result = this.props.setCompareItem.addItem(id);
 		this.setState({addResult: result});
-		// todo: show result
-		// ...................................
+		// show result
+		this.setState({contShow: true});
+		setTimeout(function() {
+			this.setState({contShow: false});
+			this.setState({addResult: null});
+		}.bind(this) , 2600);
 
 		if(!result.success) {
 			return ;
@@ -105,7 +95,7 @@ var CompareBar = React.createClass({
 					null
 				}
 
-                <CompareBarCont itemData={this.state.itemData} deleteItem={this.deleteItem} />
+                <CompareBarCont addResult={this.state.addResult} contShow={this.state.contShow} itemData={this.state.itemData} deleteItem={this.deleteItem} />
 
             </div>
 		);
@@ -127,7 +117,8 @@ var CompareBarCont = React.createClass({
 			contNodes[2] = <a className="compare-link" href="/compare" target="_blank">对比</a>;
 		}
         return (
-            <div className="compare-bar-cont">
+            <div className="compare-bar-cont" style={this.props.contShow?{display: "block"}:{}}>
+				{this.props.addResult?<div className="add-result-tip">{this.props.addResult.msg}</div>:null}
                 {contNodes}
             </div>
         );
@@ -153,7 +144,6 @@ var CompareBarItem = React.createClass({
 });
 
 var CompareBarCom = React.render(<CompareBar setCompareItem={setCompareItem}/> , document.getElementById("compareBar"));
-
 // CompareBarCom.addItem(1);
 // CompareBarCom.addItem(2);
 // CompareBarCom.deleteItem(2);

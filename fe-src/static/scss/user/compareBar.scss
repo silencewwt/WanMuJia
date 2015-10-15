@@ -15,6 +15,9 @@
     right: -8px;
     border-radius: 12px;
 }
+.compare-bar:hover .compare-bar-cont {
+    display: block;
+}
 .compare-bar-cont {
     position: absolute;
     width: 260px;
@@ -23,8 +26,10 @@
     left: -135px;
     padding: 15px 30px;
     color: #969696;
+    display: none;
 }
-.compare-bar .tip-to-add {
+.compare-bar .tip-to-add,
+.compare-bar .add-result-tip {
     line-height: 24px;
     padding: 0 20px;
 }
