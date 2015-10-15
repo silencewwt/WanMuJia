@@ -9,24 +9,14 @@
         <div class="wrapper-ov">
             <div class="gallery">
                 <div class="booth">
-                    <img src="{{ item.imgs[0] }}" alt="{{ item.name }}"/>
+                    <img src="{{ item.images.first().url }}" alt="{{ item.name }}"/>
                 </div>
                 <ul class="thumbnail">
-                    <li class="active">
-                        <a href="#"><img src="{{ item.imgs[0] }}" alt="{{ item.name }}"/></a>
-                    </li>
-                    <li>
-                        <a href="#"><img src="{{ item.imgs[1] }}" alt="{{ item.name }}"/></a>
-                    </li>
-                    <li>
-                        <a href="#"><img src="{{ item.imgs[2] }}" alt="{{ item.name }}"/></a>
-                    </li>
-                    <li>
-                        <a href="#"><img src="{{ item.imgs[3] }}" alt="{{ item.name }}"/></a>
-                    </li>
-                    <li>
-                        <a href="#"><img src="{{ item.imgs[4] }}" alt="{{ item.name }}"/></a>
-                    </li>
+                    {% for img in item.images %}
+                        <li {% if loop.index == 1 %}'class="active"'{% endif %}>
+                            <a href="#"><img src="{{ img.url }}" alt="{{ item.name }}"/></a>
+                        </li>
+                    {% endfor %}
                 </ul>
 
                 <div class="vendor">
@@ -61,8 +51,8 @@
                     <dt>规格</dt>
                     <dd>
                         <ul>
-                            <li>内径: {{ item.params["inner diameter"] }}</li>
-                            <li>外径: {{ item.params["outer diameter"] }}</li>
+                            <li>内径: </li>
+                            <li>外径: </li>
                         </ul>
                     </dd>
                     </dd>
