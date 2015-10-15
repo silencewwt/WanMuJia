@@ -3,9 +3,10 @@ $(function() {
     //  获取下一步链接
     var NEXTURL = "/";
     var urlSearch = window.location.search;
-    NEXTURL = urlSearch.substr(urlSearch.indexOf("next")+5);
-
-
+    if(urlSearch.length > 0) {
+        NEXTURL = urlSearch.substr(urlSearch.indexOf("next")+5);
+    }
+    console.log(NEXTURL);
 
     var $username = $("#username");
     var $password = $("#password");
