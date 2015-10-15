@@ -36,7 +36,7 @@ class Mobile(Regexp):
 
     def __call__(self, form, field, message=None):
         super(Mobile, self).__call__(form, field, self.message)
-        if self.available and available_mobile(field.data, self.model, self.exist_owner):
+        if self.available and not available_mobile(field.data, self.model, self.exist_owner):
             raise ValidationError(u'手机号已经被绑定')
 
 
