@@ -27,32 +27,37 @@ class Email(BaseEmail):
 
 
 class Mobile(Regexp):
-    def __init__(self, available=True, message=u'手机号码不正确'):
+    def __init__(self, available=True, model=None, exist_owner=None, message=u'手机号码不正确'):
         self.available = available
         self.message = message
+        self.model = model
+        self.exist_owner = exist_owner
         super(Mobile, self).__init__(r'^1[3-8]\d{9}$', message=self.message)
 
     def __call__(self, form, field, message=None):
         super(Mobile, self).__call__(form, field, self.message)
-        if self.available and not available_mobile(field.data):
+        if available_mobile(field.data, self.model, self.exist_owner):
             raise ValidationError(u'手机号已经被绑定')
 
 
 class Captcha(object):
-    def __init__(self, captcha_type, key_field, message=u'验证码错误'):
+    def __init__(self, captcha_type, key_field, required=True, message=u'验证码错误'):
         self.captcha_type = captcha_type
         self.key_field = key_field
+        self.required = required
         self.message = message
 
     def __call__(self, form, field):
-        if self.captcha_type == IMAGE_CAPTCHA_CODE:
-            if 'captcha_token' not in session:
-                raise ValidationError(self.message)
-            if not redis_verify(self.captcha_type, session['captcha_token'], field.data.upper()):
-                raise ValidationError(self.message)
-        else:
-            if not redis_verify(self.captcha_type, form[self.key_field].data, field.data):
-                raise ValidationError(self.message)
+        if self.required or field.data:
+            if self.captcha_type == IMAGE_CAPTCHA_CODE:
+                if 'captcha_token' not in session:
+                    raise ValidationError(self.message)
+                if not redis_verify(self.captcha_type, session['captcha_token'], field.data.upper()):
+                    raise ValidationError(self.message)
+            else:
+                if not redis_verify(self.captcha_type, form[self.key_field].data, field.data):
+                    raise ValidationError(self.message)
+            form.captcha_verified = True
 
 
 class AreaValidator(object):
@@ -148,10 +153,14 @@ class Brand(object):
             raise ValidationError(self.message)
 
 
-def available_mobile(mobile):
-    if User.query.filter_by(mobile=mobile).first() or \
-            Vendor.query.filter_by(mobile=mobile).first():
-        return False
+def available_mobile(mobile, model, exist_owner):
+    if model is None:
+        if User.query.filter_by(mobile=mobile).first() or Vendor.query.filter_by(mobile=mobile).first():
+            return False
+    else:
+        role = model.query.filter_by(mobile=mobile)
+        if role.count() > 1 or (role.first() and role.first().id != exist_owner.id):
+            return False
     return True
 
 
