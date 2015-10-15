@@ -6,13 +6,13 @@ function btnClearLoading($btn , text) {
     $btn.attr("disabled" , false);
     $btn.val(text);
 }
+
 $(function () {
 
-    var RESULTURL = "/register_result";
+    var RESULTURL = "/login";
 
     var submitlUrl = "/register_next";
 
-    var $nickname = $("#nickname");
     var $password = $("#password");
     var $confirmPwd = $("#confirm_pwd");
 
@@ -20,16 +20,10 @@ $(function () {
 
     var $submitReg = $("#submit_reg");
 
-    var $nicknameErrTip = $(".err-tip.nickname");
     var $passwordErrTip = $(".err-tip.password");
     var $confirmPwdErrTip = $(".err-tip.confirm_pwd");
     var $resultErrTip = $(".err-tip.result");
 
-
-
-    $nickname.blur(function() {
-        checkNickname();
-    });
     $password.blur(function() {
         if(checkPassword() && $confirmPwd.length > 0) {
             checkConfirmPsw();
@@ -42,7 +36,6 @@ $(function () {
     $submitReg.click(function(e) {
         e.preventDefault();
         $resultErrTip.fadeOut('50').text(" ");
-        if(!checkNickname()) return;
         if(!checkPassword()) return;
         if(!checkConfirmPsw()) return;
 
@@ -52,13 +45,15 @@ $(function () {
         $.ajax({
             type: "POST",
             url: submitlUrl,
-            data: {csrf_token: $csrf_token.val(),nickname: $nickname.val() , password: encrypt($password.val()) , confirm_password: encrypt($confirmPwd.val())},
+            data: {csrf_token: $csrf_token.val(), password: encrypt($password.val()) , confirm_password: encrypt($confirmPwd.val())},
             success: function(data) {
-                btnClearLoading(_this , _text);
                 if(data.success) {
-                    $resultErrTip.fadeIn('100').text("注册成功");
-                    window.location.href = RESULTURL;
+                    $resultErrTip.fadeIn('100').text("重置成功,将返回登录页面");
+                    setTimeout(function() {
+                        window.location.href = RESULTURL;
+                    } , 1000);
                 } else {
+                    btnClearLoading(_this , _text);
                     $resultErrTip.fadeIn('100').text(data.message);
                 }
             },
@@ -68,26 +63,6 @@ $(function () {
         });
 
     });
-
-    function checkNickname() {
-        var nicknameStr = $nickname.val();
-        if(nicknameStr.length === 0) {
-            // 昵称不能为空
-            $nicknameErrTip.fadeIn('100').text("昵称不能为空");
-            return false;
-        } else if(nicknameStr.length < 4) {
-            // 昵称不能小于4
-            $nicknameErrTip.fadeIn('100').text("昵称不能小于4个字符");
-            return false;
-        } else if(nicknameStr.length > 30) {
-            // 昵称不能大于30
-            $nicknameErrTip.fadeIn('100').text("昵称不能大于30个字符");
-            return false;
-        }
-        //
-        $nicknameErrTip.fadeOut('50').text(" ");
-        return true;
-    }
 
     function checkPassword() {
         var passwordStr = $password.val();

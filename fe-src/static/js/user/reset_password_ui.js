@@ -51,7 +51,7 @@ function isEmail(email) {
 
 $(function () {
 
-    var NEXTURL = "/register_next";
+    var NEXTURL = "/reset_password_next";
 
     var sendVerUrl = "/service/mobile_register_sms";
     var mobileNextUrl = "/register";
@@ -60,18 +60,14 @@ $(function () {
     var $mobilephone = $("#mp");
     var $verify = $("#verify");
     var $email = $("#email");
-    var $agreement = $("#agreement");
     var $csrf_token = $("#csrf_token");
 
     var $mpErrTip = $(".err-tip.mp");
     var $verErrTip = $(".err-tip.ver");
     var $emailErrTip = $(".err-tip.email");
-    var $agreementErrTip = $(".err-tip.agreement");
 
-    var $agreementCli = $(".agreement");
-
-    var $next = $("#next");
     var $send = $('.send');
+    var $next = $("#next");
     var $sendEmail = $("#sendEmail");
 
 
@@ -97,6 +93,7 @@ $(function () {
     $mobilephone.blur(function() {
         checkMP();
     });
+
     // 发送验证码。
     $send.click(function () {
         if(!checkMP()) return;
@@ -121,18 +118,10 @@ $(function () {
 		        console.error(sendVerUrl, status, err.toString());
 		    }
         });
-        //
     });
     // 验证码输入框失焦的时候
     $verify.blur(function() {
         checkVerify();
-    });
-    // 选择服务条例
-    $agreement.change(function() {
-        var ischecked = $agreement.is(':checked');
-        if(ischecked) {
-            $agreementErrTip.text(" ").fadeOut('50');
-        }
     });
     // 下一步
     $next.click(function(e) {
@@ -140,7 +129,6 @@ $(function () {
         // 验证手机号
         if(!checkMP()) return false;
         if(!checkVerify()) return false;
-        if(!checkAgreement()) return false;
 
         var _this = $(this);
         var _text = _this.val();
@@ -167,6 +155,7 @@ $(function () {
     $email.blur(function() {
         checkEmail();
     });
+    // email
     $sendEmail.click(function(e) {
         e.preventDefault();
         if(!checkEmail()) return;
@@ -182,7 +171,7 @@ $(function () {
                 btnClearLoading(_this , _text);
                 if(data.success) {
                     // 发送验证码成功
-                    $emailErrTip.fadeIn('100').text("邮件发送成功");
+                    $emailErrTip.fadeIn('100').text("重置密码邮件已发到您的邮箱");
                 } else {
                     $emailErrTip.fadeIn('100').text(data.message);
                 }
@@ -230,15 +219,5 @@ $(function () {
         }
         $emailErrTip.text(" ").fadeOut('50');
         return true;
-    }
-    // 验证服务协议是否被选中
-    function checkAgreement() {
-        var ischecked = $agreement.is(':checked');
-        if(ischecked) {
-            $agreementErrTip.text(" ").fadeOut('50');
-            return true;
-        }
-        $agreementErrTip.fadeIn('100').text('请选择同意万木家服务协议');
-        return false;
     }
 });
