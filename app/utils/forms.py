@@ -6,5 +6,7 @@ class Form(BaseForm):
     def error2str(self):
         errors = []
         for key in self.errors:
-            errors.extend(self.errors[key])
+            for error in self.errors[key]:
+                if error:
+                    errors.append(error)
         return u', '.join(errors)
