@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, session
-from flask.ext.login import login_user
+from flask.ext.login import login_user, current_user
 from flask.ext.principal import identity_changed, Identity
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, Length, EqualTo
@@ -83,3 +83,32 @@ class RegistrationDetailForm(Form):
         login_user(user)
         identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
         return user
+
+
+class SettingForm(Form):
+    nickname = StringField(validators=[NickName()])
+    mobile = StringField(validators=[Mobile(model=User, exist_owner=current_user)])
+    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile', required=False)])
+
+    def update_mobile(self):
+        if current_user.mobile != self.mobile.data and getattr(self, 'captcha_verified', False) is True:
+            current_user.mobile = self.mobile.data
+
+    def update(self):
+        current_user.nickname = self.nickname.data
+        self.update_mobile()
+        db.session.commit()
+
+
+class PasswordForm(Form):
+    old_password = StringField(validators=[Length(32, 32)])
+    new_password = StringField(validators=[Length(32, 32)])
+    confirm_password = StringField(validators=[Length(32, 32), EqualTo('new_password', '两次密码不一致')])
+
+    def verify_old_password(self, field):
+        if not current_user.verify_password(field.data):
+            raise ValidationError('原密码不正确!')
+
+    def update_password(self):
+        current_user.password = self.new_password.data
+        db.session.commit()

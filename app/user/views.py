@@ -4,8 +4,6 @@ from flask import current_app, request, render_template, redirect, flash, sessio
 from flask.ext.login import login_user, logout_user, current_user
 from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 
-from . import user as user_blueprint
-from .forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, EmailRegistrationForm, RegistrationForm
 from app import db
 from app.models import User, Collection, Item
 from app.constants import *
@@ -13,6 +11,9 @@ from app.core import reset_password as model_reset_password
 from app.permission import user_permission
 from app.utils import md5_with_salt
 from app.utils.redis import redis_set, redis_get
+from . import user as user_blueprint
+from .forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, EmailRegistrationForm, RegistrationForm, \
+    SettingForm, PasswordForm
 
 
 @user_blueprint.errorhandler(401)
@@ -164,6 +165,26 @@ def collection():
             db.session.delete(item_collection)
             db.session.commit()
         return jsonify({'success': True})
+
+
+@user_blueprint.route('/settings', methods=['POST'])
+@user_permission.require(401)
+def settings():
+    form = SettingForm()
+    if form.validate():
+        form.update()
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': form.error2str()})
+
+
+@user_permission.route('/change_password', methods=['POST'])
+@user_permission.require(401)
+def change_password():
+    form = PasswordForm()
+    if form.validate():
+        form.update_password()
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': form.error2str()})
 
 
 @user_blueprint.route('/address', methods=['GET'])
