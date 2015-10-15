@@ -95,8 +95,13 @@ class ResetPasswordNextForm(Form):
     confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('password', '前后密码不一致')])
 
     def reset_password(self):
-        current_user.password = self.password.data
-        db.session.commit()
+        user = User.query.filter_by(mobile=session[USER_RESET_PASSWORD_USERNAME]).first() or\
+            User.query.filter_by(email=session[USER_RESET_PASSWORD_USERNAME]).first()
+        if user is not None:
+            user.password = self.password.data
+            db.session.commit()
+            return True
+        return False
 
 
 class SettingForm(Form):

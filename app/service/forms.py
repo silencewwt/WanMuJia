@@ -6,20 +6,23 @@ from wtforms import StringField, IntegerField
 from app.constants import SMS_CAPTCHA, CONFIRM_EMAIL
 from app.models import User, Vendor
 from app.forms import Form
-from app.wmj_email import send_email, USER_EMAIL_CONFIRM, VENDOR_EMAIL_CONFIRM, EMAIL_CONFIRM_SUBJECT, USER_REGISTER
+from app.sms import RESET_PASSWORD_TEMPLATE
+from app.wmj_email import send_email, USER_EMAIL_CONFIRM, VENDOR_EMAIL_CONFIRM, EMAIL_CONFIRM_SUBJECT, USER_REGISTER, \
+    USER_RESET_PASSWORD
 from app.utils import md5_with_time_salt
 from app.utils.myj_captcha import send_sms_captcha
 from app.utils.redis import redis_set
 from app.utils.validator import Mobile, Captcha, ValidationError, Email
 
 
-class MobileRegisterSMSForm(Form):
+class MobileSMSForm(Form):
     mobile = StringField(validators=[Mobile()])
-    # captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
 
     def __init__(self, template, **kwargs):
-        self.template = template
         super(Form, self).__init__(**kwargs)
+        self.template = template
+        if self.template == RESET_PASSWORD_TEMPLATE:
+            self.mobile.validators = [Mobile(available=False)]
 
     def send_sms(self):
         send_sms_captcha(self.template, self.mobile.data)
@@ -76,5 +79,20 @@ class EmailRegisterForm(Form):
         if self.email_type == USER_REGISTER:
             token = md5_with_time_salt(self.email.data)
             redis_set(CONFIRM_EMAIL, token, '', email=self.email.data, action='register')
+            url = url_for('service.verify', token=token, _external=True)
+            send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, self.email_type, url=url)
+
+
+class EmailResetPasswordForm(Form):
+    email = StringField(validators=[Email(available=False)])
+
+    def __init__(self, email_type, *args, **kwargs):
+        self.email_type = email_type
+        super(EmailResetPasswordForm, self).__init__(*args, **kwargs)
+
+    def send_email(self):
+        if self.email_type == USER_RESET_PASSWORD:
+            token = md5_with_time_salt(self.email.data)
+            redis_set(CONFIRM_EMAIL, token, '', email=self.email.data, action='reset_password')
             url = url_for('service.verify', token=token, _external=True)
             send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, self.email_type, url=url)
