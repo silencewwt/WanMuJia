@@ -97,7 +97,36 @@
   + /reset_password
 + **method**
   + GET
-  + POST`
+  + POST
++ **postData**
+  + **csrf_token**
+  + **mobile**
+    + required
+  + **captcha**
+    + required
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
+
+### reset password next
++ **URL**
+  + /reset_password_next
++ **method**
+  + GET
+  + POST
++ **postData**
+  + **csrf_token**
+  + **password**
+    + required
+  + **confirm_password**
+    + required
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
 
 ### user home page
 + **URL**
@@ -133,10 +162,31 @@
 
 ### user setting
 + **URL**
-  + /setting
+  + /settings
 + **method**
-  + GET
   + POST
++ **postData**
+  + **csrf_token**
+  + **nickname**
+    + required
+  + **mobile**
+    + required
+  + **captcha**
+    + 若需要修改手机号, 则必须填写验证码
+    
+### user change password
++ **URL**
+  + /change_password
++ **method**
+  + POST
++ **postData**
+  + **csrf_token**
+  + **old_password**
+    + required
+  + **new_password**
+    + required
+  + **confirm_password**
+    + required
 
 
 ## Item
