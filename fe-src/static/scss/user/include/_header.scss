@@ -38,29 +38,32 @@
 }
 
 
-$brand-margin-top: 41px;
+$brand-margin-top: 40px;
 .brand {
   height: 130px;
 
-  & .logo {
+  .logo {
     margin: $brand-margin-top 0 0 0;
-    font-size: 30px;
     float: left;
 
-    & a:hover {
+    img {
+      height: 35px;
+    }
+
+    a:hover {
       color: #fff;
     }
   }
 
-  & .city {
+  .city {
     margin: $brand-margin-top+11 0 0 20px;
     float: left;
   }
 
-  & .search-box {
-    margin: $brand-margin-top+3 0 0 250px;
+  .search-box {
+    margin: $brand-margin-top+4 0 0 250px;
 
-    & input {
+    input {
       box-sizing: border-box;
       padding: 5px 36px 5px 5px;
       width: 515px;
@@ -75,7 +78,7 @@ $brand-margin-top: 41px;
 .main-nav {
   text-align: center;
 
-  & .nav {
+  .nav {
     display: inline-block;
 
     & > li {
@@ -83,18 +86,18 @@ $brand-margin-top: 41px;
       font-size: $font-size-large;
       line-height: $nav-line-height-base;
 
-      & span {
+      span {
         display: inline-block;
         width: 100px;
       }
 
-      & span:hover {
+      span:hover {
         color: $link-hover-color;
       }
     }
   }
 
-  & .dropdown-nav {
+  .dropdown-nav {
     @extend .dropdown-base;
   }
 }

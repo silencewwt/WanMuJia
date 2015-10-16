@@ -791,10 +791,17 @@ jQuery(document).ready(function($) {
             }
         });
 
+        $('#brand').rules('add', {
+            required: true,
+            messages: {
+                required: '请填写品牌名称',
+            }
+        });
+
         $('#name').rules('add', {
             required: true,
             messages: {
-                required: '请填写厂家名称',
+                required: '请填写公司名称',
             }
         });
 
