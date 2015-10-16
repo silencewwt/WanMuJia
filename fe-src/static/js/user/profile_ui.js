@@ -1,38 +1,32 @@
 // profile_ui
 
 var Item = React.createClass({
-  getInitialProps: function() {
-    return {
-      // item: {
-      //   item_id: 20,
-      //   item: "名字",
-      //   image_url: ""
-      //   price: "2000",
-      //   deleted: 0
-      // }
-    };
-  },
   render: function() {
     var dialogStyle = {
-      display: this.props.item.deleted ? "none" : "block"
+      display: !this.props.item.deleted ? "none" : "block"
     };
     return (
-      <div class="item">
-        <a href={"/item?id=" + this.props.item.item_id}></a>
-        <img src={this.props.image_url} alt={this.props.item.item} />
-        <span class="del glyphicon glyphicon-trash"></span>
-        <div class="dialog" style={dialogStyle}>
-          <div class="info">
-            <p>确定删除吗？</p>
-            <div class="btn-group">
-                <button class="confirm">确认</button>
-                <button class="cancle">取消</button>
+      <div className="item" data-id={this.props.item.item_id}>
+        <a href={"/item/" + this.props.item.item_id}>
+          <img src={this.props.item.image_url} alt={this.props.item.item} />
+          <span className="del glyphicon glyphicon-trash"></span>
+          <div className="dialog" style={dialogStyle}>
+            <div className="info">
+              <p>确定删除吗？</p>
+              <div className="btn-group">
+                  <button className="confirm">确认</button>
+                  <button className="cancle">取消</button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="item-info">
-          <h5><a href="/item?id={{ item.id }}">{this.props.item.item}</a></h5>
-          <div class="price">&yen; {this.props.item.price}</div>
+        </a>
+        <div className="item-info">
+          <h5>
+            <a href={'/item/' + this.props.item.item_id}>
+              {this.props.item.item}
+            </a>
+          </h5>
+          <div className="price">&yen; {this.props.item.price}</div>
         </div>
       </div>
     );
@@ -42,21 +36,7 @@ var Item = React.createClass({
 var Items = React.createClass({
   getInitialState: function() {
     return {
-      collections: [
-        {
-          item_id: 10,
-          item: "名字1",
-          image_url: "",
-          price: "2300",
-          deleted: 0
-        }, {
-          item_id: 20,
-          item: "名字2",
-          image_url: "",
-          price: "2000",
-          deleted: 0
-        }
-      ]
+      collections: []
     };
   },
   setCollection: function(collections) {
@@ -66,21 +46,14 @@ var Items = React.createClass({
   },
   render: function() {
     return (
-      <div class="item-wrapper clearfix">
-        this.state.collections.map(function (item, i) {
-            <Item item={item} />
-        })
+      <div className="item-wrapper clearfix">
+        {this.state.collections.map(function(item, i) {
+            return <Item item={item} key={i}/>;
+        })}
       </div>
     );
   }
 });
-
-function getItems(page, callback) {
-  page = page || 1;
-  $.get("/collection", {
-    page: page
-  }, callback);
-}
 
 function init() {
   // 锚点
@@ -93,24 +66,33 @@ function init() {
     e.preventDefault(); // 为什么 stopPropagation 无效？
   });
 
-  $('.collections .del').click(function(e) {
+  $('.collections').on('click', '.del', function(e) {
     var $dialog = $(this).parent().find('.dialog');
     $dialog.addClass('dialog-confirm').css('display', 'block');
     e.preventDefault();
   });
 
-  $('.dialog .cancle').click(function() {
+  $('.collections').on('click', '.cancle', function(e) {
     var $dialog = $(this).parents('.dialog');
     $dialog.removeClass('dialog-confirm').hide();
   });
 
-  $('.dialog .confirm').click(function(e) {
-    $(this).parents('.item').remove();
-    e.preventDefault();
+  $('.collections').on('click', '.confirm', function(e) {
+    var $item = $(this).parents('.item');
+    var itemId = $item.data('id');
 
     // 发送删除收藏的ajax请求
+    $.ajax({
+        url: '/collection',
+        type: 'DELETE',
+        data: {
+          item: itemId
+        },
+        success: function(data) {
+          $item.remove();
+        }
+      });
   });
-
 }
 
 function settingInit() {
@@ -277,12 +259,29 @@ $(function() {
   var currentPage = 1;
   var items = React.render(
     <Items />,
-    document.getElementById('collections')
+    $('.collections').children('.main')[0]
   );
+  var changePage = function(page) {
+    getItems(page, function(data) {
+      items.setCollection(data.collections);
+    });
+  };
   getItems(currentPage, function(data) {
     items.setCollection(data.collections);
+    console.log(data);
+    React.render(
+      <Pagination pages={data.pages} first="首页" last="末页" theme="dark" selected={changePage}/>,
+      ($('.collections').children('.pagi'))[0]
+    );
   });
 });
+
+function getItems(page, callback) {
+  page = page || 1;
+  $.get("/collection", {
+    page: page
+  }, callback);
+}
 
 function setFormTip(submitEle, text, success) {
   var $formTip = $(submitEle).parents('form').children('.form-tip');
