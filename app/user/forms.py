@@ -105,7 +105,7 @@ class ResetPasswordNextForm(Form):
 
 
 class SettingForm(Form):
-    nickname = StringField(validators=[NickName()])
+    nickname = StringField(validators=[NickName(required=False)])
     mobile = StringField(validators=[Mobile(model=User, exist_owner=current_user)])
     captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile', required=False)])
 
@@ -114,7 +114,8 @@ class SettingForm(Form):
             current_user.mobile = self.mobile.data
 
     def update(self):
-        current_user.nickname = self.nickname.data
+        if self.nickname.data:
+            current_user.nickname = self.nickname.data
         self.update_mobile()
         db.session.commit()
 

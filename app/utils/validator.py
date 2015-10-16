@@ -90,9 +90,13 @@ class QueryID(object):
 
 
 class NickName(object):
+    def __init__(self, required=True):
+        self.required = required
+
     def __call__(self, form, field):
-        if not re.match(r'^\w{4,30}$', field.data, re.UNICODE) or re.match(r'^\d*$', field.data, re.UNICODE):
-            raise ValidationError(u'用户名不正确')
+        if self.required or field.data:
+            if not re.match(r'^\w{4,30}$', field.data, re.UNICODE) or re.match(r'^\d*$', field.data, re.UNICODE):
+                raise ValidationError(u'用户名不正确')
 
 
 class Image(object):

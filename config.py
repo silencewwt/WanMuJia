@@ -93,7 +93,6 @@ class CeleryConfig(Config):
         Config.init_app(app)
         with open(cls.CONFIG_PATH) as f:
             config_dict = json.load(f)['celery']
-        print(config_dict)
         cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
         cls.MAIL_SERVER = config_dict['MAIL_SERVER']
         cls.MAIL_PORT = config_dict['MAIL_PORT']

@@ -288,7 +288,7 @@ class Vendor(BaseUser, db.Model, Property):
             vendor = Vendor(
                 "14e1b600b1fd579f47433b88e8d85291", zh_fake.phone_number(), fake.email(), zh_fake.name(),
                 zh_fake.random_number(18), '%s%s' % (zh_fake.company(), zh_fake.random_number(3)),
-                zh_fake.random_number(2), zh_fake.phone_number())
+                zh_fake.random_number(2), zh_fake.phone_number(), zh_fake.name())
             db.session.add(vendor)
             vendors.append(vendor)
         db.session.commit()

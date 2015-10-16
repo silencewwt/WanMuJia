@@ -74,7 +74,10 @@ def verify():
                 if 'email' in info and info['email'] != role.email:
                     role.email = info['email']
                 role.email_confirmed = True
-                return redirect(url_for('%s.settings' % info['role']))
+                if info['role'] == 'user':
+                    return redirect(url_for('user.profile', _anchor='security'))
+                elif info['role'] == 'vendor':
+                    return redirect(url_for('vendor.settings'))
         elif info['action'] == 'reset_password':
             session[USER_RESET_PASSWORD_STEP_DONE] = 1
             session[USER_RESET_PASSWORD_USERNAME] = info['email']
