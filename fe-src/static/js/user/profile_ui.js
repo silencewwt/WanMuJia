@@ -128,11 +128,13 @@ function settingInit() {
         '/settings',
         {
           nickname: nickname,
-          csrf_token: ''
+          csrf_token: $('#csrf_token').val()
         },
         function(data) {
           if(data.success) {
             setFormTip(this, '修改成功', true);
+            alert('修改成功');
+            window.location.reload();
           } else {
             setFormTip(this, data.message);
           }
@@ -158,14 +160,14 @@ function settingInit() {
           old_password: encrypt(encrypt(oriPwd)),
           new_password: encrypt(encrypt(newPwd)),
           confirm_password: encrypt(encrypt(conPwd)),
-          csrf_token: ''
+          csrf_token: $('#csrf_token').val()
         },
         function(data) {
           if(data.success) {
             setFormTip(this, '修改成功', true);
+            alert('修改成功');
           } else {
             setFormTip(this, data.message);
-            console.log(data.message);
           }
         }.bind(this));
     }
@@ -185,7 +187,7 @@ function settingInit() {
         '/service/mobile_register_sms',
         {
           mobile: mobile,
-          csrf_token: ''
+          csrf_token: $('#csrf_token').val()
         },
         function(data) {
           if(data.success) {
@@ -200,7 +202,7 @@ function settingInit() {
   // 绑定手机
   $('#phoneSubmit').click(function(e) {
     e.preventDefault();
-    var mobile = $('#mobile').val();
+    var mobile = $('#newmobile').val();
     var verify = $('#newverify').val();
     var formInfo = $(this).parent().prev().text();
     if(!mobile) {
@@ -213,10 +215,11 @@ function settingInit() {
         {
           mobile: mobile,
           captcha: verify,
-          csrf_token: ''
+          csrf_token: $('#csrf_token').val()
         },
         function(data) {
           if(data.success) {
+            setFormTip(this, '绑定成功', true);
             alert('绑定成功');
             window.location.reload();
           } else {
@@ -239,7 +242,7 @@ function settingInit() {
         {
           role: 'user',
           email: email,
-          csrf_token: ''
+          csrf_token: $('#csrf_token').val()
         },
         function(data) {
           if(data.success) {
