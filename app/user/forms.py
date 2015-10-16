@@ -106,11 +106,12 @@ class ResetPasswordNextForm(Form):
 
 class SettingForm(Form):
     nickname = StringField(validators=[NickName(required=False)])
-    mobile = StringField(validators=[Mobile(model=User, exist_owner=current_user)])
+    mobile = StringField(validators=[Mobile(required=False, model=User, exist_owner=current_user)])
     captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile', required=False)])
 
     def update_mobile(self):
-        if current_user.mobile != self.mobile.data and getattr(self, 'captcha_verified', False) is True:
+        if self.mobile.data and \
+                current_user.mobile != self.mobile.data and getattr(self, 'captcha_verified', False) is True:
             current_user.mobile = self.mobile.data
 
     def update(self):

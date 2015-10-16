@@ -151,7 +151,7 @@ def reset_password_next():
 @user_blueprint.route('/profile')
 @user_permission.require(401)
 def profile():
-    return render_template('user/profile.html', user=current_user)
+    return render_template('user/profile.html', user=current_user, form=SettingForm())
 
 
 @user_blueprint.route('/collection', methods=['GET', 'POST', 'DELETE'])

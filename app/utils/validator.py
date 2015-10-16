@@ -27,7 +27,8 @@ class Email(BaseEmail):
 
 
 class Mobile(Regexp):
-    def __init__(self, available=True, model=None, exist_owner=None, message=u'手机号码不正确'):
+    def __init__(self, required=True, available=True, model=None, exist_owner=None, message=u'手机号码不正确'):
+        self.required = required
         self.available = available
         self.message = message
         self.model = model
@@ -35,9 +36,10 @@ class Mobile(Regexp):
         super(Mobile, self).__init__(r'^1[3-8]\d{9}$', message=self.message)
 
     def __call__(self, form, field, message=None):
-        super(Mobile, self).__call__(form, field, self.message)
-        if self.available and not available_mobile(field.data, self.model, self.exist_owner):
-            raise ValidationError(u'手机号已经被绑定')
+        if self.required or field.data:
+            super(Mobile, self).__call__(form, field, self.message)
+            if self.available and not available_mobile(field.data, self.model, self.exist_owner):
+                raise ValidationError(u'手机号已经被绑定')
 
 
 class Captcha(object):
