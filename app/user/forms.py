@@ -126,7 +126,7 @@ class PasswordForm(Form):
     new_password = PasswordField(validators=[Length(32, 32)])
     confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('new_password', '两次密码不一致')])
 
-    def verify_old_password(self, field):
+    def validate_old_password(self, field):
         if not current_user.verify_password(field.data):
             raise ValidationError('原密码不正确!')
 
