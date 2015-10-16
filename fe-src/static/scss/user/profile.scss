@@ -92,7 +92,7 @@ $left-width: 270px;
       }
     }
 
-    .profile, .changepwd {
+    .profile, .security {
       position: relative;
       .wrapper-label {
         width: $left-width;
@@ -147,7 +147,7 @@ $left-width: 270px;
     }
 
     &.action {
-     margin: 0 auto 40px;
+     margin: 50px auto 40px;
      & > input {
        width: 300px;
        height: 34px;
