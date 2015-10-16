@@ -487,6 +487,8 @@ class Item(db.Model, Property):
     decoration_id = db.Column(db.Integer, nullable=False)
     # 二级场景 id
     second_scene_id = db.Column(db.Integer, nullable=False)
+    # 风格 id
+    style_id = db.Column(db.Integer, default=5, nullable=False)
     # 产品寓意
     story = db.Column(db.Unicode(5000), default=u'', nullable=False)
     # 已删除
@@ -514,6 +516,7 @@ class Item(db.Model, Property):
         'stove': lambda x: Stove.query.get(x.stove_id).stove,
         'paint': lambda x: Paint.query.get(x.paint_id).paint,
         'decoration': lambda x: Decoration.query.get(x.decoration_id).decoration,
+        'style': lambda x: Style.query.get(x.style_id).style,
         'carve': lambda x: [carve.carve for carve in Carve.query.filter(Carve.id.in_(x.get_carve_id()))],
         'tenon': lambda x: [tenon.tenon for tenon in Tenon.query.filter(Tenon.id.in_(x.get_tenon_id()))]
     }
@@ -528,11 +531,12 @@ class Item(db.Model, Property):
     _stove = None
     _paint = None
     _decoration = None
+    _style = None
     _carve = None
     _tenon = None
 
     def __init__(self, vendor_id, item, price, second_material_id, category_id, second_scene_id, length, width,
-                 height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, story,
+                 height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, style_id, story,
                  suite_id, amount, is_suite, is_component):
         self.vendor_id = vendor_id
         self.item = item
@@ -549,6 +553,7 @@ class Item(db.Model, Property):
         self.inside_sand_id = inside_sand_id
         self.paint_id = paint_id
         self.decoration_id = decoration_id
+        self.style_id = style_id
         self.story = story
         self.suite_id = suite_id
         self.amount = amount
@@ -612,6 +617,10 @@ class Item(db.Model, Property):
     @property
     def decoration(self):
         return self.get_or_flush('decoration')
+
+    @property
+    def style(self):
+        return self.get_or_flush('style')
 
     @property
     def carve(self):
@@ -690,12 +699,14 @@ class Stock(db.Model):
 class Style(db.Model):
     __tablename__ = 'styles'
     id = db.Column(db.Integer, primary_key=True)
-    style_id = db.Column(db.Integer, nullable=False)
     style = db.Column(db.Unicode(10), nullable=False)
 
     @staticmethod
     def generate_fake():
-        pass
+        styles = ('古典', '明式', '清式', '新中式', '其他')
+        for style in styles:
+            db.session.add(Style(style=style))
+        db.session.commit()
 
 
 class Category(db.Model):
@@ -1120,5 +1131,7 @@ def generate_fake_data():
     Tenon.generate_fake()
     FirstScene.generate_fake()
     SecondScene.generate_fake()
+    Style.generate_fake()
+    Area.generate_fake()
     # Vendor.generate_fake()
     # Privilege.generate_fake()
