@@ -61,7 +61,7 @@ def items_data_table():
         'item': {'orderable': False, 'data': lambda x: x.item},
         'vendor': {'orderable': False, 'data': lambda x: x.vendor.name},
         'second_scene_id': {'orderable': False, 'data': lambda x: x.second_scene},
-        'price': {'orderable': False, 'order_key': Item.price, 'data': lambda x: x.price},
+        'price': {'orderable': True, 'order_key': Item.price, 'data': lambda x: x.price},
         'size': {'orderable': False, 'data': lambda x: x.size()}
     }
     data_table_handler = DataTableHandler(params)
