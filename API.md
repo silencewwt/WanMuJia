@@ -173,7 +173,7 @@
 + **postData**
   + **csrf_token**
   + **nickname**
-    + required
+    + not required
   + **mobile**
     + required
   + **captcha**
@@ -769,6 +769,7 @@
   + **type**(以下之一)
     + USER_REGISTER
     + USER_EMAIL_CONFIRM
+    + USER_RESET_PASSWORD
     + VENDOR_EMAIL_CONFIRM
 + **postData**
   + USER_REGISTER
