@@ -107,6 +107,30 @@
     <div class="form-group-separator"></div>
 
     <div class="form-group required">
+        <label class="col-sm-2 control-label" for="style">商品风格</label>
+
+        <div class="col-sm-9">
+            <script type="text/javascript">
+                jQuery(document).ready(function($)
+                {
+                    $("#style").select2({
+                        placeholder: '选择商品风格...',
+                        allowClear: true
+                    }).on('select2-open', function()
+                    {
+                        // Adding Custom Scrollbar
+                        $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                    });
+
+                });
+            </script>
+            {{ form.style(class='form-control', **{'data-validate': 'required', 'data-message-required': '请选择商品风格'}) }}
+        </div>
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    <div class="form-group required">
         <label class="col-sm-2 control-label" for="second_scene_id">场景分类</label>
 
         <div class="col-sm-9">

@@ -147,10 +147,10 @@ var setCompareItem = {
     deleteItem: function(cookieId) {
         var date=new Date();
         date.setTime(date.getTime()-10000);
-        if (getCookie('compareItem1') === cookieId) {
+        if (getCookie('compareItem1') == cookieId) {
             setCookie("compareItem1", 0, date);
         }
-        else if (getCookie('compareItem2') === cookieId) {
+        else if (getCookie('compareItem2') == cookieId) {
             setCookie("compareItem2", 0, date);
         }
     },
