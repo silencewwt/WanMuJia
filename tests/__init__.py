@@ -17,11 +17,6 @@ class WMJTestCase(unittest.TestCase):
 
         db.drop_all()
         db.create_all()
-        connection = db.engine.connect()
-        sql_files = ['cities.sql', 'districts.sql', 'provinces.sql']
-        for sql_file in sql_files:
-            with open(sql_file, encoding='utf8') as f:
-                connection.execute(f.read())
         generate_fake_data()
 
     def tearDown(self):
