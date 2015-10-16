@@ -65,16 +65,20 @@ var CompareBar = React.createClass({
 		var result = this.props.setCompareItem.addItem(id);
 		this.setState({addResult: result});
 		// show result
-		this.setState({contShow: true});
+		var delayTime = 2000;
+		setTimeout(function() {
+			this.setState({contShow: true});
+		}.bind(this) , 500);
 		setTimeout(function() {
 			this.setState({contShow: false});
 			this.setState({addResult: null});
-		}.bind(this) , 2600);
+		}.bind(this) , delayTime+2500);
 
 		if(!result.success) {
-			return ;
+			return false;
 		}
-		this.getData(id);
+		setTimeout(this.getData(id) , delayTime);
+		return true;
 	},
 	componentWillMount: function() {
 		// get cookie
@@ -87,11 +91,11 @@ var CompareBar = React.createClass({
 	render: function () {
 		return (
             <div className="compare-bar">
-                <a href="/compare" target="_blank">对比</a>
+                <a href="/compare" target="_blank" id="comparebar_link">对比</a>
 
 				{
 					this.state.itemData.length?
-					<span className="compare-num">{this.state.itemData.length}</span>:
+					<span className="compare-num" id="comparebar_num">{this.state.itemData.length}</span>:
 					null
 				}
 
@@ -118,7 +122,7 @@ var CompareBarCont = React.createClass({
 		}
         return (
             <div className="compare-bar-cont" style={this.props.contShow?{display: "block"}:{}}>
-				{this.props.addResult?<div className="add-result-tip">{this.props.addResult.msg}</div>:null}
+				{this.props.addResult?<div className={"add-result-tip " + this.props.addResult.success}>{this.props.addResult.msg}</div>:null}
                 {contNodes}
             </div>
         );

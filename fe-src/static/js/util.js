@@ -136,10 +136,10 @@ var setCompareItem = {
         }
         if(!getCookie('compareItem1')) {
             setCookie("compareItem1", cookieId);
-            return {success: true, msg: "添加成功"};
+            return {success: true, msg: "添加成功！"};
         } else if(!getCookie('compareItem2')) {
             setCookie("compareItem2", cookieId);
-            return {success: true, msg: "添加成功"};
+            return {success: true, msg: "添加成功！"};
         } else {
             return {success: false, msg: "对比栏最多只能添加两个商品，请从上方对比栏处进入对比页或重新设置对比商品"};
         }

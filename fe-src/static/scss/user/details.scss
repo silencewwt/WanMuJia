@@ -224,11 +224,23 @@ $tab-border-color: #241c1a;
 
   .action {
     margin-bottom: $dl-interval;
+    position: relative;
     .vs {
       margin-right: 20px;
     }
+    .vs.had-vs {
+        background: #232323;
+    }
+    .vs.had-vs:hover {
+        background: #232323;
+    }
+    .like.had-like {
+        background: #232323;
+    }
+    .like.had-like:hover {
+        background: #232323;
+    }
   }
-
 }
 
 
@@ -300,4 +312,17 @@ $tab-border-color: #241c1a;
     padding: 25px 52px;
     background-color: $bgc-content;
   }
+}
+
+.addvs-tip-ball {
+    display: block;
+    position: absolute;
+    background: #df3c3c;
+    width: 11px;
+    height: 11px;
+    border-radius: 11px;
+    left: 60px;
+    top: 12px;
+    display: none;
+    z-index: 99999;
 }

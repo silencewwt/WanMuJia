@@ -43,8 +43,9 @@
                 </dl>
 
                 <div class="action">
-                    <button class="vs"><a href="#">加入对比</a></button>
-                    <button class="like"><a href="#">收藏</a></button>
+                    <button class="vs" data-id="{{ item.id }}">加入对比</button>
+                    <button class="like" data-id="{{ item.id }}" data-method="POST">收藏</button>
+                    <!-- <button class="like" data-id="{{ item.id }}" data-method="DELETE">取消收藏</button> -->
                 </div>
 
                 <dl class="param">
@@ -107,6 +108,7 @@
             </div>
         </div>
     </div>
+    <div class="addvs-tip-ball"></div>
 
     <script src="{{url_for('static', filename='js/user/tab.js')}}"></script>
     <script src="{{url_for('static', filename='js/user/details_ui.js')}}"></script>
