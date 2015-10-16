@@ -108,6 +108,9 @@ class User(BaseUser, db.Model):
         super(User, self).__init__(password, mobile, email)
         self.nickname = nickname if nickname else self.generate_nickname()
 
+    def item_collected(self, item_id):
+        return Collection.query.filter_by(user_id=self.id, item_id=item_id).first() is not None
+
     @staticmethod
     def generate_fake():
         from faker import Factory
