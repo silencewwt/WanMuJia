@@ -65,7 +65,7 @@ class EmailForm(Form):
             token = md5_with_time_salt(self.role.data, self.id.data)
             redis_set(CONFIRM_EMAIL, token, '', role=self.role.data, id=self.id.data, email=self.email.data, action='confirm')
             url = url_for('service.verify', token=token, _external=True)
-            send_email(self.email, EMAIL_CONFIRM_SUBJECT, self.email_type, url=url)
+            send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, self.email_type, url=url)
 
 
 class EmailRegisterForm(Form):
