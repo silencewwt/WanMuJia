@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import request, Response, jsonify, redirect, url_for, session
+from flask.ext.login import current_user
 
 from app.constants import CONFIRM_EMAIL, USER_REGISTER_STEP_DONE, USER_REGISTER_EMAIL, USER_RESET_PASSWORD_STEP_DONE, \
     USER_RESET_PASSWORD_USERNAME
@@ -21,6 +22,8 @@ def mobile_register_sms():
     else:
         template = USER_REGISTER_TEMPLATE
     form = MobileSMSForm(template, csrf_enabled=False)
+    if current_user.is_authenticated and current_user.mobile:
+        return jsonify({'success': False, 'message': '用户已绑定手机号, 暂时无法修改'})
     if form.validate():
         form.send_sms()
         return jsonify({'success': True})

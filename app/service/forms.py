@@ -55,6 +55,8 @@ class EmailForm(Form):
             role = Vendor.query.get(field.data)
         if not role:
             raise ValidationError(u'没有此用户')
+        if role.email and role.email_confirmed:
+            raise ValidationError('邮箱已绑定, 暂时无法修改')
         if not self.email.data:
             self.email.data = role.email
         self.email_confirmed = role.email_confirmed

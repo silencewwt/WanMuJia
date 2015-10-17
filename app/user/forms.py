@@ -78,6 +78,8 @@ class RegistrationDetailForm(Form):
             email=self.email.data,
             nickname=self.nickname.data
         )
+        if self.email.data:
+            user.email_confirmed = True
         db.session.add(user)
         db.session.commit()
         login_user(user)
@@ -110,14 +112,14 @@ class SettingForm(Form):
     captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile', required=False)])
 
     def update_mobile(self):
-        if self.mobile.data and \
-                current_user.mobile != self.mobile.data and getattr(self, 'captcha_verified', False) is True:
+        if current_user.mobile != self.mobile.data and getattr(self, 'captcha_verified', False) is True:
             current_user.mobile = self.mobile.data
 
     def update(self):
         if self.nickname.data:
             current_user.nickname = self.nickname.data
-        self.update_mobile()
+        if self.mobile.data and not current_user.mobile:
+            self.update_mobile()
         db.session.commit()
 
 
