@@ -400,6 +400,25 @@
       margin-right: 5px; }
     .pagination .item.next, .pagination .item.last {
       margin-left: 5px; }
+  .pagination.dark .item {
+    color: #FAFAFA;
+    border-color: #322827;
+    background-color: #231716; }
+    .pagination.dark .item:not(.dot):not(.active):not(.disabled):hover {
+      color: #969696;
+      border-color: rgba(255, 255, 255, 0.2);
+      background-color: #322827; }
+      .pagination.dark .item:not(.dot):not(.active):not(.disabled):hover:active {
+        background-color: #241d1c; }
+      .pagination.dark .item:not(.dot):not(.active):not(.disabled):hover:not(.page) + .item:not(.page) {
+        border-left-color: rgba(255, 255, 255, 0.2); }
+    .pagination.dark .item.active {
+      background-color: #322827;
+      color: #969696; }
+    .pagination.dark .item.disabled {
+      color: rgba(255, 255, 255, 0.2); }
+    .pagination.dark .item > a {
+      color: inherit; }
 
 /*==================================================
     Component: ProgressBar
