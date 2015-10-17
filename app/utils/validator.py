@@ -151,6 +151,8 @@ class Brand(object):
         self.message = message
 
     def __call__(self, form, field):
+        if not field.data:
+            raise ValidationError('请填写品牌名')
         vendor = Vendor.query.filter_by(brand=field.data).first()
         if self.exist_owner is not None:
             if vendor and vendor.id != self.exist_owner.id:
