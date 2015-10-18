@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, url_for, request, abort
+from flask import render_template, abort
 from flask.ext.login import current_user
+
 from .import main
 
 
@@ -28,6 +29,6 @@ def join():
     return render_template('site/join.html', user=current_user)
 
 
-@main.route('/contact')
-def contact():
-    return render_template('site/contact.html', user=current_user)
+@main.route('/center')
+def center():
+    return render_template('site/center.html', user=current_user)
