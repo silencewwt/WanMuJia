@@ -205,10 +205,108 @@
 + **URL**
   +	/item/filter
 + **method**
-  + POST
+  + GET
 + **parameters**
   +	page
+    + 从1开始
   +	brand
+  + material
+  + style
+  + scene
+  + category
+  + search
+    + 搜索关键字
+  + price
+    + 价格 index(6个选项的索引值)
+    + value = [0, 5]
+  + order
+    + 按照价格排序
+    + value = "desc" or "asc"
++ **return**
+  + filters
+    + available
+      + 可选条件
+      + brand
+        + id
+        + brand
+      + category
+        + id
+        + category
+      + material
+        + id
+        + material
+      + scene
+        + id
+        + scene
+      + style
+        + id
+        + style
+    + selected
+      + 已选条件
+      + 结构与available相同, 单个筛选条件只会在available或selected其中之一出现
+  + items
+    + amount
+      + 符合条件的所有商品数量
+    + page
+      + 当前页数(从1开始)
+    + pages
+      + 过滤结果总共页数
+    + search
+      + 搜索关键词
+    + order
+      + 排序方式(按照价格)
+      + value = "asc" or "desc" or ""(表示未排序)
+    + price
+      + 价格 index(6个选项的索引值)
+      + value = [0, 5]
+    + query
+      + id
+      + item
+      + price
+      + image_url
+
+```json
+{
+	"filters": {
+		"available": {
+			"brand": {
+				"id1": {"brand": ""},
+				"id2": {"brand": ""}
+			},
+			"category": {
+				"id1": {"category": ""},
+				"id2": {"category": ""},
+			},
+			"material": {
+				"id1": {"material": ""},
+				"id2": {"material": ""},
+			},
+			"scene": {
+				"id1": {"scene": ""},
+				"id2": {"scene": ""}
+			},
+			"style": {
+				"id1": {"style": ""},
+				"id2": {"sty;e": ""}
+			}
+		},
+		"selected": {
+		}
+	},
+	"items": {
+		"amount": "",
+		"page": "",
+		"pages": "",
+		"search": "",
+		"order": "",
+		"price": "",
+		"query": [
+			{"id": "", "item": "", "price": "", "image_url": ""},
+			{"id": "", "item": "", "price": "", "image_url": ""},
+		]
+	}
+}
+```
 
 ### item compare
 + **URL**
