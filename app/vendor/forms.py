@@ -38,7 +38,7 @@ class RegistrationForm(Form):
     telephone = StringField(validators=[Length(7, 15, u'固话不正确')])
     address = StringField(validators=[Length(1, 30, u'地址不正确')])
     district_cn_id = StringField(validators=[AreaValidator(), Length(6, 6)])
-    brand = StringField(validators=[Brand()])
+    brand = StringField(validators=[Brand(exist_owner=current_user)])
 
     image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image')
 
