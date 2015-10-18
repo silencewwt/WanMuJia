@@ -259,6 +259,121 @@
       + 商品寓意
     + **image_url**
       + 图片url
++ item object(**单件**)
+  + id
+  + vendor
+    + id
+      + vendor id
+  	+ brand
+  	  + 品牌名
+  + item
+    + 商品名
+  + price
+    + 指导价格
+  + length
+    + 长
+  + width
+    + 宽
+  + height
+    + 高
+  + size()
+    + 长 * 宽 * 高
+  + area
+    + 适用面积
+  + second_material
+    + 材料
+  + category
+    + 分类
+  + second_scene
+    + 场景
+  + stove
+    + 烘干工艺
+  + outside_sand
+    + 外表面打磨砂纸
+  + inside_sand
+    + 内表面打磨砂纸
+  + paint
+    + 涂饰工艺
+  + decoration
+    + 装饰工艺
+  + style
+    + 风格
+  + story
+    + 商品寓意
+  + images
+    + 商品图片(使用for遍历)
+  + is_suite
+    + value = False
+  + is_component
+    + value = False
+ + item object(**套件**)
+   + id
+   + vendor
+     + id
+     + brand
+   + item
+     + 商品名称
+   + area
+     + 适用面积
+   + price
+     + 指导价格
+   + second_material
+     + 材料
+   + second_scene
+     + 场景
+   + style
+     + 风格
+   + outside_sand
+     + 外表面砂纸
+   + inside_sand
+     + 内表面砂纸
+   + stove
+     + 烘干工艺
+   + story
+     + 寓意
+   + amount
+     + 该套件中所有组件数量和
+   + images
+     + 套件图片(使用for遍历)
+   + components
+     + 套件中的组件(使用for遍历)
+   + is_suite
+     + value = True
+   + is_component
+     + value = False
+ + item object(**组件**)
+   + id
+   + vendor
+     + id
+     + brand
+   + item
+     + 组件名称
+   + length
+     + 长
+   + width
+     + 宽
+   + height
+     + 高
+   + size()
+     + 长 * 宽 * 高
+   + area
+     + 适用面积
+   + category
+     + 组件分类
+   + carve
+     + 雕刻工艺
+   + tenon
+     + 榫卯结构
+   + paint
+     + 涂饰工艺
+   + decoration
+     + 装饰工艺
+   + amount
+     + 该组件的数量
+   + is_suite
+     + value = False
+   + is_component
+     + value = True
 
 ### item distributors
 + **URL**
