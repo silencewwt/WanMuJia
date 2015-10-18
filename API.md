@@ -241,6 +241,9 @@
       + style
         + id
         + style
+      + price
+        + id
+        + price
     + selected
       + 已选条件
       + 结构与available相同, 单个筛选条件只会在available或selected其中之一出现
@@ -255,10 +258,7 @@
       + 搜索关键词
     + order
       + 排序方式(按照价格)
-      + value = "asc" or "desc" or ""(表示未排序)
-    + price
-      + 价格 index(6个选项的索引值)
-      + value = [0, 5]
+      + value = "asc" or "desc" or null(未排序)
     + query
       + id
       + item
@@ -288,6 +288,10 @@
 			"style": {
 				"id1": {"style": ""},
 				"id2": {"sty;e": ""}
+			},
+			"price": {
+				"price": {"price": ""},
+				"price": {"price": ""}
 			}
 		},
 		"selected": {
@@ -299,7 +303,6 @@
 		"pages": "",
 		"search": "",
 		"order": "",
-		"price": "",
 		"query": [
 			{"id": "", "item": "", "price": "", "image_url": ""},
 			{"id": "", "item": "", "price": "", "image_url": ""},
