@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 from math import ceil
-from flask import current_app, request, render_template, redirect, flash, session, url_for, jsonify
-from flask.ext.login import login_user, logout_user, current_user
-from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
+from flask import current_app, request, render_template, redirect, session, url_for, jsonify
+from flask.ext.login import logout_user, current_user
+from flask.ext.principal import identity_changed, AnonymousIdentity
 
 from app import db
-from app.models import User, Collection, Item
+from app.models import Collection, Item
 from app.constants import *
-from app.core import reset_password as model_reset_password
 from app.permission import user_permission
-from app.utils import md5_with_salt
-from app.utils.redis import redis_set, redis_get
 from . import user as user_blueprint
-from .forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, EmailRegistrationForm, RegistrationForm, \
+from .forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, RegistrationForm, \
     SettingForm, PasswordForm, ResetPasswordForm, ResetPasswordNextForm
 
 
@@ -37,8 +34,8 @@ def login():
 @user_blueprint.route('/logout')
 def logout():
     logout_user()
-    identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity)
-    return redirect(url_for('user.login'))
+    identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
+    return redirect(url_for('main.index'))
 
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])
@@ -79,41 +76,6 @@ def register_result():
         return render_template('user/register_result.html', user=current_user)
     else:
         return redirect(url_for('main.index'))
-
-
-@user_blueprint.route('/reg_email', methods=['POST'])
-def send_register_email():
-    # TODO: CSRF Token
-    form = EmailRegistrationForm()
-    if form.validate_on_submit():
-        token = md5_with_salt(form.email.data)
-        redis_set(CONFIRM_EMAIL, token, None, email=form.email.data, password=form.password.data, action='register')
-        return 'ok', 200
-    return 'false', 401
-
-
-@user_blueprint.route('/verify', methods=['GET', 'POST'])
-def verify_email():
-    token = request.args.get('token', '', type=str)
-    action = request.args.get('action', '', type=str)
-    user_info = redis_get(CONFIRM_EMAIL, token)
-    if user_info and user_info['action'] == action:
-        if action == REGISTER_ACTION:
-            user = User(
-                password=user_info['password'],
-                mobile='',
-                email=user_info['email'],
-            )
-            db.session.add(user)
-            db.session.commit()
-            login_user(user)
-            identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
-            return u'已激活'
-        elif action == RESET_PASSWORD_ACTION:
-            session['reset'] = True
-            session['email'] = user_info['email']
-            return redirect(url_for('reset_password'))
-    return u'激活链接已失效'
 
 
 @user_blueprint.route('/reset_password', methods=['GET', 'POST'])
