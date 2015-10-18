@@ -1,5 +1,16 @@
-{% import 'user/macro/items_recommend.html' as recommend %} {% from 'user/macro/paging.html' import paging %} {% extends "user/layout.html" %} {% block styles %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/user/profile.css')}}" /> {% endblock %} {% block content %}
+{% import 'user/macro/items_recommend.html' as recommend %}
+{% from 'user/macro/paging.html' import paging %}
+{% extends "user/layout.html" %}
+
+{% block title %}
+  个人中心
+{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/user/profile.css')}}" />
+{% endblock %}
+
+{% block content %}
 <div class="wrapper-personal">
   <div class="overview">
     <ul class="info">
