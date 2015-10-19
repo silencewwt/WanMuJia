@@ -2,11 +2,17 @@
 
 {% extends "user/layout.html" %}
 
+{% block title %}
+  首页
+{% endblock %}
+
 {% block styles %}
     <link rel="stylesheet" href="{{url_for('static', filename='css/user/index.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/user/loading.css')}}">
 {% endblock %}
 
 {% block content %}
+
     <div id="banner" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
             <li data-target="#banner" data-slide-to="0" class="active"></li>
