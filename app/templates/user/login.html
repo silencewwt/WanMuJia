@@ -11,23 +11,32 @@
         <h1 class="title offset">登 录</h1>
 
         <form action="/login" method="post">
+            {{ form.csrf_token }}
             <div class="form-group">
                 <div class="wrapper-label">
                     <label class="control-label" for="username">登录名</label>
                 </div>
                 <input type="text" name="username" id="username" placeholder="手机号/邮箱/昵称"/>
+                <span class="err-tip username"></span>
             </div>
             <div class="form-group">
                 <div class="wrapper-label">
                     <label class="control-label" for="password">密码</label>
                 </div>
-                <input type="text" name="password" id="password"/>
+                <input type="password" name="password" id="password"/>
+                <span class="err-tip psw"></span>
             </div>
 
             <div class="form-group offset">
+                <div class="resetpsw-link"><a href="/reset_password">找回密码</a></div>
                 <input id="next" type="submit" value="登录"/>
                 <a href="/register" class="register" data-way="mp">注册</a>
+                <span class="err-tip result"></span>
             </div>
         </form>
     </div>
+
+    <script src="{{url_for('static', filename='lib/md5.js')}}"></script>
+    <script src="{{url_for('static', filename='js/util.js')}}"></script>
+    <script src="{{url_for('static', filename='js/user/login_ui.js')}}"></script>
 {% endblock %}
