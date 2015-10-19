@@ -5,8 +5,12 @@
         <div class="wrapper">
             <ul class="nav basic-info">
                 <li class="user-info">
-                    <a href="/login" class="login">请登录</a>
+                  {% if user and user.is_authenticated %}
+                    您好，<a href="/profile" class="login">{{ user.nickname }}</a>
+                  {% else %}
+                    <a href="/login" class="login" id="login">请登录</a>
                     <a href="/register" class="login">注册</a>
+                  {% endif %}
                 </li>
             </ul>
 
@@ -21,13 +25,15 @@
                     <li role="presentation"><a role="menuitem" tabindex="-1" href="/profile">账户设置</a></li>
                     </ul>
                 </li>
-                <li class="user-cart"><a href="/compare" target="_blank">对比</a></li>
+                <li class="user-cart">
+                    <div id="compareBar"></div>
+                </li>
                 <li class="dropdown-qr">
                     <a href="#" class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">
-                        <img src="{{url_for('static', filename='img/user/qr.jpg')}}" alt="二维码"/>
+                        关注万木家
                     </a>
                     <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <a href=""><img src="{{url_for('static', filename='img/user/qr.jpg')}}" alt="二维码"/></a>
+                        <a href=""><img src="{{url_for('static', filename='img/user/qrcode.jpg')}}" alt="二维码"/></a>
                     </div>
                 </li>
                 <li class="serve-phone">
@@ -74,4 +80,5 @@
             </ul>
         </div>
     </nav>
+    <script src="{{url_for('static', filename='js/user/common/CompareBar.js')}}"></script>
 </header>

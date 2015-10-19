@@ -1,0 +1,13 @@
+{% extends "user/layout.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/user/address.css')}}">
+{% endblock %}
+
+{% block content %}
+    <div id="address-picker"></div>
+    <script src="http://api.map.baidu.com/api?v=2.0&ak=sdp9qCbToS7E23nDRxaAAwbh"></script>
+    <script src="{{url_for('static', filename='js/util.js')}}"></script>
+    <script src="{{url_for('static', filename='js/user/address_data.js')}}"></script>
+    <script src="{{url_for('static', filename='js/user/address.js')}}"></script>
+{% endblock %}

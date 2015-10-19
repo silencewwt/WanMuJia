@@ -9,29 +9,37 @@
         <h1 class="title offset">新用户注册</h1>
 
         <form action="/register/result" method="post">
+            {{ form.csrf_token }}
             <div class="form-group">
                 <div class="wrapper-label">
                     <label class="control-label" for="nickname">昵称</label>
                 </div>
                 <input name="nickname" type="text" id="nickname"/>
+                <span class="err-tip nickname"></span>
             </div>
             <div class="form-group">
                 <div class="wrapper-label">
                     <label class="control-label" for="password">密码</label>
                 </div>
                 <input name="password" type="password" id="password"/>
+                <span class="err-tip password"></span>
             </div>
             <div class="form-group">
                 <div class="wrapper-label">
                     <label class="control-label" for="confirm_pwd">确认密码</label>
                 </div>
                 <input name="confirm_pwd" type="password" id="confirm_pwd"/>
+                <span class="err-tip confirm_pwd"></span>
             </div>
 
             <div class="form-group offset action">
-                <input type="submit" value="完成"/>
+                <input type="submit" value="完成" id="submit_reg"/>
+                <span class="err-tip result"></span>
             </div>
         </form>
     </div>
 
+    <script src="{{url_for('static', filename='lib/md5.js')}}"></script>
+    <script src="{{url_for('static', filename='js/util.js')}}"></script>
+    <script src="{{url_for('static', filename='js/user/register_next_ui.js')}}"></script>
 {% endblock %}
