@@ -1,5 +1,9 @@
 {% extends "user/layout.html" %}
 
+{% block title %}
+  注册成功
+{% endblock %}
+
 {% block styles %}
     <link rel="stylesheet" href="{{url_for('static', filename='css/user/register_result.css')}}"/>
 {% endblock %}
@@ -7,17 +11,6 @@
 {% block content %}
     <div class="result">
         <span class="title">√ 恭喜您注册成功！</span>
-<!--
-        <div class="info">
-            <div class="username">
-                <span>登录名</span>
-                <span>{{ user.mobile if user.mobile else user.email }}</span>
-            </div>
-            <div class="nickname">
-                <span>会员名</span>
-                <span>{{ user.nickname }}</span>
-            </div>
-        </div> -->
 
         <div class="username">
             <span>您的登录账号是：</span>
