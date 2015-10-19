@@ -239,8 +239,6 @@ var AddressPicker = React.createClass({displayName: "AddressPicker",
   }
 });
 
-
-
 'use strict'
 
 //  ==================================================
@@ -532,6 +530,433 @@ var AddressMap = React.createClass({displayName: "AddressMap",
   }
 });
 
+
+/* FilterGroup */
+
+/* 每条过滤器的每个选项 */
+var FilterOption = React.createClass({displayName: "FilterOption",
+  render: function () {
+    var optionValue = this.props.value;
+    var select = this.props.onSelect.bind(null, optionValue);
+    var optionElement;
+    var optionValueElement = React.createElement("span", null, optionValue.value);
+    if (this.props.isMultiSelect) {
+      optionElement = (
+        React.createElement("label", {href: "#", htmlFor: optionValue.name}, 
+          React.createElement("input", {onClick: select, type: "checkbox", name: optionValue.name, value: optionValue.value, id: optionValue.value}), 
+          optionValueElement
+        )
+      );
+    }
+    else {
+      optionElement = (
+        React.createElement("a", {href: "#", onClick: select}, 
+          optionValueElement
+        )
+      );
+    }
+    return optionElement;
+  }
+});
+
+/* 每条过滤器的额外操作 */
+var FilterAction = React.createClass({displayName: "FilterAction",
+  render: function () {
+    return (
+      React.createElement("div", {className: "filter-action"}, 
+        React.createElement("a", {style: {display: this.props.multiToggleStatus ? 'inline' : 'none'}, 
+          onClick: this.props.multiToggle, href: "#", className: "multi-toggle"}, "多选"), 
+        React.createElement("a", {onClick: this.props.expandToggle, href: "#"}, 
+          this.props.expandToggleStatus ? '更多' : '收起'
+        )
+      )
+    );
+  }
+});
+
+/* 状态标签 */
+var FilterStateTag = React.createClass({displayName: "FilterStateTag",
+  render: function () {
+    var tagValueNodes;
+    var currStateValues =  Array.isArray(this.props.value) ?
+                          this.props.value :
+                          [this.props.value];
+    tagValueNodes = currStateValues.map(function (value, index, values) {
+      if (this.props.treeView) {
+        // state 为 treeView
+        return (
+          React.createElement("span", {key: index}, 
+            value.value, " ", 
+            React.createElement("span", {className: "tag-remove"}, 
+              React.createElement("a", {onClick: this.props.onTagRemove.bind(null, value), href: "#"}, "×")
+            ), 
+            
+              index == values.length - 1 ?
+                null :
+                (React.createElement("span", null, ">"))
+            
+          )
+        );
+      }
+      // state 不是 treeView 但可能为多选状态
+      if (index == values.length - 1) {
+        return (
+          React.createElement("span", {key: index}, 
+            value.value, " ", 
+            React.createElement("span", {className: "tag-remove"}, 
+              React.createElement("a", {onClick: this.props.onTagRemove.bind(null, value), href: "#"}, "×")
+            )
+          )
+        );
+      }
+      else {
+        return (
+          React.createElement("span", {key: index}, 
+            value.value + ',', " "
+          )
+        );
+      }
+    }.bind(this));
+
+    return (
+      React.createElement("div", {className: "filter-tag"}, 
+        React.createElement("div", {className: "tag-name"}, this.props.name + ':', " "), 
+        React.createElement("div", {className: "tag-value"}, 
+          tagValueNodes
+        )
+      )
+    );
+  }
+});
+
+/* 状态标签栏 */
+var FilterStateBar = React.createClass({displayName: "FilterStateBar",
+  render: function () {
+    var filterState = this.props.filterState;
+    var stateTagNodes = Object.keys(filterState)
+      .map(function (field, index) {
+        var state = filterState[field];
+        var def = this.props.getFilterDef(field);
+        return (
+          React.createElement(FilterStateTag, {
+            key: index, 
+            name: def.name, 
+            value: state, 
+            treeView: def.treeView, 
+            onTagRemove: this.props.onStateDelete.bind(null, field)}
+          )
+        );
+      }.bind(this));
+    return (
+      React.createElement("div", {className: "filter-state"}, 
+        React.createElement("div", {className: "custom-content"}, 
+          this.props.children
+        ), 
+        React.createElement("div", {className: "filter-tags"}, 
+          stateTagNodes
+        )
+      )
+    );
+  }
+});
+
+/* 单条过滤器 */
+var Filter = React.createClass({displayName: "Filter",
+  getInitialState: function () {
+    return {
+      isMultiSelect: false,
+      isExpanded: false,
+      multiSelected: {}    // 暂时被多选中的选项
+    };
+  },
+  getDefaultProps: function () {
+    return {
+      canMultiSelect: false,
+      treeView: false,
+      options: [],
+    };
+  },
+  multiSelectToggle: function () {
+    this.setState({
+      isMultiSelect: !this.state.isMultiSelect,
+      // 若由非多选到多选，则自动展开
+      isExpanded: this.state.isMultiSelect ? false : true
+    });
+  },
+  expandToggle: function () {
+    this.setState({
+      // 若由展开到收起，则取消多选状态
+      isMultiSelect: this.state.isExpanded ? false : this.state.isMultiSelect,
+      isExpanded: !this.state.isExpanded
+    });
+  },
+  // 用于更新暂时被多选中的选项状态
+  updateMultiSelected: function (value) {
+    var multiSelected = this.state.multiSelected;
+    multiSelected[value.value] ?
+      multiSelected[value.value] = null :
+      multiSelected[value.value] = value;
+    this.setState({multiSelected: multiSelected});
+  },
+  // 确认多选的状态
+  confirmMultiSelect: function () {
+    var selectedObj = this.state.multiSelected;
+    var selectedArr = [];
+    for (var key in selectedObj) {
+      if (selectedObj.hasOwnProperty(key) && selectedObj[key]) {
+        selectedArr.push(selectedObj[key]);
+      }
+    }
+    this.props.onSelectOption(selectedArr);
+    // 清空多选暂存
+    this.setState({multiSelected: {}});
+    // 取消多选状态
+    this.multiSelectToggle();
+  },
+  render: function () {
+    var handleSelect = function (value) {
+      if (!this.state.isMultiSelect) {
+        this.props.onSelectOption(value);
+        return;
+      }
+      this.updateMultiSelected(value);
+    }.bind(this);
+    var optionNodes = this.props.options.map(function (option, index) {
+      return (
+        React.createElement("li", {key: index, className: "filter-item"}, 
+          React.createElement(FilterOption, {value: option, onSelect: handleSelect, isMultiSelect: this.state.isMultiSelect})
+        )
+      );
+    }.bind(this));
+
+    return (
+      React.createElement("div", {className: "filter" + (this.state.isExpanded ? " expanded" : "")}, 
+        React.createElement("div", {className: "head"}, 
+          React.createElement("h4", {className: "filter-name"}, this.props.name)
+        ), 
+
+        React.createElement("div", {className: "body"}, 
+          React.createElement("ul", {className: "filter-items"}, 
+            optionNodes
+          ), 
+
+          React.createElement("div", {style: {display: this.state.isMultiSelect ? 'block' : 'none'}, 
+              className: "multi-confirm"}, 
+            React.createElement("button", {className: "btn-confirm", onClick: this.confirmMultiSelect, type: "button", name: "confirm"}, "确定"), 
+            React.createElement("button", {className: "btn-cancel", type: "button", name: "cancel", onClick: this.multiSelectToggle}, "取消")
+          )
+        ), 
+
+        React.createElement("div", {className: "foot"}, 
+          React.createElement(FilterAction, {
+            multiToggleStatus: this.props.canMultiSelect &&
+              !this.state.isMultiSelect, 
+            expandToggleStatus: !this.state.isExpanded, 
+            multiToggle: this.multiSelectToggle, 
+            expandToggle: this.expandToggle}
+          )
+        )
+      )
+    );
+  }
+});
+
+/* 过滤器组，最外层组件 */
+/**
+ * [props]
+ * filterDefs
+ * filterValues
+ */
+var FilterGroup = React.createClass({displayName: "FilterGroup",
+  getInitialState: function () {
+    return {
+      filterValues: this.props.filterValues,
+      filterState: {}
+    };
+  },
+  getDefaultProps: function () {
+    return {
+      filterValues: {},
+      onStateChange: function () {}
+    };
+  },
+  componentDidMount: function () {
+    var defs = this.props.filterDefs
+      .reduce(function (defs, filterDef) {
+        defs[filterDef.field] = filterDef;
+        return defs;
+      }, {});
+    this.setState({defIndex: defs});
+  },
+  setFilterState: function (state) {
+    if (!this.isSameState(this.state.filterState, state)) {
+      this.setState({filterState: state});
+    }
+    // this.props.onStateChange(this.state.filterState);
+  },
+  addFilterState: function (field, value) {
+    var that = this;
+    var defs = that.state.defIndex;
+    var state = this.state.filterState;
+    var changed = false;
+    var hasValue = !!state[field];
+
+    if (defs[field].treeView) {
+      var indexOfTree = hasValue ?
+        that.findIndex(state[field], value) :
+        -1;
+      // 判断当前点击的和上一个选项是否是同一个层级
+      var isSameLevel = function () {
+        if (!hasValue) {
+          return false;
+        }
+        var len = state[field].length;
+        var currentState = that.props.filterValues[field] || [];
+        return that.findIndex(currentState, value) > -1 &&
+          that.findIndex(currentState, state[field][len - 1]) > -1;
+      };
+      // 当一开始没有值或点击的不是最后一个层级时，标记状态为改变
+      changed = !hasValue || (indexOfTree != state[field].length - 1);
+      if (changed) {
+        state[field] = state[field] || [];
+        // 如果已有此层级的选项，直接定位到此层级
+        if (indexOfTree >= 0) {
+          state[field] = state[field].slice(0, indexOfTree + 1);
+        }
+        else {
+          // 当下一层级的选项还未加载时可能对同一层级的选项做多次选择
+          // 此时保持同一层级选择的互斥性，总是只能选择一个选项
+          if (isSameLevel()) {
+            state[field].pop();
+          }
+          state[field].push(value);
+        }
+      }
+    }
+    // 非 treeView
+    // 无该 field 下的 state，或 value 值不相等，或 value 数组不相等
+    else if (!hasValue ||
+      value.value !== state[field].value ||
+      (Array.isArray(value) && !that.isSameState(value, state[field]))
+    ) {
+
+      if (Array.isArray(value) && value.length === 0) {
+        that.removeFilterState(field);
+      }
+      else {
+        state[field] = value;
+        changed = true;
+      }
+    }
+
+    // fire
+    if (changed) {
+      that.setState({filterState: state});
+      that.props.onStateChange(this.state.filterState);
+    }
+  },
+  removeFilterState: function (field, value) {
+    var defs = this.state.defIndex;
+    var state = this.state.filterState;
+    var indexOfTree;
+    if (defs[field].treeView) {
+      indexOfTree = this.findIndex(state[field], value);
+      if (indexOfTree === 0) {
+        delete state[field];
+      }
+      else if (indexOfTree > 0) {
+        state[field] = state[field].slice(0, indexOfTree);
+      }
+    }
+    else {
+      delete state[field];
+    }
+
+    // fire
+    this.setState({filterState: state});
+    this.props.onStateChange(this.state.filterState);
+  },
+  getFilterDef: function (field) {
+    return this.state.defIndex[field];
+  },
+
+  // util fn
+  isSameState: function (o, n) {
+    var that = this;
+    if (that.isEmptyObj(o) && !that.isEmptyObj(n) ||
+      !that.isEmptyObj(o) && that.isEmptyObj(n)) {
+      return false;
+    }
+    return that.isEmptyObj(o) && that.isEmptyObj(n) ||
+      Object.keys(o)
+        .filter(function (field) {
+          return that.props.filterDefs.hasOwnProperty(field);
+        })
+        .every(function (field) {
+          if (o[field] === n[field] || o[field].value === n[field].value) {
+              return true;
+          }
+          if (Array.isArray(o[field]) && Array.isArray(n[field])) {
+              return o[field].every(function (oState, index) {
+                return oState === n[field][index] ||
+                  oState.value === n[field][index].value;
+              });
+          }
+          return false;
+        });
+  },
+  isSameValueArray: function (oArr, nArr) {
+    return oArr.every(function (value, index) {
+      return value.value === nArr[index].value;
+    });
+  },
+  isEmptyObj: function (obj) {
+    return Object.keys(obj).length === 0;
+  },
+  // 用于在设置了 treeView 选项的 filter state 中寻找已选状态位置
+  findIndex: function (arr, value) {
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i].value === value.value) {
+        return i;
+      }
+    }
+    return -1;
+  },
+
+  render: function () {
+    var filterNodes = this.props.filterDefs.map(function (def, index) {
+      var options = this.state.filterValues[def.field] || [];
+      return (
+        React.createElement("li", {key: index, style: {display: options.length > 0 ? 'block' : 'none'}}, 
+          React.createElement(Filter, {
+            name: def.name, 
+            field: def.field, 
+            canMultiSelect: def.canMultiSelect, 
+            treeView: def.treeView, 
+            options: options, 
+            onSelectOption: this.addFilterState.bind(null, def.field)}
+          )
+        )
+      );
+    }.bind(this));
+
+    return (
+      React.createElement("div", {className: "cu-filter-group"}, 
+        React.createElement(FilterStateBar, {
+          filterState: this.state.filterState, 
+          getFilterDef: this.getFilterDef, 
+          onStateDelete: this.removeFilterState
+        }, 
+          this.props.children
+        ), 
+        React.createElement("ul", {className: "filter-group"}, 
+          filterNodes
+        )
+      )
+    );
+  }
+});
+
 'use strict'
 
 //  ==================================================
@@ -569,51 +994,77 @@ var PaginationBtn = React.createClass({displayName: "PaginationBtn",
   }
 });
 
-/* Pagination */
-var Pagination = React.createClass({displayName: "Pagination",
-  propTypes: {
-    pages: React.PropTypes.number
-  },
+/* Pagination Overview */
+var PagiOverview = React.createClass({displayName: "PagiOverview",
+  render: function() {
+    return (
+      React.createElement("div", {className: "overview"}, "共 ", this.props.pages, " 页，")
+    );
+  }
+});
+
+/* Pagination QuickGo */
+var PagiQuickGo = React.createClass({displayName: "PagiQuickGo",
   getInitialState: function() {
     return {
-      activePage: this.props.activePage || 1,
-      pageItems: this.getPageItems(1)
+      pageInput: null
     };
   },
-  getDefaultProps: function() {
+  inputChange: function(e) {
+    this.setState({
+      pageInput: e.target.value
+    });
+  },
+  quickGo: function() {
+    if(this.state.pageInput) {
+      var nextPage = +this.state.pageInput;
+      nextPage = nextPage < 1 ? 1 : nextPage;
+      nextPage = nextPage > this.props.pages ? this.props.pages : nextPage;
+      this.props.setActivePage(nextPage)
+    }
+  },
+  render: function() {
+    return (
+      React.createElement("div", {className: "quick-go"}, 
+        React.createElement("span", null, "到第"), 
+        React.createElement("input", {className: "go-page", type: "number", min: "1", max: this.props.pages, onChange: this.inputChange}), 
+        React.createElement("span", null, "页"), 
+        React.createElement("button", {className: "go-submit", onClick: this.quickGo}, "确认")
+      )
+    );
+  }
+});
+
+/* Pagination Main */
+var PagiMain = React.createClass({displayName: "PagiMain",
+  getInitialState: function() {
     return {
-      first: null, // 首页 null || string
-      prev: "上一页", // 上一页 null || string
-      basePages: 2, // first prev base ... mid ... next last
-      midPages: 5, // first prev base ... mid ... next last
-      ellipsis: true, // 省略号 boolen
-      next: "下一页", // 下一页 null || string
-      last: null, // 末页 null || string
-      theme: "light", // 主题
-      selected: function(page) { // 页码切换时回调
-        console.log(page);
-      }
+      pageItems: this.getPageItems(this.props.activePage)
+    };
+  },
+  componentWillReceiveProps: function(nextProps) {
+    if(nextProps.activePage !== this.props.activePage) {
+      var pageItems = this.getPageItems(nextProps.activePage);
+      this.setState({
+        pageItems: pageItems
+      });
+      this.props.selected(nextProps.activePage);
     }
   },
   handleItemClick: function(type, page) {
     if (type === "first") {
       page = 1;
     } else if (type === "prev") {
-      page = (this.state.activePage === 1) ? 1 : this.state.activePage - 1;
+      page = (this.props.activePage === 1) ? 1 : this.props.activePage - 1;
     } else if (type === "next") {
-      page = (this.state.activePage === this.props.pages) ? this.props.pages : this.state.activePage + 1;
+      page = (this.props.activePage === this.props.pages) ? this.props.pages : this.props.activePage + 1;
     } else if (type === "last") {
       page = this.props.pages;
     } else {
       page = page;
     }
-    var pageItems = this.getPageItems(page);
-    if (page !== this.state.activePage) {
-      this.setState({
-        activePage: page,
-        pageItems: pageItems
-      });
-      this.props.selected(page);
+    if (page !== this.props.activePage) {
+      this.props.setActivePage(page);
     }
   },
   getPageItems: function(n) {
@@ -627,18 +1078,18 @@ var Pagination = React.createClass({displayName: "Pagination",
       list = this._getSeriesNumber(1, p <= b + m ? p : n + 2);
     } else if((n < p - parseInt(m / 2) - 1)) {  // 2
       list = this._getSeriesNumber(1, this.props.basePages);
-      list.push('e');
+      list.push(0);
       list = list.concat(this._getSeriesNumber(n-2, m));
       if(p > m + b + 2) {
-        list.push('e');
+        list.push(0);
       }
     } else if(n === p - parseInt(m / 2) - 1) {  // 3
       list = this._getSeriesNumber(1, this.props.basePages);
-      list.push('e');
+      list.push(0);
       list = list.concat(this._getSeriesNumber(p - m, m + 1));
     } else {  // 4
       list = this._getSeriesNumber(1, this.props.basePages);
-      list.push('e');
+      list.push(0);
       list = list.concat(this._getSeriesNumber(p - m + 1, m));
     }
     return list;
@@ -653,37 +1104,79 @@ var Pagination = React.createClass({displayName: "Pagination",
     return series;
   },
   render: function() {
-    var start = this.getPageItems(this.state.activePage);
     var startBlock = [];
     var endBlock = [];
     if(this.props.pages > 0) {
       if(this.props.first) {
-        startBlock.push(React.createElement(PaginationBtn, {text: this.props.first, disabled: (this.state.activePage === 1) ? true : false, type: "prev", type: "first", changePage: this.handleItemClick.bind(this, 'first')}));
+        startBlock.push(React.createElement(PaginationBtn, {key: "first", text: this.props.first, disabled: (this.props.activePage === 1) ? true : false, type: "prev", type: "first", changePage: this.handleItemClick.bind(this, 'first')}));
       }
       if(this.props.prev) {
-        startBlock.push(React.createElement(PaginationBtn, {text: this.props.prev, disabled: (this.state.activePage === 1) ? true : false, type: "prev", changePage: this.handleItemClick.bind(this, 'prev')}));
+        startBlock.push(React.createElement(PaginationBtn, {key: "prev", text: this.props.prev, disabled: (this.props.activePage === 1) ? true : false, type: "prev", changePage: this.handleItemClick.bind(this, 'prev')}));
       }
       if(this.props.next) {
-        endBlock.push(React.createElement(PaginationBtn, {text: this.props.next, type: "next", disabled: (this.state.activePage === this.props.pages) ? true : false, changePage: this.handleItemClick.bind(this, 'next')}));
+        endBlock.push(React.createElement(PaginationBtn, {key: "next", text: this.props.next, type: "next", disabled: (this.props.activePage === this.props.pages) ? true : false, changePage: this.handleItemClick.bind(this, 'next')}));
       }
       if(this.props.last) {
-        endBlock.push(React.createElement(PaginationBtn, {text: this.props.last, type: "last", disabled: (this.state.activePage === this.props.pages) ? true : false, changePage: this.handleItemClick.bind(this, 'last')}));
+        endBlock.push(React.createElement(PaginationBtn, {key: "last", text: this.props.last, type: "last", disabled: (this.props.activePage === this.props.pages) ? true : false, changePage: this.handleItemClick.bind(this, 'last')}));
       }
     }
-    var pagiClass = (this.props.theme === 'light') ? 'pagination' : 'pagination ' + this.props.theme;
     return (
-      React.createElement("ul", {className: pagiClass}, 
+      React.createElement("ul", {className: "pagi-main"}, 
         startBlock, 
         
           (this.props.pages > 0) && this.state.pageItems.map(function(item, i) {
               return (
-                React.createElement(PaginationBtn, {text: item, type: item === 'e' ? 'dot' : 'num', active: (item === this.state.activePage) ? true : false, changePage: item === 'e' ? null : this.handleItemClick.bind(this, 'num', item), key: i})
+                React.createElement(PaginationBtn, {key: i, text: item, type: item ? 'num' : 'dot', active: (item === this.props.activePage) ? true : false, changePage: item ? this.handleItemClick.bind(this, 'num', item) : null})
               )
             }.bind(this)), 
         
         endBlock
       )
     )
+  }
+});
+
+/* Pagination */
+var Pagination = React.createClass({displayName: "Pagination",
+  propTypes: {
+    pages: React.PropTypes.number
+  },
+  getInitialState: function() {
+    return {
+      activePage: this.props.activePage
+    };
+  },
+  getDefaultProps: function() {
+    return {
+      activePage: 1, // 激活页初始值
+      first: null, // 首页 null || string
+      prev: "上一页", // 上一页 null || string
+      basePages: 2, // first prev base ... mid ... next last
+      midPages: 5, // first prev base ... mid ... next last
+      ellipsis: true, // 省略号 boolen
+      next: "下一页", // 下一页 null || string
+      last: null, // 末页 null || string
+      theme: "light", // 主题
+      quickGo: false, // 概览和快速切换 boolen
+      selected: function(page) { // 页码切换时回调
+        console.log(page);
+      }
+    }
+  },
+  setActivePage: function(page) {
+    this.setState({
+      activePage: page
+    });
+  },
+  render: function() {
+    var pagiClass = (this.props.theme === 'light') ? 'pagination' : 'pagination ' + this.props.theme;
+    return (
+      React.createElement("div", {className: pagiClass}, 
+        React.createElement(PagiMain, React.__spread({},  this.props, {activePage: this.state.activePage, setActivePage: this.setActivePage})), 
+        this.props.quickGo ? React.createElement(PagiOverview, {pages: this.props.pages}) : null, 
+        this.props.quickGo ? React.createElement(PagiQuickGo, {pages: this.props.pages, setActivePage: this.setActivePage}) : null
+      )
+  )
   }
 });
 
