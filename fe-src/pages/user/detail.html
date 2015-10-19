@@ -1,5 +1,9 @@
 {% extends "user/layout.html" %}
 
+{% block title %}
+  {{ item.item }}
+{% endblock %}
+
 {% block styles %}
     <link rel="stylesheet" href="{{url_for('static', filename='css/user/details.css')}}"/>
 {% endblock %}
@@ -9,57 +13,64 @@
         <div class="wrapper-ov">
             <div class="gallery">
                 <div class="booth">
-                    <img src="{{ item.images.first().url }}" alt="{{ item.name }}"/>
+                    <img src="{{ item.images.first().url }}" alt="{{ item.item }}"/>
                 </div>
                 <ul class="thumbnail">
-                    {% for img in item.images %}
+                    {% for img in item.images.paginate(1, 5, False).items %}
                         <li {% if loop.index == 1 %}'class="active"'{% endif %}>
-                            <a href="#"><img src="{{ img.url }}" alt="{{ item.name }}"/></a>
+                            <a href="#"><img src="{{ img.url }}" alt="{{ item.item }}"/></a>
                         </li>
                     {% endfor %}
                 </ul>
 
-                <div class="vendor">
-                    <h3 class="vendor-name">{{ item.vendor.name }}</h3>
+                <!-- <div class="vendor">
+                    <h3 class="vendor-name">{{ item.vendor.brand }}</h3>
                     <div class="vendor-info">
-                        <img src="{{ item.vendor.logo }}" alt="{{ item.vendor.name }}" class="vendor-logo"/>
-                        <p class="vendor-desc">{{ item.vendor.desc }}</p>
+                        <img src="{{ item.vendor.logo }}" alt="{{ item.vendor.brand }}" class="vendor-logo"/>
+                        <p class="vendor-desc">{{ item.vendor.introduction }}</p>
                     </div>
-                    <div class="vendor-entry">
-                        <a href="/vendor?id=">进入{{ item.vendor.name }}主页</a>
-                    </div>
-                </div>
+                </div> -->
+
             </div>
 
             <div class="property">
                 <div class="title">
-                    <h1>{{ item.name }}</h1>
-                    <p>{{ item.desc }}</p>
+                    <h1>{{ item.item }}</h1>
+                    <!-- <p>{{ item.desc }}</p> -->
+                    <p>商品品牌：{{ item.vendor.brand }}</p>
                 </div>
 
                 <dl class="param price">
-                    <dt>指导价格</dt>
+                    <dt>指导价格:</dt>
                     <dd>&yen; <span>{{ item.price }}</span></dd>
                 </dl>
-
                 <div class="action">
-                    <button class="vs"><a href="#">加入对比</a></button>
-                    <button class="like"><a href="#">收藏</a></button>
+                    <button class="vs" data-id="{{ item.id }}">加入对比</button>
+                    {% if user.is_authenticated %}
+                    {% if user.item_collected(item.id) %}
+                    <button class="like" data-id="{{ item.id }}" data-method="DELETE">取消收藏</button>
+                    {% else %}
+                    <button class="like" data-id="{{ item.id }}" data-method="POST">收藏</button>
+                    {% endif %}
+                    {% else %}
+                    <button class="like-to-login" data-id="{{ item.id }}"  data-toggle="modal" data-method="LOGIN" data-target="#login_modal">收藏</button>
+                    {% endif %}
                 </div>
 
                 <dl class="param">
-                    <dt>规格</dt>
+                    <dt>详情</dt>
                     <dd>
                         <ul>
-                            <li>内径: </li>
-                            <li>外径: </li>
+                            <li>商品种类: {{ item.category }}</li>
+                            <li>使用场景: {{ item.second_scene }}</li>
+                            <li>商品尺寸: {{ item.size() }}</li>
                         </ul>
                     </dd>
                     </dd>
                 </dl>
 
                 <div class="buy">
-                    <button class="negotiate"><a href="/address?id=">当面议价</a></button>
+                    <button class="negotiate"><a href="/address?id={{ item.id }}">当面议价</a></button>
                 </div>
             </div>
         </div>
@@ -69,45 +80,120 @@
         <div class="wrapper-desc">
             <ul class="tabs">
                 <li class="active" data-tab="detail"><a href="javascript:void(0)">商品详情</a></li>
+                {% if item.is_suite %}
+                <li data-tab="com-detail"><a href="javascript:void(0)">组件规格</a></li>
+                {% endif %}
                 <li data-tab="story"><a href="javascript:void(0)">商品寓意</a></li>
             </ul>
 
             <div class="tab-content">
                 <div class="detail">
                     <ul class="standard">
-                        <li>编号：</li>
-                        <li>材质：</li>
-                        <li>品牌：</li>
-                        <li>体积：</li>
-                        <li>产地：</li>
-                        <li>床机构：</li>
-                        <li>色系：</li>
-                        <li>工艺：</li>
-                        <li>打磨：</li>
+                        <li title="商品名：{{ item.item }}">商品名：{{ item.item }}</li>
+                        <li title="品牌名：{{ item.vendor.brand }}">品牌名：{{ item.vendor.brand }}</li>
+                        <li title="指导价格：{{ item.price }}">指导价格：{{ item.price }}</li>
+
+                        {% if not item.is_suite %}
+                        <li title="长*宽*高：{{ item.size() }}">长*宽*高：{{ item.size() }}</li>
+                        {% endif %}
+
+                        <li title="适用面积：{{ item.area }}">适用面积：{{ item.area }}</li>
+                        <li title="材料：{{ item.second_material }}">材料：{{ item.second_material }}</li>
+
+                        {% if not item.is_suite %}
+                        <li title="分类：{{ item.category }}">分类：{{ item.category }}</li>
+                        {% endif %}
+
+                        <li title="场景：{{ item.second_scene }}">场景：{{ item.second_scene }}</li>
+                        <li title="烘干工艺：{{ item.stove }}">烘干工艺：{{ item.stove }}</li>
+                        <li title="外表面打磨砂纸：{{ item.outside_sand }}">外表面打磨砂纸：{{ item.outside_sand }}</li>
+                        <li title="内表面打磨砂纸：{{ item.inside_sand }}">内表面打磨砂纸：{{ item.inside_sand }}</li>
+
+                        {% if not item.is_suite %}
+                        <li title="涂饰工艺：{{ item.paint }}">涂饰工艺：{{ item.paint }}</li>
+                        {% endif %}
+
+                        {% if not item.is_suite %}
+                        <li title="装饰工艺：{{ item.decoration }}">装饰工艺：{{ item.decoration }}</li>
+                        {% endif %}
+
+                        <li title="风格：{{ item.style }}">风格：{{ item.style }}</li>
+
+                        {% if item.is_suite %}
+                        <li title="组件数量和：{{ item.amount }}">组件数量和：{{ item.amount }}</li>
+                        {% endif %}
                     </ul>
 
                     <div class="photo">
-                        <img src="{{url_for('static', filename='img/user/item05.jpg')}}" alt="{{ item.name }}"/>
-                        <img src="{{url_for('static', filename='img/user/item05.jpg')}}" alt="{{ item.name }}"/>
-                        <img src="{{url_for('static', filename='img/user/item05.jpg')}}" alt="{{ item.name }}"/>
+                        {% for img in item.images %}
+                        <img src="{{ img.url }}" alt="{{ item.item }}"/>
+                        {% endfor %}
                     </div>
                 </div>
 
+                {% if item.is_suite %}
+                <div class="com-detail hide">
+                    <div class="detail">
+                        {% for item in item.components %}
+                        <h2>{{ item.item }}</h2>
+                        <ul class="standard">
+                            <li title="组件名：{{ item.item }}">组件名：{{ item.item }}</li>
+                            <li title="长*宽*高：{{ item.size() }}">长*宽*高：{{ item.size() }}</li>
+                            <li title="适用面积：{{ item.area }}">适用面积：{{ item.area }}</li>
+                            <li title="分类：{{ item.category }}">分类：{{ item.category }}</li>
+                            <li title="雕刻工艺：{{ item.carve }}">雕刻工艺：{{ item.carve }}</li>
+                            <li title="榫卯结构：{{ item.tenon }}">榫卯结构：{{ item.tenon }}</li>
+                            <li title="涂饰工艺：{{ item.paint }}">涂饰工艺：{{ item.paint }}</li>
+                            <li title="装饰工艺：{{ item.decoration }}">装饰工艺：{{ item.decoration }}</li>
+                            <li title="该组件的数量：{{ item.amount }}">该组件的数量：{{ item.amount }}</li>
+                        </ul>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="story hide">
                     <p>
-                        明清后的646年：也说“第一把交椅”的兴替
-                        公元1368年，至1911年中国爆发的辛亥革命推翻了清王朝，结束了长达2000年之久的君主专制制度。我仔细数了一下：明代有16任帝皇，清代是12任皇帝；1924年溥仪逐出紫禁城，天潢贵胄的满州贵族，最后跌落凡间。
-                        一个万象更新的时期，也一个新旧杂陈的时代
-                        20世纪40年代的延安，毛泽东问历史学家范文澜：满族是东北一个小民族，怎就把中国统治了？作为少数民族，满洲的统治者殚精竭虑为满族营建了一个独立居住、文化和制度的空间，尤其政治、文化体系上保有了自己的特质和优势。曾经的彪悍、淳朴，还有那纵横天下的马背民族，最终还是没能等到王朝的颠覆已然老朽。
-                        几百年来，意识形态上的左右
-                        墓碑、居室、植被、尘土，是如今看见它和那些过去也曾看见的人们之间最哀伤的见证者吧。明朝诞生了“木匠皇帝”朱由校，著有《古董十三说》、《长物志》等古典家具的书籍。明清家具形制的一大贡献是：规定了合适的高度。比如椅凳坐面高度在40～50厘米之间，椅背大多与人的脊骨自然特点设计成“S”形曲线，已是人体放松姿态的自然角度状，一直沿袭至今……
-                        回到“第一把交椅”。“交椅”就是这种传统坐具。系社会地位，与交椅的另外一个词“第一”密不可分。 汉灵帝时，北方游牧民族的“胡床”样子犹如矮凳，也称作“绳床”，双足交叉、可以折叠。到了隋朝，改名为“交床”，取其双脚交叉的特点。南宋后，人们又发明了在交床的后部装上托背，形成了真正的第一把交椅。
+                        {{ item.story }}
                     </p>
                 </div>
             </div>
         </div>
     </div>
 
+     <!-- 对比添加的小红球 -->
+    <div class="addvs-tip-ball"></div>
+
+    <!-- 登录模态框 -->
+    <div class="modal fade" id="login_modal" tabindex="-1" role="dialog" aria-labelledby="loginModal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="loginModal">登录万木家</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+                {{ form.csrf_token }}
+              <div class="form-group">
+                <label for="username" class="control-label">登录名</label>
+                <input type="text" class="form-control" name="username" id="username" placeholder="手机号/邮箱/昵称">
+              </div>
+              <div class="form-group">
+                <label for="password" class="control-label">密码</label>
+                <input type="password" class="form-control" name="password" id="password">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-primary login_btn">登录</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{url_for('static', filename='lib/md5.js')}}"></script>
     <script src="{{url_for('static', filename='js/user/tab.js')}}"></script>
     <script src="{{url_for('static', filename='js/user/details_ui.js')}}"></script>
 {% endblock %}
