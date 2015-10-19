@@ -49,9 +49,11 @@ $(function () {
     });
 
     $like.click(function() {
+
         var _this = $(this);
         var id = _this.attr('data-id');
         var method = _this.attr('data-method');
+
         _this.attr('disabled' , true);
         $.ajax({
             method: method,
@@ -74,6 +76,35 @@ $(function () {
             },
             error: function(xhr, status, err) {
 		        console.error(likeUrl, status, err.toString());
+		    }
+        });
+    });
+
+    var loginUrl = "/login";
+    var $loginBtn = $(".login_btn");
+    var $username = $("#username");
+    var $password = $("#password");
+    var $csrf_token = $("#csrf_token");
+    $loginBtn.click(function(e) {
+        e.preventDefault();
+        if(!$username.val() || !$password.val()) {
+            return console.log('000000000');
+        }
+        $(this).attr("disabled" , true);
+        $.ajax({
+            type: "POST",
+            url: loginUrl,
+            data: {csrf_token: $csrf_token.val() , username: $username.val() , password: encrypt($password.val())},
+            success: function(data) {
+                $loginBtn.removeAttr("disabled");
+                if(data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            },
+            error: function(xhr, status, err) {
+		        console.error(loginUrl, status, err.toString());
 		    }
         });
     });
