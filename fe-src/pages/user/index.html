@@ -2,6 +2,10 @@
 
 {% extends "user/layout.html" %}
 
+{% block title %}
+  首页
+{% endblock %}
+
 {% block styles %}
     <link rel="stylesheet" href="{{url_for('static', filename='css/user/index.css')}}">
 {% endblock %}
