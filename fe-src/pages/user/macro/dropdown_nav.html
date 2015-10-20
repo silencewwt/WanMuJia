@@ -1,10 +1,16 @@
-{% macro dropdown(name, list) %}
-    <span class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">{{ name }}</span>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/display">{{ list[0] }}</a></li>
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/display">{{ list[1] }}</a></li>
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/display">{{ list[2] }}</a></li>
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/display">{{ list[3] }}</a></li>
-        <li role="presentation"><a role="menuitem" tabindex="-1" href="/display">{{ list[4] }}</a></li>
-    </ul>
+{% macro dropdown(navs) %}
+{% for nav in navs %}
+    <li class="dropdown-nav">
+        <span class="dropdown-toggle" aria-haspopup="true" role="button" aria-expanded="false">{{ nav[0][1] }}</span>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            {% for item in nav[1] %}
+                <li role="presentation">
+                    <a role="menuitem" tabindex="-1" href="/display?scene={{ item[0] }}">
+                      {{ item[1] }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </li>
+{% endfor %}
 {% endmacro %}
