@@ -46,33 +46,48 @@ $(function () {
     // url 改变更新数据
     historyWatcher = new HistoryWatcher(function (e) {
         console.log('history changed:', e.state);
-        getSearchDataWithLoading(e.state, filterGroup, true);
+        getSearchDataWithLoading(e.state, true);
     });
 
 
     /* Sortbar */
     $('.sortbar .sort').delegate('.sort-index', 'click', function () {
         var $this = $(this);
-
+        var sortArrow = null;
+        var sortType = null;
         $this.siblings().removeClass('active');
-        if ($this.hasClass('active') && $this.attr('data-sort') != 'hot') {
-            $this.children('.darr').toggleClass('reverse');
-        }
         $this.addClass('active');
+        if ($this.attr('data-sort') != 'hot') {
+            sortArrow = $this.children('.darr');
+            sortArrow.toggleClass('inc').show();
+        }
+        sortType = sortArrow.hasClass('inc') ? 'asc' : 'desc';
 
-        // 改变商品列表
-        // ...
+        getSearchDataWithLoading($.extend({}, queryParams, {order: sortType}));
 
         return false;
     });
+    var updateSortBar = function (order) {
+        var $sort = $('[data-sort="price"]');
+        var $sortArrow = $sort.find('.darr');
+        if (!order) {
+            $sort.removeClass('.active');
+            $sortArrow.hide();
+        }
+        else if (order == 'asc') {
+            $sort.addClass('active');
+            $sortArrow.addClass('inc').show();
+        }
+        else {
+            $sort.addClass('active');
+            $sortArrow.removeClass('inc').show();
+        }
+    };
 
 
     /* Items */
     var Item = React.createClass({
         render: function() {
-            var dialogStyle = {
-                display: !this.props.item.deleted ? "none" : "block"
-            };
             return (
                 <div className="item" data-id={this.props.item.item_id}>
                     <a href={"/item/" + this.props.item.item_id}>
@@ -80,7 +95,7 @@ $(function () {
                     </a>
                     <div className="item-info">
                         <h5>
-                            <a href={'/item/' + this.props.item.item_id}>
+                            <a href={'/item/' + this.props.item.id}>
                                 {this.props.item.item}
                             </a>
                         </h5>
@@ -122,7 +137,7 @@ $(function () {
     /*Pagination*/
     var pagination;
     var onChangePage = function (page) {
-        getSearchDataWithLoading($.extend({}, queryParams, {page: page}), filterGroup, true);
+        getSearchDataWithLoading($.extend({}, queryParams, {page: page}));
     };
     var renderPagination = function (pages, activePage) {
         return React.render(
@@ -145,6 +160,7 @@ $(function () {
                 filterGroup.updateFilterValue(filterValuesMapping(data.filters.available));
                 filterGroup.setFilterState(filterValuesMapping(data.filters.selected));
 
+                updateSortBar(data.items.order);
                 // render pagination
                 pagination = renderPagination(data.items.pages, data.items.page);
             },
@@ -170,6 +186,8 @@ $(function () {
                 items.setItems(data.items.query);
                 // 更新过滤数据
                 filterGroup.updateFilterValue(filterValuesMapping(filters.available));
+                // 更新 sortbar
+                updateSortBar(data.items.order);
                 // 更新 pagination
                 pagination = renderPagination(data.items.pages, data.items.page);
                 // 不来自 popstate 事件时更新 url
