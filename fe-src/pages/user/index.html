@@ -58,21 +58,15 @@
         {{ recommend.title_divider('新品推荐') }}
 
         <div class="wrapper">
-            {{ recommend.items(new_items) }}
-            <div class="more">
-                <a href="">查看更多...</a>
-            </div>
+            {{ recommend.items(group1) }}
         </div>
     </section>
 
     <section class="container">
-        {{ recommend.title_divider('特别推荐') }}
+        {{ recommend.title_divider('猜你喜欢') }}
 
         <div class="wrapper">
-            {{ recommend.items(hot_items) }}
-            <div class="more">
-                <a href="">查看更多...</a>
-            </div>
+            {{ recommend.items(group2) }}
         </div>
     </section>
 
@@ -80,10 +74,7 @@
         {{ recommend.title_divider('大师作品') }}
 
         <div class="wrapper">
-            {{ recommend.items(the_masters) }}
-            <div class="more">
-                <a href="">查看更多...</a>
-            </div>
+            {{ recommend.items(group3) }}
         </div>
     </section>
 

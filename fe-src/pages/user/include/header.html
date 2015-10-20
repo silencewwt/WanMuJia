@@ -5,7 +5,7 @@
         <div class="wrapper">
             <ul class="nav basic-info">
                 <li class="user-info">
-                  {% if user and user.is_authenticated %}
+                  {% if user and user.is_authenticated and user.id_prefix == 'u' %}
                     您好，<a href="/profile" class="login">{{ user.nickname }}</a>
                   {% else %}
                     <a href="/login" class="login" id="login">请登录</a>
@@ -62,21 +62,7 @@
     <nav class="main-nav">
         <div class="wrapper">
             <ul class="nav">
-                <li class="dropdown-nav">
-                    {{ dropdown('家庭', ['餐厅', '书房', '厨卫', '走廊', '健身房']) }}
-                </li>
-                <li class="dropdown-nav">
-                    {{ dropdown('工艺品', ['餐厅', '书房', '厨卫', '走廊', '健身房']) }}
-                </li>
-                <li class="dropdown-nav">
-                    {{ dropdown('酒店', ['餐厅', '书房', '厨卫', '走廊', '健身房']) }}
-                </li>
-                <li class="dropdown-nav">
-                    {{ dropdown('其他', ['餐厅', '书房', '厨卫', '走廊', '健身房']) }}
-                </li>
-                <li class="dropdown-nav">
-                    {{ dropdown('私人定制', ['餐厅', '书房', '厨卫', '走廊', '健身房']) }}
-                </li>
+              {{ dropdown(scenes) }}
             </ul>
         </div>
     </nav>
