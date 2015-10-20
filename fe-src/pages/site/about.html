@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
     <title>万木家 | 用户使用条款</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/all.css">
-    <link rel="stylesheet" href="css/userclause.css">
-    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/site/reset.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/site/all.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/site/userclause.css')}}">
+    <script src="{{url_for('static', filename='lib/jquery.js')}}"></script>
 </head>
 <body>
     <header>
         <div class="logo fl">
-            <a href="index.html" class="logo-img"></a>
+            <a href="/index" class="logo-img"></a>
         </div>
         <nav class="nav fr" id="header_nav">
             <ul>
-                <li><a href="index.html" class="active">首页</a></li>
+                <li><a href="#" class="active">首页</a></li>
                 <li><a href="#user_guide">用户指南</a></li>
                 <li><a href="#about_platform">关于平台</a></li>
                 <li><a href="#use_process">使用流程</a></li>
@@ -47,7 +47,7 @@
 在红木经销商眼里： 万木家平台给我们带来了很多客人的引流， 万木家将我们与假冒伪劣的红木造假者区分开来， 我们不仅得到了更多来自消费者的宝贵意见，也提升了业绩！</br>
 在万木家团队眼里： 我们不仅是一群职业人，更是一群有梦想的万木人， 我们坚持以发展传统家具为己任，不断将传统文化带进百姓家中， 我们展示最具价值的商品，为红木人搭建最佳展示舞台， 我们还将网罗全球红木的最新专业资讯， 我们挖掘红木界的优秀作品， 我们不断更新万木家的红木商品， 我们不断完善万木家平台， 我们要做的、我们能做的，还有更多……</br>
             </p><br/>
-            
+
             <h2>1000个人眼里，就有1000个万木家</h2><br/>
             <p>
 在红木厂家眼里： 我可以看到用户最需要的红木 我可以结交很多业内朋友…… 我不仅可以更广泛的让大家了解到我们的额品牌，还可以展示出我们的红木精品！</br>
@@ -56,9 +56,9 @@
 在万木家团队眼里： 我们不仅是一群职业人，更是一群有梦想的万木人， 我们坚持以发展传统家具为己任，不断将传统文化带进百姓家中， 我们展示最具价值的商品，为红木人搭建最佳展示舞台， 我们还将网罗全球红木的最新专业资讯， 我们挖掘红木界的优秀作品， 我们不断更新万木家的红木商品， 我们不断完善万木家平台， 我们要做的、我们能做的，还有更多……</br>
             </p><br/>
 万木家优势
-品牌优势： 万木家网站内的所有厂家全部为全国优秀的红木制造商，平台的所有商品都为货真价实的红木正品。   设计优势： 万木家网站汇聚了众多的优秀红木设计师，在这里您可以轻松找到一款您喜爱的商品，也可以私人订制一款只属于您的红木家具。 
-内容优势： 万木家网站内容涉及红木鉴赏、红木百科、红木导购、红木对比、红木分析等内容，致力于打造最值得消费者信赖的红木导购平台。 
-渠道优势：  万木家引入了大部分全国十大红木制造企业，与此同时也带来了很多红木销售的优秀渠道。
+品牌优势： 万木家网站内的所有厂家全部为全国优秀的红木制造商，平台的所有商品都为货真价实的红木正品。   设计优势： 万木家网站汇聚了众多的优秀红木设计师，在这里您可以轻松找到一款您喜爱的商品，也可以私人订制一款只属于您的红木家具。
+内容优势： 万木家网站内容涉及红木鉴赏、红木百科、红木导购、红木对比、红木分析等内容，致力于打造最值得消费者信赖的红木导购平台。
+渠道优势： 万木家引入了大部分全国十大红木制造企业，与此同时也带来了很多红木销售的优秀渠道。
 整合的时代，已经到来！ 从线上到线下，从网络到实体店，从消费者到经销商，整合所有的红木资源。 几十余家红木商家与平台合作， 众多国内一流权威媒体的支持，
 整合众多优势资源， 发挥万木家平台的最大价值力！
 ！
@@ -97,31 +97,31 @@
             </p>
         </div>
     </div>
- <footer>
+    <footer>
         <div class="cont">
             <ul class="link-box">
                 <li>
                     <h2>关于我们</h2>
-                    <div class="link-item"><a href="#">平台介绍</a></div>
-                    <div class="link-item"><a href="#">用户条款</a></div>
-                    <div class="link-item"><a href="#">服务中心</a></div>
+                    <div class="link-item"><a href="/about">平台介绍</a></div>
+                    <div class="link-item"><a href="/legal/user">用户条款</a></div>
+                    <div class="link-item"><a href="/center">服务中心</a></div>
                 </li>
                 <li>
                     <h2>厂家指南</h2>
-                    <div class="link-item"><a href="#">入驻平台</a></div>
-                    <div class="link-item"><a href="#">入驻条款</a></div>
-                    <div class="link-item"><a href="#">使用流程</a></div>
+                    <div class="link-item"><a href="/vender/register">入驻平台</a></div>
+                    <div class="link-item"><a href="/legal/vendor">入驻条款</a></div>
+                    <div class="link-item"><a href="/join">使用流程</a></div>
                 </li>
                 <li>
                     <h2>联系我们</h2>
                     <div class="link-item">
-                        <a href="#" class="weixin">
+                        <a href="javascript: void(0);" class="weixin">
                             微信平台
-                            <img src="./imgs/weixin.jpg" alt="微信">
+                            <img src="{{url_for('static', filename='img/user/qrcode.jpg')}}" alt="微信">
                         </a>
                     </div>
-                    <div class="link-item"><a href="#">新浪微博</a></div>
-                    <div class="link-item"><a href="#">联系方式</a></div>
+                    <div class="link-item"><a href="http://weibo.com/wanmujiahongmu">新浪微博</a></div>
+                    <div class="link-item"><a href="/center#touch_us">联系方式</a></div>
                 </li>
                 <div class="cf"></div>
             </ul>
@@ -133,7 +133,7 @@
             </p>
 
         </div>
- </footer>
+   </footer>
 
 </body>
 </html>
