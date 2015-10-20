@@ -91,7 +91,7 @@ var CompareBar = React.createClass({
 	render: function () {
 		return (
             <div className="compare-bar">
-                <a href="/compare" target="_blank" id="comparebar_link">对比</a>
+                <a href="/item/compare" target="_blank" id="comparebar_link">对比</a>
 
 				{
 					this.state.itemData.length?
@@ -118,7 +118,7 @@ var CompareBarCont = React.createClass({
 		} else if(itemData.length == 2) {
 			contNodes[0] = <CompareBarItem data={itemData[0]} deleteItem={this.props.deleteItem}/>;
 			contNodes[1] = <CompareBarItem data={itemData[1]} deleteItem={this.props.deleteItem}/>;
-			contNodes[2] = <a className="compare-link" href="/compare" target="_blank">对比</a>;
+			contNodes[2] = <a className="compare-link" href="/item/compare" target="_blank">对比</a>;
 		}
         return (
             <div className="compare-bar-cont" style={this.props.contShow?{display: "block"}:{}}>

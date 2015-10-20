@@ -1,0 +1,199 @@
+.w {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.w>.cont {
+    width: 1000px;
+    margin: 0 auto;
+}
+.w>.cont>h1 {
+    text-align: center;
+    font-weight: normal;
+    font-size: 26px;
+    line-height: 60px;
+}
+
+
+.user-guide {
+    background: #eee;
+}
+.user-guide .guide-box {
+    padding-bottom: 20px;
+}
+.user-guide .guide-item {
+    display: inline-block;
+    width: 32.8%;
+    padding: 0 100px;
+    margin-top: 30px;
+}
+.user-guide .guide-item img {
+    width: 100%;
+}
+.user-guide .guide-item .detail {
+    text-align: center;
+    color: #000;
+    padding-top: 10px;
+}
+.user-guide .guide-item:hover .detail {
+    color: #803200;
+}
+.user-guide .guide-item .detail h3 {
+    font-size: 20px;
+    font-weight: normal;
+    line-height: 30px;
+}
+.user-guide .guide-item .detail .desc {
+    font-size: 15px;
+    line-height: 20px;
+    padding: 10px;
+}
+
+.about-platform {
+    margin-bottom: 34px;
+}
+.about-platform .plat-item-box {
+    width: 100%;
+    padding: 0 50px;
+}
+.about-platform .plat-item {
+    display: block;
+    float: left;
+    width: 260px;
+    padding: 15px;
+    background: #eee;
+    text-align: center;
+    padding-bottom: 170px;
+    position: relative;
+    color: #000;
+}
+.about-platform .plat-item:hover {
+    box-shadow: 0px 0px 10px #6c6c6c;
+}
+.about-platform .center-item {
+    margin: 0 60px;
+}
+.about-platform .plat-item h2 {
+    font-weight: normal;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+.about-platform .plat-item .desc-img {
+    position: absolute;
+    width: 230px;
+    height: auto;
+    background: #000;
+    left: 15px;
+    bottom: 15px;
+}
+
+.use-process {
+    background: #eee;
+    padding-bottom: 30px;
+}
+.use-process .item-box {
+    width: 100%;
+    margin-bottom: 30px;
+}
+.use-process .item-box .item {
+    display: block;
+    float: left;
+    width: 11%;
+    text-align: center;
+}
+.use-process .item-box .item img {
+    width: 100%;
+}
+.use-process .item-box span.item {
+    position: relative;
+    top: 40px;
+    padding: 0 30px;
+}
+.use-process .item-box .item>span {
+    color: #000;
+    display: block;
+    margin-top: 10px;
+}
+.use-process .item-box .item>span:hover {
+    color: #803200;
+    text-decoration: underline;
+}
+.use-process .detail-btn {
+    display: block;
+    text-align: center;
+    color: #fff;
+    background: #803200;
+    line-height: 30px;
+    width: 100px;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+.touch-us {
+    padding-bottom: 40px;
+}
+.touch-us .item-box>div{
+    text-align: center;
+    line-height: 37px;
+    font-size: 19px;
+}
+
+.banner {
+    position: relative;
+    width: 100%;
+    overflow: auto;
+    font-size: 18px;
+    line-height: 24px;
+    text-align: center;
+    color: rgba(255, 255, 255, .6);
+    text-shadow: 0 0 1px rgba(0, 0, 0, .05), 0 1px 2px rgba(0, 0, 0, .3);
+    background: #5b4d3d;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+}
+.banner ul {
+    list-style: none;
+    width: 300%;
+}
+.banner ul li {
+    display: block;
+    float: left;
+    width: 33%;
+    min-height: 350px;
+    -o-background-size: 100% 100%;
+    -ms-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+    box-shadow: inset 0 -3px 6px rgba(0, 0, 0, .1);
+}
+.banner .dot {
+    -webkit-filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .3));
+    -moz-filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .3));
+    -ms-filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .3));
+    -o-filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .3));
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .3));
+}
+.banner .dots {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 20px;
+}
+.banner .dots li {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 4px;
+    text-indent: -999em;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: .4;
+    -webkit-transition: background .5s, opacity .5s;
+    -moz-transition: background .5s, opacity .5s;
+    transition: background .5s, opacity .5s;
+    cursor: pointer;
+}
+.banner .dots li.active {
+    background: #fff;
+    opacity: 1;
+}

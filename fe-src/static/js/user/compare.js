@@ -91,7 +91,7 @@ var CompareItem = React.createClass({
         return (
             <div className={this.props.pos}>
                 {this.props.aHref?
-                    <a href={"/item?id="+this.props.aHref}><img src={this.props.imgSrc} alt="" /></a>:
+                    <a href={"/item/"+this.props.aHref}><img src={this.props.imgSrc} alt="" /></a>:
                     <span className="add-compare"><a href="#ad" className="add-compare-btn">+</a></span>
                 }
                 {this.props.aHref?
