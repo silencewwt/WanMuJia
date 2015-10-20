@@ -101,11 +101,15 @@ function genFormData($form, files) {
     });
 
     $form.find('select').each(function () {
-        data[this.name] = this.value;
+        if (this.value) {
+            data[this.name] = this.value;
+        }
     });
 
     $form.find('textarea').each(function () {
-        data[this.name] = this.value;
+        if (this.value) {
+            data[this.name] = this.value;
+        }
     });
 
     return data;
