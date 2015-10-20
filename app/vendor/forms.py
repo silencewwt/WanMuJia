@@ -3,14 +3,14 @@ import datetime
 from base64 import b64decode
 
 from flask.ext.cdn import url_for
-from flask.ext.login import current_user, current_app
+from flask.ext.login import current_user
 from flask.ext.wtf.file import FileField
-from wtforms import StringField, PasswordField, SelectMultipleField, TextAreaField, FloatField, HiddenField
-from wtforms.validators import ValidationError, DataRequired, Length, EqualTo, NumberRange
+from wtforms import StringField, PasswordField, SelectMultipleField, TextAreaField, HiddenField
+from wtforms.validators import ValidationError, DataRequired, Length, EqualTo
 
 from app import db
 from app.constants import SMS_CAPTCHA, VENDOR_REMINDS_PENDING, VENDOR_REMINDS_COMPLETE
-from app.models import Vendor, VendorAddress, Material, Stove, Carve, Sand, Paint, Decoration, \
+from app.models import Vendor, VendorAddress, Stove, Carve, Sand, Paint, Decoration, \
     Tenon, Item, ItemTenon, ItemCarve, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, \
     FirstMaterial, SecondMaterial, Category, Style
 from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
@@ -37,7 +37,7 @@ class RegistrationForm(Form):
     license_limit = StringField(validators=[Length(8, 10, u'营业执照期限不正确')])
     telephone = StringField(validators=[Length(7, 15, u'固话不正确')])
     address = StringField(validators=[Length(1, 30, u'地址不正确')])
-    district_cn_id = StringField(validators=[AreaValidator(), Length(6, 6)])
+    area_cn_id = StringField(validators=[AreaValidator(), Length(6, 6)])
     brand = StringField(validators=[Brand(exist_owner=current_user)])
 
     image_fields = ('agent_identity_front', 'agent_identity_back', 'license_image')
@@ -66,7 +66,7 @@ class RegistrationDetailForm(RegistrationForm):
     confirm_password = PasswordField(validators=[Length(6, 32)])
 
     def save_address(self, vendor):
-        address = VendorAddress(vendor_id=vendor.id, cn_id=self.district_cn_id.data, address=self.address.data)
+        address = VendorAddress(vendor_id=vendor.id, cn_id=self.area_cn_id.data, address=self.address.data)
         db.session.add(address)
         db.session.commit()
 
@@ -105,7 +105,7 @@ class ReconfirmForm(RegistrationForm):
 
     def update_address(self):
         current_user.address.address = self.address.data
-        current_user.address.cn_id = self.district_cn_id.data
+        current_user.address.cn_id = self.area_cn_id.data
         db.session.add(current_user.address)
         db.session.commit()
 
@@ -126,7 +126,7 @@ class ReconfirmForm(RegistrationForm):
         for attr in self.url_attributes:
             setattr(self, attr + '_url', url_for('static', filename=getattr(current_user, attr)))
         self.address.data = current_user.address.address
-        self.district_cn_id.data = current_user.address.cn_id
+        self.area_cn_id.data = current_user.address.cn_id
         self.show_address()
 
     def reconfirm(self):
@@ -556,7 +556,7 @@ class SettingsForm(Form):
     contact = StringField()
     address = StringField(validators=[Length(1, 30, u'地址不正确')])
     introduction = StringField(validators=[Length(0, 30, u'厂家简介不正确')])
-    district_cn_id = StringField(validators=[AreaValidator(), Length(6, 6)])
+    # area_cn_id = StringField(validators=[AreaValidator(), Length(6, 6)])
     email = StringField()
     brand = StringField()
 
@@ -578,7 +578,7 @@ class SettingsForm(Form):
     def show_vendor_setting(self, vendor):
         self.telephone.data = vendor.telephone
         self.introduction.data = vendor.introduction
-        self.district_cn_id.data = vendor.address.cn_id
+        # self.area_cn_id.data = vendor.address.cn_id
         self.contact.data = vendor.contact
         self.address.data = vendor.address.address
         self.mobile.data = vendor.mobile
@@ -592,7 +592,7 @@ class SettingsForm(Form):
         vendor.telephone = self.telephone.data
         vendor.contact = self.contact.data
         vendor.address.address = self.address.data
-        vendor.address.cn_id = self.district_cn_id.data
+        # vendor.address.cn_id = self.area_cn_id.data
         if vendor.email != self.email.data:
             vendor.email = self.email.data
             vendor.email_confirmed = False
