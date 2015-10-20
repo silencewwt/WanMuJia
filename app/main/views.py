@@ -20,7 +20,6 @@ def index():
         items = statisitc.item_query.order_by(func.rand()).limit(18).all()
         item_ids = [item.id for item in items]
         redis_set('INDEX_ITEMS', 'ITEMS', json.dumps(item_ids), expire=86400)
-    print(item_ids, type(item_ids))
     items = Item.query.filter(Item.id.in_(item_ids)).order_by(Item.id).all()
     while len(items) < 18:
         items.append(items[0])
@@ -30,7 +29,6 @@ def index():
         for second_scene in SecondScene.query.filter_by(first_scene_id=first_scene.id).order_by(SecondScene.id):
             l[1].append((second_scene.id, second_scene.second_scene))
         scenes.append(l)
-    print(scenes)
     return render_template('user/index.html', user=current_user, scenes=scenes,
                            group1=items[:6], group2=items[6:12], group3=items[12:18])
 
