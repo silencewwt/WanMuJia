@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
     <title>万木家 | 服务中心</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/all.css">
-    <link rel="stylesheet" href="css/index.css">
-    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/site/reset.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/site/all.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/site/center.css')}}">
+    <script src="{{url_for('static', filename='lib/jquery.js')}}"></script>
 </head>
 <body>
     <header>
         <div class="logo fl">
-            <a href="index.html" class="logo-img"></a>
+            <a href="index" class="logo-img"></a>
         </div>
         <nav class="nav fr" id="header_nav">
             <ul>
-                <li><a href="index.html" class="active">首页</a></li>
+                <li><a href="#" class="active">首页</a></li>
                 <li><a href="#user_guide">用户指南</a></li>
                 <li><a href="#about_platform">关于平台</a></li>
                 <li><a href="#use_process">使用流程</a></li>
@@ -28,10 +28,10 @@
 
     <div class="banner">
         <ul>
-            <li href="index.html" style="background-image: url('imgs/banner.png');"></li>
-            <li href="index.html" style="background-image: url('imgs/banner.png');"></li>
-            <li href="index.html" style="background-image: url('imgs/banner.png');"></li>
-            <li href="http://www.baidu.com" style="background-image: url('imgs/banner.png');"></li>
+            <li href="#" style="background-image: url('img/site/banner.png');"></li>
+            <li href="#" style="background-image: url('img/site/banner.png');"></li>
+            <li href="#" style="background-image: url('img/site/banner.png');"></li>
+            <li href="#" style="background-image: url('img/site/banner.png');"></li>
         </ul>
     </div>
 
@@ -40,18 +40,18 @@
             <h1 id="user_guide">用户指南</h1>
 
             <div class="guide-box">
-                <a href="" class="guide-item">
+                <a href="/register" class="guide-item">
                     <div>
-                        <img src="./imgs/guide_register.png" alt="注册账号">
+                        <img src="{{url_for('static', filename='img/site/guide_register.png')}}" alt="注册账号">
                         <div class="detail">
                             <h3>注册账号</h3>
                             <div class=desc>用户点击注册万木家账号</div>
                         </div>
                     </div>
                 </a>
-                <a href="" class="guide-item">
+                <a href="/reset_password" class="guide-item">
                     <div>
-                        <img src="./imgs/guide_findpsw.png" alt="找回密码">
+                        <img src="{{url_for('static', filename='img/site/guide_findpsw.png')}}" alt="找回密码">
                         <div class="detail">
                             <h3>找回密码</h3>
                             <div class=desc>通过手机号或者邮箱找回密码</div>
@@ -60,7 +60,7 @@
                 </a>
                 <a href="" class="guide-item">
                     <div>
-                        <img src="./imgs/guide_progress.png" alt="使用流程">
+                        <img src="{{url_for('static', filename='img/site/guide_progress.png')}}" alt="使用流程">
                         <div class="detail">
                             <h3>使用流程</h3>
                             <div class=desc>万木家平台使用流程</div>
@@ -84,7 +84,7 @@
                         致力打造中国乃至全球红木销售领域最值得消费者信赖的网站
                         <br/><br/><br/>
                     </div>
-                    <img class="desc-img" src="./imgs/platform.png" />
+                    <img class="desc-img" src="{{url_for('static', filename='img/site/platform.png')}}" />
                 </a>
                 <a href="#" class="plat-item center-item">
                     <h2>用户使用条款</h2>
@@ -92,7 +92,7 @@
                        本协议是您与万木家网站（简称"本站"，网址：www.wanmujia.com）所有者（以下简称为"万木家"）之间就万木家网站服务等相关事宜所订立的契约，请您仔细阅读本注册协议。
                        <br/><br/><br/>
                     </div>
-                    <img class="desc-img" src="./imgs/user.jpg" />
+                    <img class="desc-img" src="{{url_for('static', filename='img/site/user.jpg')}}" />
                 </a>
                 <a href="#" class="plat-item">
                     <h2>厂家入驻条款</h2>
@@ -102,7 +102,7 @@
                         帮助各红木企业做互联网转型。
                         <br/><br/><br/>
                     </div>
-                    <img class="desc-img" src="./imgs/company.jpg" />
+                    <img class="desc-img" src="{{url_for('static', filename='img/site/company.jpg')}}" />
                 </a>
 
                 <div class="cf"></div>
@@ -112,45 +112,43 @@
 
     <div class="use-process w" id="use_process">
         <div class="cont">
-            <h1>使用流程</h1>
+            <h1>厂家使用流程</h1>
             <div class="item-box">
-                <a href="useprocess.html?pro=1" class="item">
-                    <img src="./imgs/pro_1.png" alt="申请账号">
+                <div class="item">
+                    <img src="{{url_for('static', filename='img/site/pro_1.png')}}" alt="申请账号">
                     <span>注册账号</span>
-                </a>
+                </div>
                 <span class="item">
-                    <img src="./imgs/arr.png" alt="申请账号">
+                    <img src="{{url_for('static', filename='img/site/arr.png')}}" alt="申请账号">
                 </span>
-                <a href="useprocess.html?pro=2" class="item">
-                    <img src="./imgs/pro_3.png" alt="上传证明">
+                <div class="item">
+                    <img src="{{url_for('static', filename='img/site/pro_3.png')}}" alt="上传证明">
                     <span>平台审核</span>
-                </a>
+                </div>
                 <span class="item">
-                    <img src="./imgs/arr.png" alt="申请账号">
+                    <img src="{{url_for('static', filename='img/site/arr.png')}}" alt="申请账号">
                 </span>
-                <a href="useprocess.html?pro=3" class="item">
-                    <img src="./imgs/pro_2.png" alt="平台审核">
+                <div class="item">
+                    <img src="{{url_for('static', filename='img/site/pro_2.png')}}" alt="平台审核">
                     <span>上传家具</span>
-                </a>
+                </div>
                 <span class="item">
-                    <img src="./imgs/arr.png" alt="申请账号">
+                    <img src="{{url_for('static', filename='img/site/arr.png')}}" alt="申请账号">
                 </span>
-                <a href="useprocess.html?pro=4" class="item">
-                    <img src="./imgs/pro_4.png" alt="上传家具">
+                <div class="item">
+                    <img src="{{url_for('static', filename='img/site/pro_4.png')}}" alt="上传家具">
                     <span>修改商品</span>
-                </a>
+                </div>
                 <span class="item">
-                    <img src="./imgs/arr.png" alt="申请账号">
+                    <img src="{{url_for('static', filename='img/site/arr.png')}}" alt="申请账号">
                 </span>
-                <a href="useprocess.html?pro=5" class="item">
-                    <img src="./imgs/pro_5.png" alt="邀请商家">
+                <div class="item">
+                    <img src=".{{url_for('static', filename='img/site/pro_5.png')}}" alt="邀请商家">
                     <span>邀请商家</span>
-                </a>
+                </div>
                 <div class="cf"></div>
             </div>
-            <a href="useprocess.html?pro=1" class="detail-btn">
-                查看详情
-            </a>
+
         </div>
     </div>
 
@@ -170,26 +168,26 @@
             <ul class="link-box">
                 <li>
                     <h2>关于我们</h2>
-                    <div class="link-item"><a href="#">平台介绍</a></div>
-                    <div class="link-item"><a href="#">用户条款</a></div>
-                    <div class="link-item"><a href="#">服务中心</a></div>
+                    <div class="link-item"><a href="/about">平台介绍</a></div>
+                    <div class="link-item"><a href="/legal/user">用户条款</a></div>
+                    <div class="link-item"><a href="/center">服务中心</a></div>
                 </li>
                 <li>
                     <h2>厂家指南</h2>
-                    <div class="link-item"><a href="#">入驻平台</a></div>
-                    <div class="link-item"><a href="#">入驻条款</a></div>
-                    <div class="link-item"><a href="#">使用流程</a></div>
+                    <div class="link-item"><a href="/vender/register">入驻平台</a></div>
+                    <div class="link-item"><a href="/legal/vendor">入驻条款</a></div>
+                    <div class="link-item"><a href="/join">使用流程</a></div>
                 </li>
                 <li>
                     <h2>联系我们</h2>
                     <div class="link-item">
-                        <a href="#" class="weixin">
+                        <a href="javascript: void(0);" class="weixin">
                             微信平台
-                            <img src="./imgs/weixin.jpg" alt="微信">
+                            <img src="{{url_for('static', filename='img/user/qrcode.jpg')}}" alt="微信">
                         </a>
                     </div>
-                    <div class="link-item"><a href="#">新浪微博</a></div>
-                    <div class="link-item"><a href="#">联系方式</a></div>
+                    <div class="link-item"><a href="http://weibo.com/wanmujiahongmu">新浪微博</a></div>
+                    <div class="link-item"><a href="/center#touch_us">联系方式</a></div>
                 </li>
                 <div class="cf"></div>
             </ul>
@@ -201,9 +199,9 @@
             </p>
 
         </div>
- </footer>
+   </footer>
 
 </body>
-<script type="text/javascript" src="js/unslider.min.js"></script>
-<script type="text/javascript" src="js/index.js"></script>
+<script src="{{url_for('static', filename='js/site/unslider.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/site/index.js')}}"></script>
 </html>
