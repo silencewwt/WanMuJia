@@ -179,4 +179,4 @@ def change_password():
 
 @user_blueprint.route('/address', methods=['GET'])
 def address():
-    return render_template('user/address.html')
+    return render_template('user/address.html', user=current_user)
