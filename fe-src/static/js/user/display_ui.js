@@ -5,7 +5,7 @@ $(function () {
 
     /* Progressbar */
     var progressBar = React.render(
-        <ProgressBar />,
+        <ProgressBar color="#009966" />,
         $('#progress-bar')[0]
     );
 
@@ -29,7 +29,7 @@ $(function () {
             filterSelected: state,
             otherParams: queryParams,
             isFromFilter: true
-        }));
+        }), 'filter');
     };
 
     var filterGroup = React.render(
@@ -46,7 +46,7 @@ $(function () {
     // url 改变更新数据
     historyWatcher = new HistoryWatcher(function (e) {
         console.log('history changed:', e.state);
-        getSearchDataWithLoading(e.state, true);
+        getSearchDataWithLoading(e.state, true, 'popstate');
     });
 
 
@@ -63,7 +63,7 @@ $(function () {
         }
         sortType = sortArrow.hasClass('inc') ? 'asc' : 'desc';
 
-        getSearchDataWithLoading($.extend({}, queryParams, {order: sortType}));
+        getSearchDataWithLoading($.extend({}, queryParams, {order: sortType}), 'sortbar');
 
         return false;
     });
@@ -137,7 +137,7 @@ $(function () {
     /*Pagination*/
     var pagination;
     var onChangePage = function (page) {
-        getSearchDataWithLoading($.extend({}, queryParams, {page: page}));
+        getSearchDataWithLoading($.extend({}, queryParams, {page: page}), 'pagination');
     };
     var renderPagination = function (pages, activePage) {
         return React.render(
@@ -171,7 +171,11 @@ $(function () {
     })();
 
 
-    function getSearchDataWithLoading (params, isFromPopstate) {
+    function getSearchDataWithLoading (params, origin) {
+        // 请求非 popstate 触发和分页回调触发时，直接重置请求页码为1
+        origin == 'popstate' && origin == 'pagination' &&
+            (params.page = 1);
+
         getSearchData({
             params: params,
             done: function (data) {
@@ -191,12 +195,18 @@ $(function () {
                 // 更新 pagination
                 pagination = renderPagination(data.items.pages, data.items.page);
                 // 不来自 popstate 事件时更新 url
-                !isFromPopstate && historyWatcher.addHistory(queryParams, '?' + $.param(queryParams, true));
+                origin !== 'popstate' && historyWatcher.addHistory(queryParams, '?' + $.param(queryParams, true));
                 // 如果来自 popstate 事件则需要手动更新过滤器的状态
-                isFromPopstate && filterGroup.setFilterState(filterValuesMapping(filters.selected));
+                origin === 'popstate' && filterGroup.setFilterState(filterValuesMapping(filters.selected));
             },
             fail: function (xhr) {
 
+            },
+            beforeSend: function () {
+                progressBar.start();
+            },
+            complete: function () {
+                progressBar.done();
             }
         });
     }

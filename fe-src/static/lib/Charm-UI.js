@@ -186,6 +186,350 @@ var AddressListRow = React.createClass({displayName: "AddressListRow",
     }
 });
 
+'use strict'
+
+//  ==================================================
+//  Include: AddressList AddressSearch
+//
+//  TODO:
+//  ==================================================
+
+var AddressPicker = React.createClass({displayName: "AddressPicker",
+  getInitialState: function() {
+    return {
+      city: "北京",
+      currentCity: null,
+      address: this.props.keyword
+    };
+  },
+  getDefaultProps: function() {
+    return {};
+  },
+  componentWillMount: function() {
+    var myCity = new BMap.LocalCity();
+    myCity
+      .get(function(res) {
+        var currentCity = res.name;
+        this.setState({
+            currentCity: currentCity
+        });
+      }.bind(this));
+  },
+  setAddress: function(ad) {
+    this.setState({
+      address: ad
+    });
+  },
+  setCity: function(ct) {
+    this.setState({
+      city: ct
+    });
+  },
+  render: function() {
+    var addressPickerActiveStyle = this.state.address
+      ? this.props.addressPickerActiveStyle
+      : {};
+    return (
+      React.createElement("div", {className: "address-picker", style: addressPickerActiveStyle}, 
+        React.createElement(AddressList, {setCity: this.setCity, localAddress: this.state.currentCity, addressData: this.props.addressData}), 
+        React.createElement(AddressInput, React.__spread({},  this.props, {city: this.state.city, searchSubmitHandler: this.setAddress})), 
+        React.createElement(AddressMap, {addressKeyword: this.state.address, city: this.props.city, theme: this.props.theme})
+      )
+    );
+  }
+});
+
+'use strict'
+
+//  ==================================================
+//  Include: AddressInput AddressMap
+//
+//  TODO: [add] 增加各项参数
+//  ==================================================
+
+/* AddressSearch */
+var AddressSearch = React.createClass({displayName: "AddressSearch",
+  getInitialState: function() {
+    return {
+      address: null
+    };
+  },
+  getDefaultProps: function() {
+    return {
+      inputWidth: 400,
+      inputTip: "输入想要搜索的地址",
+      searchBtnText: "搜索",
+      city: "北京",
+      theme: "dark"
+    }
+  },
+  componentWillMount: function() {
+    var myCity = new BMap.LocalCity();
+    myCity
+      .get(function(res) {
+        var currentCity = res.name;
+        this.setCity(currentCity);
+      }.bind(this));
+  },
+  setAddress: function(ad) {
+    this.setState({
+      address: ad
+    });
+  },
+  setCity: function(ct) {
+    this.setState({
+      city: ct
+    });
+  },
+  render: function() {
+    return (
+      React.createElement("div", {className: "address-search"}, 
+        React.createElement(AddressInput, React.__spread({},  this.props, {searchSubmitHandler: this.setAddress})), 
+        React.createElement(AddressMap, {addressKeyword: this.state.address, city: this.props.city, theme: this.props.theme})
+      )
+    );
+  }
+});
+
+/* AddressInput */
+var AddressInput = React.createClass({displayName: "AddressInput",
+  getInitialState: function() {
+    return {
+      keyword: this.props.keyword
+    };
+  },
+  getDefaultProps: function() {
+    return {
+      inputWidth: 400,
+      inputTip: "输入想要搜索的地址",
+      searchBtnText: "搜索",
+      city: "北京",
+      theme: "light"
+    }
+  },
+  searchSubmit: function() {
+    var keyword = this.getDOMNode()
+      .children[0]
+      .value;
+    this.props
+      .searchSubmitHandler(keyword);
+    setCookie('searchKeyword', keyword, 30);
+  },
+  checkEnter: function(e) {
+    (e.keyCode === 13) && this.searchSubmit();
+  },
+  componentDidMount: function() {
+    var mapAutoComplete = new BMap.Autocomplete({
+      "input": "_addressSearchKeyword",
+      "location": this.props.city
+    });
+  },
+  render: function() {
+    var keywordStyle = {
+      width: this.props.inputWidth
+    };
+    var conClassName = "address-input";
+    switch (this.props.theme) {
+    case 'light' :
+      break;
+    case 'dark' :
+      conClassName += " dark";
+      break;
+    default :
+
+    }
+    return (
+      React.createElement("div", {className: conClassName}, 
+        React.createElement("input", {className: "input-keyword", id: "_addressSearchKeyword", onKeyUp: this.checkEnter, placeholder: this.state.keyword || this.props.inputTip, style: keywordStyle}), 
+        React.createElement("button", {className: "input-commit", onClick: this.searchSubmit}, this.props.searchBtnText)
+      )
+    );
+  }
+});
+
+/* AddressMap */
+var AddressMap = React.createClass({displayName: "AddressMap",
+  getInitialState: function() {
+    return {
+      mapLocalObj: null,
+      itemsNumber: 0,
+      itemsList: [],
+      itemActive: 0
+    };
+  },
+  getDefaultProps: function() {
+    return {
+      mapSearchgeotableId: 121763,
+      mapSearchTags: "",
+      mapSearchFilter: "",
+      theme: "light"
+    }
+  },
+  componentDidMount: function() {
+    this.map = new BMap.Map("_addressMapMain", {
+      enableMapClick: false
+    });
+    this.map
+      .centerAndZoom(this.props.city, 12);
+  },
+  componentWillReceiveProps: function(nextProps) {
+    nextProps.addressKeyword && this.getNearby(nextProps.addressKeyword);
+  },
+  getNearby: function(keyword, page) {
+    // 地址解析获取经纬度
+    var myGeo = new BMap.Geocoder();
+    var _this = this;
+    myGeo
+      .getPoint(keyword, function(point) { // 解析成功后的回调 搜索信息
+        if (point) {
+          $.ajax({
+            type: 'get',
+            url: 'http://api.map.baidu.com/geosearch/v3/nearby',
+            dataType: "jsonp",
+            data: {
+              ak: 'sdp9qCbToS7E23nDRxaAAwbh',
+              geotable_id: 121763,
+              location: point.lng + ',' + point.lat,
+              radius: 10000,
+              page_index: page || 0,
+              page_size: 50
+            },
+            jsonp: 'callback',
+            success: function(res) {
+              _this.setState({
+                itemsNumber: res.total,
+                itemsList: res.contents
+              });
+              _this.showNearby();
+              _this.map
+                .centerAndZoom(_this.props.addressKeyword, 12);
+            }
+          })
+        } else {
+          alert("未找到该区域信息");
+        }
+      }.bind(this), this.props.city);
+  },
+  showNearby: function() {
+    var _this = this;
+    for (var k in this.state.itemsList) {
+      var point = new BMap.Point(this.state.itemsList[k].location[0], this.state.itemsList[k].location[1]);
+      var marker = new BMap.Marker(point);
+      var label = new BMap.Label(String.fromCharCode(65 + parseInt(k)), {
+        offset: new BMap.Size(4, 2)
+      });
+      label.setStyle({
+        border: 'none',
+        backgroundColor: 'transparent',
+        color: '#FAFAFA'
+      });
+      marker.setLabel(label);
+      marker.setTitle(this.state.itemsList[k].title);
+      marker
+        .addEventListener('click', function(e) {
+          _this.showInfoWindow(this.getLabel().content.charCodeAt(0) - 65);
+        });
+      this.map
+        .addOverlay(marker);
+    }
+    this.state.itemsList.length && this.showInfoWindow(0);
+  },
+  showInfoWindow: function(index) {
+    if (index !== this.state.itemActive || 1) {
+      var point = new BMap.Point(this.state.itemsList[index].location[0], this.state.itemsList[index].location[1]);
+      var itemInfo = this.state.itemsList[index];
+      var title = itemInfo.title;
+      var address = itemInfo.address;
+      var tel = itemInfo.tel;
+      var content = '<p class="map-info-window">地址：' + address + '</p>';
+      var infoWindow = new BMap.InfoWindow(content, {
+        title: title,
+        width: 290,
+        panel: "panel",
+        enableAutoPan: true,
+        offset: new BMap.Size(0, -25)
+      });
+      this.setState({
+        itemActive: + index
+      });
+      this.map
+        .openInfoWindow(infoWindow, point);
+    }
+  },
+  clickMapItem: function(e) {
+    var ele = e.target;
+    var eleClass = ele.getAttribute('class');
+    var itemIndex = 0;
+    if (eleClass === "map-item") {
+      itemIndex = ele.getAttribute('data-key');
+    } else if (eleClass === "map-item-mark" || eleClass === "map-item-main") {
+      itemIndex = ele.parentNode
+        .getAttribute('data-key');
+    } else if (!eleClass) {
+      itemIndex = ele.parentNode
+        .parentNode
+        .parentNode
+        .getAttribute('data-key');
+    } else {
+      itemIndex = ele.parentNode
+        .parentNode
+        .getAttribute('data-key');
+    }
+    this.showInfoWindow(itemIndex);
+  },
+  render: function() {
+    var conClassName = "address-map";
+    switch (this.props.theme) {
+    case 'light' :
+      break;
+    case 'dark' :
+      conClassName += " dark";
+      break;
+    default :
+
+    }
+    var mapItemActieStyle = {
+      backgroundColor: "#181211"
+    };
+    return (
+      React.createElement("div", {className: conClassName, style: {
+        display: this.props.addressKeyword
+          ? "block"
+          : "none"
+      }}, 
+        React.createElement("div", {className: "map-nav"}, 
+          React.createElement("div", {className: "map-nav-title"}, 
+            "附近有", 
+            React.createElement("span", {className: "map-nav-number"}, 
+              this.state.itemsNumber
+            ), 
+            "家体验店"
+          ), 
+          React.createElement("ul", {className: "map-items", id: "_addressMapItems", onClick: this.clickMapItem}, 
+            this
+              .state
+              .itemsList
+              .map(function (item, i) {
+                return React.createElement("li", {className: "map-item", "data-key": i, key: i, style: (i === this.state.itemActive)
+                  ? mapItemActieStyle
+                  :
+                    {}}, 
+                  React.createElement("span", {className: "map-item-mark"}, String.fromCharCode(65 + i)), 
+                  React.createElement("div", {className: "map-item-main"}, 
+                    React.createElement("div", {className: "map-item-title"}, item.title), 
+                    React.createElement("div", {className: "map-item-address"}, "地址：", item.address), 
+                    React.createElement("div", {className: "map-item-tel"}, "电话：", item.tel)
+                  )
+                );
+              }.bind(this))
+          )
+        ), 
+        React.createElement("div", {className: "map-main", id: "_addressMapMain"})
+      )
+    );
+  }
+});
+
 
 //  ==================================================
 //  Component: FilterGroup
@@ -636,664 +980,6 @@ var FilterGroup = React.createClass({displayName: "FilterGroup",
 'use strict'
 
 //  ==================================================
-//  Include: AddressList AddressSearch
-//
-//  TODO:
-//  ==================================================
-
-var AddressPicker = React.createClass({displayName: "AddressPicker",
-  getInitialState: function() {
-    return {
-      city: "北京",
-      currentCity: null,
-      address: this.props.keyword
-    };
-  },
-  getDefaultProps: function() {
-    return {};
-  },
-  componentWillMount: function() {
-    var myCity = new BMap.LocalCity();
-    myCity
-      .get(function(res) {
-        var currentCity = res.name;
-        this.setState({
-            currentCity: currentCity
-        });
-      }.bind(this));
-  },
-  setAddress: function(ad) {
-    this.setState({
-      address: ad
-    });
-  },
-  setCity: function(ct) {
-    this.setState({
-      city: ct
-    });
-  },
-  render: function() {
-    var addressPickerActiveStyle = this.state.address
-      ? this.props.addressPickerActiveStyle
-      : {};
-    return (
-      React.createElement("div", {className: "address-picker", style: addressPickerActiveStyle}, 
-        React.createElement(AddressList, {setCity: this.setCity, localAddress: this.state.currentCity, addressData: this.props.addressData}), 
-        React.createElement(AddressInput, React.__spread({},  this.props, {city: this.state.city, searchSubmitHandler: this.setAddress})), 
-        React.createElement(AddressMap, {addressKeyword: this.state.address, city: this.props.city, theme: this.props.theme})
-      )
-    );
-  }
-});
-
-'use strict'
-
-//  ==================================================
-//  Include: AddressInput AddressMap
-//
-//  TODO: [add] 增加各项参数
-//  ==================================================
-
-/* AddressSearch */
-var AddressSearch = React.createClass({displayName: "AddressSearch",
-  getInitialState: function() {
-    return {
-      address: null
-    };
-  },
-  getDefaultProps: function() {
-    return {
-      inputWidth: 400,
-      inputTip: "输入想要搜索的地址",
-      searchBtnText: "搜索",
-      city: "北京",
-      theme: "dark"
-    }
-  },
-  componentWillMount: function() {
-    var myCity = new BMap.LocalCity();
-    myCity
-      .get(function(res) {
-        var currentCity = res.name;
-        this.setCity(currentCity);
-      }.bind(this));
-  },
-  setAddress: function(ad) {
-    this.setState({
-      address: ad
-    });
-  },
-  setCity: function(ct) {
-    this.setState({
-      city: ct
-    });
-  },
-  render: function() {
-    return (
-      React.createElement("div", {className: "address-search"}, 
-        React.createElement(AddressInput, React.__spread({},  this.props, {searchSubmitHandler: this.setAddress})), 
-        React.createElement(AddressMap, {addressKeyword: this.state.address, city: this.props.city, theme: this.props.theme})
-      )
-    );
-  }
-});
-
-/* AddressInput */
-var AddressInput = React.createClass({displayName: "AddressInput",
-  getInitialState: function() {
-    return {
-      keyword: this.props.keyword
-    };
-  },
-  getDefaultProps: function() {
-    return {
-      inputWidth: 400,
-      inputTip: "输入想要搜索的地址",
-      searchBtnText: "搜索",
-      city: "北京",
-      theme: "light"
-    }
-  },
-  searchSubmit: function() {
-    var keyword = this.getDOMNode()
-      .children[0]
-      .value;
-    this.props
-      .searchSubmitHandler(keyword);
-    setCookie('searchKeyword', keyword, 30);
-  },
-  checkEnter: function(e) {
-    (e.keyCode === 13) && this.searchSubmit();
-  },
-  componentDidMount: function() {
-    var mapAutoComplete = new BMap.Autocomplete({
-      "input": "_addressSearchKeyword",
-      "location": this.props.city
-    });
-  },
-  render: function() {
-    var keywordStyle = {
-      width: this.props.inputWidth
-    };
-    var conClassName = "address-input";
-    switch (this.props.theme) {
-    case 'light' :
-      break;
-    case 'dark' :
-      conClassName += " dark";
-      break;
-    default :
-
-    }
-    return (
-      React.createElement("div", {className: conClassName}, 
-        React.createElement("input", {className: "input-keyword", id: "_addressSearchKeyword", onKeyUp: this.checkEnter, placeholder: this.state.keyword || this.props.inputTip, style: keywordStyle}), 
-        React.createElement("button", {className: "input-commit", onClick: this.searchSubmit}, this.props.searchBtnText)
-      )
-    );
-  }
-});
-
-/* AddressMap */
-var AddressMap = React.createClass({displayName: "AddressMap",
-  getInitialState: function() {
-    return {
-      mapLocalObj: null,
-      itemsNumber: 0,
-      itemsList: [],
-      itemActive: 0
-    };
-  },
-  getDefaultProps: function() {
-    return {
-      mapSearchgeotableId: 121763,
-      mapSearchTags: "",
-      mapSearchFilter: "",
-      theme: "light"
-    }
-  },
-  componentDidMount: function() {
-    this.map = new BMap.Map("_addressMapMain", {
-      enableMapClick: false
-    });
-    this.map
-      .centerAndZoom(this.props.city, 12);
-  },
-  componentWillReceiveProps: function(nextProps) {
-    nextProps.addressKeyword && this.getNearby(nextProps.addressKeyword);
-  },
-  getNearby: function(keyword, page) {
-    // 地址解析获取经纬度
-    var myGeo = new BMap.Geocoder();
-    var _this = this;
-    myGeo
-      .getPoint(keyword, function(point) { // 解析成功后的回调 搜索信息
-        if (point) {
-          $.ajax({
-            type: 'get',
-            url: 'http://api.map.baidu.com/geosearch/v3/nearby',
-            dataType: "jsonp",
-            data: {
-              ak: 'sdp9qCbToS7E23nDRxaAAwbh',
-              geotable_id: 121763,
-              location: point.lng + ',' + point.lat,
-              radius: 10000,
-              page_index: page || 0,
-              page_size: 50
-            },
-            jsonp: 'callback',
-            success: function(res) {
-              _this.setState({
-                itemsNumber: res.total,
-                itemsList: res.contents
-              });
-              _this.showNearby();
-              _this.map
-                .centerAndZoom(_this.props.addressKeyword, 12);
-            }
-          })
-        } else {
-          alert("未找到该区域信息");
-        }
-      }.bind(this), this.props.city);
-  },
-  showNearby: function() {
-    var _this = this;
-    for (var k in this.state.itemsList) {
-      var point = new BMap.Point(this.state.itemsList[k].location[0], this.state.itemsList[k].location[1]);
-      var marker = new BMap.Marker(point);
-      var label = new BMap.Label(String.fromCharCode(65 + parseInt(k)), {
-        offset: new BMap.Size(4, 2)
-      });
-      label.setStyle({
-        border: 'none',
-        backgroundColor: 'transparent',
-        color: '#FAFAFA'
-      });
-      marker.setLabel(label);
-      marker.setTitle(this.state.itemsList[k].title);
-      marker
-        .addEventListener('click', function(e) {
-          _this.showInfoWindow(this.getLabel().content.charCodeAt(0) - 65);
-        });
-      this.map
-        .addOverlay(marker);
-    }
-    this.state.itemsList.length && this.showInfoWindow(0);
-  },
-  showInfoWindow: function(index) {
-    if (index !== this.state.itemActive || 1) {
-      var point = new BMap.Point(this.state.itemsList[index].location[0], this.state.itemsList[index].location[1]);
-      var itemInfo = this.state.itemsList[index];
-      var title = itemInfo.title;
-      var address = itemInfo.address;
-      var tel = itemInfo.tel;
-      var content = '<p class="map-info-window">地址：' + address + '</p>';
-      var infoWindow = new BMap.InfoWindow(content, {
-        title: title,
-        width: 290,
-        panel: "panel",
-        enableAutoPan: true,
-        offset: new BMap.Size(0, -25)
-      });
-      this.setState({
-        itemActive: + index
-      });
-      this.map
-        .openInfoWindow(infoWindow, point);
-    }
-  },
-  clickMapItem: function(e) {
-    var ele = e.target;
-    var eleClass = ele.getAttribute('class');
-    var itemIndex = 0;
-    if (eleClass === "map-item") {
-      itemIndex = ele.getAttribute('data-key');
-    } else if (eleClass === "map-item-mark" || eleClass === "map-item-main") {
-      itemIndex = ele.parentNode
-        .getAttribute('data-key');
-    } else if (!eleClass) {
-      itemIndex = ele.parentNode
-        .parentNode
-        .parentNode
-        .getAttribute('data-key');
-    } else {
-      itemIndex = ele.parentNode
-        .parentNode
-        .getAttribute('data-key');
-    }
-    this.showInfoWindow(itemIndex);
-  },
-  render: function() {
-    var conClassName = "address-map";
-    switch (this.props.theme) {
-    case 'light' :
-      break;
-    case 'dark' :
-      conClassName += " dark";
-      break;
-    default :
-
-    }
-    var mapItemActieStyle = {
-      backgroundColor: "#181211"
-    };
-    return (
-      React.createElement("div", {className: conClassName, style: {
-        display: this.props.addressKeyword
-          ? "block"
-          : "none"
-      }}, 
-        React.createElement("div", {className: "map-nav"}, 
-          React.createElement("div", {className: "map-nav-title"}, 
-            "附近有", 
-            React.createElement("span", {className: "map-nav-number"}, 
-              this.state.itemsNumber
-            ), 
-            "家体验店"
-          ), 
-          React.createElement("ul", {className: "map-items", id: "_addressMapItems", onClick: this.clickMapItem}, 
-            this
-              .state
-              .itemsList
-              .map(function (item, i) {
-                return React.createElement("li", {className: "map-item", "data-key": i, key: i, style: (i === this.state.itemActive)
-                  ? mapItemActieStyle
-                  :
-                    {}}, 
-                  React.createElement("span", {className: "map-item-mark"}, String.fromCharCode(65 + i)), 
-                  React.createElement("div", {className: "map-item-main"}, 
-                    React.createElement("div", {className: "map-item-title"}, item.title), 
-                    React.createElement("div", {className: "map-item-address"}, "地址：", item.address), 
-                    React.createElement("div", {className: "map-item-tel"}, "电话：", item.tel)
-                  )
-                );
-              }.bind(this))
-          )
-        ), 
-        React.createElement("div", {className: "map-main", id: "_addressMapMain"})
-      )
-    );
-  }
-});
-
-var ToolTip = React.createClass({displayName: "ToolTip",
-    getDefaultProps: function() {
-        return {
-            tip: "tip",
-            trigger: 'hover',
-            delay: 0,
-            hoverable: false,
-            position: "tip",
-            width: "200px",
-            type: 'span',
-            aHref: "#"
-        };
-    },
-    getInitialState: function() {
-        return {
-            position: this.props.position,
-            isActive: false,
-            isOnTip: false,
-            tipHeight: ""
-        };
-    },
-    handleMouseOver: function(e) {
-        if(this.props.trigger=="hover") {
-            this.setState({isActive: true});
-        }
-    },
-    handleMouseOut: function(e) {
-        if(this.props.trigger=="hover") {
-            setTimeout(function() {
-                if(this.state.isOnTip) {
-                    return false;
-                }
-                this.setState({isActive: false});
-            }.bind(this) , this.props.delay);
-        }
-    },
-    handleClick: function(e) {
-        if(this.props.trigger=="click") {
-            if(this.state.isActive) {
-                this.setState({isActive: false});
-            } else if(!this.state.isActive) {
-                this.setState({isActive: true});
-            }
-        }
-    },
-    handleTipMouseOver: function(e) {
-        if(this.props.hoverable) {
-            this.setState({isOnTip: true});
-            this.setState({isActive: true});
-        }
-    },
-    handleTipMouseOut: function(e) {
-        if(this.props.hoverable) {
-            this.setState({isOnTip: false});
-            this.setState({isActive: false});
-        }
-    },
-    componentDidUpdate: function() {
-        this.setTipPosition();
-    },
-    setTipPosition: function() {
-        var tip = this.refs.tip.getDOMNode();
-        var cont = this.refs.cont.getDOMNode();
-        if(!this.flag) {
-            this.state.tipHeight = tip.offsetHeight;
-            this.flag = 1;
-        }
-        var tipWidth = tip.offsetWidth;
-        var tipHeight = tip.offsetHeight;
-        var contWidth = cont.offsetWidth;
-        var contHeight = cont.offsetHeight;
-        switch (this.state.position) {
-            case "left":tip.style.top = -(tipHeight-contHeight)/2+"px";
-                        tip.style.left = -(tipWidth+20)+"px";
-                break;
-            case "right":tip.style.top = -(tipHeight-contHeight)/2+"px";
-                        tip.style.left = "100%";
-                break;
-            case "top":tip.style.left = -(tipWidth-contWidth)/2+"px";
-                        tip.style.bottom = "100%";
-                break;
-            case "bottom":tip.style.left = -(tipWidth-contWidth)/2+"px";
-                        tip.style.top = "100%";
-                break;
-            default: tip.style.top = -(tipHeight-contHeight)/2+"px";
-                    tip.style.left = -(tipWidth+20)+"px";
-        }
-        tip.style.height = this.state.tipHeight-20+"px";
-        this.prevertTipOverflow();
-    },
-    prevertTipOverflow: function() {
-        var tipX = this.refs.tip.getDOMNode().getBoundingClientRect().left;
-        var tipY = this.refs.tip.getDOMNode().getBoundingClientRect().top;
-        var tipWidth = this.refs.tip.getDOMNode().offsetWidth;
-        var tipHeight = this.refs.tip.getDOMNode().offsetHeight;
-        var availWidth = parseInt(document.body.clientWidth);
-        if(tipX < 0 && tipX+tipWidth > availWidth) {
-            return true;
-        }
-        if(tipX < 0) {
-            if(this.state.position == "left") {
-                this.setState({position: "top"});
-                return ;
-            }
-            if(this.state.position == "top" || this.state.position == "bottom") {
-                this.setState({position: "right"});
-                return ;
-            }
-        }
-        if(tipX+tipWidth > availWidth) {
-            if(this.state.position == "right") {
-                this.setState({position: "bottom"});
-                return ;
-            }
-            if(this.state.position == "bottom" || this.state.position == "top") {
-                this.setState({position: "left"});
-                return ;
-            }
-        }
-
-    },
-    getTipStyle: function() {
-        return {
-            display: this.state.isActive?"block":"none",
-            color: "pink",
-            backgroundColor: "#333",
-            width: this.props.width,
-        };
-    },
-    render: function() {
-        if(this.props.type=="span") {
-            return (
-                React.createElement("span", {className: "tooltip "+this.state.position}, 
-                    React.createElement("span", {ref: "cont", onMouseOver: this.handleMouseOver, onMouseOut: this.handleMouseOut, onClick: this.handleClick}, this.props.children), 
-                    React.createElement("div", {onMouseOver: this.handleTipMouseOver, onMouseOut: this.handleTipMouseOut, className: "tip", ref: "tip", style: this.getTipStyle()}, this.props.tip)
-                )
-            );
-        }
-        if(this.props.type=="a") {
-            return (
-                React.createElement("span", {className: "tooltip "+this.state.position}, 
-                    React.createElement("a", {href: this.props.aHref, ref: "cont", onMouseOver: this.handleMouseOver, onMouseOut: this.handleMouseOut, onClick: this.handleClick}, this.props.children), 
-                    React.createElement("div", {onMouseOver: this.handleTipMouseOver, onMouseOut: this.handleTipMouseOut, className: "tip", ref: "tip", style: this.getTipStyle()}, this.props.tip)
-                )
-            );
-        }
-        if(this.props.type=="button") {
-            return (
-                React.createElement("span", {className: "tooltip "+this.state.position}, 
-                    React.createElement("button", {ref: "cont", onMouseOver: this.handleMouseOver, onMouseOut: this.handleMouseOut, onClick: this.handleClick}, this.props.children), 
-                    React.createElement("div", {onMouseOver: this.handleTipMouseOver, onMouseOut: this.handleTipMouseOut, className: "tip", ref: "tip", style: this.getTipStyle()}, this.props.tip)
-                )
-            );
-        }
-    }
-});
-
-'use strict'
-
-//  ==================================================
-//  Component: ProgressBar
-//
-//  Include: Spinner
-//
-//  Description: Jsx for ProgressBar
-//
-//  TODO: [fix] 修正初始时 transition 不生效的问题
-//  ==================================================
-
-/* Spinner */
-var Spinner = React.createClass({displayName: "Spinner",
-  render: function() {
-    return (
-      React.createElement("div", {className: "cu-spinner"})
-    );
-  }
-});
-
-/* ProgressBar */
-var ProgressBar = React.createClass({displayName: "ProgressBar",
-  getInitialState: function() {
-    return {
-      rate: null,
-      done: false
-    };
-  },
-  getDefaultProps: function() {
-    return {
-      speed: 0.6,  // 动画速度
-      spinner: true,  // 是否有圈圈
-      easing: 'ease',  // 动画缓动曲线
-      maxRate: 0.96,  // 进度条最大宽度
-      incStep: 0.04,  // inc 增长步幅
-      minStep: 0.005,  // 随机增长的最小步幅
-      maxStep: 0.03,  // 随机增长的最大步幅
-      trickle: true,  // 是否自动增长
-      trickleSpeed: 800,  // 自动增长的间隔时间
-      setTrickle: false  // set 后是否自动增长（未启用）
-    };
-  },
-  start: function() {
-    this._init();
-    this.set('0.5%');
-    this.props.trickle && this._autoInc();
-  },
-  set: function(n, trickle) {
-    !trickle && this._init();
-    n = this._format(n);
-    if (n === 100) {
-      /* done */
-      this.setState({
-        rate: 100
-      });
-    } else {
-      n = n > this.props.maxRate * 100
-        ? this.props.maxRate * 100
-        : n;
-      this.setState({
-        rate: n
-      });
-    }
-  },
-  inc: function(n) {
-    this._init();
-    this.props.trickle && this._autoInc();
-    n = n
-      ? this._format(n)
-      : this.props.incStep * 100;
-    var newRate = this.state.rate + n;
-    this.set(newRate + '%', true);
-  },
-  done: function() {
-    this.set('100%');
-    setTimeout(function() {
-      this.setState({
-        done: true
-      });
-      setTimeout(function() {
-        this.setState({
-          rate: null
-        });
-      }.bind(this), this.props.speed * 2 * 1000);
-    }.bind(this), this.props.speed * 1000);
-  },
-  _format: function(data) {  // 格式化为 0-100 的整数
-    if (typeof data === 'number') {  // 0-1 的小数
-      return data > 1
-        ? this.pros.maxRate * 100
-        : data * 100;
-    } else if (typeof data === 'string') {  // 百分比
-      return parseFloat(data) > 100
-        ? this.props.maxRate * 100
-        : parseFloat(data);
-    } else {
-      return;
-    }
-  },
-  _init: function() {
-    this.state.done && this.setState({
-      done: false
-    });
-    this.timer && this._clearInterval();
-  },
-  _autoInc: function() {
-    var newRate;
-    var random;
-    this.timer = setInterval(function() {
-      random = this._getRadomStep();
-      newRate = this.state.rate + random;
-      console.log(random);
-      if (newRate > this.props.maxRate * 100) {
-        console.log(this.props.maxRate * 100);
-        this._clearInterval();
-        return;
-      }
-      console.log(newRate);
-      this.set(newRate + '%', true);
-    }.bind(this), this.props.trickleSpeed);
-  },
-  _clearInterval: function() {
-    this.timer && clearInterval(this.timer);
-  },
-  _getRadomStep: function(min, max) {
-    min = min || this.props.minStep * 100;
-    max = max || this.props.maxStep * 100;
-    return Math.random() * (max - min) + min;
-  },
-  render: function() {
-    var progressStyle = {
-      //display: (!this.state.rate && typeof this.state.rate === 'object') ? 'none' : 'block',
-      opacity: this.state.done
-        ? 0
-        : 1,
-      transition: 'opacity ' + this.props.speed * 2 + 's ' + this.props.easing
-    };
-    var barStyle = {
-      width: !this.state.rate
-        ? 0
-        : this.state.rate + '%',
-      transition: 'width ' + this.props.speed + 's ' + this.props.easing
-    };
-    return this.state.rate
-      ? (
-        React.createElement("div", {className: "cu-progress", style: progressStyle}, 
-          React.createElement("div", {className: "cu-progress-bar", style: barStyle}), 
-          this.props.spinner
-            ? React.createElement(Spinner, null)
-            : null
-        )
-      )
-      : null;
-  }
-});
-
-'use strict'
-
-//  ==================================================
 //  Component: ProgressBar
 //
 //  Include: PaginationBtn
@@ -1512,4 +1198,321 @@ var Pagination = React.createClass({displayName: "Pagination",
       )
   )
   }
+});
+
+'use strict'
+
+//  ==================================================
+//  Component: ProgressBar
+//
+//  Include: Spinner
+//
+//  Description: Jsx for ProgressBar
+//
+//  TODO: [fix] 修正初始时 transition 不生效的问题
+//  ==================================================
+
+/* Spinner */
+var Spinner = React.createClass({displayName: "Spinner",
+  render: function() {
+    return (
+      React.createElement("div", {className: "cu-spinner", style: {borderColor: this.props.color,borderLeftColor: 'transparent'}})
+    );
+  }
+});
+
+/* ProgressBar */
+var ProgressBar = React.createClass({displayName: "ProgressBar",
+  getInitialState: function() {
+    return {
+      rate: null,
+      done: false
+    };
+  },
+  getDefaultProps: function() {
+    return {
+      speed: 0.6,  // 动画速度
+      spinner: true,  // 是否有圈圈
+      easing: 'ease',  // 动画缓动曲线
+      maxRate: 0.96,  // 进度条最大宽度
+      incStep: 0.04,  // inc 增长步幅
+      minStep: 0.005,  // 随机增长的最小步幅
+      maxStep: 0.03,  // 随机增长的最大步幅
+      trickle: true,  // 是否自动增长
+      trickleSpeed: 800,  // 自动增长的间隔时间
+      color: '#09c4c7',
+      setTrickle: false  // set 后是否自动增长（未启用）
+    };
+  },
+  start: function() {
+    this._init();
+    this.set('0.5%');
+    this.props.trickle && this._autoInc();
+  },
+  set: function(n, trickle) {
+    !trickle && this._init();
+    n = this._format(n);
+    if (n === 100) {
+      /* done */
+      this.setState({
+        rate: 100
+      });
+    } else {
+      n = n > this.props.maxRate * 100
+        ? this.props.maxRate * 100
+        : n;
+      this.setState({
+        rate: n
+      });
+    }
+  },
+  inc: function(n) {
+    this._init();
+    this.props.trickle && this._autoInc();
+    n = n
+      ? this._format(n)
+      : this.props.incStep * 100;
+    var newRate = this.state.rate + n;
+    this.set(newRate + '%', true);
+  },
+  done: function() {
+    this.set('100%');
+    setTimeout(function() {
+      this.setState({
+        done: true
+      });
+      setTimeout(function() {
+        this.setState({
+          rate: null
+        });
+      }.bind(this), this.props.speed * 2 * 1000);
+    }.bind(this), this.props.speed * 1000);
+  },
+  _format: function(data) {  // 格式化为 0-100 的整数
+    if (typeof data === 'number') {  // 0-1 的小数
+      return data > 1
+        ? this.pros.maxRate * 100
+        : data * 100;
+    } else if (typeof data === 'string') {  // 百分比
+      return parseFloat(data) > 100
+        ? this.props.maxRate * 100
+        : parseFloat(data);
+    } else {
+      return;
+    }
+  },
+  _init: function() {
+    this.state.done && this.setState({
+      done: false
+    });
+    this.timer && this._clearInterval();
+  },
+  _autoInc: function() {
+    var newRate;
+    var random;
+    this.timer = setInterval(function() {
+      random = this._getRadomStep();
+      newRate = this.state.rate + random;
+      console.log(random);
+      if (newRate > this.props.maxRate * 100) {
+        console.log(this.props.maxRate * 100);
+        this._clearInterval();
+        return;
+      }
+      console.log(newRate);
+      this.set(newRate + '%', true);
+    }.bind(this), this.props.trickleSpeed);
+  },
+  _clearInterval: function() {
+    this.timer && clearInterval(this.timer);
+  },
+  _getRadomStep: function(min, max) {
+    min = min || this.props.minStep * 100;
+    max = max || this.props.maxStep * 100;
+    return Math.random() * (max - min) + min;
+  },
+  render: function() {
+    var progressStyle = {
+      //display: (!this.state.rate && typeof this.state.rate === 'object') ? 'none' : 'block',
+      opacity: this.state.done
+        ? 0
+        : 1,
+      transition: 'opacity ' + this.props.speed + 's ' + this.props.easing
+    };
+    var barStyle = {
+      width: !this.state.rate
+        ? 0
+        : this.state.rate + '%',
+      transition: 'width ' + this.props.speed + 's ' + this.props.easing,
+      backgroundColor: this.props.color,
+      boxShadowColor: this.props.color
+    };
+    return this.state.rate
+      ? (
+        React.createElement("div", {className: "cu-progress", style: progressStyle}, 
+          React.createElement("div", {className: "cu-progress-bar", style: barStyle}), 
+          this.props.spinner
+            ? React.createElement(Spinner, {color: this.props.color})
+            : null
+        )
+      )
+      : null;
+  }
+});
+
+var ToolTip = React.createClass({displayName: "ToolTip",
+    getDefaultProps: function() {
+        return {
+            tip: "tip",
+            trigger: 'hover',
+            delay: 0,
+            hoverable: false,
+            position: "tip",
+            width: "200px",
+            type: 'span',
+            aHref: "#"
+        };
+    },
+    getInitialState: function() {
+        return {
+            position: this.props.position,
+            isActive: false,
+            isOnTip: false,
+            tipHeight: ""
+        };
+    },
+    handleMouseOver: function(e) {
+        if(this.props.trigger=="hover") {
+            this.setState({isActive: true});
+        }
+    },
+    handleMouseOut: function(e) {
+        if(this.props.trigger=="hover") {
+            setTimeout(function() {
+                if(this.state.isOnTip) {
+                    return false;
+                }
+                this.setState({isActive: false});
+            }.bind(this) , this.props.delay);
+        }
+    },
+    handleClick: function(e) {
+        if(this.props.trigger=="click") {
+            if(this.state.isActive) {
+                this.setState({isActive: false});
+            } else if(!this.state.isActive) {
+                this.setState({isActive: true});
+            }
+        }
+    },
+    handleTipMouseOver: function(e) {
+        if(this.props.hoverable) {
+            this.setState({isOnTip: true});
+            this.setState({isActive: true});
+        }
+    },
+    handleTipMouseOut: function(e) {
+        if(this.props.hoverable) {
+            this.setState({isOnTip: false});
+            this.setState({isActive: false});
+        }
+    },
+    componentDidUpdate: function() {
+        this.setTipPosition();
+    },
+    setTipPosition: function() {
+        var tip = this.refs.tip.getDOMNode();
+        var cont = this.refs.cont.getDOMNode();
+        if(!this.flag) {
+            this.state.tipHeight = tip.offsetHeight;
+            this.flag = 1;
+        }
+        var tipWidth = tip.offsetWidth;
+        var tipHeight = tip.offsetHeight;
+        var contWidth = cont.offsetWidth;
+        var contHeight = cont.offsetHeight;
+        switch (this.state.position) {
+            case "left":tip.style.top = -(tipHeight-contHeight)/2+"px";
+                        tip.style.left = -(tipWidth+20)+"px";
+                break;
+            case "right":tip.style.top = -(tipHeight-contHeight)/2+"px";
+                        tip.style.left = "100%";
+                break;
+            case "top":tip.style.left = -(tipWidth-contWidth)/2+"px";
+                        tip.style.bottom = "100%";
+                break;
+            case "bottom":tip.style.left = -(tipWidth-contWidth)/2+"px";
+                        tip.style.top = "100%";
+                break;
+            default: tip.style.top = -(tipHeight-contHeight)/2+"px";
+                    tip.style.left = -(tipWidth+20)+"px";
+        }
+        tip.style.height = this.state.tipHeight-20+"px";
+        this.prevertTipOverflow();
+    },
+    prevertTipOverflow: function() {
+        var tipX = this.refs.tip.getDOMNode().getBoundingClientRect().left;
+        var tipY = this.refs.tip.getDOMNode().getBoundingClientRect().top;
+        var tipWidth = this.refs.tip.getDOMNode().offsetWidth;
+        var tipHeight = this.refs.tip.getDOMNode().offsetHeight;
+        var availWidth = parseInt(document.body.clientWidth);
+        if(tipX < 0 && tipX+tipWidth > availWidth) {
+            return true;
+        }
+        if(tipX < 0) {
+            if(this.state.position == "left") {
+                this.setState({position: "top"});
+                return ;
+            }
+            if(this.state.position == "top" || this.state.position == "bottom") {
+                this.setState({position: "right"});
+                return ;
+            }
+        }
+        if(tipX+tipWidth > availWidth) {
+            if(this.state.position == "right") {
+                this.setState({position: "bottom"});
+                return ;
+            }
+            if(this.state.position == "bottom" || this.state.position == "top") {
+                this.setState({position: "left"});
+                return ;
+            }
+        }
+
+    },
+    getTipStyle: function() {
+        return {
+            display: this.state.isActive?"block":"none",
+            color: "pink",
+            backgroundColor: "#333",
+            width: this.props.width,
+        };
+    },
+    render: function() {
+        if(this.props.type=="span") {
+            return (
+                React.createElement("span", {className: "tooltip "+this.state.position}, 
+                    React.createElement("span", {ref: "cont", onMouseOver: this.handleMouseOver, onMouseOut: this.handleMouseOut, onClick: this.handleClick}, this.props.children), 
+                    React.createElement("div", {onMouseOver: this.handleTipMouseOver, onMouseOut: this.handleTipMouseOut, className: "tip", ref: "tip", style: this.getTipStyle()}, this.props.tip)
+                )
+            );
+        }
+        if(this.props.type=="a") {
+            return (
+                React.createElement("span", {className: "tooltip "+this.state.position}, 
+                    React.createElement("a", {href: this.props.aHref, ref: "cont", onMouseOver: this.handleMouseOver, onMouseOut: this.handleMouseOut, onClick: this.handleClick}, this.props.children), 
+                    React.createElement("div", {onMouseOver: this.handleTipMouseOver, onMouseOut: this.handleTipMouseOut, className: "tip", ref: "tip", style: this.getTipStyle()}, this.props.tip)
+                )
+            );
+        }
+        if(this.props.type=="button") {
+            return (
+                React.createElement("span", {className: "tooltip "+this.state.position}, 
+                    React.createElement("button", {ref: "cont", onMouseOver: this.handleMouseOver, onMouseOut: this.handleMouseOut, onClick: this.handleClick}, this.props.children), 
+                    React.createElement("div", {onMouseOver: this.handleTipMouseOver, onMouseOut: this.handleTipMouseOut, className: "tip", ref: "tip", style: this.getTipStyle()}, this.props.tip)
+                )
+            );
+        }
+    }
 });
