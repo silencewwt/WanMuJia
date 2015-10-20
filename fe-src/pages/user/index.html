@@ -8,7 +8,6 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{{url_for('static', filename='css/user/index.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/user/loading.css')}}">
 {% endblock %}
 
 {% block content %}
@@ -22,19 +21,19 @@
 
         <div class="carousel-inner slide-wrapper" role="listbox">
             <div class="item active">
-                <a href=""><img src="img/user/20130924085846.jpg" alt="..."></a>
+                <a href="item/13863"><img src="img/user/carousel/13863.jpg" alt="..."></a>
                 <div class="carousel-caption">
 
                 </div>
             </div>
             <div class="item">
-                <a href=""><img src="img/user/20130924085846.jpg" alt="..."></a>
+                <a href="/item/13896"><img src="img/user/carousel/13896.jpg" alt="..."></a>
                 <div class="carousel-caption">
 
                 </div>
             </div>
             <div class="item">
-                <a href=""><img src="img/user/20130924085846.jpg" alt="..."></a>
+                <a href="item/13916"><img src="img/user/carousel/13916.jpg" alt="..."></a>
                 <div class="carousel-caption">
 
                 </div>
@@ -58,21 +57,15 @@
         {{ recommend.title_divider('新品推荐') }}
 
         <div class="wrapper">
-            {{ recommend.items(new_items) }}
-            <div class="more">
-                <a href="">查看更多...</a>
-            </div>
+            {{ recommend.items(group1) }}
         </div>
     </section>
 
     <section class="container">
-        {{ recommend.title_divider('特别推荐') }}
+        {{ recommend.title_divider('猜你喜欢') }}
 
         <div class="wrapper">
-            {{ recommend.items(hot_items) }}
-            <div class="more">
-                <a href="">查看更多...</a>
-            </div>
+            {{ recommend.items(group2) }}
         </div>
     </section>
 
@@ -80,10 +73,7 @@
         {{ recommend.title_divider('大师作品') }}
 
         <div class="wrapper">
-            {{ recommend.items(the_masters) }}
-            <div class="more">
-                <a href="">查看更多...</a>
-            </div>
+            {{ recommend.items(group3) }}
         </div>
     </section>
 
