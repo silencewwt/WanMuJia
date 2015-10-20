@@ -80,7 +80,7 @@ def item_filter():
     amount = query.count()
     data = {
         'filters': {'available': {}, 'selected': {}},
-        'items': {'amout': amount, 'page': page, 'pages': ceil(amount / per_page), "search": search,
+        'items': {'amount': amount, 'page': page, 'pages': ceil(amount / per_page), "search": search,
                   "order": price_order, 'query': []}
     }
     if not brands:
