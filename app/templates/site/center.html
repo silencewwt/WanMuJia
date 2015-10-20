@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <title>万木家 | 服务中心</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/site/reset.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/site/all.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/site/center.css')}}">
+    <script src="{{url_for('static', filename='lib/jquery.js')}}"></script>
+</head>
+<body>
+    <header>
+        <div class="logo fl">
+            <a href="index" class="logo-img"></a>
+        </div>
+        <nav class="nav fr" id="header_nav">
+            <ul>
+                <li><a href="#" class="active">首页</a></li>
+                <li><a href="#user_guide">用户指南</a></li>
+                <li><a href="#about_platform">关于平台</a></li>
+                <li><a href="#use_process">使用流程</a></li>
+                <li><a href="#touch_us">联系我们</a></li>
+            </ul>
+        </nav>
+        <div class="cf"></div>
+    </header>
+
+    <div class="banner">
+        <ul>
+            <li href="#" style="background-image: url('img/site/banner.png');"></li>
+            <li href="#" style="background-image: url('img/site/banner.png');"></li>
+            <li href="#" style="background-image: url('img/site/banner.png');"></li>
+            <li href="#" style="background-image: url('img/site/banner.png');"></li>
+        </ul>
+    </div>
+
+    <div class="user-guide w">
+        <div class="cont">
+            <h1 id="user_guide">用户指南</h1>
+
+            <div class="guide-box">
+                <a href="/register" class="guide-item">
+                    <div>
+                        <img src="{{url_for('static', filename='img/site/guide_register.png')}}" alt="注册账号">
+                        <div class="detail">
+                            <h3>注册账号</h3>
+                            <div class=desc>用户点击注册万木家账号</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="/reset_password" class="guide-item">
+                    <div>
+                        <img src="{{url_for('static', filename='img/site/guide_findpsw.png')}}" alt="找回密码">
+                        <div class="detail">
+                            <h3>找回密码</h3>
+                            <div class=desc>通过手机号或者邮箱找回密码</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="" class="guide-item">
+                    <div>
+                        <img src="{{url_for('static', filename='img/site/guide_progress.png')}}" alt="使用流程">
+                        <div class="detail">
+                            <h3>使用流程</h3>
+                            <div class=desc>万木家平台使用流程</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="about-platform w" id="about_platform">
+        <div class="cont">
+            <h1>关于平台</h1>
+
+            <div class="plat-item-box">
+                <a href="#" class="plat-item">
+                    <h2>平台介绍</h2>
+                    <div class="desc">
+                        万木家是北京静雅居科技有限公司旗下的红木导购平台
+                        汇聚全国大部分最优秀的红木厂家、分布广泛的红木经销商， 专注于红木的导购服务， 
+                        致力打造中国乃至全球红木销售领域最值得消费者信赖的网站
+                        <br/><br/><br/>
+                    </div>
+                    <img class="desc-img" src="{{url_for('static', filename='img/site/platform.png')}}" />
+                </a>
+                <a href="#" class="plat-item center-item">
+                    <h2>用户使用条款</h2>
+                    <div class="desc">
+                       本协议是您与万木家网站（简称"本站"，网址：www.wanmujia.com）所有者（以下简称为"万木家"）之间就万木家网站服务等相关事宜所订立的契约，请您仔细阅读本注册协议。
+                       <br/><br/><br/>
+                    </div>
+                    <img class="desc-img" src="{{url_for('static', filename='img/site/user.jpg')}}" />
+                </a>
+                <a href="#" class="plat-item">
+                    <h2>厂家入驻条款</h2>
+                    <div class="desc">
+                        本协议由您与北京静雅居科技有限公司共同缔结，本协议具有合同效力。
+                        红木企业在使用万木家网站的时候，需要关注该入驻协议，万木家将会尽更大可能为各大红木企业服务，
+                        帮助各红木企业做互联网转型。
+                        <br/><br/><br/>
+                    </div>
+                    <img class="desc-img" src="{{url_for('static', filename='img/site/company.jpg')}}" />
+                </a>
+
+                <div class="cf"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="use-process w" id="use_process">
+        <div class="cont">
+            <h1>厂家使用流程</h1>
+            <div class="item-box">
+                <div class="item">
+                    <img src="{{url_for('static', filename='img/site/pro_1.png')}}" alt="申请账号">
+                    <span>注册账号</span>
+                </div>
+                <span class="item">
+                    <img src="{{url_for('static', filename='img/site/arr.png')}}" alt="申请账号">
+                </span>
+                <div class="item">
+                    <img src="{{url_for('static', filename='img/site/pro_3.png')}}" alt="上传证明">
+                    <span>平台审核</span>
+                </div>
+                <span class="item">
+                    <img src="{{url_for('static', filename='img/site/arr.png')}}" alt="申请账号">
+                </span>
+                <div class="item">
+                    <img src="{{url_for('static', filename='img/site/pro_2.png')}}" alt="平台审核">
+                    <span>上传家具</span>
+                </div>
+                <span class="item">
+                    <img src="{{url_for('static', filename='img/site/arr.png')}}" alt="申请账号">
+                </span>
+                <div class="item">
+                    <img src="{{url_for('static', filename='img/site/pro_4.png')}}" alt="上传家具">
+                    <span>修改商品</span>
+                </div>
+                <span class="item">
+                    <img src="{{url_for('static', filename='img/site/arr.png')}}" alt="申请账号">
+                </span>
+                <div class="item">
+                    <img src=".{{url_for('static', filename='img/site/pro_5.png')}}" alt="邀请商家">
+                    <span>邀请商家</span>
+                </div>
+                <div class="cf"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="touch-us w" id="touch_us">
+        <div class="cont">
+            <h1>联系我们</h1>
+            <div class="item-box">
+                <div class="item">商务合作：busyness@wanmujia.com</div>
+                <div class="item">意见反馈：chambers@wanmujia.com</div>
+                <div class="item">加入我们：hr@wanmujia.com</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="cont">
+            <ul class="link-box">
+                <li>
+                    <h2>关于我们</h2>
+                    <div class="link-item"><a href="/about">平台介绍</a></div>
+                    <div class="link-item"><a href="/legal/user">用户条款</a></div>
+                    <div class="link-item"><a href="/center">服务中心</a></div>
+                </li>
+                <li>
+                    <h2>厂家指南</h2>
+                    <div class="link-item"><a href="/vender/register">入驻平台</a></div>
+                    <div class="link-item"><a href="/legal/vendor">入驻条款</a></div>
+                    <div class="link-item"><a href="/join">使用流程</a></div>
+                </li>
+                <li>
+                    <h2>联系我们</h2>
+                    <div class="link-item">
+                        <a href="javascript: void(0);" class="weixin">
+                            微信平台
+                            <img src="{{url_for('static', filename='img/user/qrcode.jpg')}}" alt="微信">
+                        </a>
+                    </div>
+                    <div class="link-item"><a href="http://weibo.com/wanmujiahongmu">新浪微博</a></div>
+                    <div class="link-item"><a href="/center#touch_us">联系方式</a></div>
+                </li>
+                <div class="cf"></div>
+            </ul>
+
+            <p class="copyright">
+            &copy; 2015 万木家&trade; 版权所有 |
+            <a href="http://www.miit.gov.cn/" target="_blank">京ICP备15040704号</a><br />
+            北京静雅居科技有限公司
+            </p>
+
+        </div>
+   </footer>
+
+</body>
+<script src="{{url_for('static', filename='lib/unslider.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/site/index.js')}}"></script>
+</html>
