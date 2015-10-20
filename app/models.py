@@ -295,7 +295,7 @@ class Vendor(BaseUser, db.Model, Property):
             db.session.add(vendor)
             vendors.append(vendor)
         db.session.commit()
-        districts = District.query.all()
+        districts = Area.query.filter(Area.level == 3).all()
         for vendor in vendors:
             vendor_address = VendorAddress(vendor.id, districts[randint(0, len(districts))].cn_id, zh_fake.address())
             db.session.add(vendor_address)
@@ -313,7 +313,7 @@ class Vendor(BaseUser, db.Model, Property):
             if Vendor.query.filter_by(mobile=mobile).first():
                 continue
             vendors.append((mobile, password))
-            vendor = Vendor(password_hash, mobile, '', '', '', '', '', '')
+            vendor = Vendor(password_hash, mobile, '', '', '', '', '', '', '')
             vendor.initialized = False
             vendor.item_permission = True
             db.session.add(vendor)
@@ -869,6 +869,21 @@ class Area(db.Model):
         grades.reverse()
         return grades
 
+    def father(self):
+        if self.level > 1:
+            return Area.query.get(self.father_id)
+        return None
+
+    def children(self):
+        if self.level < 3:
+            return Area.query.filter_by(father_id=self.id).all()
+        return []
+
+    def city(self):
+        if self.level == 2:
+            return self
+        return self.father()
+
 
 class Province(db.Model):
     __tablename__ = 'provinces'
@@ -1022,6 +1037,16 @@ class DistributorAddress(Address, db.Model):
     @property
     def distributor(self):
         return Distributor.query.get(self.distributor_id)
+
+    def update_distributor_amount(self):
+        city = self.area.city()
+        districts = city.children()
+        cn_ids = [district.cn_id for district in districts]
+        cn_ids.append(city.cn_id)
+        city.distributor_amount = DistributorAddress.query.filter(DistributorAddress.cn_id.in_(cn_ids),
+                                                                  Distributor.id == DistributorAddress.distributor_id,
+                                                                  Distributor.is_revoked == False).count()
+        db.session.commit()
 
 
 class Stove(db.Model):

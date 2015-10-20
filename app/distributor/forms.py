@@ -58,6 +58,7 @@ class RegisterForm(Form):
         )
         db.session.add(distributor_address)
         db.session.commit()
+        distributor_address.update_distributor_amount()
         distributor_geo_coding.delay(distributor.id, distributor_address.id)
         return distributor
 
@@ -102,5 +103,6 @@ class SettingsForm(Form):
             current_user.address.address = self.address.data
             current_user.address.cn_id = self.district_cn_id.data
         db.session.commit()
+        current_user.address.update_distributor_amount()
         if geo_coding:
             distributor_geo_coding.delay(current_user.id, current_user.address.id)
