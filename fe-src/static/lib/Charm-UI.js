@@ -1183,6 +1183,11 @@ var Pagination = React.createClass({displayName: "Pagination",
       }
     }
   },
+  componentWillReceiveProps: function(nextProps) {
+    if(nextProps.activePage !== this.props.activePage) {
+      this.setActivePage(nextProps.activePage);
+    }
+  },
   setActivePage: function(page) {
     this.setState({
       activePage: page
