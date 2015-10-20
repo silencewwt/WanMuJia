@@ -8,7 +8,7 @@ from flask.ext.wtf.file import FileField
 from wtforms import StringField, PasswordField, SelectMultipleField, TextAreaField, HiddenField
 from wtforms.validators import ValidationError, DataRequired, Length, EqualTo
 
-from app import db
+from app import db, statisitc
 from app.constants import SMS_CAPTCHA, VENDOR_REMINDS_PENDING, VENDOR_REMINDS_COMPLETE
 from app.models import Vendor, VendorAddress, Stove, Carve, Sand, Paint, Decoration, \
     Tenon, Item, ItemTenon, ItemCarve, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, \
@@ -220,6 +220,7 @@ class ItemForm(Form):
         db.session.add(item)
         db.session.commit()
         self.add_attach(item.id)
+        statisitc.init_statistic()
         return item
 
     def add_attach(self, item_id):
@@ -272,6 +273,7 @@ class ItemForm(Form):
             db.session.delete(ItemCarve.query.filter_by(item_id=item.id, carve_id=carve_id).limit(1).first())
         db.session.add(item)
         db.session.commit()
+        statisitc.init_statistic()
 
 
 class ComponentForm(Form):
@@ -464,6 +466,7 @@ class SuiteForm(Form):
         )
         db.session.add(suite)
         db.session.commit()
+        statisitc.init_statistic()
         return suite
 
     def show_suite(self, suite):
@@ -477,6 +480,7 @@ class SuiteForm(Form):
             setattr(suite, attr, getattr(self, attr).data)
         suite.inside_sand_id = self.inside_sand_id.data
         suite.update_suite_amount()
+        statisitc.init_statistic()
 
 
 class ItemImageForm(Form):
