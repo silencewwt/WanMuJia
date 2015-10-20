@@ -241,7 +241,8 @@
   width: 940px;
   height: 420px;
   background-color: #fff;
-  color: #333; }
+  color: #333;
+  /* Scrollbar */ }
   .address-map .map-nav {
     float: left;
     width: 280px;
@@ -306,6 +307,16 @@
       font-size: 15px; }
       .address-map .map-main .map-info-btn:active {
         background-color: #18a689; }
+  .address-map ::-webkit-scrollbar {
+    width: 10px;
+    height: 0; }
+  .address-map ::-webkit-scrollbar-track {
+    background: #EEE;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4); }
+  .address-map ::-webkit-scrollbar-thumb {
+    background: #B0B0B0;
+    border-radius: 10px;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1); }
   .address-map.dark .map-nav {
     background-color: #2a201e;
     color: rgba(255, 255, 255, 0.5); }
@@ -346,19 +357,6 @@
     color: #C0C0C0; }
     .tangram-suggestion-main .tangram-suggestion td .tangram-suggestion-grey {
       color: rgba(255, 255, 255, 0.5); }
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 0; }
-
-::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05); }
-
-::-webkit-scrollbar-thumb {
-  background: #dadada;
-  border-radius: 10px; }
 
 .clearfix:after, .inline-list:after, .cu-filter-group .filter-group .filter .body .filter-items:after, .cu-filter-group .filter-state:after, .cu-filter-group .filter-group .filter .body .multi-confirm:after {
   content: '';

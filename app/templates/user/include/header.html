@@ -62,7 +62,11 @@
     <nav class="main-nav">
         <div class="wrapper">
             <ul class="nav">
-              {{ dropdown(scenes) }}
+              {% if scenes %}
+                  {{ dropdown(scenes) }}
+              {% else %}
+                  {{ dropdown() }}
+              {% endif %}
             </ul>
         </div>
     </nav>

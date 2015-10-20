@@ -1081,7 +1081,7 @@ var PagiMain = React.createClass({displayName: "PagiMain",
     } else if (type === "last") {
       page = this.props.pages;
     } else {
-      page = page;
+      page = page > this.props.pages ? this.props.pages : page;
     }
     if (page !== this.props.activePage) {
       this.props.setActivePage(page);
