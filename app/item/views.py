@@ -2,6 +2,7 @@
 from math import ceil
 from flask import render_template, request, current_app, abort, jsonify
 from flask.ext.login import current_user
+from flask.ext.cdn import url_for
 
 from app import statisitc
 from app.models import Item
@@ -11,7 +12,7 @@ from . import item as item_blueprint
 
 @item_blueprint.route("/")
 def item_list():
-    return render_template("user/list.html", user=current_user)
+    return render_template("user/display.html", user=current_user)
 
 
 @item_blueprint.route("/filter")
@@ -108,7 +109,7 @@ def item_filter():
         data['filters']['available']['price'] = {index: {'price': price_text[index]} for index in range(0, 6)}
     for item in items:
         image = item.images.first()
-        image_url = image.url if image else ''
+        image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
         data['items']['query'].append({
             'id': item.id,
             'item': item.item,
@@ -128,7 +129,7 @@ def detail(item_id):
         if item.is_suite or item.is_component:
             return '套件商品无法对比'
         image = item.images.first()
-        image_url = image.url if image else ''
+        image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
         item_dict = {
             'item': item.item,
             'price': item.price,

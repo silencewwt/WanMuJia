@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from math import ceil
-from flask import current_app, request, render_template, redirect, session, url_for, jsonify
+from flask import current_app, request, render_template, redirect, session, jsonify
+from flask.ext.cdn import url_for
 from flask.ext.login import logout_user, current_user
 from flask.ext.principal import identity_changed, AnonymousIdentity
 
@@ -28,7 +29,7 @@ def login():
         if 'csrf_token' in form.errors:
             return jsonify({'success': False, 'message': '登录失败, 请刷新页面重试'})
         return jsonify({'success': False, 'message': '用户名或密码错误'})
-    return render_template('user/login.html', form=form)
+    return render_template('user/login.html', user=current_user, form=form)
 
 
 @user_blueprint.route('/logout')
@@ -128,7 +129,7 @@ def collection():
         collection_dict = {'collections': [], 'amout': amount, 'page': page, 'pages': ceil(amount / per_page)}
         for collection in collections:
             image = collection.item.images.first()
-            image_url = image.url if image else ''
+            image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
             collection_dict['collections'].append({
                 'item': collection.item.item,
                 'price': collection.item.price,
