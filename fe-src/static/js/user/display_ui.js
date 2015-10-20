@@ -173,7 +173,7 @@ $(function () {
 
     function getSearchDataWithLoading (params, origin) {
         // 请求非 popstate 触发和分页回调触发时，直接重置请求页码为1
-        origin == 'popstate' && origin == 'pagination' &&
+        origin !== 'popstate' && origin !== 'pagination' &&
             (params.page = 1);
 
         getSearchData({
