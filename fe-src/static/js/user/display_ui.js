@@ -90,7 +90,7 @@ $(function () {
         render: function() {
             return (
                 <div className="item" data-id={this.props.item.item_id}>
-                    <a href={"/item/" + this.props.item.item_id}>
+                    <a href={"/item/" + this.props.item.id}>
                         <img src={this.props.item.image_url} alt={this.props.item.item} />
                     </a>
                     <div className="item-info">
