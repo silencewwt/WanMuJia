@@ -81,6 +81,8 @@
   color: #c8c8c8; }
 
 .AddressList .AddressCont .AddressSearch > input {
+  line-height: 28px;
+  height: 18px;
   outline: none;
   margin-left: 30px;
   width: 180px;
@@ -179,6 +181,182 @@
     vertical-align: top; }
   .address-picker .address-search {
     display: inline-block; }
+
+/*==================================================
+    Component: AddressSearch
+  ==================================================*/
+/* to be extended */
+.format-border, .input, .address-input .input-keyword, .button, .address-input .input-commit, .address-map .map-main .map-info-btn {
+  border: none; }
+  .format-border:focus, .input:focus, .address-input .input-keyword:focus, .button:focus, .address-input .input-commit:focus, .address-map .map-main .map-info-btn:focus {
+    outline: none; }
+
+.input, .address-input .input-keyword {
+  font-size: 16px;
+  color: #333; }
+
+.button, .address-input .input-commit, .address-map .map-main .map-info-btn {
+  font-size: 18px; }
+
+/* main */
+/* AddressInput */
+.address-input {
+  display: inline-block; }
+  .address-input .input-keyword {
+    padding: 0 1em;
+    width: 400px;
+    height: 46px;
+    line-height: 46px;
+    vertical-align: middle;
+    box-sizing: border-box; }
+  .address-input .input-commit {
+    display: inline-block;
+    width: 100px;
+    height: 46px;
+    background-color: #f04533;
+    border-left: 1px solid #f04533;
+    color: #fafafa;
+    transition: background-color 0.3s ease;
+    vertical-align: middle; }
+    .address-input .input-commit:hover {
+      background-color: #ef3c2a; }
+    .address-input .input-commit:active {
+      background-color: #df2411; }
+  .address-input.dark .input-keyword {
+    color: rgba(255, 255, 255, 0.5);
+    background-color: #2a201e; }
+  .address-input.dark .input-commit {
+    color: rgba(255, 255, 255, 0.5);
+    background-color: #2a201e;
+    border-color: rgba(255, 255, 255, 0.1); }
+    .address-input.dark .input-commit:hover {
+      background-color: #271e1c; }
+    .address-input.dark .input-commit:active {
+      background-color: #181211; }
+
+/* AddressMap */
+.address-map {
+  margin-top: 10px;
+  position: relative;
+  width: 940px;
+  height: 420px;
+  background-color: #fff;
+  color: #333;
+  /* Scrollbar */ }
+  .address-map .map-nav {
+    float: left;
+    width: 280px;
+    height: 100%;
+    border-right: 1px solid #eaeaea;
+    overflow-y: scroll; }
+    .address-map .map-nav .map-nav-title {
+      height: 40px;
+      padding: 0 10px;
+      border-bottom: 1px solid #eaeaea;
+      line-height: 40px;
+      font-size: 14px; }
+      .address-map .map-nav .map-nav-title .map-nav-number {
+        margin: 0 4px;
+        font-weight: bold;
+        color: #f04533; }
+    .address-map .map-nav .map-items {
+      height: 380px; }
+      .address-map .map-nav .map-items li {
+        position: relative;
+        padding: 10px 6px;
+        border-bottom: 1px solid #eaeaea;
+        overflow: hidden;
+        transition: background-color 0.3s ease; }
+        .address-map .map-nav .map-items li:hover {
+          background-color: #f6f6f6; }
+        .address-map .map-nav .map-items li .map-item-mark {
+          position: absolute;
+          top: 14px;
+          left: 10px;
+          padding-top: 1px;
+          width: 20px;
+          height: 26px;
+          background: url("http://api0.map.bdimg.com/images/marker_red_sprite.png") no-repeat;
+          color: #fafafa;
+          text-align: center; }
+        .address-map .map-nav .map-items li .map-item-main {
+          margin-left: 34px; }
+          .address-map .map-nav .map-items li .map-item-main .map-item-title {
+            line-height: 26px; }
+          .address-map .map-nav .map-items li .map-item-main .map-item-address,
+          .address-map .map-nav .map-items li .map-item-main .map-item-tel {
+            font-size: 14px;
+            color: #666; }
+  .address-map .map-main {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 660px;
+    height: 100%; }
+    .address-map .map-main .map-info-window {
+      width: 280px;
+      margin: 2px 0;
+      color: #666; }
+    .address-map .map-main .map-info-btn {
+      display: block;
+      margin-top: 14px;
+      padding: 0.4em 0.8em;
+      background-color: #1bbc9b;
+      border-radius: 4px;
+      color: #fafafa;
+      font-size: 15px; }
+      .address-map .map-main .map-info-btn:active {
+        background-color: #18a689; }
+  .address-map ::-webkit-scrollbar {
+    width: 10px;
+    height: 0; }
+  .address-map ::-webkit-scrollbar-track {
+    background: #EEE;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4); }
+  .address-map ::-webkit-scrollbar-thumb {
+    background: #B0B0B0;
+    border-radius: 10px;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1); }
+  .address-map.dark .map-nav {
+    background-color: #2a201e;
+    color: rgba(255, 255, 255, 0.5); }
+    .address-map.dark .map-nav .map-nav-title {
+      border-color: rgba(255, 255, 255, 0.1); }
+    .address-map.dark .map-nav .map-nav-number {
+      color: #f04533; }
+    .address-map.dark .map-nav .map-items li {
+      border-color: rgba(255, 255, 255, 0.1); }
+      .address-map.dark .map-nav .map-items li:hover {
+        background-color: #241b1a; }
+      .address-map.dark .map-nav .map-items li:active {
+        background-color: #181211; }
+    .address-map.dark .map-nav .map-items .map-item-mark {
+      color: rgba(255, 255, 255, 0.75); }
+  .address-map.dark .map-main .BMap_bubble_title {
+    color: #2a201e;
+    font-weight: 600; }
+  .address-map.dark .map-main .map-info-btn {
+    background-color: #2a201e;
+    color: black; }
+    .address-map.dark .map-main .map-info-btn:active {
+      background-color: #1b1513;
+      color: rgba(255, 255, 255, 0.5); }
+
+/* Baidu Map Autocomplete */
+.tangram-suggestion-main .tangram-suggestion td {
+  font-size: 14px;
+  color: #f04533; }
+  .tangram-suggestion-main .tangram-suggestion td i {
+    padding-left: 8px;
+    background: none; }
+
+.tangram-suggestion-main .tangram-suggestion {
+  border-color: #2a201e; }
+  .tangram-suggestion-main .tangram-suggestion td {
+    background-color: #2a201e;
+    color: #C0C0C0; }
+    .tangram-suggestion-main .tangram-suggestion td .tangram-suggestion-grey {
+      color: rgba(255, 255, 255, 0.5); }
 
 .clearfix:after, .inline-list:after, .cu-filter-group .filter-group .filter .body .filter-items:after, .cu-filter-group .filter-state:after, .cu-filter-group .filter-group .filter .body .multi-confirm:after {
   content: '';
@@ -384,41 +562,81 @@
         cursor: pointer; }
       .pagination .quick-go .go-submit:focus {
         outline: none; }
-  .pagination.dark {
+  .pagination.dark .item {
+    color: #FAFAFA;
+    border-color: #322827;
     background-color: #231716; }
-    .pagination.dark .item {
-      color: #FAFAFA;
-      border-color: #322827;
-      background-color: #231716; }
-      .pagination.dark .item:not(.dot):not(.active):not(.disabled):hover {
-        color: #969696;
-        border-color: rgba(255, 255, 255, 0.2);
-        background-color: #322827; }
-        .pagination.dark .item:not(.dot):not(.active):not(.disabled):hover:active {
-          background-color: #241d1c; }
-        .pagination.dark .item:not(.dot):not(.active):not(.disabled):hover:not(.page) + .item:not(.page) {
-          border-left-color: rgba(255, 255, 255, 0.2); }
-      .pagination.dark .item.active {
-        background-color: #322827;
-        color: #969696; }
-      .pagination.dark .item.disabled {
-        color: rgba(255, 255, 255, 0.2); }
-      .pagination.dark .item > a {
-        color: inherit; }
-    .pagination.dark .quick-go .go-page {
-      border-color: rgba(255, 255, 255, 0.1);
-      background-color: #291b1a; }
-      .pagination.dark .quick-go .go-page:focus {
-        outline: none; }
-    .pagination.dark .quick-go .go-submit {
-      color: #FAFAFA;
-      border-color: #322827;
-      background-color: #231716; }
-      .pagination.dark .quick-go .go-submit:hover {
-        color: #969696;
-        background-color: #322827; }
-      .pagination.dark .quick-go .go-submit:active {
+    .pagination.dark .item:not(.dot):not(.active):not(.disabled):hover {
+      color: #969696;
+      border-color: rgba(255, 255, 255, 0.2);
+      background-color: #322827; }
+      .pagination.dark .item:not(.dot):not(.active):not(.disabled):hover:active {
         background-color: #241d1c; }
+      .pagination.dark .item:not(.dot):not(.active):not(.disabled):hover:not(.page) + .item:not(.page) {
+        border-left-color: rgba(255, 255, 255, 0.2); }
+    .pagination.dark .item.active {
+      background-color: #322827;
+      color: #969696; }
+    .pagination.dark .item.disabled {
+      color: rgba(255, 255, 255, 0.2); }
+    .pagination.dark .item > a {
+      color: inherit; }
+  .pagination.dark .quick-go .go-page {
+    border-color: rgba(255, 255, 255, 0.1);
+    background-color: #291b1a; }
+    .pagination.dark .quick-go .go-page:focus {
+      outline: none; }
+  .pagination.dark .quick-go .go-submit {
+    color: #FAFAFA;
+    border-color: #322827;
+    background-color: #231716; }
+    .pagination.dark .quick-go .go-submit:hover {
+      color: #969696;
+      background-color: #322827; }
+    .pagination.dark .quick-go .go-submit:active {
+      background-color: #241d1c; }
+
+/*==================================================
+    Component: ProgressBar
+  ==================================================*/
+/* main */
+.cu-progress {
+  z-index: 2000; }
+  .cu-progress .cu-progress-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 2px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px; }
+  .cu-progress .cu-spinner {
+    position: fixed;
+    top: 15px;
+    right: 10px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #09c4c7;
+    border-left-color: transparent;
+    border-radius: 50%;
+    animation: rotateSpinner 0.6s infinite linear;
+    -webkit-animation: rotateSpinner 0.6s infinite linear; }
+
+/* animation */
+@keyframes rotateSpinner {
+  from {
+    -webkit-transform: rotateZ(0);
+            transform: rotateZ(0); }
+  to {
+    -webkit-transform: rotateZ(360deg);
+            transform: rotateZ(360deg); } }
+
+@-webkit-keyframes rotateSpinner {
+  from {
+    -webkit-transform: rotateZ(0);
+            transform: rotateZ(0); }
+  to {
+    -webkit-transform: rotateZ(360deg);
+            transform: rotateZ(360deg); } }
 
 .tooltip {
   position: relative; }
@@ -483,225 +701,3 @@
 .tooltip.bottom .tip {
   top: 100%;
   margin-top: 16px; }
-
-/*==================================================
-    Component: ProgressBar
-  ==================================================*/
-/* main */
-.cu-progress {
-  z-index: 2000; }
-  .cu-progress .cu-progress-bar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #09c4c7;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    box-shadow: 1px 0 1px #09c4c7; }
-  .cu-progress .cu-spinner {
-    position: fixed;
-    top: 15px;
-    right: 10px;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #09c4c7;
-    border-left-color: transparent;
-    border-radius: 50%;
-    animation: rotateSpinner 0.6s infinite linear;
-    -webkit-animation: rotateSpinner 0.6s infinite linear; }
-
-/* animation */
-@keyframes rotateSpinner {
-  from {
-    -webkit-transform: rotateZ(0);
-            transform: rotateZ(0); }
-  to {
-    -webkit-transform: rotateZ(360deg);
-            transform: rotateZ(360deg); } }
-
-@-webkit-keyframes rotateSpinner {
-  from {
-    -webkit-transform: rotateZ(0);
-            transform: rotateZ(0); }
-  to {
-    -webkit-transform: rotateZ(360deg);
-            transform: rotateZ(360deg); } }
-
-/*==================================================
-    Component: AddressSearch
-  ==================================================*/
-/* to be extended */
-.format-border, .input, .address-input .input-keyword, .button, .address-input .input-commit, .address-map .map-main .map-info-btn {
-  border: none; }
-  .format-border:focus, .input:focus, .address-input .input-keyword:focus, .button:focus, .address-input .input-commit:focus, .address-map .map-main .map-info-btn:focus {
-    outline: none; }
-
-.input, .address-input .input-keyword {
-  font-size: 16px;
-  color: #333; }
-
-.button, .address-input .input-commit, .address-map .map-main .map-info-btn {
-  font-size: 18px; }
-
-/* main */
-/* AddressInput */
-.address-input {
-  display: inline-block; }
-  .address-input .input-keyword {
-    padding: 0 1em;
-    width: 400px;
-    height: 46px;
-    line-height: 46px;
-    vertical-align: middle;
-    box-sizing: border-box; }
-  .address-input .input-commit {
-    display: inline-block;
-    width: 100px;
-    height: 46px;
-    background-color: #f04533;
-    border-left: 1px solid #f04533;
-    color: #fafafa;
-    transition: background-color 0.3s ease;
-    vertical-align: middle; }
-    .address-input .input-commit:hover {
-      background-color: #ef3c2a; }
-    .address-input .input-commit:active {
-      background-color: #df2411; }
-  .address-input.dark .input-keyword {
-    color: rgba(255, 255, 255, 0.5);
-    background-color: #2a201e; }
-  .address-input.dark .input-commit {
-    color: rgba(255, 255, 255, 0.5);
-    background-color: #2a201e;
-    border-color: rgba(255, 255, 255, 0.1); }
-    .address-input.dark .input-commit:hover {
-      background-color: #271e1c; }
-    .address-input.dark .input-commit:active {
-      background-color: #181211; }
-
-/* AddressMap */
-.address-map {
-  margin-top: 10px;
-  position: relative;
-  width: 940px;
-  height: 420px;
-  background-color: #fff;
-  color: #333; }
-  .address-map .map-nav {
-    float: left;
-    width: 280px;
-    height: 100%;
-    border-right: 1px solid #eaeaea;
-    overflow-y: scroll; }
-    .address-map .map-nav .map-nav-title {
-      height: 40px;
-      padding: 0 10px;
-      border-bottom: 1px solid #eaeaea;
-      line-height: 40px;
-      font-size: 14px; }
-      .address-map .map-nav .map-nav-title .map-nav-number {
-        margin: 0 4px;
-        font-weight: bold;
-        color: #f04533; }
-    .address-map .map-nav .map-items {
-      height: 380px; }
-      .address-map .map-nav .map-items li {
-        position: relative;
-        padding: 10px 6px;
-        border-bottom: 1px solid #eaeaea;
-        overflow: hidden;
-        transition: background-color 0.3s ease; }
-        .address-map .map-nav .map-items li:hover {
-          background-color: #f6f6f6; }
-        .address-map .map-nav .map-items li .map-item-mark {
-          position: absolute;
-          top: 14px;
-          left: 10px;
-          padding-top: 1px;
-          width: 20px;
-          height: 26px;
-          background: url("http://api0.map.bdimg.com/images/marker_red_sprite.png") no-repeat;
-          color: #fafafa;
-          text-align: center; }
-        .address-map .map-nav .map-items li .map-item-main {
-          margin-left: 34px; }
-          .address-map .map-nav .map-items li .map-item-main .map-item-title {
-            line-height: 26px; }
-          .address-map .map-nav .map-items li .map-item-main .map-item-address,
-          .address-map .map-nav .map-items li .map-item-main .map-item-tel {
-            font-size: 14px;
-            color: #666; }
-  .address-map .map-main {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 660px;
-    height: 100%; }
-    .address-map .map-main .map-info-window {
-      width: 280px;
-      margin: 2px 0;
-      color: #666; }
-    .address-map .map-main .map-info-btn {
-      display: block;
-      margin-top: 14px;
-      padding: 0.4em 0.8em;
-      background-color: #1bbc9b;
-      border-radius: 4px;
-      color: #fafafa;
-      font-size: 15px; }
-      .address-map .map-main .map-info-btn:active {
-        background-color: #18a689; }
-  .address-map.dark .map-nav {
-    background-color: #2a201e;
-    color: rgba(255, 255, 255, 0.5); }
-    .address-map.dark .map-nav .map-nav-title {
-      border-color: rgba(255, 255, 255, 0.1); }
-    .address-map.dark .map-nav .map-nav-number {
-      color: #f04533; }
-    .address-map.dark .map-nav .map-items li {
-      border-color: rgba(255, 255, 255, 0.1); }
-      .address-map.dark .map-nav .map-items li:hover {
-        background-color: #241b1a; }
-      .address-map.dark .map-nav .map-items li:active {
-        background-color: #181211; }
-    .address-map.dark .map-nav .map-items .map-item-mark {
-      color: rgba(255, 255, 255, 0.75); }
-  .address-map.dark .map-main .BMap_bubble_title {
-    color: #2a201e;
-    font-weight: 600; }
-  .address-map.dark .map-main .map-info-btn {
-    background-color: #2a201e;
-    color: black; }
-    .address-map.dark .map-main .map-info-btn:active {
-      background-color: #1b1513;
-      color: rgba(255, 255, 255, 0.5); }
-
-/* Baidu Map Autocomplete */
-.tangram-suggestion-main .tangram-suggestion td {
-  font-size: 14px;
-  color: #f04533; }
-  .tangram-suggestion-main .tangram-suggestion td i {
-    padding-left: 8px;
-    background: none; }
-
-.tangram-suggestion-main .tangram-suggestion {
-  border-color: #2a201e; }
-  .tangram-suggestion-main .tangram-suggestion td {
-    background-color: #2a201e;
-    color: #C0C0C0; }
-    .tangram-suggestion-main .tangram-suggestion td .tangram-suggestion-grey {
-      color: rgba(255, 255, 255, 0.5); }
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 0; }
-
-::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05); }
-
-::-webkit-scrollbar-thumb {
-  background: #dadada;
-  border-radius: 10px; }

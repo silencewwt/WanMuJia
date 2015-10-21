@@ -186,6 +186,350 @@ var AddressListRow = React.createClass({displayName: "AddressListRow",
     }
 });
 
+'use strict'
+
+//  ==================================================
+//  Include: AddressList AddressSearch
+//
+//  TODO:
+//  ==================================================
+
+var AddressPicker = React.createClass({displayName: "AddressPicker",
+  getInitialState: function() {
+    return {
+      city: "北京",
+      currentCity: null,
+      address: this.props.keyword
+    };
+  },
+  getDefaultProps: function() {
+    return {};
+  },
+  componentWillMount: function() {
+    var myCity = new BMap.LocalCity();
+    myCity
+      .get(function(res) {
+        var currentCity = res.name;
+        this.setState({
+            currentCity: currentCity
+        });
+      }.bind(this));
+  },
+  setAddress: function(ad) {
+    this.setState({
+      address: ad
+    });
+  },
+  setCity: function(ct) {
+    this.setState({
+      city: ct
+    });
+  },
+  render: function() {
+    var addressPickerActiveStyle = this.state.address
+      ? this.props.addressPickerActiveStyle
+      : {};
+    return (
+      React.createElement("div", {className: "address-picker", style: addressPickerActiveStyle}, 
+        React.createElement(AddressList, {setCity: this.setCity, localAddress: this.state.currentCity, addressData: this.props.addressData}), 
+        React.createElement(AddressInput, React.__spread({},  this.props, {city: this.state.city, searchSubmitHandler: this.setAddress})), 
+        React.createElement(AddressMap, {addressKeyword: this.state.address, city: this.props.city, theme: this.props.theme})
+      )
+    );
+  }
+});
+
+'use strict'
+
+//  ==================================================
+//  Include: AddressInput AddressMap
+//
+//  TODO: [add] 增加各项参数
+//  ==================================================
+
+/* AddressSearch */
+var AddressSearch = React.createClass({displayName: "AddressSearch",
+  getInitialState: function() {
+    return {
+      address: null
+    };
+  },
+  getDefaultProps: function() {
+    return {
+      inputWidth: 400,
+      inputTip: "输入想要搜索的地址",
+      searchBtnText: "搜索",
+      city: "北京",
+      theme: "dark"
+    }
+  },
+  componentWillMount: function() {
+    var myCity = new BMap.LocalCity();
+    myCity
+      .get(function(res) {
+        var currentCity = res.name;
+        this.setCity(currentCity);
+      }.bind(this));
+  },
+  setAddress: function(ad) {
+    this.setState({
+      address: ad
+    });
+  },
+  setCity: function(ct) {
+    this.setState({
+      city: ct
+    });
+  },
+  render: function() {
+    return (
+      React.createElement("div", {className: "address-search"}, 
+        React.createElement(AddressInput, React.__spread({},  this.props, {searchSubmitHandler: this.setAddress})), 
+        React.createElement(AddressMap, {addressKeyword: this.state.address, city: this.props.city, theme: this.props.theme})
+      )
+    );
+  }
+});
+
+/* AddressInput */
+var AddressInput = React.createClass({displayName: "AddressInput",
+  getInitialState: function() {
+    return {
+      keyword: this.props.keyword
+    };
+  },
+  getDefaultProps: function() {
+    return {
+      inputWidth: 400,
+      inputTip: "输入想要搜索的地址",
+      searchBtnText: "搜索",
+      city: "北京",
+      theme: "light"
+    }
+  },
+  searchSubmit: function() {
+    var keyword = this.getDOMNode()
+      .children[0]
+      .value;
+    this.props
+      .searchSubmitHandler(keyword);
+    setCookie('searchKeyword', keyword, 30);
+  },
+  checkEnter: function(e) {
+    (e.keyCode === 13) && this.searchSubmit();
+  },
+  componentDidMount: function() {
+    var mapAutoComplete = new BMap.Autocomplete({
+      "input": "_addressSearchKeyword",
+      "location": this.props.city
+    });
+  },
+  render: function() {
+    var keywordStyle = {
+      width: this.props.inputWidth
+    };
+    var conClassName = "address-input";
+    switch (this.props.theme) {
+    case 'light' :
+      break;
+    case 'dark' :
+      conClassName += " dark";
+      break;
+    default :
+
+    }
+    return (
+      React.createElement("div", {className: conClassName}, 
+        React.createElement("input", {className: "input-keyword", id: "_addressSearchKeyword", onKeyUp: this.checkEnter, placeholder: this.state.keyword || this.props.inputTip, style: keywordStyle}), 
+        React.createElement("button", {className: "input-commit", onClick: this.searchSubmit}, this.props.searchBtnText)
+      )
+    );
+  }
+});
+
+/* AddressMap */
+var AddressMap = React.createClass({displayName: "AddressMap",
+  getInitialState: function() {
+    return {
+      mapLocalObj: null,
+      itemsNumber: 0,
+      itemsList: [],
+      itemActive: 0
+    };
+  },
+  getDefaultProps: function() {
+    return {
+      mapSearchgeotableId: 121763,
+      mapSearchTags: "",
+      mapSearchFilter: "",
+      theme: "light"
+    }
+  },
+  componentDidMount: function() {
+    this.map = new BMap.Map("_addressMapMain", {
+      enableMapClick: false
+    });
+    this.map
+      .centerAndZoom(this.props.city, 12);
+  },
+  componentWillReceiveProps: function(nextProps) {
+    nextProps.addressKeyword && this.getNearby(nextProps.addressKeyword);
+  },
+  getNearby: function(keyword, page) {
+    // 地址解析获取经纬度
+    var myGeo = new BMap.Geocoder();
+    var _this = this;
+    myGeo
+      .getPoint(keyword, function(point) { // 解析成功后的回调 搜索信息
+        if (point) {
+          $.ajax({
+            type: 'get',
+            url: 'http://api.map.baidu.com/geosearch/v3/nearby',
+            dataType: "jsonp",
+            data: {
+              ak: 'sdp9qCbToS7E23nDRxaAAwbh',
+              geotable_id: 121763,
+              location: point.lng + ',' + point.lat,
+              radius: 10000,
+              page_index: page || 0,
+              page_size: 50
+            },
+            jsonp: 'callback',
+            success: function(res) {
+              _this.setState({
+                itemsNumber: res.total,
+                itemsList: res.contents
+              });
+              _this.showNearby();
+              _this.map
+                .centerAndZoom(_this.props.addressKeyword, 12);
+            }
+          })
+        } else {
+          alert("未找到该区域信息");
+        }
+      }.bind(this), this.props.city);
+  },
+  showNearby: function() {
+    var _this = this;
+    for (var k in this.state.itemsList) {
+      var point = new BMap.Point(this.state.itemsList[k].location[0], this.state.itemsList[k].location[1]);
+      var marker = new BMap.Marker(point);
+      var label = new BMap.Label(String.fromCharCode(65 + parseInt(k)), {
+        offset: new BMap.Size(4, 2)
+      });
+      label.setStyle({
+        border: 'none',
+        backgroundColor: 'transparent',
+        color: '#FAFAFA'
+      });
+      marker.setLabel(label);
+      marker.setTitle(this.state.itemsList[k].title);
+      marker
+        .addEventListener('click', function(e) {
+          _this.showInfoWindow(this.getLabel().content.charCodeAt(0) - 65);
+        });
+      this.map
+        .addOverlay(marker);
+    }
+    this.state.itemsList.length && this.showInfoWindow(0);
+  },
+  showInfoWindow: function(index) {
+    if (index !== this.state.itemActive || 1) {
+      var point = new BMap.Point(this.state.itemsList[index].location[0], this.state.itemsList[index].location[1]);
+      var itemInfo = this.state.itemsList[index];
+      var title = itemInfo.title;
+      var address = itemInfo.address;
+      var tel = itemInfo.tel;
+      var content = '<p class="map-info-window">地址：' + address + '</p>';
+      var infoWindow = new BMap.InfoWindow(content, {
+        title: title,
+        width: 290,
+        panel: "panel",
+        enableAutoPan: true,
+        offset: new BMap.Size(0, -25)
+      });
+      this.setState({
+        itemActive: + index
+      });
+      this.map
+        .openInfoWindow(infoWindow, point);
+    }
+  },
+  clickMapItem: function(e) {
+    var ele = e.target;
+    var eleClass = ele.getAttribute('class');
+    var itemIndex = 0;
+    if (eleClass === "map-item") {
+      itemIndex = ele.getAttribute('data-key');
+    } else if (eleClass === "map-item-mark" || eleClass === "map-item-main") {
+      itemIndex = ele.parentNode
+        .getAttribute('data-key');
+    } else if (!eleClass) {
+      itemIndex = ele.parentNode
+        .parentNode
+        .parentNode
+        .getAttribute('data-key');
+    } else {
+      itemIndex = ele.parentNode
+        .parentNode
+        .getAttribute('data-key');
+    }
+    this.showInfoWindow(itemIndex);
+  },
+  render: function() {
+    var conClassName = "address-map";
+    switch (this.props.theme) {
+    case 'light' :
+      break;
+    case 'dark' :
+      conClassName += " dark";
+      break;
+    default :
+
+    }
+    var mapItemActieStyle = {
+      backgroundColor: "#181211"
+    };
+    return (
+      React.createElement("div", {className: conClassName, style: {
+        display: this.props.addressKeyword
+          ? "block"
+          : "none"
+      }}, 
+        React.createElement("div", {className: "map-nav"}, 
+          React.createElement("div", {className: "map-nav-title"}, 
+            "附近有", 
+            React.createElement("span", {className: "map-nav-number"}, 
+              this.state.itemsNumber
+            ), 
+            "家体验店"
+          ), 
+          React.createElement("ul", {className: "map-items", id: "_addressMapItems", onClick: this.clickMapItem}, 
+            this
+              .state
+              .itemsList
+              .map(function (item, i) {
+                return React.createElement("li", {className: "map-item", "data-key": i, key: i, style: (i === this.state.itemActive)
+                  ? mapItemActieStyle
+                  :
+                    {}}, 
+                  React.createElement("span", {className: "map-item-mark"}, String.fromCharCode(65 + i)), 
+                  React.createElement("div", {className: "map-item-main"}, 
+                    React.createElement("div", {className: "map-item-title"}, item.title), 
+                    React.createElement("div", {className: "map-item-address"}, "地址：", item.address), 
+                    React.createElement("div", {className: "map-item-tel"}, "电话：", item.tel)
+                  )
+                );
+              }.bind(this))
+          )
+        ), 
+        React.createElement("div", {className: "map-main", id: "_addressMapMain"})
+      )
+    );
+  }
+});
+
 
 //  ==================================================
 //  Component: FilterGroup
@@ -636,344 +980,383 @@ var FilterGroup = React.createClass({displayName: "FilterGroup",
 'use strict'
 
 //  ==================================================
-//  Include: AddressList AddressSearch
+//  Component: ProgressBar
+//
+//  Include: PaginationBtn
 //
 //  TODO:
 //  ==================================================
 
-var AddressPicker = React.createClass({displayName: "AddressPicker",
+/* PaginationBtn */
+var PaginationBtn = React.createClass({displayName: "PaginationBtn",
+  getDefaultProps: function() {
+    return {
+      text: 1,
+      type: "num"
+    };
+  },
+  render: function() {
+    var text = (this.props.type === 'dot') ? '...' : this.props.text;
+    var itemClass = this.props.active
+      ? "item active"
+      : "item";
+    if(this.props.type !== 'num') {
+      itemClass += (" page " + this.props.type);
+    }
+    if(this.props.disabled) {
+      itemClass += ' disabled';
+    }
+    return (
+      React.createElement("li", {className: itemClass, onClick: this.props.changePage}, 
+        React.createElement("a", null, text)
+      )
+    );
+  }
+});
+
+/* Pagination Overview */
+var PagiOverview = React.createClass({displayName: "PagiOverview",
+  render: function() {
+    return (
+      React.createElement("div", {className: "overview"}, "共 ", this.props.pages, " 页，")
+    );
+  }
+});
+
+/* Pagination QuickGo */
+var PagiQuickGo = React.createClass({displayName: "PagiQuickGo",
   getInitialState: function() {
     return {
-      city: "北京",
-      currentCity: null,
-      address: this.props.keyword
+      pageInput: null
+    };
+  },
+  inputChange: function(e) {
+    this.setState({
+      pageInput: e.target.value
+    });
+  },
+  quickGo: function() {
+    if(this.state.pageInput) {
+      var nextPage = +this.state.pageInput;
+      nextPage = nextPage < 1 ? 1 : nextPage;
+      nextPage = nextPage > this.props.pages ? this.props.pages : nextPage;
+      this.props.setActivePage(nextPage)
+    }
+  },
+  render: function() {
+    return (
+      React.createElement("div", {className: "quick-go"}, 
+        React.createElement("span", null, "到第"), 
+        React.createElement("input", {className: "go-page", type: "number", min: "1", max: this.props.pages, onChange: this.inputChange}), 
+        React.createElement("span", null, "页"), 
+        React.createElement("button", {className: "go-submit", onClick: this.quickGo}, "确认")
+      )
+    );
+  }
+});
+
+/* Pagination Main */
+var PagiMain = React.createClass({displayName: "PagiMain",
+  getInitialState: function() {
+    return {
+      pageItems: this.getPageItems(this.props.activePage)
+    };
+  },
+  componentWillReceiveProps: function(nextProps) {
+    if(nextProps.activePage !== this.props.activePage || nextProps.pages !== this.props.pages) {
+      var pageItems = this.getPageItems(nextProps.activePage, nextProps.pages);
+      this.setState({
+        pageItems: pageItems
+      });
+        if(nextProps.activePage !== this.props.activePage) {
+            this.props.selected(nextProps.activePage);
+        }
+    }
+  },
+  handleItemClick: function(type, page) {
+    if (type === "first") {
+      page = 1;
+    } else if (type === "prev") {
+      page = (this.props.activePage === 1) ? 1 : this.props.activePage - 1;
+    } else if (type === "next") {
+      page = (this.props.activePage === this.props.pages) ? this.props.pages : this.props.activePage + 1;
+    } else if (type === "last") {
+      page = this.props.pages;
+    } else {
+      page = page > this.props.pages ? this.props.pages : page;
+    }
+    if (page !== this.props.activePage) {
+      this.props.setActivePage(page);
+    }
+  },
+  getPageItems: function(n, pages) {
+    var list = [];
+    var b = this.props.basePages;
+    var m = this.props.midPages;
+    var p = pages || this.props.pages;
+    if(n <= parseInt(m / 2) + 1) { // 1
+      list = this._getSeriesNumber(1, p <= b + m ? p : m);
+    } else if((n <= parseInt(m / 2) + 1 + b) || p <= b + m)  { // 1'
+      list = this._getSeriesNumber(1, p <= b + m ? p : n + 2);
+    } else if((n < p - parseInt(m / 2) - 1)) {  // 2
+      list = this._getSeriesNumber(1, this.props.basePages);
+      list.push(0);
+      list = list.concat(this._getSeriesNumber(n-2, m));
+      if(p > m + b + 2) {
+        list.push(0);
+      }
+    } else if(n === p - parseInt(m / 2) - 1) {  // 3
+      list = this._getSeriesNumber(1, this.props.basePages);
+      list.push(0);
+      list = list.concat(this._getSeriesNumber(p - m, m + 1));
+    } else {  // 4
+      list = this._getSeriesNumber(1, this.props.basePages);
+      list.push(0);
+      list = list.concat(this._getSeriesNumber(p - m + 1, m));
+    }
+    return list;
+  },
+  _getSeriesNumber: function(start, length) {
+    var series = [];
+    while(length--) {
+      series.push(start++);
+    }
+    return series;
+  },
+  render: function() {
+    var startBlock = [];
+    var endBlock = [];
+    if(this.props.pages > 0) {
+      if(this.props.first) {
+        startBlock.push(React.createElement(PaginationBtn, {key: "first", text: this.props.first, disabled: (this.props.activePage === 1) ? true : false, type: "prev", type: "first", changePage: this.handleItemClick.bind(this, 'first')}));
+      }
+      if(this.props.prev) {
+        startBlock.push(React.createElement(PaginationBtn, {key: "prev", text: this.props.prev, disabled: (this.props.activePage === 1) ? true : false, type: "prev", changePage: this.handleItemClick.bind(this, 'prev')}));
+      }
+      if(this.props.next) {
+        endBlock.push(React.createElement(PaginationBtn, {key: "next", text: this.props.next, type: "next", disabled: (this.props.activePage === this.props.pages) ? true : false, changePage: this.handleItemClick.bind(this, 'next')}));
+      }
+      if(this.props.last) {
+        endBlock.push(React.createElement(PaginationBtn, {key: "last", text: this.props.last, type: "last", disabled: (this.props.activePage === this.props.pages) ? true : false, changePage: this.handleItemClick.bind(this, 'last')}));
+      }
+    }
+    return (
+      React.createElement("ul", {className: "pagi-main"}, 
+        startBlock, 
+        
+          (this.props.pages > 0) && this.state.pageItems.map(function(item, i) {
+              return (
+                React.createElement(PaginationBtn, {key: i, text: item, type: item ? 'num' : 'dot', active: (item === this.props.activePage) ? true : false, changePage: item ? this.handleItemClick.bind(this, 'num', item) : null})
+              )
+            }.bind(this)), 
+        
+        endBlock
+      )
+    )
+  }
+});
+
+/* Pagination */
+var Pagination = React.createClass({displayName: "Pagination",
+  propTypes: {
+    pages: React.PropTypes.number
+  },
+  getInitialState: function() {
+    return {
+      activePage: this.props.activePage
     };
   },
   getDefaultProps: function() {
-    return {};
+    return {
+      activePage: 1, // 激活页初始值
+      first: null, // 首页 null || string
+      prev: "上一页", // 上一页 null || string
+      basePages: 2, // first prev base ... mid ... next last
+      midPages: 5, // first prev base ... mid ... next last
+      ellipsis: true, // 省略号 boolen
+      next: "下一页", // 下一页 null || string
+      last: null, // 末页 null || string
+      theme: "light", // 主题
+      quickGo: false, // 概览和快速切换 boolen
+      selected: function(page) { // 页码切换时回调
+        console.log(page);
+      }
+    }
   },
-  componentWillMount: function() {
-    var myCity = new BMap.LocalCity();
-    myCity
-      .get(function(res) {
-        var currentCity = res.name;
-        this.setState({
-            currentCity: currentCity
-        });
-      }.bind(this));
-  },
-  setAddress: function(ad) {
+  setActivePage: function(page) {
     this.setState({
-      address: ad
-    });
-  },
-  setCity: function(ct) {
-    this.setState({
-      city: ct
+      activePage: page
     });
   },
   render: function() {
-    var addressPickerActiveStyle = this.state.address
-      ? this.props.addressPickerActiveStyle
-      : {};
+    var pagiClass = (this.props.theme === 'light') ? 'pagination' : 'pagination ' + this.props.theme;
     return (
-      React.createElement("div", {className: "address-picker", style: addressPickerActiveStyle}, 
-        React.createElement(AddressList, {setCity: this.setCity, localAddress: this.state.currentCity, addressData: this.props.addressData}), 
-        React.createElement(AddressInput, React.__spread({},  this.props, {city: this.state.city, searchSubmitHandler: this.setAddress})), 
-        React.createElement(AddressMap, {addressKeyword: this.state.address, city: this.props.city, theme: this.props.theme})
+      React.createElement("div", {className: pagiClass}, 
+        React.createElement(PagiMain, React.__spread({},  this.props, {activePage: this.state.activePage, setActivePage: this.setActivePage})), 
+        this.props.quickGo ? React.createElement(PagiOverview, {pages: this.props.pages}) : null, 
+        this.props.quickGo ? React.createElement(PagiQuickGo, {pages: this.props.pages, setActivePage: this.setActivePage}) : null
       )
-    );
+  )
   }
 });
 
 'use strict'
 
 //  ==================================================
-//  Include: AddressInput AddressMap
+//  Component: ProgressBar
 //
-//  TODO: [add] 增加各项参数
+//  Include: Spinner
+//
+//  Description: Jsx for ProgressBar
+//
+//  TODO: [fix] 修正初始时 transition 不生效的问题
 //  ==================================================
 
-/* AddressSearch */
-var AddressSearch = React.createClass({displayName: "AddressSearch",
-  getInitialState: function() {
-    return {
-      address: null
-    };
-  },
-  getDefaultProps: function() {
-    return {
-      inputWidth: 400,
-      inputTip: "输入想要搜索的地址",
-      searchBtnText: "搜索",
-      city: "北京",
-      theme: "dark"
-    }
-  },
-  componentWillMount: function() {
-    var myCity = new BMap.LocalCity();
-    myCity
-      .get(function(res) {
-        var currentCity = res.name;
-        this.setCity(currentCity);
-      }.bind(this));
-  },
-  setAddress: function(ad) {
-    this.setState({
-      address: ad
-    });
-  },
-  setCity: function(ct) {
-    this.setState({
-      city: ct
-    });
-  },
+/* Spinner */
+var Spinner = React.createClass({displayName: "Spinner",
   render: function() {
     return (
-      React.createElement("div", {className: "address-search"}, 
-        React.createElement(AddressInput, React.__spread({},  this.props, {searchSubmitHandler: this.setAddress})), 
-        React.createElement(AddressMap, {addressKeyword: this.state.address, city: this.props.city, theme: this.props.theme})
-      )
+      React.createElement("div", {className: "cu-spinner", style: {borderColor: this.props.color,borderLeftColor: 'transparent'}})
     );
   }
 });
 
-/* AddressInput */
-var AddressInput = React.createClass({displayName: "AddressInput",
+/* ProgressBar */
+var ProgressBar = React.createClass({displayName: "ProgressBar",
   getInitialState: function() {
     return {
-      keyword: this.props.keyword
+      rate: null,
+      done: false
     };
   },
   getDefaultProps: function() {
     return {
-      inputWidth: 400,
-      inputTip: "输入想要搜索的地址",
-      searchBtnText: "搜索",
-      city: "北京",
-      theme: "light"
-    }
-  },
-  searchSubmit: function() {
-    var keyword = this.getDOMNode()
-      .children[0]
-      .value;
-    this.props
-      .searchSubmitHandler(keyword);
-    setCookie('searchKeyword', keyword, 30);
-  },
-  checkEnter: function(e) {
-    (e.keyCode === 13) && this.searchSubmit();
-  },
-  componentDidMount: function() {
-    var mapAutoComplete = new BMap.Autocomplete({
-      "input": "_addressSearchKeyword",
-      "location": this.props.city
-    });
-  },
-  render: function() {
-    var keywordStyle = {
-      width: this.props.inputWidth
-    };
-    var conClassName = "address-input";
-    switch (this.props.theme) {
-    case 'light' :
-      break;
-    case 'dark' :
-      conClassName += " dark";
-      break;
-    default :
-
-    }
-    return (
-      React.createElement("div", {className: conClassName}, 
-        React.createElement("input", {className: "input-keyword", id: "_addressSearchKeyword", onKeyUp: this.checkEnter, placeholder: this.state.keyword || this.props.inputTip, style: keywordStyle}), 
-        React.createElement("button", {className: "input-commit", onClick: this.searchSubmit}, this.props.searchBtnText)
-      )
-    );
-  }
-});
-
-/* AddressMap */
-var AddressMap = React.createClass({displayName: "AddressMap",
-  getInitialState: function() {
-    return {
-      mapLocalObj: null,
-      itemsNumber: 0,
-      itemsList: [],
-      itemActive: 0
+      speed: 0.6,  // 动画速度
+      spinner: true,  // 是否有圈圈
+      easing: 'ease',  // 动画缓动曲线
+      maxRate: 0.96,  // 进度条最大宽度
+      incStep: 0.04,  // inc 增长步幅
+      minStep: 0.005,  // 随机增长的最小步幅
+      maxStep: 0.03,  // 随机增长的最大步幅
+      trickle: true,  // 是否自动增长
+      trickleSpeed: 800,  // 自动增长的间隔时间
+      color: '#09c4c7',
+      setTrickle: false  // set 后是否自动增长（未启用）
     };
   },
-  getDefaultProps: function() {
-    return {
-      mapSearchgeotableId: 121763,
-      mapSearchTags: "",
-      mapSearchFilter: "",
-      theme: "light"
-    }
+  start: function() {
+    this._init();
+    this.set('0.5%');
+    this.props.trickle && this._autoInc();
   },
-  componentDidMount: function() {
-    this.map = new BMap.Map("_addressMapMain", {
-      enableMapClick: false
-    });
-    this.map
-      .centerAndZoom(this.props.city, 12);
-  },
-  componentWillReceiveProps: function(nextProps) {
-    nextProps.addressKeyword && this.getNearby(nextProps.addressKeyword);
-  },
-  getNearby: function(keyword, page) {
-    // 地址解析获取经纬度
-    var myGeo = new BMap.Geocoder();
-    var _this = this;
-    myGeo
-      .getPoint(keyword, function(point) { // 解析成功后的回调 搜索信息
-        if (point) {
-          $.ajax({
-            type: 'get',
-            url: 'http://api.map.baidu.com/geosearch/v3/nearby',
-            dataType: "jsonp",
-            data: {
-              ak: 'sdp9qCbToS7E23nDRxaAAwbh',
-              geotable_id: 121763,
-              location: point.lng + ',' + point.lat,
-              radius: 10000,
-              page_index: page || 0,
-              page_size: 50
-            },
-            jsonp: 'callback',
-            success: function(res) {
-              _this.setState({
-                itemsNumber: res.total,
-                itemsList: res.contents
-              });
-              _this.showNearby();
-              _this.map
-                .centerAndZoom(_this.props.addressKeyword, 12);
-            }
-          })
-        } else {
-          alert("未找到该区域信息");
-        }
-      }.bind(this), this.props.city);
-  },
-  showNearby: function() {
-    var _this = this;
-    for (var k in this.state.itemsList) {
-      var point = new BMap.Point(this.state.itemsList[k].location[0], this.state.itemsList[k].location[1]);
-      var marker = new BMap.Marker(point);
-      var label = new BMap.Label(String.fromCharCode(65 + parseInt(k)), {
-        offset: new BMap.Size(4, 2)
-      });
-      label.setStyle({
-        border: 'none',
-        backgroundColor: 'transparent',
-        color: '#FAFAFA'
-      });
-      marker.setLabel(label);
-      marker.setTitle(this.state.itemsList[k].title);
-      marker
-        .addEventListener('click', function(e) {
-          _this.showInfoWindow(this.getLabel().content.charCodeAt(0) - 65);
-        });
-      this.map
-        .addOverlay(marker);
-    }
-    this.state.itemsList.length && this.showInfoWindow(0);
-  },
-  showInfoWindow: function(index) {
-    if (index !== this.state.itemActive || 1) {
-      var point = new BMap.Point(this.state.itemsList[index].location[0], this.state.itemsList[index].location[1]);
-      var itemInfo = this.state.itemsList[index];
-      var title = itemInfo.title;
-      var address = itemInfo.address;
-      var tel = itemInfo.tel;
-      var content = '<p class="map-info-window">地址：' + address + '</p>';
-      var infoWindow = new BMap.InfoWindow(content, {
-        title: title,
-        width: 290,
-        panel: "panel",
-        enableAutoPan: true,
-        offset: new BMap.Size(0, -25)
-      });
+  set: function(n, trickle) {
+    !trickle && this._init();
+    n = this._format(n);
+    if (n === 100) {
+      /* done */
       this.setState({
-        itemActive: + index
+        rate: 100
       });
-      this.map
-        .openInfoWindow(infoWindow, point);
+    } else {
+      n = n > this.props.maxRate * 100
+        ? this.props.maxRate * 100
+        : n;
+      this.setState({
+        rate: n
+      });
     }
   },
-  clickMapItem: function(e) {
-    var ele = e.target;
-    var eleClass = ele.getAttribute('class');
-    var itemIndex = 0;
-    if (eleClass === "map-item") {
-      itemIndex = ele.getAttribute('data-key');
-    } else if (eleClass === "map-item-mark" || eleClass === "map-item-main") {
-      itemIndex = ele.parentNode
-        .getAttribute('data-key');
-    } else if (!eleClass) {
-      itemIndex = ele.parentNode
-        .parentNode
-        .parentNode
-        .getAttribute('data-key');
+  inc: function(n) {
+    this._init();
+    this.props.trickle && this._autoInc();
+    n = n
+      ? this._format(n)
+      : this.props.incStep * 100;
+    var newRate = this.state.rate + n;
+    this.set(newRate + '%', true);
+  },
+  done: function() {
+    this.set('100%');
+    setTimeout(function() {
+      this.setState({
+        done: true
+      });
+      setTimeout(function() {
+        this.setState({
+          rate: null
+        });
+      }.bind(this), this.props.speed * 2 * 1000);
+    }.bind(this), this.props.speed * 1000);
+  },
+  _format: function(data) {  // 格式化为 0-100 的整数
+    if (typeof data === 'number') {  // 0-1 的小数
+      return data > 1
+        ? this.pros.maxRate * 100
+        : data * 100;
+    } else if (typeof data === 'string') {  // 百分比
+      return parseFloat(data) > 100
+        ? this.props.maxRate * 100
+        : parseFloat(data);
     } else {
-      itemIndex = ele.parentNode
-        .parentNode
-        .getAttribute('data-key');
+      return;
     }
-    this.showInfoWindow(itemIndex);
+  },
+  _init: function() {
+    this.state.done && this.setState({
+      done: false
+    });
+    this.timer && this._clearInterval();
+  },
+  _autoInc: function() {
+    var newRate;
+    var random;
+    this.timer = setInterval(function() {
+      random = this._getRadomStep();
+      newRate = this.state.rate + random;
+      console.log(random);
+      if (newRate > this.props.maxRate * 100) {
+        console.log(this.props.maxRate * 100);
+        this._clearInterval();
+        return;
+      }
+      console.log(newRate);
+      this.set(newRate + '%', true);
+    }.bind(this), this.props.trickleSpeed);
+  },
+  _clearInterval: function() {
+    this.timer && clearInterval(this.timer);
+  },
+  _getRadomStep: function(min, max) {
+    min = min || this.props.minStep * 100;
+    max = max || this.props.maxStep * 100;
+    return Math.random() * (max - min) + min;
   },
   render: function() {
-    var conClassName = "address-map";
-    switch (this.props.theme) {
-    case 'light' :
-      break;
-    case 'dark' :
-      conClassName += " dark";
-      break;
-    default :
-
-    }
-    var mapItemActieStyle = {
-      backgroundColor: "#181211"
+    var progressStyle = {
+      //display: (!this.state.rate && typeof this.state.rate === 'object') ? 'none' : 'block',
+      opacity: this.state.done
+        ? 0
+        : 1,
+      transition: 'opacity ' + this.props.speed + 's ' + this.props.easing
     };
-    return (
-      React.createElement("div", {className: conClassName, style: {
-        display: this.props.addressKeyword
-          ? "block"
-          : "none"
-      }}, 
-        React.createElement("div", {className: "map-nav"}, 
-          React.createElement("div", {className: "map-nav-title"}, 
-            "附近有", 
-            React.createElement("span", {className: "map-nav-number"}, 
-              this.state.itemsNumber
-            ), 
-            "家体验店"
-          ), 
-          React.createElement("ul", {className: "map-items", id: "_addressMapItems", onClick: this.clickMapItem}, 
-            this
-              .state
-              .itemsList
-              .map(function (item, i) {
-                return React.createElement("li", {className: "map-item", "data-key": i, key: i, style: (i === this.state.itemActive)
-                  ? mapItemActieStyle
-                  :
-                    {}}, 
-                  React.createElement("span", {className: "map-item-mark"}, String.fromCharCode(65 + i)), 
-                  React.createElement("div", {className: "map-item-main"}, 
-                    React.createElement("div", {className: "map-item-title"}, item.title), 
-                    React.createElement("div", {className: "map-item-address"}, "地址：", item.address), 
-                    React.createElement("div", {className: "map-item-tel"}, "电话：", item.tel)
-                  )
-                );
-              }.bind(this))
-          )
-        ), 
-        React.createElement("div", {className: "map-main", id: "_addressMapMain"})
+    var barStyle = {
+      width: !this.state.rate
+        ? 0
+        : this.state.rate + '%',
+      transition: 'width ' + this.props.speed + 's ' + this.props.easing,
+      backgroundColor: this.props.color,
+      boxShadowColor: this.props.color
+    };
+    return this.state.rate
+      ? (
+        React.createElement("div", {className: "cu-progress", style: progressStyle}, 
+          React.createElement("div", {className: "cu-progress-bar", style: barStyle}), 
+          this.props.spinner
+            ? React.createElement(Spinner, {color: this.props.color})
+            : null
+        )
       )
-    );
+      : null;
   }
 });
 
@@ -1132,384 +1515,4 @@ var ToolTip = React.createClass({displayName: "ToolTip",
             );
         }
     }
-});
-
-'use strict'
-
-//  ==================================================
-//  Component: ProgressBar
-//
-//  Include: Spinner
-//
-//  Description: Jsx for ProgressBar
-//
-//  TODO: [fix] 修正初始时 transition 不生效的问题
-//  ==================================================
-
-/* Spinner */
-var Spinner = React.createClass({displayName: "Spinner",
-  render: function() {
-    return (
-      React.createElement("div", {className: "cu-spinner"})
-    );
-  }
-});
-
-/* ProgressBar */
-var ProgressBar = React.createClass({displayName: "ProgressBar",
-  getInitialState: function() {
-    return {
-      rate: null,
-      done: false
-    };
-  },
-  getDefaultProps: function() {
-    return {
-      speed: 0.6,  // 动画速度
-      spinner: true,  // 是否有圈圈
-      easing: 'ease',  // 动画缓动曲线
-      maxRate: 0.96,  // 进度条最大宽度
-      incStep: 0.04,  // inc 增长步幅
-      minStep: 0.005,  // 随机增长的最小步幅
-      maxStep: 0.03,  // 随机增长的最大步幅
-      trickle: true,  // 是否自动增长
-      trickleSpeed: 800,  // 自动增长的间隔时间
-      setTrickle: false  // set 后是否自动增长（未启用）
-    };
-  },
-  start: function() {
-    this._init();
-    this.set('0.5%');
-    this.props.trickle && this._autoInc();
-  },
-  set: function(n, trickle) {
-    !trickle && this._init();
-    n = this._format(n);
-    if (n === 100) {
-      /* done */
-      this.setState({
-        rate: 100
-      });
-    } else {
-      n = n > this.props.maxRate * 100
-        ? this.props.maxRate * 100
-        : n;
-      this.setState({
-        rate: n
-      });
-    }
-  },
-  inc: function(n) {
-    this._init();
-    this.props.trickle && this._autoInc();
-    n = n
-      ? this._format(n)
-      : this.props.incStep * 100;
-    var newRate = this.state.rate + n;
-    this.set(newRate + '%', true);
-  },
-  done: function() {
-    this.set('100%');
-    setTimeout(function() {
-      this.setState({
-        done: true
-      });
-      setTimeout(function() {
-        this.setState({
-          rate: null
-        });
-      }.bind(this), this.props.speed * 2 * 1000);
-    }.bind(this), this.props.speed * 1000);
-  },
-  _format: function(data) {  // 格式化为 0-100 的整数
-    if (typeof data === 'number') {  // 0-1 的小数
-      return data > 1
-        ? this.pros.maxRate * 100
-        : data * 100;
-    } else if (typeof data === 'string') {  // 百分比
-      return parseFloat(data) > 100
-        ? this.props.maxRate * 100
-        : parseFloat(data);
-    } else {
-      return;
-    }
-  },
-  _init: function() {
-    this.state.done && this.setState({
-      done: false
-    });
-    this.timer && this._clearInterval();
-  },
-  _autoInc: function() {
-    var newRate;
-    var random;
-    this.timer = setInterval(function() {
-      random = this._getRadomStep();
-      newRate = this.state.rate + random;
-      console.log(random);
-      if (newRate > this.props.maxRate * 100) {
-        console.log(this.props.maxRate * 100);
-        this._clearInterval();
-        return;
-      }
-      console.log(newRate);
-      this.set(newRate + '%', true);
-    }.bind(this), this.props.trickleSpeed);
-  },
-  _clearInterval: function() {
-    this.timer && clearInterval(this.timer);
-  },
-  _getRadomStep: function(min, max) {
-    min = min || this.props.minStep * 100;
-    max = max || this.props.maxStep * 100;
-    return Math.random() * (max - min) + min;
-  },
-  render: function() {
-    var progressStyle = {
-      //display: (!this.state.rate && typeof this.state.rate === 'object') ? 'none' : 'block',
-      opacity: this.state.done
-        ? 0
-        : 1,
-      transition: 'opacity ' + this.props.speed * 2 + 's ' + this.props.easing
-    };
-    var barStyle = {
-      width: !this.state.rate
-        ? 0
-        : this.state.rate + '%',
-      transition: 'width ' + this.props.speed + 's ' + this.props.easing
-    };
-    return this.state.rate
-      ? (
-        React.createElement("div", {className: "cu-progress", style: progressStyle}, 
-          React.createElement("div", {className: "cu-progress-bar", style: barStyle}), 
-          this.props.spinner
-            ? React.createElement(Spinner, null)
-            : null
-        )
-      )
-      : null;
-  }
-});
-
-'use strict'
-
-//  ==================================================
-//  Component: ProgressBar
-//
-//  Include: PaginationBtn
-//
-//  TODO:
-//  ==================================================
-
-/* PaginationBtn */
-var PaginationBtn = React.createClass({displayName: "PaginationBtn",
-  getDefaultProps: function() {
-    return {
-      text: 1,
-      type: "num"
-    };
-  },
-  render: function() {
-    var text = (this.props.type === 'dot') ? '...' : this.props.text;
-    var itemClass = this.props.active
-      ? "item active"
-      : "item";
-    if(this.props.type !== 'num') {
-      itemClass += (" page " + this.props.type);
-    }
-    if(this.props.disabled) {
-      itemClass += ' disabled';
-    }
-    return (
-      React.createElement("li", {className: itemClass, onClick: this.props.changePage}, 
-        React.createElement("a", null, text)
-      )
-    );
-  }
-});
-
-/* Pagination Overview */
-var PagiOverview = React.createClass({displayName: "PagiOverview",
-  render: function() {
-    return (
-      React.createElement("div", {className: "overview"}, "共 ", this.props.pages, " 页，")
-    );
-  }
-});
-
-/* Pagination QuickGo */
-var PagiQuickGo = React.createClass({displayName: "PagiQuickGo",
-  getInitialState: function() {
-    return {
-      pageInput: null
-    };
-  },
-  inputChange: function(e) {
-    this.setState({
-      pageInput: e.target.value
-    });
-  },
-  quickGo: function() {
-    if(this.state.pageInput) {
-      var nextPage = +this.state.pageInput;
-      nextPage = nextPage < 1 ? 1 : nextPage;
-      nextPage = nextPage > this.props.pages ? this.props.pages : nextPage;
-      this.props.setActivePage(nextPage)
-    }
-  },
-  render: function() {
-    return (
-      React.createElement("div", {className: "quick-go"}, 
-        React.createElement("span", null, "到第"), 
-        React.createElement("input", {className: "go-page", type: "number", min: "1", max: this.props.pages, onChange: this.inputChange}), 
-        React.createElement("span", null, "页"), 
-        React.createElement("button", {className: "go-submit", onClick: this.quickGo}, "确认")
-      )
-    );
-  }
-});
-
-/* Pagination Main */
-var PagiMain = React.createClass({displayName: "PagiMain",
-  getInitialState: function() {
-    return {
-      pageItems: this.getPageItems(this.props.activePage)
-    };
-  },
-  componentWillReceiveProps: function(nextProps) {
-    if(nextProps.activePage !== this.props.activePage) {
-      var pageItems = this.getPageItems(nextProps.activePage);
-      this.setState({
-        pageItems: pageItems
-      });
-      this.props.selected(nextProps.activePage);
-    }
-  },
-  handleItemClick: function(type, page) {
-    if (type === "first") {
-      page = 1;
-    } else if (type === "prev") {
-      page = (this.props.activePage === 1) ? 1 : this.props.activePage - 1;
-    } else if (type === "next") {
-      page = (this.props.activePage === this.props.pages) ? this.props.pages : this.props.activePage + 1;
-    } else if (type === "last") {
-      page = this.props.pages;
-    } else {
-      page = page;
-    }
-    if (page !== this.props.activePage) {
-      this.props.setActivePage(page);
-    }
-  },
-  getPageItems: function(n) {
-    var list = [];
-    var b = this.props.basePages;
-    var m = this.props.midPages;
-    var p = this.props.pages;
-    if(n <= parseInt(m / 2) + 1) { // 1
-      list = this._getSeriesNumber(1, p <= b + m ? p : m);
-    } else if((n <= parseInt(m / 2) + 1 + b) || p <= b + m)  { // 1'
-      list = this._getSeriesNumber(1, p <= b + m ? p : n + 2);
-    } else if((n < p - parseInt(m / 2) - 1)) {  // 2
-      list = this._getSeriesNumber(1, this.props.basePages);
-      list.push(0);
-      list = list.concat(this._getSeriesNumber(n-2, m));
-      if(p > m + b + 2) {
-        list.push(0);
-      }
-    } else if(n === p - parseInt(m / 2) - 1) {  // 3
-      list = this._getSeriesNumber(1, this.props.basePages);
-      list.push(0);
-      list = list.concat(this._getSeriesNumber(p - m, m + 1));
-    } else {  // 4
-      list = this._getSeriesNumber(1, this.props.basePages);
-      list.push(0);
-      list = list.concat(this._getSeriesNumber(p - m + 1, m));
-    }
-    return list;
-  },
-  _getSeriesNumber: function(start, length) {
-    start = start;
-    length = length;
-    var series = [];
-    while(length--) {
-      series.push(start++);
-    }
-    return series;
-  },
-  render: function() {
-    var startBlock = [];
-    var endBlock = [];
-    if(this.props.pages > 0) {
-      if(this.props.first) {
-        startBlock.push(React.createElement(PaginationBtn, {key: "first", text: this.props.first, disabled: (this.props.activePage === 1) ? true : false, type: "prev", type: "first", changePage: this.handleItemClick.bind(this, 'first')}));
-      }
-      if(this.props.prev) {
-        startBlock.push(React.createElement(PaginationBtn, {key: "prev", text: this.props.prev, disabled: (this.props.activePage === 1) ? true : false, type: "prev", changePage: this.handleItemClick.bind(this, 'prev')}));
-      }
-      if(this.props.next) {
-        endBlock.push(React.createElement(PaginationBtn, {key: "next", text: this.props.next, type: "next", disabled: (this.props.activePage === this.props.pages) ? true : false, changePage: this.handleItemClick.bind(this, 'next')}));
-      }
-      if(this.props.last) {
-        endBlock.push(React.createElement(PaginationBtn, {key: "last", text: this.props.last, type: "last", disabled: (this.props.activePage === this.props.pages) ? true : false, changePage: this.handleItemClick.bind(this, 'last')}));
-      }
-    }
-    return (
-      React.createElement("ul", {className: "pagi-main"}, 
-        startBlock, 
-        
-          (this.props.pages > 0) && this.state.pageItems.map(function(item, i) {
-              return (
-                React.createElement(PaginationBtn, {key: i, text: item, type: item ? 'num' : 'dot', active: (item === this.props.activePage) ? true : false, changePage: item ? this.handleItemClick.bind(this, 'num', item) : null})
-              )
-            }.bind(this)), 
-        
-        endBlock
-      )
-    )
-  }
-});
-
-/* Pagination */
-var Pagination = React.createClass({displayName: "Pagination",
-  propTypes: {
-    pages: React.PropTypes.number
-  },
-  getInitialState: function() {
-    return {
-      activePage: this.props.activePage
-    };
-  },
-  getDefaultProps: function() {
-    return {
-      activePage: 1, // 激活页初始值
-      first: null, // 首页 null || string
-      prev: "上一页", // 上一页 null || string
-      basePages: 2, // first prev base ... mid ... next last
-      midPages: 5, // first prev base ... mid ... next last
-      ellipsis: true, // 省略号 boolen
-      next: "下一页", // 下一页 null || string
-      last: null, // 末页 null || string
-      theme: "light", // 主题
-      quickGo: false, // 概览和快速切换 boolen
-      selected: function(page) { // 页码切换时回调
-        console.log(page);
-      }
-    }
-  },
-  setActivePage: function(page) {
-    this.setState({
-      activePage: page
-    });
-  },
-  render: function() {
-    var pagiClass = (this.props.theme === 'light') ? 'pagination' : 'pagination ' + this.props.theme;
-    return (
-      React.createElement("div", {className: pagiClass}, 
-        React.createElement(PagiMain, React.__spread({},  this.props, {activePage: this.state.activePage, setActivePage: this.setActivePage})), 
-        this.props.quickGo ? React.createElement(PagiOverview, {pages: this.props.pages}) : null, 
-        this.props.quickGo ? React.createElement(PagiQuickGo, {pages: this.props.pages, setActivePage: this.setActivePage}) : null
-      )
-  )
-  }
 });

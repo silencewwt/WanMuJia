@@ -9,7 +9,7 @@ function getSearchData(option) {
         beforeSend: option.beforeSend,
         complete: option.complete,
         success: option.done,
-        fail: option.fail
+        error: option.fail
     });
 }
 
