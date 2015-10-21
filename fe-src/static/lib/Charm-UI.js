@@ -1068,9 +1068,9 @@ var PagiMain = React.createClass({displayName: "PagiMain",
       this.setState({
         pageItems: pageItems
       });
-        if(nextProps.activePage !== this.props.activePage) {
-            this.props.selected(nextProps.activePage);
-        }
+      if(nextProps.activePage !== this.props.activePage) {
+        this.props.selected(nextProps.activePage);
+      }
     }
   },
   handleItemClick: function(type, page) {
@@ -1117,6 +1117,8 @@ var PagiMain = React.createClass({displayName: "PagiMain",
     return list;
   },
   _getSeriesNumber: function(start, length) {
+    start = start;
+    length = length;
     var series = [];
     while(length--) {
       series.push(start++);
@@ -1181,6 +1183,11 @@ var Pagination = React.createClass({displayName: "Pagination",
       selected: function(page) { // 页码切换时回调
         console.log(page);
       }
+    }
+  },
+  componentWillReceiveProps: function(nextProps) {
+    if(nextProps.activePage !== this.props.activePage) {
+      this.setActivePage(nextProps.activePage);
     }
   },
   setActivePage: function(page) {

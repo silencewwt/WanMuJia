@@ -1,5 +1,9 @@
 @import "main";
 
+#banner {
+  margin-top: 10px;
+}
+
 .slide-wrapper {
   @extend .wrapper;
   width: 100%;
