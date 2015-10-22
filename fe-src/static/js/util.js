@@ -32,13 +32,15 @@ function getRegs() {
 }
 
 // Cookies
-function setCookie(cookieName, coockieValue, expiredays) {
+function setCookie(cookieName, coockieValue, expiredays, path) {
     var cookieText = encodeURIComponent(cookieName) + '=' +
         encodeURIComponent(coockieValue);
 
     if (expiredays instanceof Date) {
         cookieText += "; expires=" + expiredays.toUTCString();
     }
+
+    cookieText += "; path=" + path ? path : "/";
 
     return (document.cookie = cookieText);
 }
