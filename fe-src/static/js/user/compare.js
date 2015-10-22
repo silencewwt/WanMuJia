@@ -92,7 +92,7 @@ var CompareItem = React.createClass({
             <div className={this.props.pos}>
                 {this.props.aHref?
                     <a href={"/item/"+this.props.aHref}><img src={this.props.imgSrc} alt="" /></a>:
-                    <span className="add-compare"><a href="#ad" className="add-compare-btn">+</a></span>
+                    <span className="add-compare"><a href="/item" className="add-compare-btn">+</a></span>
                 }
                 {this.props.aHref?
                     <span className="delete-compare-btn" onClick={this.handleDeleteClick}>删除</span>:
