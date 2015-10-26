@@ -211,7 +211,8 @@ var AddressPicker = React.createClass({displayName: "AddressPicker",
       .get(function(res) {
         var currentCity = res.name;
         this.setState({
-            currentCity: currentCity
+            currentCity: currentCity,
+            city: currentCity
         });
       }.bind(this));
   },
@@ -233,7 +234,7 @@ var AddressPicker = React.createClass({displayName: "AddressPicker",
       React.createElement("div", {className: "address-picker", style: addressPickerActiveStyle}, 
         React.createElement(AddressList, {setCity: this.setCity, localAddress: this.state.currentCity, addressData: this.props.addressData}), 
         React.createElement(AddressInput, React.__spread({},  this.props, {city: this.state.city, searchSubmitHandler: this.setAddress})), 
-        React.createElement(AddressMap, {addressKeyword: this.state.address, city: this.props.city, theme: this.props.theme})
+        React.createElement(AddressMap, {addressKeyword: this.state.address, city: this.state.city, theme: this.props.theme, lbs: this.props.lbs})
       )
     );
   }
@@ -311,9 +312,10 @@ var AddressInput = React.createClass({displayName: "AddressInput",
     var keyword = this.getDOMNode()
       .children[0]
       .value;
+    var date = new Date();
     this.props
       .searchSubmitHandler(keyword);
-    setCookie('searchKeyword', keyword, 30);
+    setCookie('searchKeyword', keyword, date.setDate(date.getDate() + 30));
   },
   checkEnter: function(e) {
     (e.keyCode === 13) && this.searchSubmit();
@@ -359,9 +361,6 @@ var AddressMap = React.createClass({displayName: "AddressMap",
   },
   getDefaultProps: function() {
     return {
-      mapSearchgeotableId: 121763,
-      mapSearchTags: "",
-      mapSearchFilter: "",
       theme: "light"
     }
   },
@@ -382,33 +381,48 @@ var AddressMap = React.createClass({displayName: "AddressMap",
     myGeo
       .getPoint(keyword, function(point) { // 解析成功后的回调 搜索信息
         if (point) {
-          $.ajax({
-            type: 'get',
-            url: 'http://api.map.baidu.com/geosearch/v3/nearby',
-            dataType: "jsonp",
-            data: {
-              ak: 'sdp9qCbToS7E23nDRxaAAwbh',
-              geotable_id: 121763,
-              location: point.lng + ',' + point.lat,
-              radius: 10000,
-              page_index: page || 0,
-              page_size: 50
-            },
-            jsonp: 'callback',
-            success: function(res) {
-              _this.setState({
-                itemsNumber: res.total,
-                itemsList: res.contents
-              });
-              _this.showNearby();
-              _this.map
-                .centerAndZoom(_this.props.addressKeyword, 12);
+          myGeo.getLocation(point, function(geo) {
+            if(_this.compareCity(geo.addressComponents.city, _this.props.city)) {
+              $.ajax({
+                type: 'get',
+                url: 'http://api.map.baidu.com/geosearch/v3/nearby',
+                dataType: "jsonp",
+                data: {
+                  ak: _this.props.lbs.ak,
+                  geotable_id: _this.props.lbs.geotableId,
+                  location: point.lng + ',' + point.lat,
+                  radius: _this.props.lbs.radius,
+                  tags: _this.props.lbs.tags,
+                  sortby: _this.props.lbs.sortby,
+                  page_index: _this.props.lbs.page || 0,
+                  filter: _this.props.lbs.filter,
+                  page_size: 50
+                },
+                jsonp: 'callback',
+                success: function(res) {
+                  _this.setState({
+                    itemsNumber: res.total,
+                    itemsList: res.contents
+                  });
+                  _this.showNearby();
+                  _this.map
+                    .centerAndZoom(_this.props.addressKeyword, 12);
+                }
+              })
+            } else {
+              _this.noItemsToShow();
             }
-          })
+          });
         } else {
-          alert("未找到该区域信息");
+          _this.noItemsToShow();
         }
       }.bind(this), this.props.city);
+  },
+  compareCity: function(ct1, ct2) {
+    return ct1.replace(/市$/,'') === ct2.replace(/市$/,'');
+  },
+  noItemsToShow: function() {
+    console.log('暂无商家');
   },
   showNearby: function() {
     var _this = this;
@@ -506,10 +520,8 @@ var AddressMap = React.createClass({displayName: "AddressMap",
             "家体验店"
           ), 
           React.createElement("ul", {className: "map-items", id: "_addressMapItems", onClick: this.clickMapItem}, 
-            this
-              .state
-              .itemsList
-              .map(function (item, i) {
+            this.state.itemsList.length ?
+              this.state.itemsList.map(function (item, i) {
                 return React.createElement("li", {className: "map-item", "data-key": i, key: i, style: (i === this.state.itemActive)
                   ? mapItemActieStyle
                   :
@@ -521,7 +533,9 @@ var AddressMap = React.createClass({displayName: "AddressMap",
                     React.createElement("div", {className: "map-item-tel"}, "电话：", item.tel)
                   )
                 );
-              }.bind(this))
+              }.bind(this)) :
+              React.createElement("div", {className: "no-items"}, "您所在的城市目前还没有该家具的体验馆，敬请期待")
+            
           )
         ), 
         React.createElement("div", {className: "map-main", id: "_addressMapMain"})
