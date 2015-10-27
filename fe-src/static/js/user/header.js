@@ -31,6 +31,15 @@ $(function () {
     });
 
 
+    // SEARCH-INPUT
+    $('#search-input').on('keydown', function (e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            window.location.href = '/item/?search=' + encodeURIComponent($(this).val());
+        }
+    });
+
+
     // MAIN-NAV
     var mainNav = $('.main-nav ul.nav');
     var slideTime = 400;
