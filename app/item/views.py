@@ -67,7 +67,7 @@ def item_filter():
     else:
         price = None
     if search is not None and search != '':
-        query.filter(Item.item.like('%' + search + '%'))
+        query = query.filter(Item.item.like('%' + search + '%'))
     if price_order == 'asc':
         query = query.order_by(Item.price)
     elif price_order == 'desc':
