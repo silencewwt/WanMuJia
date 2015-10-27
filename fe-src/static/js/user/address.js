@@ -11,11 +11,11 @@ var disFilter = {
 };
 
 var lbsOption = {
-  ak: "sdp9qCbToS7E23nDRxaAAwbh",
+  ak: 'sdp9qCbToS7E23nDRxaAAwbh',
   geotableId: 121763,
   radius: 10000,
-  tags: "",
-  sortby: "",
+  tags: '',
+  sortby: '',
   filter: ''
 };
 

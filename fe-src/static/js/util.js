@@ -40,7 +40,7 @@ function setCookie(cookieName, coockieValue, expiredays, path) {
         cookieText += "; expires=" + expiredays.toUTCString();
     }
 
-    cookieText += "; path=" + path ? path : "/";
+    cookieText += "; path=" + (path ? path : "/");
 
     return (document.cookie = cookieText);
 }

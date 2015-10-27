@@ -261,6 +261,9 @@
         color: #f04533; }
     .address-map .map-nav .map-items {
       height: 380px; }
+      .address-map .map-nav .map-items .no-items {
+        padding: 30px 15px;
+        font-size: 16px; }
       .address-map .map-nav .map-items li {
         position: relative;
         padding: 10px 6px;
