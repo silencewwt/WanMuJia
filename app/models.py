@@ -513,7 +513,7 @@ class Item(db.Model, Property):
                                                                                                ItemImage.created),
         'components': lambda x: Item.query.filter_by(suite_id=x.id, is_deleted=False, is_component=True),
         'second_scene': lambda x: SecondScene.query.get(x.second_scene_id).second_scene,
-        'second_material': lambda x: SecondMaterial.query.get(x.second_scene_id).second_material,
+        'second_material': lambda x: SecondMaterial.query.get(x.second_material_id).second_material,
         'outside_sand': lambda x: Sand.query.get(x.outside_sand_id).sand,
         'inside_sand': lambda x: Sand.query.get(x.inside_sand_id).sand if x.inside_sand_id else '——',
         'stove': lambda x: Stove.query.get(x.stove_id).stove,
