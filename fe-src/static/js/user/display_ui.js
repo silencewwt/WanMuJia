@@ -155,9 +155,9 @@ $(function () {
                     otherParams: data.items
                 });
                 // 设置输入框 value
-                $('#search-input').val(decodeURIComponent(queryParams.search));
+                $('#search-input').val(decodeURIComponent(queryParams.search || ''));
                 // 设置商品数量值
-                $('#amount').text(data.items.amount || '');
+                $('#amount').text(data.items.amount);
                 items.setItems(data.items.query);
 
                 filterGroup.updateFilterValue(filterValuesMapping(data.filters.available));
