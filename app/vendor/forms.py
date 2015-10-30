@@ -17,7 +17,8 @@ from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
 from app.utils import IO
 from app.utils.forms import Form
 from app.utils.image import save_image
-from app.utils.fields import OptionGroupSelectField, SelectField, SelectNotRequiredField, IntegerField
+from app.utils.fields import OptionGroupSelectField, SelectField, SelectNotRequiredField, \
+    SelectNotRequiredMultipleField, IntegerField
 from app.utils.validator import Email, Mobile, Captcha, QueryID, Image, AreaValidator, Digit, Brand
 
 
@@ -159,7 +160,7 @@ class ItemForm(Form):
     paint_id = SelectField(coerce=int, validators=[QueryID(Paint, message=u'涂饰工艺不正确')])
     decoration_id = SelectField(coerce=int, validators=[QueryID(Decoration, message=u'装饰工艺不正确')])
     style_id = SelectField(coerce=int, validators=[QueryID(Style, message='风格分类不正确')])
-    tenon_id = SelectMultipleField(coerce=int, validators=[QueryID(Tenon, message=u'榫卯结构不正确')])
+    tenon_id = SelectNotRequiredMultipleField(coerce=int, validators=[QueryID(Tenon, required=False, message=u'榫卯结构不正确')])
     story = TextAreaField(validators=[Length(0, 5000)])
 
     attributes = ('item', 'length', 'width', 'height', 'price', 'area', 'second_material_id', 'category_id',
@@ -287,7 +288,7 @@ class ComponentForm(Form):
     carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, message=u'雕刻工艺不正确')])
     paint_id = SelectField(coerce=int, validators=[QueryID(Paint, message=u'涂饰工艺不正确')])
     decoration_id = SelectField(coerce=int, validators=[QueryID(Decoration, message=u'装饰工艺不正确')])
-    tenon_id = SelectMultipleField(coerce=int, validators=[QueryID(Tenon, message=u'榫卯结构不正确')])
+    tenon_id = SelectNotRequiredMultipleField(coerce=int, validators=[QueryID(Tenon, required=False, message=u'榫卯结构不正确')])
     amount = IntegerField(validators=[Digit(required=True, min=1, message='商品数量不正确')])
 
     component_obj = None
