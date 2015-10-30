@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from wtforms.fields import SelectField as BaseSelectField, IntegerField as BaseIntegerField
+from wtforms.fields import SelectField as BaseSelectField, SelectMultipleField as BaseSelectMultipleField,\
+    IntegerField as BaseIntegerField
 from wtforms.validators import ValidationError
 from wtforms.widgets import HTMLString, html_params, Select as BaseSelect
 from html import escape
@@ -38,6 +39,17 @@ class SelectNotRequiredField(BaseSelectField):
                     break
             else:
                 raise ValueError(self.gettext('Not a valid choice'))
+
+
+class SelectNotRequiredMultipleField(BaseSelectMultipleField):
+    def process_formdata(self, valuelist):
+        try:
+            self.data = list(self.coerce(x) for x in valuelist)
+        except ValueError:
+            if len(valuelist) == 1 and valuelist[0] == '':
+                self.data = []
+            else:
+                raise ValueError(self.gettext('Invalid choice(s): one or more data inputs could not be coerced'))
 
 
 class OptionGroupSelectWidget(Select):
