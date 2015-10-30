@@ -46,6 +46,7 @@ class DataTableHandler(object):
 
     def query_params(self, query):
         self.data['recordsTotal'] = query.count()
+        self.data['recordsFiltered'] = query.count()
         order_column = request.args.get('order[0][column]', '')
         order_key = request.args.get('columns[%s][data]' % order_column, '')
         order_dir = request.args.get('order[0][dir]')
@@ -55,7 +56,6 @@ class DataTableHandler(object):
             else:
                 query = query.order_by(self.params[order_key]['order_key'])
         query = query.offset(self.start).limit(self.length)
-        self.data['recordsFiltered'] = query.count()
         for record in query:
             data = {}
             for param in self.params:
