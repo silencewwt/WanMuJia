@@ -935,7 +935,7 @@ function saveInfos(options) {
         if (isCategorySelect(name)) {
             return;
         }
-        data[name] = $this.val();
+        data[name] = $this.val() || '';
     });
 
     // 套件信息
@@ -960,7 +960,7 @@ function saveInfos(options) {
                 if (isCategorySelect(name)) {
                     return;
                 }
-                com[name] = $this.val();
+                com[name] = $this.val() || '';
             });
 
             // category_id
