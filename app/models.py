@@ -281,17 +281,18 @@ class Vendor(BaseUser, db.Model, Property):
         redis_set(self.REMINDS, self.id, json.dumps(reminds), 3600 * 24 * 3)
 
     @staticmethod
-    def generate_fake():
+    def generate_fake(num=100):
         from faker import Factory
         from random import randint
         zh_fake = Factory.create('zh-CN')
         fake = Factory.create()
         vendors = []
-        for i in range(100):
+        for i in range(num):
             vendor = Vendor(
                 "14e1b600b1fd579f47433b88e8d85291", zh_fake.phone_number(), fake.email(), zh_fake.name(),
                 zh_fake.random_number(18), '%s%s' % (zh_fake.company(), zh_fake.random_number(3)),
                 zh_fake.random_number(2), zh_fake.phone_number(), zh_fake.name())
+            vendor.confirmed = True if randint(0, 100) % 2 else False
             db.session.add(vendor)
             vendors.append(vendor)
         db.session.commit()
@@ -647,6 +648,122 @@ class Item(db.Model, Property):
         if self.is_suite:
             components = self.components
             self.amount = sum([component.amount for component in components])
+
+    @staticmethod
+    def generate_fake(num=10):
+        from faker import Factory
+        zh_fake = Factory.create('zh-CN')
+        fake = Factory.create()
+        second_material_ids = [_.id for _ in SecondMaterial.query]
+        category_ids = [_.id for _ in Category.query.filter_by(level=3)]
+        second_scene_ids = [_.id for _ in SecondScene.query]
+        stove_ids = [_.id for _ in Stove.query]
+        sand_ids = [_.id for _ in Sand.query]
+        paint_ids = [_.id for _ in Paint.query]
+        decoration_ids = [_.id for _ in Decoration.query]
+        style_ids = [_.id for _ in Style.query]
+        tenon_ids = [_.id for _ in Tenon.query]
+        carve_ids = [_.id for _ in Carve.query]
+
+        def generate_fake_item():
+            for i in range(num):
+                item = Item(
+                    vendor_id=vendor.id,
+                    item=zh_fake.name(),
+                    price=random.randint(0, 10000000),
+                    second_material_id=random.choice(second_material_ids),
+                    category_id=random.choice(category_ids),
+                    second_scene_id=random.choice(second_scene_ids),
+                    length=random.randint(0, 1000),
+                    width=random.randint(0, 1000),
+                    height=random.randint(0, 1000),
+                    area=random.randint(0, 100),
+                    stove_id=random.choice(stove_ids),
+                    outside_sand_id=random.choice(sand_ids),
+                    inside_sand_id=random.choice(sand_ids),
+                    paint_id=random.choice(paint_ids),
+                    decoration_id=random.choice(decoration_ids),
+                    style_id=random.choice(style_ids),
+                    story=fake.text(random.randint(10, 100)),
+                    suite_id=0,
+                    amount=0,
+                    is_suite=False,
+                    is_component=False
+                )
+                db.session.add(item)
+                db.session.commit()
+                generate_fake_attach(item)
+
+        def generate_fake_suite():
+            for i in range(num):
+                suite = Item(
+                    vendor_id=vendor.id,
+                    item=zh_fake.name(),
+                    price=random.randint(0, 10000000),
+                    second_material_id=random.choice(second_material_ids),
+                    category_id=0,
+                    second_scene_id=random.choice(second_scene_ids),
+                    length=0,
+                    width=0,
+                    height=0,
+                    area=random.randint(0, 100),
+                    stove_id=random.choice(stove_ids),
+                    outside_sand_id=random.choice(sand_ids),
+                    inside_sand_id=random.choice(sand_ids),
+                    paint_id=0,
+                    decoration_id=0,
+                    style_id=random.choice(style_ids),
+                    story=fake.text(random.randint(10, 100)),
+                    suite_id=0,
+                    amount=1,
+                    is_suite=True,
+                    is_component=False
+                )
+                db.session.add(suite)
+                db.session.commit()
+                generate_fake_component(suite)
+
+        def generate_fake_component(suite):
+            for i in range(random.randint(1, 5)):
+                component = Item(
+                    vendor_id=vendor.id,
+                    item=zh_fake.name(),
+                    price=0,
+                    second_material_id=0,
+                    category_id=random.choice(category_ids),
+                    second_scene_id=0,
+                    length=random.randint(0, 100),
+                    width=random.randint(0, 100),
+                    height=random.randint(0, 100),
+                    area=random.randint(0, 100),
+                    stove_id=0,
+                    outside_sand_id=0,
+                    inside_sand_id=0,
+                    paint_id=random.choice(paint_ids),
+                    decoration_id=random.choice(decoration_ids),
+                    style_id=0,
+                    story='',
+                    suite_id=suite.id,
+                    amount=random.randint(0, 10),
+                    is_suite=False,
+                    is_component=True
+                )
+                db.session.add(component)
+                db.session.commit()
+                generate_fake_attach(component)
+
+        def generate_fake_attach(item):
+            tenon_set = set(tenon_ids[:random.randint(1, len(tenon_ids) / 2 - 1)])
+            for tenon_id in tenon_set:
+                db.session.add(ItemTenon(item_id=item.id, tenon_id=tenon_id))
+            carve_set = set(carve_ids[:random.randint(1, len(carve_ids) / 2 - 1)])
+            for carve_id in carve_set:
+                db.session.add(ItemCarve(item_id=item.id, carve_id=carve_id))
+            db.session.commit()
+
+        for vendor in Vendor.query.all():
+            generate_fake_item()
+            generate_fake_suite()
 
 
 class ItemImage(db.Model, Property):
@@ -1147,7 +1264,7 @@ def load_user(user_id):
     return User.query.get(id_)
 
 
-def generate_fake_data():
+def generate_fake_data(num=100):
     Category.generate_fake()
     FirstMaterial.generate_fake()
     SecondMaterial.generate_fake()

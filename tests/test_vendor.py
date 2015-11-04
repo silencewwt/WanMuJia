@@ -69,7 +69,7 @@ class VendorTestCase(WMJTestCase):
             'license_limit':  '2035/10/19',
             'telephone': '01012345678',
             'address': 'vendor address',
-            'district_cn_id': '110111',
+            'area_cn_id': '110111',
             'brand': 'brand'
         }
         temp_data = {}
