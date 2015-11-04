@@ -158,11 +158,11 @@
 
         <div class="form-group-separator"></div>
 
-        <div class="form-group required">
+        <div class="form-group">
             <label class="col-sm-2 control-label" for="tenon_id">榫卯结构</label>
 
             <div class="col-sm-9">
-                {{ form.tenon_id(id=genSerialId('tenon_id', num), class='form-control', **{'data-validate': 'required', 'data-message-required': '选择榫卯结构', 'multiple': 'multiple', 'data-select2-elem': 'true'}) }}
+                {{ form.tenon_id(id=genSerialId('tenon_id', num), class='form-control', **{ 'multiple': 'multiple', 'data-select2-elem': 'true'}) }}
             </div>
         </div>
 

@@ -63,9 +63,10 @@ def create_app(config_name):
     def page_not_found(error):
         return render_template('user/404.html'), 404
 
-    from app import statisitc
-    with app.app_context():
-        statisitc.init_statistic()
+    if config_name != 'testing':
+        from app import statisitc
+        with app.app_context():
+            statisitc.init_statistic()
 
     return app
 

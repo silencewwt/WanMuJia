@@ -17,7 +17,7 @@ class WMJTestCase(unittest.TestCase):
 
         db.drop_all()
         db.create_all()
-        generate_fake_data()
+        generate_fake_data(10)
 
     def tearDown(self):
         db.session.remove()
