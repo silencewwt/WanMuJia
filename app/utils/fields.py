@@ -45,8 +45,8 @@ class SelectNotRequiredMultipleField(BaseSelectMultipleField):
     def process_formdata(self, valuelist):
         try:
             self.data = list(self.coerce(x) for x in valuelist)
-        except ValueError:
-            if len(valuelist) == 1 and valuelist[0] == '':
+        except (ValueError, TypeError):
+            if len(valuelist) == 1 and (valuelist[0] == '' or valuelist[0] is None):
                 self.data = []
             else:
                 raise ValueError(self.gettext('Invalid choice(s): one or more data inputs could not be coerced'))
