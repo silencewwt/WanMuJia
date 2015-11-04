@@ -180,3 +180,12 @@ def change_password():
 @user_blueprint.route('/address', methods=['GET'])
 def address():
     return render_template('user/address.html', user=current_user)
+
+
+@user_blueprint.route('/logined')
+def logined():
+    if current_user.is_authenticated and current_user.id_prefix == 'u':
+        return jsonify({'logined': True, 'username': current_user.username,
+                        'mobile': current_user.mobile, 'email': current_user.email})
+    else:
+        return jsonify({'logined': False})
