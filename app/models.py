@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import time
+import re
 import random
 
 from flask import current_app
@@ -663,7 +664,7 @@ class Item(db.Model, Property):
             if not os.path.exists(item_dir):
                 os.mkdir(item_dir)
             for image in item.images:
-                src_path = os.path.join(current_app.config['IMAGE_DIR'], image.url[1:])
+                src_path = os.path.join(current_app.config['IMAGE_DIR'], re.sub('.*(?=images)', '', image.url))
                 image_name = image.url.rsplit('/', maxsplit=1)[-1]
                 dst_path = os.path.join(item_dir, image_name)
                 shutil.copyfile(src_path, dst_path)
