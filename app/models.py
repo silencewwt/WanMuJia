@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import json
+import os
+import shutil
 import time
 import random
 
+from flask import current_app
 from flask.ext.login import UserMixin
 from flask.ext.cdn import url_for
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -648,6 +651,25 @@ class Item(db.Model, Property):
         if self.is_suite:
             components = self.components
             self.amount = sum([component.amount for component in components])
+
+    @staticmethod
+    def images_dump():
+        for item in Item.query.filter_by(is_deleted=False):
+            vendor_dir = os.path.join(current_app.config['IMAGE_DIR'], 'raw_images/%s_%d/' % (item.vendor.brand, item.vendor.id))
+            item_dir = os.path.join(vendor_dir, '%s_%d' % (item.item, item.id))
+
+            if not os.path.exists(vendor_dir):
+                os.mkdir(vendor_dir)
+            if not os.path.exists(item_dir):
+                os.mkdir(item_dir)
+            for image in item.images:
+                src_path = os.path.join(current_app.config['IMAGE_DIR'], image.url[1:])
+                image_name = image.url.rsplit('/', maxsplit=1)[-1]
+                dst_path = os.path.join(item_dir, image_name)
+                shutil.copyfile(src_path, dst_path)
+            story_path = os.path.join(item_dir, '商品信息.txt')
+            with open(story_path, 'w', encoding='utf8') as f:
+                f.write(item.story)
 
     @staticmethod
     def generate_fake(num=10):
