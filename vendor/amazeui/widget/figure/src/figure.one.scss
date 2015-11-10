@@ -1,0 +1,33 @@
+/**
+  * Figure theme: one
+  */
+
+.am-figure-one {
+  $global-light-gray:  #dfdfdf !default;
+  $global-dark-gray:  #888 !default;
+  $figure-img-border-color:  $global-light-gray !default;
+  $figure-bg:  $white !default;
+  $figure-color:  $global-dark-gray !default;
+
+  margin: 0 10px;
+  background: $figure-bg;
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    padding: 2px;
+    border: 1px solid $figure-img-border-color;
+  }
+
+  figcaption {
+    text-align: center;
+    font-size: 1.4rem;
+    padding: 10px 0;
+    color: $figure-color;
+  }
+
+  // @include hook-am-figure-one();
+}
+
+// @mixin hook-am-figure-one(){}

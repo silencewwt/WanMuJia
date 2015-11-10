@@ -1,0 +1,11 @@
+/**
+  * Divider Theme: dashed
+  */
+
+.am-divider-dashed {
+  border-top: 1px dashed #ccc;
+
+  // @include hook-am-divider-dashed();
+}
+
+// @mixin hook-am-divider-dashed(){}

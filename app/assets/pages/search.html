@@ -1,0 +1,9 @@
+{% extends "user/layout.html" %}
+
+{% block title -%}
+  搜索页
+{%- endblock %}
+
+{% block scripts -%}
+  <script src="{{url_for('static', filename='js/user/search.bundle.js')}}"></script>
+{%- endblock %}

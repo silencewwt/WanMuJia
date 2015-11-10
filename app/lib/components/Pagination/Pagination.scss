@@ -1,0 +1,178 @@
+//  ==================================================
+//  Component: ProgressBar
+//
+//  Include: PaginationBtn
+//
+//  TODO:
+//  ==================================================
+
+$teal: #1BBC9B;
+$coral: #FD605B;
+
+$itemSize: 35px;
+$itemBackground: #FFF;
+$itemBorder: #E2E2E2;
+
+$itemBtnPadding: 8px;
+
+$itemActive: $coral;
+
+$darkBackground: #231716;
+$darkBorder: #322827;
+$darkActiveBackground: #322827;
+$darkActiveBorder: rgba(#FFF, .2);
+
+$qickGoColor: #A0A0A0;
+
+/*==================================================
+  Component: ProgressBar
+==================================================*/
+
+.pagination {
+  padding-right: 10px;
+  &, .pagi-main, .overview, .quick-go, .item {
+    display: inline-block;
+  }
+  .item {
+    width: $itemSize;
+    height: $itemSize;
+    margin-left: -1px;
+    border: 1px solid $itemBorder;
+    background-color: $itemBackground;
+    line-height: $itemSize;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .1s ease, color .1s ease;
+    &:not(.dot):not(.active):not(.disabled):hover {
+      color: $itemActive;
+      border-color: $itemActive;
+      &:not(.page) + .item:not(.page) {
+        border-left-color: $itemActive;
+      }
+    }
+    &.active {
+      border-color: $itemActive;
+      background-color: $itemActive;
+      color: #FFF;
+      cursor: default;
+    }
+    &.disabled {
+      color: #BBB;
+    }
+    &.page {
+      width: auto;
+      padding: 0 $itemBtnPadding;
+    }
+    &.dot {
+      margin: 0;
+      border: none;
+      cursor: default;
+      & + .page {
+        margin-left: 0;
+      }
+    }
+    &.first, &.prev {
+      margin-left: 0;
+      margin-right: 5px;
+    }
+    &.next, &.last {
+      margin-left: 5px;
+    }
+  }
+
+  .overview {
+    margin-left: 15px;
+    color: $qickGoColor;
+    font-size: 14px;
+    span {
+      vertical-align: middle;
+    }
+  }
+
+  .quick-go {
+    color: $qickGoColor;
+    font-size: 14px;
+    span {
+      vertical-align: middle;
+    }
+    input {
+      padding-left: 3px;
+      margin: 0 5px;
+      width: 30px;
+      border: 1px solid $itemBorder;
+      border-radius: 2px;
+      background-color: $itemBackground;
+      color: $qickGoColor;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .go-submit {
+      font-size: 14px;
+      margin-left: 8px;
+      border: 1px solid $itemBorder;
+      border-radius: 2px;
+      background-color: $itemBackground;
+      color: #444;
+      vertical-align: middle;
+      &:hover {
+        color: $itemActive;
+        border-color: $itemActive;
+        cursor: pointer;
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  &.dark {
+    .item {
+      color: #FAFAFA;
+      border-color: $darkBorder;
+      background-color: $darkBackground;
+      &:not(.dot):not(.active):not(.disabled):hover {
+        color: #969696;
+        border-color: $darkActiveBorder;
+        background-color: $darkActiveBackground;
+        &:active {
+          background-color: darken($darkActiveBackground, 5%);
+        }
+        &:not(.page) + .item:not(.page) {
+          border-left-color: $darkActiveBorder;
+        }
+      }
+      &.active {
+        background-color: $darkActiveBackground;
+        color: #969696;
+      }
+      &.disabled {
+        color: $darkActiveBorder;
+      }
+      & > a {
+        color: inherit;
+      }
+    }
+
+    .quick-go {
+      .go-page {
+        border-color: rgba($darkActiveBorder, .1);
+        background-color: lighten($darkBackground, 2%);
+        &:focus {
+          outline: none;
+        }
+      }
+      .go-submit {
+        color: #FAFAFA;
+        border-color: $darkBorder;
+        background-color: $darkBackground;
+        &:hover {
+          color: #969696;
+          background-color: $darkActiveBackground;
+        }
+        &:active {
+          background-color: darken($darkActiveBackground, 5%);
+        }
+      }
+    }
+  }
+}

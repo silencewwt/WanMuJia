@@ -1,1 +1,0 @@
-$(function(){$('.upload input[type="file"]').on("change",function(){var n=$(this),t=n.val(),i=$(this).parents(".form-group").find(".state");i.empty().append($("<div>"+t+"</div>"))})});

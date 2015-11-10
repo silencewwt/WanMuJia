@@ -1,0 +1,11 @@
+/**
+  * Divider Theme: dotted
+  */
+
+.am-divider-dotted {
+  border-top: 1px dotted #ccc;
+
+  // @include hook-am-divider-dotted();
+}
+
+// @mixin hook-am-divider-dotted(){}
