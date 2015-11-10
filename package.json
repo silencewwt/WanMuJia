@@ -4,7 +4,7 @@
   "description": "A shoppers platform of red wood.",
   "main": "app.js",
   "scripts": {
-    "build": "webpack --config ./webpack.config.js"
+    "build": "webpack --config ./webpack.config.js --watch"
   },
   "keywords": [
     "red wood",
