@@ -1,0 +1,295 @@
+
+$pageWidth: 1200px;
+
+$topBarHeight: 40px;
+
+$bannerHeight: 74px;
+
+$topBarTextColor: #666;
+$textActiveColor: #5e2c00;
+
+$inputBackColor: #833e00;
+
+@mixin link($color: #333) {
+  color: $color;
+  text-decoration: none;
+}
+
+.overflow {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.paragraph {
+  padding: 0;
+  margin: 0;
+}
+
+// TopBar
+#top-bar {
+  background-color: #f0f0f0;
+  border-bottom: 2px solid #e4e4e4;
+  box-sizing: border-box;
+}
+
+.top-bar {
+  margin: 0 auto;
+  width: $pageWidth;
+  height: $topBarHeight;
+  color: $topBarTextColor;
+  font-size: 14px;
+
+  .user-info {
+    float: left;
+    line-height: $topBarHeight;
+
+    .login > a {
+      @include link(lighten($textActiveColor, 4));
+
+      &:hover {
+        color: darken($textActiveColor, 4);
+      }
+    }
+
+    .reg {
+      margin-left: 20px;
+
+      & > a {
+        @include link($textActiveColor);
+
+        &:hover {
+          color: darken($textActiveColor, 4);
+        }
+      }
+    }
+  }
+
+  .site-info {
+    float: right;
+    line-height: $topBarHeight;
+
+    & > span {
+      margin-left: 20px;
+    }
+
+    a {
+      @include link($topBarTextColor);
+
+      &:hover {
+        color: darken($textActiveColor, 4);
+      }
+    }
+  }
+}
+
+// Banner
+.banner {
+  margin: 25px 0;
+  height: $bannerHeight;
+
+  & > div {
+    float: left;
+  }
+
+  .logo {
+    margin: ($bannerHeight - 45) / 2 0;
+
+    & > img {
+      width: 130px;
+    }
+  }
+
+  .city {
+    margin: ($bannerHeight - 24) / 2 0;
+    margin-left: 30px;
+    width: 70px;
+    height: 24px;
+    text-align: center;
+  }
+
+  .search {
+    margin: ($bannerHeight - 38) / 2 0;
+    margin-left: 70px;
+    width: 650px;
+
+    input {
+      padding-left: 15px;
+      border: 2px solid $inputBackColor;
+      background-color: #f5f5f5;
+
+      &:focus {
+        outline: none;
+        box-shadow: none;
+      }
+    }
+
+    button {
+      padding: 0 32px;
+      border: none;
+      background-color: $inputBackColor;
+      color: #fff;
+
+      &:hover {
+        background-color: darken($inputBackColor, 2);
+      }
+
+      &:active {
+        background-color: darken($inputBackColor, 8);
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: none;
+      }
+    }
+   }
+
+  .qrcode {
+    float: right;
+    margin-right: 35px;
+    text-align: center;
+
+    & > img {
+      width: 74px;
+      height: 74px;
+    }
+
+    & > div {
+      color: $inputBackColor;
+      font-size: 12px;
+    }
+  }
+}
+
+// Nav
+.nav {
+  display: inline-block;
+}
+
+.nav-main {
+  display: inline-block;
+  padding-left: 20px;
+
+  .nav-main-item {
+    display: inline-block;
+    width: 160px;
+    text-align: center;
+
+    &.active {
+      & > a {
+        @include link($inputBackColor);
+      }
+    }
+
+    & > a {
+      @include link($topBarTextColor);
+
+      &:hover {
+        color: $inputBackColor;
+      }
+    }
+  }
+}
+
+#slider {
+  position: relative;
+  height: 300px;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    right: 0;
+    width: 1200 - 239px;
+    height: 2px;
+    background-color: #88582d;
+  }
+
+  .am-slider {
+    margin: 0;
+  }
+
+  .am-control-nav {
+    width: auto;
+    right: 10px;
+    bottom: 18px;
+    text-align: right;
+
+    & > li {
+      margin: 0 4px;
+
+      a {
+        width: 10px;
+        height: 10px;
+        background-color: rgba(#fff, 0.2);
+
+        &.am-active, &:hover {
+          background-color: lighten(#6E3800, 4);
+        }
+      }
+    }
+  }
+
+  img {
+    height: 300px;
+  }
+}
+
+#group-1, #group-2, #group-3 {
+  margin-top: 40px;
+}
+
+.footer {
+  margin-top: 40px;
+
+  .footer-icon {
+    padding: 40px 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+
+    & > img {
+      width: 750px;
+    }
+  }
+
+  .footer-link {
+    margin: 10px auto;
+    width: 900px;
+    overflow: hidden;
+
+    .link-group {
+      float: left;
+      width: 300px;
+      text-align: center;
+
+      & > li {
+        margin: 20px 0;
+
+        & > a {
+          @include link(#666);
+
+          &:hover {
+            color: #333;
+          }
+        }
+      }
+    }
+  }
+
+  .footer-right {
+    margin: 20px auto;
+    font-size: 14px;
+    color: #888;
+    text-align: center;
+
+    a {
+      @include link(#888);
+
+      &:hover {
+        color: #333;
+      }
+    }
+  }
+}

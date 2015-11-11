@@ -1,0 +1,281 @@
+
+$pageWidth: 1200px;
+
+$itemWidthTg: 241px;
+$itemHeightTg: 280px;
+
+$itemWidth: 220px;
+$itemHeight: 270px;
+
+$itemPaddingLeft: 38px;
+$itemPaddingTop: 24px;
+
+$itemMargin: 25px;
+
+$imgWidthTg: $itemWidthTg - $itemPaddingLeft * 2;
+$imgHeightTg: 196 - $itemPaddingTop * 2;
+
+$imgWidth: $itemWidth - $itemPaddingLeft * 2;
+$imgHeight: 196 - $itemPaddingTop * 2;
+
+$titleColor: #777;
+$titleFontSize: 14px;
+
+$priceColor: #cf0a0a;
+$priceFontSize: 18px;
+
+$divideColor: #ccc;
+$divideWidth: 1px;
+$divideBorder: $divideWidth solid $divideColor;
+
+$itemsWidthTg: $itemWidthTg * 4 - $divideWidth * 4;
+
+$itemsWidth: $pageWidth;
+
+$guideWidth: $pageWidth - $itemsWidthTg;
+$guideTitleHeight: 50px;
+
+$itemTipHeight: 44px;
+$itemTipBackColor: #f5f5f5;
+$itemTipBackColorActive: #88582d;
+
+$activeColor: #6e3800;
+
+@mixin link($color: #333) {
+  color: $color;
+  text-decoration: none;
+}
+
+.overflow {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.paragraph {
+  padding: 0;
+  margin: 0;
+}
+
+.items {
+  position: relative;
+  width: $itemsWidth;
+  background-color: #fff;
+  // overflow: hidden;
+
+  &:after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+
+  &.normal {
+    .item {
+      &:hover {
+        & > .item-tip {
+          transform: translateY(0);
+        }
+        & > .item-img {
+          transform: translateY(-10px);
+        }
+        & > .item-info > h5 {
+          transform: translateY(-6px);
+        }
+      }
+
+      &:nth-child(5n+1) {
+        margin-left: 0;
+      }
+    }
+  }
+
+  &.tight {
+    float: left;
+    margin-left: 0;
+    width: $itemsWidthTg;
+
+    .items-flag {
+      position: absolute;
+      top: -$divideWidth;
+      left: -$divideWidth;
+      width: 100%;
+      height: 2px;
+      background-color: $activeColor;
+      z-index: 100;
+    }
+
+    .item {
+      margin-top: -$divideWidth;
+      margin-left: -$divideWidth;
+      width: $itemWidthTg - $itemPaddingLeft * 2 - $divideWidth * 2;
+      height: $itemHeightTg - $itemPaddingTop * 2 - $divideWidth * 1.5;
+      box-sizing: content-box;
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        display: block;
+        width: 100%;
+        height: 0;
+        background-color: #9e0808;
+        transition: height .2s ease;
+      }
+
+      &:hover {
+        &:after {
+          height: 2px;
+        }
+      }
+
+      .item-img {
+        width: $imgWidthTg;
+        height: $imgHeightTg;
+        line-height: $imgHeightTg;
+      }
+
+      .item-info {
+        & > h5 {
+          line-height: 1.4;
+        }
+
+        .price {
+          width: $itemWidthTg - $itemPaddingLeft * 2;
+        }
+      }
+    }
+  }
+
+  .item {
+    position: relative;
+    float: left;
+    display: block;
+    margin-top: $itemMargin;
+    margin-left: $itemMargin;
+    width: $itemWidth;
+    height: $itemHeight;
+    padding: $itemPaddingTop $itemPaddingLeft;
+    border: $divideBorder;
+    box-sizing: border-box;
+    text-align: center;
+    overflow: hidden;
+
+    &:hover {
+      & > .item-img {
+        transform: translateY(-4px);
+      }
+      & > .item-info {
+        transform: translateY(-2px);
+      }
+    }
+
+    .item-badge {
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      padding: 0 8px;
+      height: 22px;
+      color: #fff;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .item-img {
+      display: block;
+      width: $imgWidth;
+      height: $imgHeight;
+      line-height: $imgHeight;
+      font-size: 0;
+      transform: translateY(0);
+      transition: transform 0.3s ease;
+
+      & > img {
+        max-width: 100%;
+        max-height: 100%;
+        vertical-align:middle;
+      }
+    }
+
+    .item-info {
+      position: relative;
+      transform: translateY(0);
+      transition: transform 0.2s ease;
+
+      & > h5 {
+        @extend .paragraph;
+        margin-top: 20px;
+        height: 40px;
+        font-size: $titleFontSize;
+        line-height: 1.2;
+        overflow: hidden;
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+
+        & > a {
+          @include link($titleColor);
+        }
+      }
+
+      .price {
+        position: absolute;
+        @extend .paragraph;
+        width: $itemWidth - $itemPaddingLeft * 2;
+        bottom: -24px;
+        color: $priceColor;
+        font-size: $priceFontSize;
+      }
+    }
+
+    .item-tip {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      transform: translateY($itemTipHeight);
+      transition: transform 0.3s ease;
+
+      .go-expe {
+        border-top: 1px solid $divideColor;
+        margin-left: -1px;
+        & > a {
+          background-position: 0 -3px;
+
+          &:hover {
+            background-position: 0 -53px;
+          }
+        }
+      }
+
+      .go-comp {
+        border-top: 1px solid $divideColor;
+        & > a {
+          background-position: -110px -3px;
+
+          &:hover {
+            background-position: -110px -53px;
+          }
+        }
+      }
+
+      & > span {
+        display: inline-block;
+        width: 50%;
+        height: $itemTipHeight;
+        border-top: $divideWidth solid #eee;
+        box-sizing: border-box;
+
+        & > a {
+          display: inline-block;
+          width: 100%;
+          height: 100%;
+          line-height: $itemTipHeight;
+          background: $itemTipBackColor url('../misc/demo/index/item-tip.png') no-repeat;
+          font-size: 0;
+          transition: background-position 0.3s ease;
+        }
+      }
+    }
+  }
+}

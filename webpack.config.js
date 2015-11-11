@@ -43,7 +43,10 @@ var config = {
     loaders: [
       {
         test: /(\.jsx|\.js)$/,
-        loader: 'babel?presets[]=es2015',
+        loader: 'babel',
+        query: {
+          presets: ['es2015', 'react']
+        },
         exclude: /node_modules/
       },
       {
