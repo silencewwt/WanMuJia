@@ -1,9 +1,13 @@
-{% extends "user/layout.html" %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>首页</title>
+  <script src="{{url_for('static', filename='js/user/commons.bundle.js')}}"></script>
+</head>
+<body>
+  <div id="root"></div>
 
-{% block title -%}
-  首页
-{%- endblock %}
-
-{% block scripts -%}
-  <script src="{{url_for('static', filename='js/user/home.bundle.js')}}"></script>
-{%- endblock %}
+  <script src="{{url_for('static', filename='js/user/Home.bundle.js')}}"></script>
+</body>
+</html>

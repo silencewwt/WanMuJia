@@ -1,9 +1,13 @@
-{% extends "user/layout.html" %}
-
-{% block title -%}
-  搜索页
-{%- endblock %}
-
-{% block scripts -%}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>搜索页</title>
+  <script src="{{url_for('static', filename='js/user/commons.bundle.js')}}"></script>
+</head>
+<body>
+  <div id="box"></div>
+  
   <script src="{{url_for('static', filename='js/user/search.bundle.js')}}"></script>
-{%- endblock %}
+</body>
+</html>

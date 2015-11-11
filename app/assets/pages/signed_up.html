@@ -1,9 +1,13 @@
-{% extends "user/layout.html" %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>新用户注册</title>
+  <script src="{{url_for('static', filename='js/user/commons.bundle.js')}}"></script>
+</head>
+<body>
+  <div id="box"></div>
 
-{% block title -%}
-  新用户注册
-{%- endblock %}
-
-{% block scripts -%}
   <script src="{{url_for('static', filename='js/user/signedup.bundle.js')}}"></script>
-{%- endblock %}
+</body>
+</html>

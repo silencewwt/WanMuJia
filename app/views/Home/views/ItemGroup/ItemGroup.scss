@@ -1,0 +1,114 @@
+$pageWidth: 1200px;
+
+$itemWidthTg: 241px;
+$itemHeightTg: 280px;
+
+$itemWidth: 220px;
+$itemHeight: 270px;
+
+$itemPaddingLeft: 38px;
+$itemPaddingTop: 24px;
+
+$itemMargin: 25px;
+
+$imgWidthTg: $itemWidthTg - $itemPaddingLeft * 2;
+$imgHeightTg: 196 - $itemPaddingTop * 2;
+
+$imgWidth: $itemWidth - $itemPaddingLeft * 2;
+$imgHeight: 196 - $itemPaddingTop * 2;
+
+$titleColor: #777;
+$titleFontSize: 14px;
+
+$priceColor: #cf0a0a;
+$priceFontSize: 18px;
+
+$divideColor: #ccc;
+$divideWidth: 1px;
+$divideBorder: $divideWidth solid $divideColor;
+
+$itemsWidthTg: $itemWidthTg * 4 - $divideWidth * 4;
+
+$itemsWidth: $pageWidth;
+
+$guideWidth: $pageWidth - $itemsWidthTg;
+$guideTitleHeight: 50px;
+
+$itemTipHeight: 44px;
+$itemTipBackColor: #f5f5f5;
+$itemTipBackColorActive: #88582d;
+
+$activeColor: #6e3800;
+
+@mixin link($color: #333) {
+  color: $color;
+  text-decoration: none;
+}
+
+.overflow {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.paragraph {
+  padding: 0;
+  margin: 0;
+}
+
+.item-group {
+  width: $pageWidth;
+  height: $itemHeightTg * 2;
+  border: $divideBorder;
+  border-right: none;
+  box-sizing: border-box;
+}
+
+.group-guide {
+  float: left;
+  margin-left: -$divideWidth;
+  width: $guideWidth;
+  height: $itemHeightTg* 2;
+  box-sizing: border-box;
+
+  .guide-title {
+    position: relative;
+    padding-left: 20px;
+    margin-top: -$divideWidth;
+    height: $guideTitleHeight;
+    background-color: $activeColor;
+    line-height: $guideTitleHeight - 2;
+    font-size: 20px;
+
+    & > a {
+      @include link(#fff);
+    }
+
+    .more {
+      position: absolute;
+      line-height: 30px;
+      right: 20px;
+      bottom: 10px;
+      font-size: 16px;
+
+      &:hover {
+        &:before {
+          right: -10px;
+        }
+      }
+
+      &:before {
+        position: absolute;
+        bottom: 8px;
+        right: -8px;
+        transition: right 0.3s ease;
+      }
+    }
+  }
+
+  .guide-img {
+    width: 100%;
+    height: $itemHeightTg * 2 - $guideTitleHeight;
+    background-color: #aaa;
+  }
+}

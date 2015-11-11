@@ -1,6 +1,16 @@
+'use strict';
+
 require('../../assets/pages/index.html');
 require('./Home.scss');
-let react = require('react');
+
 let utils = require('../../lib/utils/utils');
 
-console.log(utils.encryptMd5('hello'));
+let React = require('react');
+let ReactDOM = require('react-dom');
+
+let ItemGroup = require('./views/ItemGroup/ItemGroup.jsx');
+
+let itemGroup = ReactDOM.render(
+  <ItemGroup />,
+  document.getElementById('root')
+);
