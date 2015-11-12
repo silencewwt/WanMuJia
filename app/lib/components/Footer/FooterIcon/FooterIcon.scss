@@ -1,0 +1,14 @@
+
+$borderColor: #ccc;
+$border: 1px solid $borderColor;
+
+.footer-icon {
+  padding: 40px 0;
+  border-top: $border;
+  border-bottom: $border;
+  text-align: center;
+
+  & > img {
+    width: 750px;
+  }
+}
