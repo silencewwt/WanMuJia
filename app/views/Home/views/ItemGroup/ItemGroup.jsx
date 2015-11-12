@@ -1,9 +1,9 @@
 'use strict';
 
+require('./ItemGroup.scss');
+
 let React = require('react');
 let Items = require('../../../../lib/components/Items/Items.jsx');
-
-require('./ItemGroup.scss');
 
 //  ==================================================
 //  Component: ItemGoup
@@ -15,7 +15,7 @@ require('./ItemGroup.scss');
 //
 //  Use: Home
 //
-//  TODO: 厂商页　bug
+//  TODO:
 //  ==================================================
 
 const GroupGuide = React.createClass({
@@ -42,6 +42,9 @@ const GroupGuide = React.createClass({
 });
 
 const ItemGroup = React.createClass({
+  getDefaultProps: function() {
+    color: '#833e00'
+  },
   render: function() {
     return (
       <div className="item-group">

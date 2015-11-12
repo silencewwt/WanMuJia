@@ -1,17 +1,19 @@
 'use strict';
 
+require('./Items.scss');
+
 let React = require('react');
 
 //  ==================================================
 //  Component: Items
 //
-//  Props:  items theme guide
+//  Props: items theme guide
 //
-//  Include: ItemGroup Items Item ItemBadge ItemImg ItemInfo ItemTip
+//  Include: Item ItemBadge ItemImg ItemInfo ItemTip
 //
-//  Use: index.html search.html
+//  Use: Home Search
 //
-//  TODO: 厂商页　bug
+//  TODO:
 //  ==================================================
 
 var ItemBadge = React.createClass({
@@ -24,7 +26,7 @@ var ItemBadge = React.createClass({
   render: function() {
     var badgeStyle = {
       backgroundColor: this.props.color
-    }
+    };
     return (
       <span className="item-badge" style={badgeStyle}>
         {this.props.text}
@@ -135,3 +137,5 @@ var Items = React.createClass({
     );
   }
 });
+
+module.exports = Items;
