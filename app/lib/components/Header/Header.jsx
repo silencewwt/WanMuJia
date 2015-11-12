@@ -28,8 +28,10 @@ var Header = React.createClass({
       <div className="header">
         <TopBar />
         <Banner />
-        <HeaderNav {...this.props} />
-        <MainNav />
+        <div className="container">
+          <MainNav items={this.props.mainNav}/>
+          <HeaderNav />
+        </div>
         <Slider slides={this.props.slides} />
       </div>
     );

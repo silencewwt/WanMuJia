@@ -1,16 +1,17 @@
 
-$pageWidth: 1200px;
+$page-width: 1200px;
 
-$bannerHeight: 74px;
-
-$topBarTextColor: #666;
-$textActiveColor: #5e2c00;
-
-
+$main-color: #833e00;
+$main-nav-width: 239px;
+$slider-height: 300px;
 
 @mixin link($color: #333) {
   color: $color;
   text-decoration: none;
+}
+
+@mixin linkHover($color: #333, $amount: 12) {
+  color: darken($color, $amount);
 }
 
 .overflow {
@@ -25,13 +26,25 @@ $textActiveColor: #5e2c00;
 }
 
 .container {
+  position: relative;
   display: block;
   margin: 0 auto;
-  width: $pageWidth;
+  width: $page-width;
 }
+
+@import "./TopBar/TopBar.scss";
+@import "./Banner/Banner.scss";
+@import "./HeaderNav/HeaderNav.scss";
+@import "./MainNav/MainNav.scss";
+@import "./Slider/Slider.scss";
 
 // Header
 .header {
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
 
   // TopBar
   .top-bar {

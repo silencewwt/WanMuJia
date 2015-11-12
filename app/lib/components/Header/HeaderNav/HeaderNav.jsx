@@ -1,7 +1,5 @@
 'use strict';
 
-require('./HeaderNav.scss');
-
 let React = require('react');
 
 //  ==================================================
@@ -18,7 +16,7 @@ let React = require('react');
 
 let HeaderNavBtn = React.createClass({
   render: function() {
-    let itemClass = this.props.item.active ? "nav-main-item active" : "nav-main-item";
+    let itemClass = this.props.item.active ? "nav-item active" : "nav-item";
     return (
       <li className={itemClass}>
         <a href={this.props.item.link} title={this.props.item.title}>
@@ -56,7 +54,7 @@ let HeaderNav = React.createClass({
   },
   render: function() {
     return (
-      <div className="nav-main">
+      <div className="header-nav">
         {this.props.items.map(function(item, i) {
           return <HeaderNavBtn item={item} key={i} />;
         })}

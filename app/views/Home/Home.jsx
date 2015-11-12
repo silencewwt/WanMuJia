@@ -212,16 +212,16 @@ const MOCK_SLIDES = [
 ];
 
 ReactDOM.render(
-  <Header slides={MOCK_SLIDES} />,
+  <Header slides={MOCK_SLIDES} mainNav={MOCK_NAV_ITEMS} />,
   document.getElementById('header')
 );
 
-ReactDOM.render(
-  <ItemGroup guide={MOCK_GUIDE} items={MOCK_ITEMS} />,
-  document.getElementById('item-group-1')
-);
+// ReactDOM.render(
+//   <ItemGroup guide={MOCK_GUIDE} items={MOCK_ITEMS} />,
+//   document.getElementById('item-group-1')
+// );
 
-ReactDOM.render(
-  <Footer />,
-  document.getElementById('footer')
-);
+// ReactDOM.render(
+//   <Footer />,
+//   document.getElementById('footer')
+// );
