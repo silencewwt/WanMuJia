@@ -6,14 +6,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or \
-        '\xd7\x98\x0e\xbd\x00\xfb\xa8R\x8e\xc3\x17\xc5\xb5"\x08\xec\x06\x9a\xda~\xa5\xf3#\x1b1\x97\xd7P\xd9QO+'
+    SECRET_KEY = 'hard string to guess'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     DEBUG = True
     CSRF_ENABLED = True
 
-    MD5_SALT = os.environ.get('MD5_SALT') or \
-        '\xde6\xfd\xc3\x1fZ\x85\xc3\x91\x93\xb7^D\xb5\\\x87p\x8bF\x97\x8c\xe6\xdbt\xe3\x8e\xd4 \x08\x16\xc7\xc9'
+    MD5_SALT = 'md5 salt'
     CONFIRM_EMAIL_DURATION = 86400  # seconds (24 hours)
     DISTRIBUTOR_REGISTER_DURATION = 86400
     SMS_CAPTCHA_DURATION = 600
@@ -34,14 +32,14 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = True
     IMAGE_DIR = os.path.join(basedir, 'app/static/')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'mysql+pymysql://dev:devpassword@localhost/wmj?charset=utf8'
-    CELERY_BROKER_URL = 'redis://localhost:6379/0'
     HOST = 'http://127.0.0.1:5000'
 
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
+        with open(cls.CONFIG_PATH) as f:
+            config_dict = json.load(f)['development']
+        cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
 
 
 class TestingConfig(Config):
@@ -49,20 +47,19 @@ class TestingConfig(Config):
     WTF_CSRF_ENABLED = False
     DEBUG_TB_ENABLED = False
     SERVER_NAME = 'localhost'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'mysql+pymysql://test:testpassword@localhost/test?charset=utf8'
     IMAGE_DIR = os.path.join(basedir, 'app/static/')
 
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
-        pass
+        with open(cls.CONFIG_PATH) as f:
+            config_dict = json.load(f)['testing']
+        cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
 
 
 class ProductionConfig(Config):
     DEBUG = False
     PROPAGATE_EXCEPTIONS = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     HOST = 'http://www.wanmujia.com'
     CELERY_BROKER_URL = 'redis://localhost:6379/0'
     IMAGE_DIR = '/var/www/WanMuJia/'
@@ -71,7 +68,6 @@ class ProductionConfig(Config):
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
-        import json
         with open(cls.CONFIG_PATH) as f:
             config_dict = json.load(f)['production']
         cls.SECRET_KEY = config_dict['SECRET_KEY']
