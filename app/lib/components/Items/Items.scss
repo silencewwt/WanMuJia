@@ -1,49 +1,51 @@
 
-$pageWidth: 1200px;
+$item-width-tg: 241px;
+$item-height-tg: 280px;
 
-$itemWidthTg: 241px;
-$itemHeightTg: 280px;
+$item-width: 220px;
+$item-height: 270px;
 
-$itemWidth: 220px;
-$itemHeight: 270px;
+$item-padding-left: 38px;
+$item-padding-top: 24px;
 
-$itemPaddingLeft: 38px;
-$itemPaddingTop: 24px;
+$item-margin: 25px;
 
-$itemMargin: 25px;
+$img-width-tg: $item-width-tg - $item-padding-left * 2;
+$img-height-tg: 196 - $item-padding-top * 2;
 
-$imgWidthTg: $itemWidthTg - $itemPaddingLeft * 2;
-$imgHeightTg: 196 - $itemPaddingTop * 2;
+$img-width: $item-width - $item-padding-left * 2;
+$img-height: 196 - $item-padding-top * 2;
 
-$imgWidth: $itemWidth - $itemPaddingLeft * 2;
-$imgHeight: 196 - $itemPaddingTop * 2;
+$title-color: #777;
+$title-font-size: 14px;
 
-$titleColor: #777;
-$titleFontSize: 14px;
+$price-color: #cf0a0a;
+$price-font-size: 18px;
 
-$priceColor: #cf0a0a;
-$priceFontSize: 18px;
+$divide-color: #ccc;
+$divide-width: 1px;
+$divide-border: $divide-width solid $divide-color;
 
-$divideColor: #ccc;
-$divideWidth: 1px;
-$divideBorder: $divideWidth solid $divideColor;
+$items-width-tg: $item-width-tg * 4 - $divide-width * 4;
 
-$itemsWidthTg: $itemWidthTg * 4 - $divideWidth * 4;
+$items-width: $page-width;
 
-$itemsWidth: $pageWidth;
+$guide-width: $page-width - $items-width-tg;
+$guide-title-height: 50px;
 
-$guideWidth: $pageWidth - $itemsWidthTg;
-$guideTitleHeight: 50px;
+$item-tip-height: 44px;
+$item-tip-back-color: #f5f5f5;
+$item-tip-back-color-active: #88582d;
 
-$itemTipHeight: 44px;
-$itemTipBackColor: #f5f5f5;
-$itemTipBackColorActive: #88582d;
-
-$activeColor: #6e3800;
+$active-color: #6e3800;
 
 @mixin link($color: #333) {
   color: $color;
   text-decoration: none;
+}
+
+@mixin linkHover($color: #333, $amount: 12) {
+  color: darken($color, $amount);
 }
 
 .overflow {
@@ -57,9 +59,10 @@ $activeColor: #6e3800;
   margin: 0;
 }
 
+
 .items {
   position: relative;
-  width: $itemsWidth;
+  width: $items-width;
   background-color: #fff;
   // overflow: hidden;
 
@@ -92,23 +95,22 @@ $activeColor: #6e3800;
   &.tight {
     float: left;
     margin-left: 0;
-    width: $itemsWidthTg;
+    width: $items-width-tg;
 
     .items-flag {
       position: absolute;
-      top: -$divideWidth;
-      left: -$divideWidth;
+      left: -$divide-width;
       width: 100%;
       height: 2px;
-      background-color: $activeColor;
+      background-color: $active-color;
       z-index: 100;
     }
 
     .item {
-      margin-top: -$divideWidth;
-      margin-left: -$divideWidth;
-      width: $itemWidthTg - $itemPaddingLeft * 2 - $divideWidth * 2;
-      height: $itemHeightTg - $itemPaddingTop * 2 - $divideWidth * 1.5;
+      margin-top: -$divide-width;
+      margin-left: -$divide-width;
+      width: $item-width-tg - $item-padding-left * 2 - $divide-width * 2;
+      height: $item-height-tg - $item-padding-top * 2 - $divide-width * 1.5;
       box-sizing: content-box;
 
       &:after {
@@ -130,9 +132,9 @@ $activeColor: #6e3800;
       }
 
       .item-img {
-        width: $imgWidthTg;
-        height: $imgHeightTg;
-        line-height: $imgHeightTg;
+        width: $img-width-tg;
+        height: $img-height-tg;
+        line-height: $img-height-tg;
       }
 
       .item-info {
@@ -141,7 +143,7 @@ $activeColor: #6e3800;
         }
 
         .price {
-          width: $itemWidthTg - $itemPaddingLeft * 2;
+          width: $item-width-tg - $item-padding-left * 2;
         }
       }
     }
@@ -151,12 +153,12 @@ $activeColor: #6e3800;
     position: relative;
     float: left;
     display: block;
-    margin-top: $itemMargin;
-    margin-left: $itemMargin;
-    width: $itemWidth;
-    height: $itemHeight;
-    padding: $itemPaddingTop $itemPaddingLeft;
-    border: $divideBorder;
+    margin-top: $item-margin;
+    margin-left: $item-margin;
+    width: $item-width;
+    height: $item-height;
+    padding: $item-padding-top $item-padding-left;
+    border: $divide-border;
     box-sizing: border-box;
     text-align: center;
     overflow: hidden;
@@ -184,9 +186,9 @@ $activeColor: #6e3800;
 
     .item-img {
       display: block;
-      width: $imgWidth;
-      height: $imgHeight;
-      line-height: $imgHeight;
+      width: $img-width;
+      height: $img-height;
+      line-height: $img-height;
       font-size: 0;
       transform: translateY(0);
       transition: transform 0.3s ease;
@@ -207,24 +209,24 @@ $activeColor: #6e3800;
         @extend .paragraph;
         margin-top: 20px;
         height: 40px;
-        font-size: $titleFontSize;
+        font-size: $title-font-size;
         line-height: 1.2;
         overflow: hidden;
         transform: translateY(0);
         transition: transform 0.3s ease;
 
         & > a {
-          @include link($titleColor);
+          @include link($title-color);
         }
       }
 
       .price {
         position: absolute;
         @extend .paragraph;
-        width: $itemWidth - $itemPaddingLeft * 2;
+        width: $item-width - $item-padding-left * 2;
         bottom: -24px;
-        color: $priceColor;
-        font-size: $priceFontSize;
+        color: $price-color;
+        font-size: $price-font-size;
       }
     }
 
@@ -233,11 +235,11 @@ $activeColor: #6e3800;
       left: 0;
       bottom: 0;
       width: 100%;
-      transform: translateY($itemTipHeight);
+      transform: translateY($item-tip-height);
       transition: transform 0.3s ease;
 
       .go-expe {
-        border-top: 1px solid $divideColor;
+        border-top: 1px solid $divide-color;
         margin-left: -1px;
         & > a {
           background-position: 0 -3px;
@@ -249,7 +251,7 @@ $activeColor: #6e3800;
       }
 
       .go-comp {
-        border-top: 1px solid $divideColor;
+        border-top: 1px solid $divide-color;
         & > a {
           background-position: -110px -3px;
 
@@ -262,16 +264,16 @@ $activeColor: #6e3800;
       & > span {
         display: inline-block;
         width: 50%;
-        height: $itemTipHeight;
-        border-top: $divideWidth solid #eee;
+        height: $item-tip-height;
+        border-top: $divide-width solid #eee;
         box-sizing: border-box;
 
         & > a {
           display: inline-block;
           width: 100%;
           height: 100%;
-          line-height: $itemTipHeight;
-          background: $itemTipBackColor url('../../../assets/images/item-tip.png') no-repeat;
+          line-height: $item-tip-height;
+          background: $item-tip-back-color url('../../assets/images/item-tip.png') no-repeat;
           font-size: 0;
           transition: background-position 0.3s ease;
         }
