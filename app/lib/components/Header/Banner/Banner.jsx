@@ -1,7 +1,5 @@
 'use strict';
 
-require('./Banner.scss');
-
 let React = require('react');
 
 //  ==================================================

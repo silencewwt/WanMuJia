@@ -18,17 +18,21 @@ let AMUIReact = require('amazeui-react');
 var Slider = React.createClass({
   render: function() {
     return (
-      <AMUIReact.Slider>
-        {this.props.slides.map(function(item, i) {
-          return (
-            <AMUIReact.Slider.Item key={i}>
-              <a href={item.url} title={item.title}>
-                <img src={item.img} />
-              </a>
-            </AMUIReact.Slider.Item>
-          );
-        })}
-      </AMUIReact.Slider>
+      <div className="slider">
+        <div className="container">
+          <AMUIReact.Slider theme="a1">
+            {this.props.slides.map(function(item, i) {
+              return (
+                <AMUIReact.Slider.Item key={i}>
+                  <a href={item.url} title={item.title}>
+                    <img src={item.img} />
+                  </a>
+                </AMUIReact.Slider.Item>
+              );
+            })}
+          </AMUIReact.Slider>
+        </div>
+      </div>
     );
   }
 });

@@ -1,83 +1,36 @@
-$pageWidth: 1200px;
+@import "../../../../lib/components/Items/Items.scss";
 
-$itemWidthTg: 241px;
-$itemHeightTg: 280px;
-
-$itemWidth: 220px;
-$itemHeight: 270px;
-
-$itemPaddingLeft: 38px;
-$itemPaddingTop: 24px;
-
-$itemMargin: 25px;
-
-$imgWidthTg: $itemWidthTg - $itemPaddingLeft * 2;
-$imgHeightTg: 196 - $itemPaddingTop * 2;
-
-$imgWidth: $itemWidth - $itemPaddingLeft * 2;
-$imgHeight: 196 - $itemPaddingTop * 2;
-
-$titleColor: #777;
-$titleFontSize: 14px;
-
-$priceColor: #cf0a0a;
-$priceFontSize: 18px;
-
-$divideColor: #ccc;
-$divideWidth: 1px;
-$divideBorder: $divideWidth solid $divideColor;
-
-$itemsWidthTg: $itemWidthTg * 4 - $divideWidth * 4;
-
-$itemsWidth: $pageWidth;
-
-$guideWidth: $pageWidth - $itemsWidthTg;
-$guideTitleHeight: 50px;
-
-$itemTipHeight: 44px;
-$itemTipBackColor: #f5f5f5;
-$itemTipBackColorActive: #88582d;
-
-$activeColor: #6e3800;
-
-@mixin link($color: #333) {
-  color: $color;
-  text-decoration: none;
-}
-
-.overflow {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.paragraph {
-  padding: 0;
-  margin: 0;
+.container {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  width: $page-width;
 }
 
 .item-group {
-  width: $pageWidth;
-  height: $itemHeightTg * 2;
-  border: $divideBorder;
-  border-right: none;
-  box-sizing: border-box;
+  // height: $item-height-tg * 2;
+  // border: $divide-border;
+  // border-right: none;
+  // box-sizing: border-box;
+
+  .container {
+    overflow: hidden;
+  }
 }
 
 .group-guide {
   float: left;
-  margin-left: -$divideWidth;
-  width: $guideWidth;
-  height: $itemHeightTg* 2;
+  width: $guide-width;
+  height: $item-height-tg* 2;
   box-sizing: border-box;
 
   .guide-title {
     position: relative;
     padding-left: 20px;
-    margin-top: -$divideWidth;
-    height: $guideTitleHeight;
-    background-color: $activeColor;
-    line-height: $guideTitleHeight - 2;
+    margin-top: -$divide-width;
+    height: $guide-title-height;
+    background-color: $active-color;
+    line-height: $guide-title-height - 2;
     font-size: 20px;
 
     & > a {
@@ -108,7 +61,7 @@ $activeColor: #6e3800;
 
   .guide-img {
     width: 100%;
-    height: $itemHeightTg * 2 - $guideTitleHeight;
+    height: $item-height-tg * 2 - $guide-title-height;
     background-color: #aaa;
   }
 }

@@ -6,15 +6,6 @@ $text-active-color: #5e2c00;
 $topbar-bgc: #f4f4f4;
 $topbar-boder: 2px solid #eee;
 
-@mixin link($color: #333) {
-  color: $color;
-  text-decoration: none;
-}
-
-@mixin linkHover($color: #333, $amount: 12) {
-  color: darken($color, $amount);
-}
-
 .top-bar {
   background-color: $topbar-bgc;
   border-bottom: $topbar-boder;

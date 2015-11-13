@@ -1,103 +1,153 @@
 
-$pageWidth: 1200px;
+$nav-title-height: 50px;
+$nav-cate-height: $slider-height / 5;
 
-$bannerHeight: 74px;
+$nav-height: $nav-title-height + $nav-cate-height * 5;
 
+$nav-cate-bgc: #6e3800;
 
-$textActiveColor: #5e2c00;
+$nav-item-group-width: 270px;
 
-$inputBackColor: #833e00;
+$nav-item-height: $nav-cate-height * 5 / 3;
+$nav-item-width: 270px;
+$nav-item-img-size: $nav-cate-height * 5 / 3 - 20;
 
-@mixin link($color: #333) {
-  color: $color;
-  text-decoration: none;
-}
-
-.overflow {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.paragraph {
-  padding: 0;
-  margin: 0;
-}
-
-// Nav
-.nav {
+.main-nav {
+  position: relative;
   display: inline-block;
-}
+  width: $main-nav-width;
+  // height: $navHeight;
+  text-align: center;
 
-.nav-main {
-  display: inline-block;
-  padding-left: 20px;
+  .nav-title {
+    height: $nav-title-height;
+    color: #fafafa;
+    line-height: $nav-title-height;
+  }
 
-  .nav-main-item {
-    display: inline-block;
-    width: 160px;
-    text-align: center;
+  .category-list {
+    position: absolute;
+    width: $main-nav-width;
+    z-index: 200;
+  }
 
-    &.active {
-      & > a {
-        @include link($inputBackColor);
-      }
+  .category {
+    height: $nav-cate-height;
+    background-color: rgba($nav-cate-bgc, 0.95);
+    line-height: $nav-cate-height;
+    color: #fff;
+    // transition: background-color .4s ease, color .4s ease;
+
+    &:hover {
+      background-color: #fff;
+      color: $nav-cate-bgc;
+    }
+
+    // &:hover > a:after {
+    //   transform: translateX(4px);
+    // }
+
+    &:hover > .category-subpart {
+      display: block;
     }
 
     & > a {
-      @include link($topBarTextColor);
+      position: relative;
+      display: block;
 
-      &:hover {
-        color: $inputBackColor;
+      @include link(inherit);
+
+      &:before {
+        position: absolute;
+        top: 20px;
+        right: 18px;
+        font-size: 18px;
       }
     }
-  }
-}
 
-#slider {
-  position: relative;
-  height: 300px;
+    .category-subpart {
+      position: absolute;
+      display: none;
+      // top: $nav-title-height;
+      top: 0;
+      left: $main-nav-width;
+      width: $page-width - $main-nav-width;
+      height: $nav-cate-height * 5;
+      background-color: #fff;
+      text-align: left;
+      // outline: 1px solid red;
 
-  &:before {
-    content: "";
-    position: absolute;
-    top: -2px;
-    right: 0;
-    width: 1200 - 239px;
-    height: 2px;
-    background-color: #88582d;
-  }
+      .category-more {
+        position: absolute;
+        right: 60px;
+        bottom: 18px;
+        color: #aaa;
+        font-size: 14px;
 
-  .am-slider {
-    margin: 0;
-  }
+        & > a {
+          @include link(inherit);
+        }
+      }
+    }
 
-  .am-control-nav {
-    width: auto;
-    right: 10px;
-    bottom: 18px;
-    text-align: right;
+    .category-items {
+      float: left;
 
-    & > li {
-      margin: 0 4px;
+      .category-item {
+        padding: 10px 20px;
+        width: $nav-item-width;
+        height: $nav-item-height;
+        box-sizing: border-box;
+        cursor: pointer;
+        // outline: 1px solid green;
 
-      a {
-        width: 10px;
-        height: 10px;
-        background-color: rgba(#fff, 0.2);
+        & > img {
+          width: $nav-item-img-size;
+          height: $nav-item-img-size;
+          vertical-align: middle;
 
-        &.am-active, &:hover {
-          background-color: lighten(#6E3800, 4);
+          &:hover + .item-title {
+            color: darken($nav-cate-bgc, 4);
+          }
+        }
+
+        .item-title {
+          display: inline-block;
+          padding: 0 10px;
+          margin: 0;
+          width: 96px;
+          color: #333;
+          line-height: 24px;
+          text-align: center;
+          vertical-align: middle;
+
+          @extend .overflow;
+
+          &:hover {
+            color: darken($nav-cate-bgc, 4);
+          }
+        }
+
+        .item-btn {
+          float: right;
+          padding: 0 4px;
+          margin-top: 32px;
+          line-height: 16px;
+          color: $nav-cate-bgc;
+          font-size: 12px;
+          border: 1px solid $nav-cate-bgc;
+          border-radius: 2px;
+
+          &:hover {
+            color: #fff;
+            background-color: $nav-cate-bgc;
+          }
+
+          &:active {
+            background-color: darken($nav-cate-bgc, 4);
+          }
         }
       }
     }
   }
-
-  img {
-    height: 300px;
-  }
-}
-
-#group-1, #group-2, #group-3 {
-  margin-top: 40px;
 }

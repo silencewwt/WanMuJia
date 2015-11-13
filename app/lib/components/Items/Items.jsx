@@ -1,7 +1,5 @@
 'use strict';
 
-require('./Items.scss');
-
 let React = require('react');
 
 //  ==================================================
@@ -121,7 +119,7 @@ var Items = React.createClass({
   },
   render: function() {
     var flagStyle = {
-      bakcgroundColor: this.props.color
+      backgroundColor: this.props.color
     };
     return (
       <div className={'items ' + this.props.theme}>

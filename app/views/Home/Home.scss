@@ -1,5 +1,10 @@
 @import "../../assets/styles/main";
+@import "./views/ItemGroup/ItemGroup.scss";
 
-.home-class {
-  color: #f5f5f5;
+.header {
+  margin-bottom: 20px;
+}
+
+.item-group {
+  margin: 20px auto;
 }
