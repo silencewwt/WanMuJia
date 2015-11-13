@@ -1,9 +1,9 @@
 
 $banner-height: 74px;
 
-$input-bgc: #833e00;
+$input-border-color: #833e00;
 
-$btn-bgc: $input-bgc; // #833e00
+$btn-bgc: $input-border-color; // #833e00
 
 .banner {
   & > .container {
@@ -36,8 +36,8 @@ $btn-bgc: $input-bgc; // #833e00
 
       input {
         padding-left: 15px;
-        border: 2px solid $input-bgc;
-        background-color: #f5f5f5;
+        border: 2px solid $input-border-color;
+        // background-color: #f5f5f5;
 
         &:focus {
           outline: none;
