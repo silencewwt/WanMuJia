@@ -4,7 +4,7 @@ require("./CityPickerWithTab.scss");
 
 let React = require("react");
 let addressData = require("../../../../assets/data/addressData.json");
-let cookieOperation = require("../../../cookie.js");
+let cookieOperation = require("../../../utils/cookie.js");
 
 var CityPickerWithTab = React.createClass({
   getInitialState: function() {

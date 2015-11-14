@@ -54,6 +54,10 @@ var config = {
         loaders: ['style', 'css', 'sass']
       },
       {
+        test: /\.json$/,
+        loader: 'json',
+      },
+      {
         test: /\.html$/,
         loader: 'file-loader?name=' + fileOutputDir + '/templates/user/' + '[name].[ext]'
       },
