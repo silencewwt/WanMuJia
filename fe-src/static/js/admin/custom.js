@@ -120,7 +120,7 @@ jQuery(document).ready(function($) {
                 {data: "id", bSortable: false, visible: false},
                 {data: "item", bSortable: false},
                 {data: "vendor", bSortable: false},
-                {data: "second_scene_id", bSortable: false},
+                {data: "scene_id", bSortable: false},
                 {data: "price"},
                 {data: "size", bSortable: false}
             ],
