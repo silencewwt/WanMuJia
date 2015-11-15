@@ -136,7 +136,7 @@ jQuery(document).ready(function($) {
                 {data: "item", bSortable: false},
                 {data: "price"},
                 {data: "size", bSortable: false},
-                {data: "second_scene_id", bSortable: false},
+                {data: "scene_id", bSortable: false},
                 {data: "second_material_id", bSortable: false},
                 {data: "inventory", visible: false},
             ],
