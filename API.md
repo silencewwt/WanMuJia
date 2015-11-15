@@ -193,6 +193,16 @@
   + **confirm_password**
     + required
 
+### user logined
++ **URL**
+  + /logined
++ **method**
+  + GET
++ **return**
+  + 已登录
+    + `{"logined": true, "username": "", "mobile": "", "email": ""}`
+  + 未登录
+    + `{"logined": false}`
 
 ## Item
 ### item list
