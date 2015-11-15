@@ -5,7 +5,7 @@ from flask.ext.login import current_user
 from flask.ext.cdn import url_for
 
 from app import statisitc
-from app.models import Item
+from app.models import Item, Category
 from app.user.forms import LoginForm
 from . import item as item_blueprint
 
@@ -19,9 +19,9 @@ def item_list():
 def item_filter():
     materials = request.args.getlist('material', type=int)
     styles = request.args.getlist('style', type=int)
-    scenes = request.args.getlist('scene', type=int)
+    scene = request.args.get('scene', None, type=int)
     brands = request.args.getlist('brand', type=int)
-    categories = request.args.getlist('category', type=int)
+    category = request.args.get('category', None, type=int)
     price = request.args.get('price', type=int)
     price_order = request.args.get('order', type=str)
     search = request.args.get('search', type=str)
@@ -43,20 +43,32 @@ def item_filter():
             statisitc.materials['available_set'] - (statisitc.materials['available_set'] - set(materials))
         )
         query = query.filter(Item.second_material_id.in_(materials))
-    if categories:
-        category_statistic_set = set([id_ for id_ in statisitc.categories['available']])
-        categories = list(
-            category_statistic_set - (category_statistic_set - set(categories))
-        )
+    if category is not None:
+        category = Category.query.get(category)
         category_ids = []
-        for category_id in categories:
-            category_ids.extend(statisitc.categories['available_list'][category_id])
-        query = query.filter(Item.category_id.in_(category_ids))
-    if scenes:
+        if category is not None:
+            if category.level == 3:
+                category_ids = [category.id]
+            elif category.level == 2:
+                children = statisitc.categories['available'][category.father_id]['children'][category.id]['children']
+                if children:
+                    category_ids = children.keys()
+                else:
+                    category_ids = [category.id]
+            else:
+                children = statisitc.categories['available'][category.id]['children']
+                for child in children:
+                    if not children[child]['children']:
+                        category_ids.append(child)
+                    else:
+                        category_ids.extend(children[child]['children'].keys())
+        if category_ids:
+            query = query.filter(Item.category_id.in_(category_ids))
+    if scene is not None:
         scenes = list(
             statisitc.scenes['available_set'] - (statisitc.scenes['available_set'] - set(scenes))
         )
-        query = query.filter(Item.second_scene_id.in_(scenes))
+        query = query.filter(Item.scene_id.in_(scenes))
     if styles:
         styles = list(
             statisitc.styles['available_set'] - (statisitc.styles['available_set'] - set(styles))
@@ -91,10 +103,43 @@ def item_filter():
         data['filters']['available']['material'] = statisitc.materials['available']
     else:
         data['filters']['selected']['material'] = statisitc.selected(statisitc.materials['total'], materials)
-    if not categories:
-        data['filters']['available']['category'] = statisitc.categories['available']
+    if category is None:
+        data['filters']['available']['category'] = {key: {'category': statisitc.categories['available'][key]['category']} for key in statisitc.categories['available']}
     else:
-        data['filters']['selected']['category'] = statisitc.selected(statisitc.categories['total'], categories)
+        if category.level == 1:
+            data['filters']['selected']['category'] = {category.id: {'category': category.category}}
+            second_categories = statisitc.categories['available'][category.id]['children']
+            data['filters']['available']['category'] = {key: {'category': second_categories[key]['category']} for key in second_categories}
+        elif category.level == 2:
+            data['filters']['selected']['category'] = {
+                category.father_id: {
+                    'category': category.father.category,
+                    'children': {
+                        category.id: {
+                            'category': category.category
+                        }
+                    }
+                }
+            }
+            third_categories = statisitc.categories['available'][category.father_id]['children'][category.id]['children']
+            if third_categories:
+                data['filters']['available']['category'] = {key: {'category': third_categories[key]['category']} for key in third_categories}
+        else:
+            data['filters']['selected']['category'] = {
+                category.father.father_id: {
+                    'category': category.father.father.category,
+                    'children': {
+                        category.father.id: {
+                            'category': category.father.category,
+                            'children': {
+                                category.id: {
+                                    'category': category.category
+                                }
+                            }
+                        }
+                    }
+                }
+            }
     if not scenes:
         data['filters']['available']['scene'] = statisitc.scenes['available']
     else:
@@ -135,7 +180,7 @@ def detail(item_id):
             'price': item.price,
             'second_material': item.second_material,
             'category': item.category,
-            'second_scene': item.second_scene,
+            'scene': item.scene,
             'outside_sand': item.outside_sand,
             'inside_sand': item.inside_sand,
             'size': item.size(),

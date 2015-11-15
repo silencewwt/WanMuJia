@@ -94,7 +94,7 @@ def items_data_table():
         'id': {'orderable': False, 'data': lambda x: x.id},
         'item': {'orderable': False, 'data': lambda x: x.item},
         'second_material_id': {'orderable': False, 'data': lambda x: x.second_material},
-        'second_scene_id': {'orderable': False, 'data': lambda x: x.second_scene},
+        'scene_id': {'orderable': False, 'data': lambda x: x.scene},
         'size': {'orderable': False, 'data': lambda x: x.size()},
         'price': {'orderable': True, 'order_key': Item.price, 'data': lambda x: x.price},
         'inventory': {'orderable': False, 'data': handle_stock}

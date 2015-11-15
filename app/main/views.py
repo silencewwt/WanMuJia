@@ -6,7 +6,7 @@ from sqlalchemy import func
 from flask.ext.login import current_user
 
 from app import statisitc
-from app.models import Item, FirstScene, SecondScene
+from app.models import Item, Scene
 from app.utils.redis import redis_set, redis_get
 from .import main
 
@@ -24,10 +24,10 @@ def index():
     while len(items) < 18:
         items.append(items[0])
     scenes = []
-    for first_scene in FirstScene.query.order_by(FirstScene.id):
-        l = [(first_scene.id, first_scene.first_scene), []]
-        for second_scene in SecondScene.query.filter_by(first_scene_id=first_scene.id).order_by(SecondScene.id):
-            l[1].append((second_scene.id, second_scene.second_scene))
+    for first_scene in Scene.query.order_by(Scene.id):
+        l = [(first_scene.id, first_scene.scene), []]
+        for scene in Scene.query.filter_by(father_id=first_scene.id).order_by(Scene.id):
+            l[1].append((scene.id, scene.scene))
         scenes.append(l)
     return render_template('user/index.html', user=current_user, scenes=scenes,
                            group1=items[:6], group2=items[6:12], group3=items[12:18])
