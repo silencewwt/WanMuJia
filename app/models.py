@@ -852,12 +852,21 @@ class Style(db.Model):
         db.session.commit()
 
 
-class Category(db.Model):
+class Category(db.Model, Property):
     __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.Unicode(20), nullable=False)
     father_id = db.Column(db.Integer, nullable=False)
     level = db.Column(db.Integer, nullable=False)
+
+    _flush = {
+        'father': lambda x: Category.query.get(x.father_id) if x.level > 1 else x
+    }
+    _father = None
+
+    @property
+    def father(self):
+        return self.get_or_flush('father')
 
     @staticmethod
     def generate_fake():
@@ -877,6 +886,52 @@ class Category(db.Model):
                 db.session.commit()
 
 
+class Scene(db.Model, Property):
+    __tablename__ = 'scenes'
+    id = db.Column(db.Integer, primary_key=True)
+    scene = db.Column(db.Unicode(20), nullable=False)
+    father_id = db.Column(db.Integer, nullable=False)
+    level = db.Column(db.Integer, nullable=False)
+
+    _flush = {
+        'father': lambda x: Scene.query.get(x.father_id)
+    }
+    _father = None
+
+    def __init__(self, scene, father_id, level):
+        self.scene = scene
+        self.father_id = father_id
+        self.level = level
+
+    @property
+    def father(self):
+        return self.get_or_flush('father')
+
+    @staticmethod
+    def data_migration():
+        scenes = {'书房': {}, '客厅': {}, '卧室': {}, '厨卫': {}, '餐厅': {}, '儿童房': {}, '酒店': {}, '工作室': {}, '其他': {}}
+        for scene in scenes:
+            origin_id = SecondScene.query.filter_by(second_scene=scene).first().id
+            scenes[scene]['origin_id'] = origin_id
+            scenes[scene]['new_id'] = Scene.query.filter_by(scene=scene).first().id
+            scenes[scene]['items'] = Item.query.filter_by(second_scene_id=origin_id).all()
+        for scene in scenes:
+            for item in scenes[scene]['items']:
+                item.second_scene_id = scenes[scene]['new_id']
+        db.session.commit()
+
+    @staticmethod
+    def generate_fake():
+        scenes = [('家庭', ('书房', '客厅', '卧室', '厨卫', '餐厅', '儿童房')), ('办公', ('酒店', '工作室')), ('工艺品', ('工艺品',)), ('其他', ('其他', ))]
+        for item in scenes:
+            scene = Scene(scene=item[0], father_id=0, level=1)
+            db.session.add(scene)
+            db.session.commit()
+            for second_scene in item[1]:
+                db.session.add(Scene(scene=second_scene, father_id=scene.id, level=2))
+            db.session.commit()
+
+
 class FirstScene(db.Model):
     __tablename__ = 'first_scenes'
     id = db.Column(db.Integer, primary_key=True)
@@ -890,11 +945,20 @@ class FirstScene(db.Model):
         db.session.commit()
 
 
-class SecondScene(db.Model):
+class SecondScene(db.Model, Property):
     __tablename__ = 'second_scenes'
     id = db.Column(db.Integer, primary_key=True)
     first_scene_id = db.Column(db.Integer, nullable=False)
     second_scene = db.Column(db.Unicode(10), nullable=False)
+
+    _flush = {
+        'father': lambda x: FirstScene.query.get(x.second_scene_id)
+    }
+    _father = None
+
+    @property
+    def father(self):
+        return self.get_or_flush('father')
 
     @staticmethod
     def generate_fake():
