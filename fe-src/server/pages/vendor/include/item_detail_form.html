@@ -57,13 +57,13 @@
 <div class="form-group-separator"></div>
 
 <div class="form-group required">
-    <label class="col-sm-2 control-label" for="second_scene_id">场景分类</label>
+    <label class="col-sm-2 control-label" for="scene_id">场景分类</label>
 
     <div class="col-sm-9">
         <script type="text/javascript">
             jQuery(document).ready(function($)
             {
-                $("#second_scene_id").select2({
+                $("#scene_id").select2({
                     placeholder: '选择场景分类...',
                     allowClear: true
                 }).on('select2-open', function()
@@ -75,7 +75,7 @@
             });
         </script>
 
-        {{ form.second_scene_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '请选择场景分类'}) }}
+        {{ form.scene_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '请选择场景分类'}) }}
     </div>
 </div>
 
