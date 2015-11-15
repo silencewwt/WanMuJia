@@ -14,7 +14,7 @@ var conf = {
     serverPath: '../WanMuJia/app/',
     staticPath: './fe-src/static/',
     pagePath: './fe-src/pages/',
-    distPath: './app/'
+    distPath: '../WanMuJia-fe-release/app/'
 };
 
 
