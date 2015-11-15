@@ -7,6 +7,7 @@ $mainColor: #6E3800;
 .city-picker-wt {
     position: relative;
     display: inline-block;
+    text-align: left;
 
     .after-i:after {
         content: "";
@@ -47,12 +48,13 @@ $mainColor: #6E3800;
         position: absolute;
         z-index: 997;
         width: 564px;
-        top: 35px;
+        top: 34px;
         left: 0;
         padding: 18px 17px;
         border: 1px solid $grayColor;
         box-shadow: 0 0px 1px $grayColor;
         padding-bottom: 0;
+        background: #fff;
 
         .city-picker-close {
             position: absolute;

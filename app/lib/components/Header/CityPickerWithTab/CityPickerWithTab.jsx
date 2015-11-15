@@ -3,9 +3,11 @@
 require("./CityPickerWithTab.scss");
 
 let React = require("react");
+let ReactDOM = require('react-dom');
 let addressData = require("../../../../assets/data/addressData.json");
 let cookieOperation = require("../../../utils/cookie.js");
 
+// props : callback -- return a object of address
 var CityPickerWithTab = React.createClass({
   getInitialState: function() {
     return {
@@ -20,7 +22,8 @@ var CityPickerWithTab = React.createClass({
   },
   // ---------------- 点击组件外部组件隐藏 begin ------------------
   handleClick: function(e) {
-    if (this.getDOMNode().contains(e.target)) {
+
+    if (ReactDOM.findDOMNode(this).contains(e.target)) {
       return ;
     }
     this.setState({active: false});
@@ -28,12 +31,25 @@ var CityPickerWithTab = React.createClass({
   componentDidMount: function() {
     document.addEventListener('mousedown', this.handleClick, false);
 
-    // TODO:
     // 获取cookie、如果没有、定位城市，如果存在，储存id,更新 state,调用回调
-    var cityId = cookieOperation.getCookie(cityId);
-    // this.setState({
-    //     nowAddress: {province: "陕西", city: "西安市"},
-    // });
+    let cityId = cookieOperation.getCookie("cityId");
+    if(cityId) {
+      let provinceId = cityId.toString().substr(0, 2) + "0000";
+      let province = addressData[provinceId].name;
+      let city = addressData[provinceId].cell[cityId].name;
+      this.setState({
+        nowAddress: {
+          province: province,
+          provinceId: provinceId,
+          city: city,
+          cityId: cityId
+        }
+      }, function() {
+        this.props.callback(this.state.nowAddress);
+      });
+    }
+    // TODO:没有cookie 定位获取 设置地址状态，回调
+
   },
   componentWillUnmount: function () {
     document.removeEventListener('mousedown', this.handleClick, false);
@@ -48,10 +64,10 @@ var CityPickerWithTab = React.createClass({
     };
     this.setState({nowAddress: address});
     this.toggle();
-    // 储存cookie
-    cookieOperation.setCookie(address, address, 30, "/");
+    // 储存cookie only city id
+    cookieOperation.setCookie("cityId", address.cityId, 3000, "/");
     // 回调
-    // ..........this.props.callback(...,...,...,...);
+    this.props.callback(address);
   },
   // 显示/隐藏列表
   toggle: function() {
