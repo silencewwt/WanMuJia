@@ -136,7 +136,7 @@ def upgrade():
     sa.Column('inside_sand_id', sa.Integer(), nullable=False),
     sa.Column('paint_id', sa.Integer(), nullable=False),
     sa.Column('decoration_id', sa.Integer(), nullable=False),
-    sa.Column('second_scene_id', sa.Integer(), nullable=False),
+    sa.Column('scene_id', sa.Integer(), nullable=False),
     sa.Column('story', sa.Unicode(length=5000), nullable=False),
     sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('searchable', sa.Boolean(), nullable=False),

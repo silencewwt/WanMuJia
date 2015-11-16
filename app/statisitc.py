@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from app import db
-from app.models import Category, Item, Vendor, SecondScene, SecondMaterial, Style
+from app.models import Category, Item, Vendor, SecondMaterial, Style, Scene
 
 materials = None
 categories = None
@@ -27,19 +27,44 @@ def materials_statistic():
 def categories_statistic():
     global categories
     categories = {'total': {}, 'available': {}, 'available_list': {}}
-    for category in Category.query.filter(Category.level == 1):
-        categories['total'][category.id] = {'category': category.category}
+    category_list = Category.query.order_by(Category.id).all()
+    first_category = second_category = None
+    for category in category_list:
+        if category.level == 1:
+            categories['total'][category.id] = {'category': category.category, 'children': {}}
+            first_category = categories['total'][category.id]
+        elif category.level == 2:
+            first_category['children'][category.id] = {'category': category.category, 'children': {}}
+            second_category = first_category['children'][category.id]
+        else:
+            second_category['children'][category.id] = {'category': category.category}
 
-    category_ids = [item.category_id for item in item_query.group_by(Item.category_id)]
-    query = db.session.query(Category).filter(Category.id.in_(
-        db.session.query(Category.father_id).filter(Category.id.in_(
-            db.session.query(Category.father_id).filter(Category.id.in_(
-                category_ids
-            ))
-        ))
-    ))
-    for category in query:
-        categories['available'][category.id] = {'category': category.category}
+    category_ids = [item.category_id for item in item_query.filter_by(is_suite=False).group_by(Item.category_id)]
+
+    del_list = []
+    length = len(category_list)
+    for index in range(length):
+        if index < length - 1:
+            if category_list[index].level >= category_list[index + 1].level:
+                if category_list[index].id not in category_ids:
+                    del_list.append(category_list[index])
+        else:
+            if category_list[index].id not in category_ids:
+                del_list.append(category_list[index])
+    for category in del_list:
+        category_list.remove(category)
+
+    first_category = second_category = None
+    for category in category_list:
+        if category.level == 1:
+            categories['available'][category.id] = {'category': category.category, 'children': {}}
+            first_category = categories['available'][category.id]
+        elif category.level == 2:
+            first_category['children'][category.id] = {'category': category.category, 'children': {}}
+            second_category = first_category['children'][category.id]
+        else:
+            second_category['children'][category.id] = {'category': category.category}
+
     for id_ in categories['available']:
         second_category_ids = db.session.query(Category.id).filter(Category.father_id == id_)
         third_category_ids = db.session.query(Category.id).filter(Category.father_id.in_(second_category_ids))
@@ -80,15 +105,31 @@ def brands_statistic():
 def scenes_statistic():
     global scenes
     scenes = {'total': {}, 'available': {}, 'available_set': set()}
-    query = SecondScene.query
-    for second_scene in query:
-        scenes['total'][second_scene.id] = {'scene': second_scene.second_scene}
+    first_scene = None
+    scene_list = Scene.query.order_by(Scene.id).all()
+    for scene in scene_list:
+        if scene.level == 1:
+            scenes['total'][scene.id] = {'scene': scene.scene, 'children': {}}
+            first_scene = scenes['total'][scene.id]
+        else:
+            first_scene['children'][scene.id] = {'scene': scene.scene}
 
-    second_scene_ids = [item.second_scene_id for item in item_query.group_by(Item.second_scene_id)]
-    query = query.filter(SecondScene.id.in_(second_scene_ids))
-    for second_scene in query:
-        scenes['available'][second_scene.id] = {'scene': second_scene.second_scene}
-    scenes['available_set'] = set([second_scene.id for second_scene in query])
+    scene_ids = [item.scene_id for item in item_query.group_by(Item.scene_id)]
+
+    del_list = []
+    for scene in scene_list:
+        if scene.level == 2 and scene.id not in scene_ids:
+            del_list.append(scene)
+    for scene in del_list:
+        scene_list.remove(scene)
+
+    first_scene = None
+    for scene in scene_list:
+        if scene.level == 1:
+            scenes['available'][scene.id] = {'scene': scene.scene, 'children': {}}
+            first_scene = scenes['available'][scene.id]
+        else:
+            first_scene['children'][scene.id] = {'scene': scene.scene}
 
 
 def init_statistic():

@@ -494,7 +494,7 @@ class Item(db.Model, Property):
     # 装饰 id
     decoration_id = db.Column(db.Integer, nullable=False)
     # 二级场景 id
-    second_scene_id = db.Column(db.Integer, nullable=False)
+    scene_id = db.Column(db.Integer, nullable=False)
     # 风格 id
     style_id = db.Column(db.Integer, default=5, nullable=False)
     # 产品寓意
@@ -517,7 +517,7 @@ class Item(db.Model, Property):
         'images': lambda x: ItemImage.query.filter_by(item_id=x.id, is_deleted=False).order_by(ItemImage.sort,
                                                                                                ItemImage.created),
         'components': lambda x: Item.query.filter_by(suite_id=x.id, is_deleted=False, is_component=True),
-        'second_scene': lambda x: SecondScene.query.get(x.second_scene_id).second_scene,
+        'scene': lambda x: Scene.query.get(x.scene_id).scene,
         'second_material': lambda x: SecondMaterial.query.get(x.second_material_id).second_material,
         'outside_sand': lambda x: Sand.query.get(x.outside_sand_id).sand,
         'inside_sand': lambda x: Sand.query.get(x.inside_sand_id).sand if x.inside_sand_id else '——',
@@ -532,7 +532,7 @@ class Item(db.Model, Property):
     _category = None
     _images = None
     _components = None
-    _second_scene = None
+    _scene = None
     _second_material = None
     _outside_sand = None
     _inside_sand = None
@@ -543,7 +543,7 @@ class Item(db.Model, Property):
     _carve = None
     _tenon = None
 
-    def __init__(self, vendor_id, item, price, second_material_id, category_id, second_scene_id, length, width,
+    def __init__(self, vendor_id, item, price, second_material_id, category_id, scene_id, length, width,
                  height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, style_id, story,
                  suite_id, amount, is_suite, is_component):
         self.vendor_id = vendor_id
@@ -551,7 +551,7 @@ class Item(db.Model, Property):
         self.price = price
         self.second_material_id = second_material_id
         self.category_id = category_id
-        self.second_scene_id = second_scene_id
+        self.scene_id = scene_id
         self.length = length
         self.width = width
         self.height = height
@@ -599,8 +599,8 @@ class Item(db.Model, Property):
         return self.get_or_flush('category')
 
     @property
-    def second_scene(self):
-        return self.get_or_flush('second_scene')
+    def scene(self):
+        return self.get_or_flush('scene')
 
     @property
     def second_material(self):
@@ -657,7 +657,7 @@ class Item(db.Model, Property):
     def images_dump():
         for item in Item.query.filter_by(is_deleted=False):
             vendor_dir = os.path.join(current_app.config['IMAGE_DIR'], 'raw_images/%s_%d/' % (item.vendor.brand, item.vendor.id))
-            item_dir = os.path.join(vendor_dir, '%s_%d' % (item.item, item.id))
+            item_dir = os.path.join(vendor_dir, '%s_%d' % (item.item.replace('/', ''), item.id))
 
             if not os.path.exists(vendor_dir):
                 os.mkdir(vendor_dir)
@@ -670,7 +670,7 @@ class Item(db.Model, Property):
                 shutil.copyfile(src_path, dst_path)
             story_path = os.path.join(item_dir, '商品信息.txt')
             with open(story_path, 'w', encoding='utf8') as f:
-                f.write(item.story)
+                f.writelines(['寓意: %s\n' % item.story, '尺寸(cm): %s\n' % item.size(), '适用面积(m^2): %s\n' % (item.area if item.area else '——')])
 
     @staticmethod
     def generate_fake(num=10):
@@ -679,7 +679,7 @@ class Item(db.Model, Property):
         fake = Factory.create()
         second_material_ids = [_.id for _ in SecondMaterial.query]
         category_ids = [_.id for _ in Category.query.filter_by(level=3)]
-        second_scene_ids = [_.id for _ in SecondScene.query]
+        scene_ids = [_.id for _ in Scene.query]
         stove_ids = [_.id for _ in Stove.query]
         sand_ids = [_.id for _ in Sand.query]
         paint_ids = [_.id for _ in Paint.query]
@@ -696,7 +696,7 @@ class Item(db.Model, Property):
                     price=random.randint(0, 10000000),
                     second_material_id=random.choice(second_material_ids),
                     category_id=random.choice(category_ids),
-                    second_scene_id=random.choice(second_scene_ids),
+                    scene_id=random.choice(scene_ids),
                     length=random.randint(0, 1000),
                     width=random.randint(0, 1000),
                     height=random.randint(0, 1000),
@@ -725,7 +725,7 @@ class Item(db.Model, Property):
                     price=random.randint(0, 10000000),
                     second_material_id=random.choice(second_material_ids),
                     category_id=0,
-                    second_scene_id=random.choice(second_scene_ids),
+                    scene_id=random.choice(scene_ids),
                     length=0,
                     width=0,
                     height=0,
@@ -754,7 +754,7 @@ class Item(db.Model, Property):
                     price=0,
                     second_material_id=0,
                     category_id=random.choice(category_ids),
-                    second_scene_id=0,
+                    scene_id=0,
                     length=random.randint(0, 100),
                     width=random.randint(0, 100),
                     height=random.randint(0, 100),
@@ -1361,8 +1361,7 @@ def generate_fake_data(num=100):
     Paint.generate_fake()
     Decoration.generate_fake()
     Tenon.generate_fake()
-    FirstScene.generate_fake()
-    SecondScene.generate_fake()
+    Scene.generate_fake()
     Style.generate_fake()
     Area.generate_fake()
     # Vendor.generate_fake()
