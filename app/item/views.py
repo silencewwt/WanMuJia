@@ -5,7 +5,7 @@ from flask.ext.login import current_user
 from flask.ext.cdn import url_for
 
 from app import statisitc
-from app.models import Item, Category
+from app.models import Item, Category, Scene
 from app.user.forms import LoginForm
 from . import item as item_blueprint
 
@@ -65,10 +65,16 @@ def item_filter():
         if category_ids:
             query = query.filter(Item.category_id.in_(category_ids))
     if scene is not None:
-        scenes = list(
-            statisitc.scenes['available_set'] - (statisitc.scenes['available_set'] - set(scenes))
-        )
-        query = query.filter(Item.scene_id.in_(scenes))
+        scene = Scene.query.get(scene)
+        scene_ids = []
+        if scene is not None:
+            if scene.level == 2:
+                scene_ids = [scene.id]
+            else:
+                children = statisitc.scenes['available'][scene.id]['children']
+                scene_ids.extend(children.keys())
+        if scene_ids:
+            query = query.filter(Item.scene_id.in_(scene_ids))
     if styles:
         styles = list(
             statisitc.styles['available_set'] - (statisitc.styles['available_set'] - set(styles))
@@ -105,45 +111,62 @@ def item_filter():
         data['filters']['selected']['material'] = statisitc.selected(statisitc.materials['total'], materials)
     if category is None:
         data['filters']['available']['category'] = {key: {'category': statisitc.categories['available'][key]['category']} for key in statisitc.categories['available']}
-    else:
-        if category.level == 1:
-            data['filters']['selected']['category'] = {category.id: {'category': category.category}}
-            second_categories = statisitc.categories['available'][category.id]['children']
-            data['filters']['available']['category'] = {key: {'category': second_categories[key]['category']} for key in second_categories}
-        elif category.level == 2:
-            data['filters']['selected']['category'] = {
-                category.father_id: {
-                    'category': category.father.category,
-                    'children': {
-                        category.id: {
-                            'category': category.category
-                        }
+    elif category.level == 1:
+        data['filters']['selected']['category'] = {category.id: {'category': category.category}}
+        second_categories = statisitc.categories['available'][category.id]['children']
+        data['filters']['available']['category'] = {key: {'category': second_categories[key]['category']} for key in second_categories}
+    elif category.level == 2:
+        data['filters']['selected']['category'] = {
+            category.father_id: {
+                'category': category.father.category,
+                'children': {
+                    category.id: {
+                        'category': category.category
                     }
                 }
             }
-            third_categories = statisitc.categories['available'][category.father_id]['children'][category.id]['children']
-            if third_categories:
-                data['filters']['available']['category'] = {key: {'category': third_categories[key]['category']} for key in third_categories}
-        else:
-            data['filters']['selected']['category'] = {
-                category.father.father_id: {
-                    'category': category.father.father.category,
-                    'children': {
-                        category.father.id: {
-                            'category': category.father.category,
-                            'children': {
-                                category.id: {
-                                    'category': category.category
-                                }
+        }
+        third_categories = statisitc.categories['available'][category.father_id]['children'][category.id]['children']
+        if third_categories:
+            data['filters']['available']['category'] = {key: {'category': third_categories[key]['category']} for key in third_categories}
+    else:
+        data['filters']['selected']['category'] = {
+            category.father.father_id: {
+                'category': category.father.father.category,
+                'children': {
+                    category.father.id: {
+                        'category': category.father.category,
+                        'children': {
+                            category.id: {
+                                'category': category.category
                             }
                         }
                     }
                 }
             }
-    if not scenes:
-        data['filters']['available']['scene'] = statisitc.scenes['available']
+        }
+    if scene is None:
+        data['filters']['available']['scene'] = {key: {'scene': statisitc.scenes['available'][key]['scene']} for key in statisitc.scenes['available']}
+    elif scene.level == 1:
+        data['filters']['selected']['scene'] = {
+            scene.id: {
+                'scene': scene.scene,
+            }
+        }
+        children = statisitc.scenes['available'][scene.id]['children']
+        if children:
+            data['filters']['available']['scene'] = {child: {'scene': children[child]['scene']} for child in children}
     else:
-        data['filters']['selected']['scene'] = statisitc.selected(statisitc.scenes['total'], scenes)
+        data['filters']['selected']['scene'] = {
+            scene.father_id: {
+                'scene': scene.father.scene,
+                'children': {
+                    scene.id: {
+                        'scene': scene.scene
+                    }
+                }
+            }
+        }
     if not styles:
         data['filters']['available']['style'] = statisitc.styles['available']
     else:
