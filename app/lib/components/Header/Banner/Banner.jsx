@@ -1,6 +1,8 @@
 'use strict';
 
 let React = require('react');
+let Logo = require('../../../../assets/images/logo.png');
+let Qrcode = require('../../../../assets/images/qrcode.png');
 
 //  ==================================================
 //  Component: Banner
@@ -14,16 +16,21 @@ let React = require('react');
 //  TODO:
 //  ==================================================
 
+let CityPickerWithTab = require('./CityPickerWithTab/CityPickerWithTab');
+
 var Banner = React.createClass({
+  handleChangeCity: function(o) {
+    console.log(o);
+  },
   render: function() {
     return (
       <div className="banner">
         <div className="container">
           <div className="logo">
-            <img src="logo.png" title="万木家" />
+            <img src={Logo} title="万木家" />
           </div>
           <div className="city">
-            选城市
+            <CityPickerWithTab callback={this.handleChangeCity} />
           </div>
           <div className="search">
             <div className="am-input-group">
@@ -34,7 +41,7 @@ var Banner = React.createClass({
             </div>
           </div>
           <div className="qrcode">
-            <img src="qrcode.png" title="扫一扫关注我们" />
+            <img src={Qrcode} title="扫一扫关注我们" />
             <div>万木家官方微信平台</div>
           </div>
         </div>

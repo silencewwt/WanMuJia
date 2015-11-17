@@ -22,20 +22,19 @@ $btn-bgc: $input-border-color; // #833e00
     }
 
     .city {
-      margin: ($banner-height - 24) / 2 0;
+      margin: ($banner-height - 32) / 2 0;
       margin-left: 30px;
-      width: 70px;
-      height: 24px;
-      text-align: center;
+      width: 100px;
     }
 
     .search {
-      margin: ($banner-height - 38) / 2 0;
+      margin: ($banner-height - 40) / 2 0;
       margin-left: 70px;
-      width: 650px;
+      width: 600px;
 
       input {
         padding-left: 15px;
+        height: 40px;
         border: 2px solid $input-border-color;
         // background-color: #f5f5f5;
 
@@ -47,6 +46,7 @@ $btn-bgc: $input-border-color; // #833e00
 
       button {
         padding: 0 32px;
+        height: 40px;
         border: none;
         background-color: $btn-bgc;
         color: #fff;
