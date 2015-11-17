@@ -55,7 +55,7 @@ var config = {
       },
       {
         test: /\.scss$/,
-        loaders: ['style', 'css', 'resolve-url', 'sass']
+        loaders: ['style', 'css?root=' + __dirname, 'resolve-url', 'sass']
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/,
@@ -77,6 +77,7 @@ var config = {
   },
   plugins: plugins,
   resolve: {
+    root: __dirname,
     extensions: ['', '.js', '.jsx']
   }
 };
