@@ -1,6 +1,7 @@
 var webpack = require('webpack');
 var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
+var ProvidePlugin = webpack.ProvidePlugin;
 var env = process.env.WEBPACK_ENV;
 var fs = require('fs');
 var path = require('path');
@@ -10,6 +11,13 @@ var outputDir;
 var plugins = [
   new CommonsChunkPlugin({
     name: "commons"
+  }),
+  new ProvidePlugin({
+    React: 'react',
+    ReactDOM: 'react-dom',
+    Utils: '/app/lib/utils/utils',
+    Header: path.join(__dirname, 'app/lib/components/Header/Header'),
+    Footer: path.join(__dirname, 'app/lib/components/Footer/Footer')
   })
 ];
 
@@ -30,48 +38,47 @@ if (env === 'build') {
   outputDir = '../WanMuJia/app';
 }
 
-var fileOutputDir = '../../../../' + outputDir;
 var config = {
   entry: entries,
   devtool: env === 'build' ? null : 'source-map',
   output: {
-    path: path.join(__dirname, outputDir, 'static/js/user'),
-    filename: '[name].bundle.js'
-    //publicPath: 'http://static.wanmujia.com/js/user/'
+    path: path.join(__dirname, outputDir, 'static'),
+    filename: 'js/user/[name].bundle.js',
+    publicPath: env === 'build' ?  'http://static.wanmujia.com/' : 'http://localhost:5000/'
   },
   module: {
     loaders: [
       {
         test: /(\.jsx|\.js)$/,
-        loader: 'babel',
-        query: {
-          presets: ['es2015', 'react']
-        },
+        loader: 'babel?presets[]=es2015&presets[]=react',
         exclude: /node_modules/
       },
       {
         test: /\.scss$/,
-        loaders: ['style', 'css', 'sass']
+        loaders: ['style', 'css', 'resolve-url', 'sass']
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/,
+        loader: 'file-loader?name=img/user/[name].[ext]'
       },
       {
         test: /\.json$/,
-        loader: 'json',
+        loader: 'json'
       },
       {
         test: /\.html$/,
-        loader: 'file-loader?name=' + fileOutputDir + '/templates/user/' + '[name].[ext]'
+        loader: 'file-loader?name=../templates/user/[name].[ext]'
       },
       {
-        test: /\.(jpe?g|png|gif|svg)$/i,
-        loader: 'file-loader?name=' + fileOutputDir + '/static/img/user/' + '[name].[ext]'
-      },
-      {
-        test: /\.(woff?2|otf|eot|svg|ttf)$/i,
-        loader: 'file-loader?name=' + fileOutputDir + '/static/fonts/user/' + '[name].[ext]'
+        test: /\.(woff2?|otf|eot|svg|ttf)$/i,
+        loader: 'file-loader?name=fonts/user/[name].[ext]'
       }
     ]
   },
-  plugins: plugins
+  plugins: plugins,
+  resolve: {
+    extensions: ['', '.js', '.jsx']
+  }
 };
 
 module.exports = config;
