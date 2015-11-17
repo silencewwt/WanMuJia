@@ -59,6 +59,13 @@ def create_app(config_name):
     from .service import service as service_blueprint
     app.register_blueprint(service_blueprint, url_prefix='/service')
 
+    @app.after_request
+    def set_csrf_token_cookie(response):
+        csrf_token = getattr(request, 'csrf_token', None)
+        if csrf_token is not None:
+            response.set_cookie('csrf_token', csrf_token, max_age=3600)
+        return response
+
     @app.errorhandler(404)
     def page_not_found(error):
         return render_template('user/404.html'), 404
