@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import hashlib
 import json
 import os
 import shutil
@@ -104,13 +105,15 @@ class User(BaseUser, db.Model):
     # 邮箱
     email = db.Column(db.String(64), nullable=False)
     # 用户名
-    nickname = db.Column(db.Unicode(30), nullable=False)
+    username = db.Column(db.Unicode(30), nullable=False)
+    # 用户名可修改
+    username_revisable = db.Column(db.Boolean, default=True, nullable=False)
 
     id_prefix = user_id_prefix
 
-    def __init__(self, password, mobile, email, nickname=u''):
+    def __init__(self, password, mobile, email):
         super(User, self).__init__(password, mobile, email)
-        self.nickname = nickname if nickname else self.generate_nickname()
+        self.username = self.generate_username()
 
     def item_collected(self, item_id):
         return Collection.query.filter_by(user_id=self.id, item_id=item_id).first() is not None
@@ -121,14 +124,22 @@ class User(BaseUser, db.Model):
         zh_fake = Factory.create('zh-CN')
         fake = Factory.create()
         for i in range(100):
-            user = User('14e1b600b1fd579f47433b88e8d85291', zh_fake.phone_number(), fake.email(), zh_fake.name())
+            user = User('14e1b600b1fd579f47433b88e8d85291', zh_fake.phone_number(), fake.email())
             db.session.add(user)
         db.session.commit()
 
     @staticmethod
-    def generate_nickname():
-        prefix = u'万木家用户'
-        return u'%s%s' % (prefix, random.randint(100000, 999999))
+    def generate_username():
+        prefix = u'wmj'
+        chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789'
+        for i in range(5):
+            l = []
+            md5 = hashlib.md5(str(time.time()).encode()).hexdigest()
+            l.extend([random.SystemRandom().choice(md5) for _ in range(6)])
+            l.extend([random.SystemRandom().choice(chars) for _ in range(4)])
+            username = prefix + ''.join(l)
+            if not User.query.filter_by(username=username).first():
+                return username
 
 
 class Collection(db.Model, Property):
