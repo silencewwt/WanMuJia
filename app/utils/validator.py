@@ -91,14 +91,21 @@ class QueryID(object):
                         raise ValidationError(self.message)
 
 
-class NickName(object):
-    def __init__(self, required=True):
+class UserName(object):
+    def __init__(self, required=True, exist_owner=None):
         self.required = required
+        self.exist_owner = exist_owner
 
     def __call__(self, form, field):
         if self.required or field.data:
             if not re.match(r'^\w{4,30}$', field.data, re.UNICODE) or re.match(r'^\d*$', field.data, re.UNICODE):
                 raise ValidationError(u'用户名不正确')
+            user = User.query.filter_by(username=field.data).first()
+            if user is not None:
+                if self.exist_owner is None:
+                    raise ValidationError('用户名已存在')
+                if self.exist_owner.id != user.id:
+                    raise ValidationError('用户名已存在')
 
 
 class Image(object):
