@@ -9,7 +9,7 @@ from app import db
 from app.constants import *
 from app.models import User
 from app.utils.forms import Form
-from app.utils.validator import Email, Mobile, Captcha, NickName, ValidationError
+from app.utils.validator import Email, Mobile, Captcha, UserName, ValidationError
 
 
 class LoginForm(Form):
@@ -51,7 +51,6 @@ class EmailRegistrationForm(RegistrationForm):
 class RegistrationDetailForm(Form):
     password = PasswordField(validators=[Length(6, 32, '请填写密码'), EqualTo('confirm_password', u'前后密码不一致哦!')])
     confirm_password = PasswordField(validators=[Length(6, 32, '请填写确认密码')])
-    nickname = StringField(validators=[NickName()])
     mobile = StringField()
     email = StringField()
 
@@ -76,7 +75,6 @@ class RegistrationDetailForm(Form):
             password=self.password.data,
             mobile=self.mobile.data,
             email=self.email.data,
-            nickname=self.nickname.data
         )
         if self.email.data:
             user.email_confirmed = True
@@ -107,7 +105,7 @@ class ResetPasswordNextForm(Form):
 
 
 class SettingForm(Form):
-    nickname = StringField(validators=[NickName(required=False)])
+    username = StringField(validators=[UserName(required=False, exist_owner=current_user)])
     mobile = StringField(validators=[Mobile(required=False, model=User, exist_owner=current_user)])
     captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile', required=False)])
 
@@ -116,8 +114,9 @@ class SettingForm(Form):
             current_user.mobile = self.mobile.data
 
     def update(self):
-        if self.nickname.data:
-            current_user.nickname = self.nickname.data
+        if self.username.data != current_user.username and current_user.username_revisable:
+            current_user.username = self.username.data
+            current_user.username_revisable = False
         if self.mobile.data and not current_user.mobile:
             self.update_mobile()
         db.session.commit()

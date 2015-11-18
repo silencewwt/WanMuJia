@@ -52,11 +52,6 @@
     + length = [6, 32]
     + require
     + 需将用户的密码md5两次, 且与password相等
-  + **nickname**
-    + 昵称
-    + type = text
-    + length = [4, 30]
-    + require
 + **return**
   + 成功
     + `{"status": true}`
@@ -172,7 +167,7 @@
   + POST
 + **postData**
   + **csrf_token**
-  + **nickname**
+  + **username**
     + not required
   + **mobile**
     + required
