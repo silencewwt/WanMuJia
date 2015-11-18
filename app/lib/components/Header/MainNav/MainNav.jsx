@@ -14,7 +14,7 @@ let React = require('react');
 //  TODO:
 //  ==================================================
 
-var CategoryItem = React.createClass({
+let CategoryItem = React.createClass({
   render: function() {
     return (
       <li className="category-item">
@@ -28,7 +28,7 @@ var CategoryItem = React.createClass({
   }
 });
 
-var CategoryItemGroup = React.createClass({
+let CategoryItemGroup = React.createClass({
   render: function() {
     return (
       <ul className="category-items">
@@ -40,10 +40,10 @@ var CategoryItemGroup = React.createClass({
   }
 });
 
-var CategoryItems = React.createClass({
+let CategoryItems = React.createClass({
   render: function() {
-    var itemsGroups;
-    var subpartStyle = {
+    let itemsGroups;
+    let subpartStyle = {
       width: 961
     };
     if(this.props.items.length > 6) {
@@ -75,42 +75,68 @@ var CategoryItems = React.createClass({
   }
 });
 
-var Category = React.createClass({
+let Category = React.createClass({
   render: function() {
     return (
       <li className="category">
-        <a href="#" className="am-icon-angle-right">{this.props.category.title}</a>
+        <a
+          href="#"
+          className="am-icon-angle-right"
+        >
+          {this.props.category.title}
+        </a>
         <CategoryItems items={this.props.category.subpart} />
       </li>
     );
   }
 });
 
-var NavTitle = React.createClass({
+let NavTitle = React.createClass({
   render: function() {
-    var titleStyle = {
-      backgroundColor: this.props.color
+    let titleStyle = {
+      paddingRight: 10,
+      backgroundColor: this.props.color,
+      cursor: this.props.shrink ? 'pointer' : 'default'
     };
+    let titleClass = 'nav-title';
+    if(this.props.shrink) {
+      titleClass += ' am-icon-chevron-down';
+    }
+
     return (
-      <div className="nav-title" style={titleStyle}>
+      <div
+        className={titleClass}
+        style={titleStyle}
+      >
         {this.props.title}
       </div>
     );
   }
 });
 
-var Nav = React.createClass({
+let Nav = React.createClass({
   getDefaultProps: function() {
     return {
       title: '全部商品分类',
-      color: '#411e00'
+      color: '#411e00',
+      shrink: false
     }
   },
   render: function() {
+    let ulStyle = {
+      display: this.props.shrink ? 'none' : 'block'
+    };
     return (
       <div className="main-nav">
-        <NavTitle title={this.props.title} color={this.props.color} />
-        <ul className="category-list">
+        <NavTitle
+          title={this.props.title}
+          color={this.props.color}
+          shrink={this.props.shrink}
+        />
+        <ul
+          className="category-list"
+          style={ulStyle}
+        >
           {this.props.items.map(function(category, i) {
             return <Category category={category} key={i} index={i} />;
           }.bind(this))}

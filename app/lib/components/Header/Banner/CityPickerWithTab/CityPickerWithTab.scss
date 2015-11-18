@@ -15,8 +15,8 @@ $mainColor: #6E3800;
         border-left: 4.5px solid transparent;
         border-right: 4.5px solid transparent;
         border-top: 6px solid $grayColor;
-        top: 15px;
-        right: 5px;
+        top: 12px;
+        right: 6px;
         transition: All .2s ease;
     }
     .after-i.active:after {
@@ -30,7 +30,7 @@ $mainColor: #6E3800;
         height: $btnHeight;
         padding: 0 20px 0 8px;
         text-align: center;
-        line-height: $btnHeight;
+        line-height: $btnHeight - 1;
         font-size: 14px;
         color: $btnColor;
         border: 1px solid $grayColor;

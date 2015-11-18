@@ -38,6 +38,18 @@ $topbar-boder: 2px solid #eee;
           }
         }
       }
+
+      .profile > a, .logout > a {
+        @include link($text-color);
+
+        &:hover {
+          @include linkHover($text-color);
+        }
+      }
+
+      .logout {
+        margin-left: 20px;
+      }
     }
 
     .site-info {

@@ -1,5 +1,7 @@
 'use strict';
 
+require('./Slider.scss');
+
 let React = require('react');
 let AMUIReact = require('amazeui-react');
 
