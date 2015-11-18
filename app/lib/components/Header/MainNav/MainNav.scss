@@ -121,7 +121,7 @@ $nav-item-img-size: $nav-cate-height * 5 / 3 - 20;
         cursor: pointer;
         // outline: 1px solid green;
 
-        & > img {
+        img {
           width: $nav-item-img-size;
           height: $nav-item-img-size;
           vertical-align: middle;

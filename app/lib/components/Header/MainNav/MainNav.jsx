@@ -5,11 +5,11 @@ let React = require('react');
 //  ==================================================
 //  Component: Nav
 //
-//  Props:  items
+//  Props: title => string 主导航 title 文字
+//         color => string 主导航 title 背景色
+//         shrink => boolean 主导航是否折叠
 //
-//  Include: Nav
-//
-//  Use: index.html
+//  Dependence:
 //
 //  TODO:
 //  ==================================================
@@ -18,11 +18,25 @@ let CategoryItem = React.createClass({
   render: function() {
     return (
       <li className="category-item">
-        <img src={this.props.item.img} alt={this.props.item.title} title={this.props.item.title} />
-        <span className="item-title" title={this.props.item.title}>
-          {this.props.item.title}
-        </span>
-        <span className="item-btn">查看</span>
+        <a href={'/item/' + this.props.item.id}>
+          <img
+            src={this.props.item.img}
+            alt={this.props.item.title}
+            title={this.props.item.title}
+          />
+          <span
+            className="item-title"
+            title={this.props.item.title}
+          >
+            {this.props.item.title}
+          </span>
+        </a>
+        <a
+          href={'/item/' + this.props.item.id}
+          className="item-btn"
+        >
+          查看
+        </a>
       </li>
     );
   }
@@ -46,21 +60,21 @@ let CategoryItems = React.createClass({
     let subpartStyle = {
       width: 961
     };
-    if(this.props.items.length > 6) {
+    if(this.props.items.subpart.length > 6) {
       itemsGroups = [
-        <CategoryItemGroup items={this.props.items.slice(0, 3)} key={0} />,
-        <CategoryItemGroup items={this.props.items.slice(3, 6)} key={1} />,
-        <CategoryItemGroup items={this.props.items.slice(6, 9)} key={2} />
+        <CategoryItemGroup items={this.props.items.subpart.slice(0, 3)} key={0} />,
+        <CategoryItemGroup items={this.props.items.subpart.slice(3, 6)} key={1} />,
+        <CategoryItemGroup items={this.props.items.subpart.slice(6, 9)} key={2} />
       ];
-    } else if (this.props.items.length > 3) {
+    } else if (this.props.items.subpart.length > 3) {
       itemsGroups = [
-        <CategoryItemGroup items={this.props.items.slice(0, 3)} key={0} />,
-        <CategoryItemGroup items={this.props.items.slice(3, 6)} key={1} />
+        <CategoryItemGroup items={this.props.items.subpart.slice(0, 3)} key={0} />,
+        <CategoryItemGroup items={this.props.items.subpart.slice(3, 6)} key={1} />
       ];
       subpartStyle.width -= 270;
     } else {
       itemsGroups = [
-        <CategoryItemGroup items={this.props.items.slice(0, 3)} key={0} />
+        <CategoryItemGroup items={this.props.items.subpart.slice(0, 3)} key={0} />
       ];
       subpartStyle.width -= 270 * 2;
     }
@@ -68,7 +82,7 @@ let CategoryItems = React.createClass({
       <div className="category-subpart" style={subpartStyle}>
         {itemsGroups}
         <div className="category-more">
-          <a href="#">查看更多</a>
+          <a href={'/item/?scene=' + this.props.items.id}>查看更多</a>
         </div>
       </div>
     );
@@ -85,7 +99,7 @@ let Category = React.createClass({
         >
           {this.props.category.title}
         </a>
-        <CategoryItems items={this.props.category.subpart} />
+        <CategoryItems items={this.props.category} />
       </li>
     );
   }
