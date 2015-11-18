@@ -2,7 +2,7 @@
 from flask import current_app, session
 from flask.ext.login import login_user, current_user
 from flask.ext.principal import identity_changed, Identity
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length, EqualTo
 
 from app import db
@@ -15,12 +15,13 @@ from app.utils.validator import Email, Mobile, Captcha, UserName, ValidationErro
 class LoginForm(Form):
     username = StringField(validators=[DataRequired()])
     password = PasswordField(validators=[DataRequired()])
+    remember = BooleanField()
 
     def login(self):
         user = User.query.filter_by(mobile=self.username.data).first() or \
             User.query.filter_by(email=self.username.data).first()
         if user and user.verify_password(self.password.data):
-            login_user(user)
+            login_user(user, remember=self.remember.data)
             identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
             return True
         return False

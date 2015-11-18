@@ -75,6 +75,9 @@
     + type = password
     + require
     + 需将用户密码md5两次
+  + **remember**
+    + 记住密码
+    + type = bool
 + **return**
   + 成功
     + `{"status": true}`

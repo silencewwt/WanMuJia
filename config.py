@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import os
 import json
 
@@ -14,6 +15,7 @@ class Config(object):
     MD5_SALT = 'md5 salt'
     CONFIRM_EMAIL_DURATION = 86400  # seconds (24 hours)
     DISTRIBUTOR_REGISTER_DURATION = 86400
+    REMEMBER_COOKIE_DURATION = datetime.timedelta(days=30)
     SMS_CAPTCHA_DURATION = 600
     IMAGE_CAPTCHA_DURATION = 600
     ITEM_PER_PAGE = 40
