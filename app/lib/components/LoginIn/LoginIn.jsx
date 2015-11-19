@@ -4,6 +4,13 @@ require("./LoginIn.scss");
 
 let React = require("react");
 
+let reqwest = require("reqwest");
+let utils = require("../../utils/utils");
+let encryptMd5 = utils.encryptMd5;
+let getCookie = utils.getCookie;
+
+// props: callback  nextUrl
+
 var LoginIn = React.createClass({
   getInitialState: function() {
     return {
@@ -11,7 +18,9 @@ var LoginIn = React.createClass({
       userErrTip: "",
       psw: "",
       pswErrTip: "",
-      remd: true
+      nextErrTip: "",
+      remd: true,
+      nextAction: true,
     };
   },
   setUser: function(value) {
@@ -25,10 +34,10 @@ var LoginIn = React.createClass({
   },
   clear: function(type, num) {
     switch (type) {
-      case "user": this.setState({userErrTip: ""});
+      case "user": this.setState({userErrTip: "", nextErrTip: ""});
         if(!num) {this.setState({user: ""});}
         break;
-      case "psw": this.setState({pswErrTip: ""});
+      case "psw": this.setState({pswErrTip: "", nextErrTip: ""});
         if(!num) {this.setState({psw: ""});}
         break;
       default: return;
@@ -46,12 +55,42 @@ var LoginIn = React.createClass({
     }
     // TODO: ajax请求登录，如果失败，根据后端返回信息设置错误信息。
     //        如果正确，根据是否有 URL 属性决定跳转还是回调
+    this.setState({nextAction: false});
+    reqwest({
+      url: '/login',
+      method: 'post',
+      data: {
+        username: this.state.user,
+        password: encryptMd5(this.state.psw),
+        remember: this.state.remd,
+        csrf_token: getCookie("csrf_token"),
+      },
+      success: function(resp) {
+        if(resp.success) {
+          this.setState({nextErrTip: "登录成功"});
+           if(this.props.nextUrl) {
+             window.location.href = this.props.nextUrl;
+             return ;
+           }
+           this.props.callback(resp);
+           return ;
+        }
+        this.setState({nextErrTip: resp.message});
+        this.setState({nextAction: true});
+      }.bind(this),
+      error: function(err) {
+        this.setState({nextErrTip: "服务器出错"});
+        this.setState({nextAction: true});
+      }.bind(this),
+    });
   },
   render: function() {
     return (
       <div className="login-box">
 
-        <div className="header-logo"></div>
+        <div className="header-logo">
+          <div className="logo"></div>
+        </div>
 
         <UserInputGroup
           setValue={this.setUser}
@@ -70,7 +109,9 @@ var LoginIn = React.createClass({
           remd={this.state.remd} />
 
         <NextButton
-          next={this.doNext} />
+          next={this.doNext}
+          nextAction={this.state.nextAction}
+          errTip={this.state.nextErrTip} />
 
       </div>
     );
@@ -156,11 +197,12 @@ var RemdLoginGroup = React.createClass({
 
 var NextButton = React.createClass({
   render: function() {
+    let errTip = this.props.errTip;
     return (
-      <div className={"input-group"}>
+      <div className={(errTip.length?"err ":"") + "input-group"}>
 
-        <input onClick={this.props.next} type="button" value="完成" className="next" />
-        <div className="tip err" ></div>
+        <input disabled={!this.props.nextAction} onClick={this.props.next} type="button" value="完成" className="next" />
+        <div className="tip err" >{errTip}</div>
 
       </div>
     );

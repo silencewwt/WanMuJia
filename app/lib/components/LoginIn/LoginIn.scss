@@ -8,8 +8,18 @@
 
   .header-logo {
     height: 150px;
-    background: gray;
     margin-bottom: 10px;
+    position: relative;
+    .logo {
+      width: 150px;
+      height: 75px;
+      background: url('/app/assets/images/login_wmj_logo.png') center no-repeat;
+      background-size: 100% auto;
+      position: absolute;
+      top: 45px;
+      left: 50%;
+      margin-left: -75px;
+    }
   }
 
   .input-group {
@@ -26,6 +36,7 @@
     .ipt {
       width: 362px;
       height: 38px;
+      line-height: 36px;
       padding-left: 8px;
       border: 1px solid #ccc;
     }
@@ -113,7 +124,7 @@
       font-size: 14px;
       margin-top: 2px;
       a {
-        color: #999;        
+        color: #999;
       }
     }
   }
