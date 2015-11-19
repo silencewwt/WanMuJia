@@ -15,7 +15,7 @@ let React= require('react');
 //  TODO:
 //  ==================================================
 
-let TopBar = require('./TopBar/TopBar.jsx');
+let TopBar = require('../TopBar/TopBar.jsx');
 let Banner = require('./Banner/Banner.jsx');
 let HeaderNav = require('./HeaderNav/HeaderNav.jsx');
 let MainNav = require('./MainNav/MainNav.jsx');
