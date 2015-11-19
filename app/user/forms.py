@@ -23,7 +23,7 @@ class LoginForm(Form):
         if user and user.verify_password(self.password.data):
             login_user(user, remember=self.remember.data)
             identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
-            return True
+            return user
         return False
 
 
@@ -53,32 +53,19 @@ class RegistrationDetailForm(Form):
     password = PasswordField(validators=[Length(6, 32, '请填写密码'), EqualTo('confirm_password', u'前后密码不一致哦!')])
     confirm_password = PasswordField(validators=[Length(6, 32, '请填写确认密码')])
     mobile = StringField()
-    email = StringField()
 
     def __init__(self, *args, **kwargs):
         super(RegistrationDetailForm, self).__init__(*args, **kwargs)
-        if USER_REGISTER_MOBILE in session:
-            self.mobile.data = session[USER_REGISTER_MOBILE]
-        else:
-            self.mobile.data = ''
-        if USER_REGISTER_EMAIL in session:
-            self.email.data = session[USER_REGISTER_EMAIL]
-        else:
-            self.email.data = ''
-
-    def validate_mobile(self, field):
-        if not field.data and not self.email.data:
-            session.pop(USER_REGISTER_STEP_DONE)
-            raise ValidationError('参数错误, 注册失败!')
+        if USER_REGISTER_MOBILE not in session:
+            raise ValidationError('参数错误, 注册失败')
+        self.mobile.data = session[USER_REGISTER_MOBILE]
 
     def register(self):
         user = User(
             password=self.password.data,
             mobile=self.mobile.data,
-            email=self.email.data,
+            email='',
         )
-        if self.email.data:
-            user.email_confirmed = True
         db.session.add(user)
         db.session.commit()
         login_user(user)
