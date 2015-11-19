@@ -67,7 +67,7 @@
     + type = bool
 + **return**
   + 成功
-    + `{"status": true}`
+    + `{"status": true, "user": {"username": "", "mobile": "", "email": ""}}`
   + 失败
     + `{"status": false, "message": ""}`
     

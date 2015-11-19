@@ -24,12 +24,14 @@ def login():
     form = LoginForm()
     if request.method == 'POST':
         if form.validate():
-            if form.login():
-                return jsonify({'success': True})
+            user = form.login()
+            if user is not False:
+                return jsonify({'success': True, 'user': {'username': user.username,
+                                                          'mobile': user.mobile, 'email': user.email}})
         if 'csrf_token' in form.errors:
             return jsonify({'success': False, 'message': '登录失败, 请刷新页面重试'})
         return jsonify({'success': False, 'message': '用户名或密码错误'})
-    return render_template('user/login.html', user=current_user, form=form)
+    return render_template('user/login.html')
 
 
 @user_blueprint.route('/logout')

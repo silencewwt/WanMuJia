@@ -23,7 +23,7 @@ class LoginForm(Form):
         if user and user.verify_password(self.password.data):
             login_user(user, remember=self.remember.data)
             identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
-            return True
+            return user
         return False
 
 
