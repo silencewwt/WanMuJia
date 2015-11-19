@@ -1,5 +1,7 @@
 'use strict';
 
+require('./TopBar.scss');
+
 let React = require('react');
 
 //  ==================================================

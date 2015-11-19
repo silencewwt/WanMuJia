@@ -1,5 +1,16 @@
 'use strict';
 
+//  ==================================================
+//  Component: Header
+//
+//  Props: mainNav => object 主导航数据
+//         shrink => boolean 主导航是否折叠
+//
+//  Dependence: ItemGroup Header Slider Footer
+//
+//  TODO:
+//  ==================================================
+
 require('../../assets/pages/index.html');
 require('./Home.scss');
 
