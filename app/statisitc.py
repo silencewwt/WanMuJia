@@ -21,7 +21,7 @@ def materials_statistic():
     query = query.filter(SecondMaterial.id.in_(second_material_ids))
     for second_material in query:
         materials['available'][second_material.id] = {'material': second_material.second_material}
-    materials['available_set'] = set([second_material.id for second_material in query])
+    materials['available_set'] = set(materials['available'].keys())
 
 
 def categories_statistic():
@@ -84,7 +84,7 @@ def style_statistic():
     query = db.session.query(Style).filter(Style.id.in_(style_ids))
     for style in query:
         styles['available'][style.id] = {'style': style.style}
-    styles['available_set'] = set([style.id for style in query])
+    styles['available_set'] = set(styles['available'].keys())
 
 
 def brands_statistic():
@@ -99,37 +99,19 @@ def brands_statistic():
     query = query.filter(Vendor.id.in_(vendor_ids))
     for vendor in query:
         brands['available'][vendor.id] = {'brand': vendor.brand}
-    brands['available_set'] = set([vendor.id for vendor in query])
+    brands['available_set'] = set(brands['available'].keys())
 
 
 def scenes_statistic():
     global scenes
     scenes = {'total': {}, 'available': {}, 'available_set': set()}
-    first_scene = None
-    scene_list = Scene.query.order_by(Scene.id).all()
-    for scene in scene_list:
-        if scene.level == 1:
-            scenes['total'][scene.id] = {'scene': scene.scene, 'children': {}}
-            first_scene = scenes['total'][scene.id]
-        else:
-            first_scene['children'][scene.id] = {'scene': scene.scene}
-
+    for scene in Scene.query.filter_by(level=2):
+        scenes['total'][scene.id] = {'scene': scene.scene}
     scene_ids = [item.scene_id for item in item_query.group_by(Item.scene_id)]
-
-    del_list = []
-    for scene in scene_list:
-        if scene.level == 2 and scene.id not in scene_ids:
-            del_list.append(scene)
-    for scene in del_list:
-        scene_list.remove(scene)
-
-    first_scene = None
-    for scene in scene_list:
-        if scene.level == 1:
-            scenes['available'][scene.id] = {'scene': scene.scene, 'children': {}}
-            first_scene = scenes['available'][scene.id]
-        else:
-            first_scene['children'][scene.id] = {'scene': scene.scene}
+    query = db.session.query(Scene).filter(Scene.id.in_(scene_ids))
+    for scene in query:
+        scenes['available'][scene.id] = {'scene': scene.scene}
+    scenes['available_set'] = set(scenes['available'].keys())
 
 
 def init_statistic():
