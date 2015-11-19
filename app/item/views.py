@@ -5,7 +5,7 @@ from flask.ext.login import current_user
 from flask.ext.cdn import url_for
 
 from app import statisitc
-from app.models import Item, Category, Scene
+from app.models import Item, Category
 from app.user.forms import LoginForm
 from . import item as item_blueprint
 
@@ -104,11 +104,14 @@ def item_filter():
     else:
         data['filters']['selected']['material'] = statisitc.selected(statisitc.materials['total'], materials)
     if category is None:
-        data['filters']['available']['category'] = {key: {'category': statisitc.categories['available'][key]['category']} for key in statisitc.categories['available']}
+        first_categories = statisitc.categories['available']
+        data['filters']['available']['category'] = \
+            {key: {'category': first_categories[key]['category']} for key in first_categories}
     elif category.level == 1:
         data['filters']['selected']['category'] = {category.id: {'category': category.category}}
         second_categories = statisitc.categories['available'][category.id]['children']
-        data['filters']['available']['category'] = {key: {'category': second_categories[key]['category']} for key in second_categories}
+        data['filters']['available']['category'] = \
+            {key: {'category': second_categories[key]['category']} for key in second_categories}
     elif category.level == 2:
         data['filters']['selected']['category'] = {
             category.father_id: {
@@ -122,7 +125,8 @@ def item_filter():
         }
         third_categories = statisitc.categories['available'][category.father_id]['children'][category.id]['children']
         if third_categories:
-            data['filters']['available']['category'] = {key: {'category': third_categories[key]['category']} for key in third_categories}
+            data['filters']['available']['category'] = \
+                {key: {'category': third_categories[key]['category']} for key in third_categories}
     else:
         data['filters']['selected']['category'] = {
             category.father.father_id: {
@@ -158,7 +162,8 @@ def item_filter():
             'id': item.id,
             'item': item.item,
             'price': item.price,
-            'image_url': image_url
+            'image_url': image_url,
+            'is_suite': item.is_suite
         })
     return jsonify(data)
 

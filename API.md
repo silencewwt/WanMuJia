@@ -273,6 +273,7 @@
       + item
       + price
       + image_url
+      + is_suite
 
 ```json
 {
@@ -323,8 +324,8 @@
 		"search": "",
 		"order": "",
 		"query": [
-			{"id": "", "item": "", "price": "", "image_url": ""},
-			{"id": "", "item": "", "price": "", "image_url": ""},
+			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": false},
+			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
 		]
 	}
 }
