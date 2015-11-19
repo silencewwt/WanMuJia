@@ -41,42 +41,35 @@ def logout():
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
-    if USER_REGISTER_STEP_DONE in session and session[USER_REGISTER_STEP_DONE] == 1:
-        return redirect(url_for('user.register_next'))
-    if request.method == 'POST':
+    step = request.args.get('step', 1, type=int)
+    if USER_REGISTER_STEP not in session:
+        if step not in (1, 2):
+            return redirect(url_for('main.index'))
+        session[USER_REGISTER_STEP] = 1
+    elif session[USER_REGISTER_STEP] != step:
+        return redirect(url_for('user.register', step=session[USER_REGISTER_STEP]))
+
+    if request.method == 'GET':
+        return render_template('user/register.html')
+
+    if step == 1:
         form = MobileRegistrationForm()
         if form.validate():
             session[USER_REGISTER_MOBILE] = form.mobile.data
-            session[USER_REGISTER_STEP_DONE] = 1
+            session[USER_REGISTER_STEP] = 2
             return jsonify({'success': True})
         else:
             return jsonify({'success': False, 'message': form.error2str()})
-    return render_template('user/register.html', form=RegistrationForm())
-
-
-@user_blueprint.route('/register_next', methods=['GET', 'POST'])
-def register_next():
-    if USER_REGISTER_STEP_DONE not in session or \
-                            USER_REGISTER_MOBILE not in session and USER_REGISTER_EMAIL not in session:
-        return redirect(url_for('user.register'))
-    if request.method == 'POST':
+    elif step == 2:
+        if USER_REGISTER_MOBILE not in session:
+            session[USER_REGISTER_STEP] = 1
+            return redirect(url_for('user.register', step=1))
         form = RegistrationDetailForm()
         if form.validate():
-            form.register()
-            session.pop(USER_REGISTER_STEP_DONE)
-            session[USER_REGISTER_RESULT] = 1
-            return jsonify({'success': True})
+            user = form.register()
+            session.pop(USER_REGISTER_STEP)
+            return jsonify({'success': True, 'user': {'username': user.username, 'mobile': user.mobile}})
         return jsonify({'success': False, 'message': form.error2str()})
-    return render_template('user/register_next.html', form=RegistrationDetailForm())
-
-
-@user_blueprint.route('/register_result')
-def register_result():
-    if USER_REGISTER_RESULT in session:
-        session.pop(USER_REGISTER_RESULT)
-        return render_template('user/register_result.html', user=current_user)
-    else:
-        return redirect(url_for('main.index'))
 
 
 @user_blueprint.route('/reset_password', methods=['GET', 'POST'])
@@ -98,7 +91,7 @@ def reset_password_next():
     if USER_RESET_PASSWORD_STEP_DONE not in session:
         return redirect(url_for('user.reset_password'))
     if USER_RESET_PASSWORD_USERNAME not in session:
-        session.pop(USER_REGISTER_STEP_DONE)
+        session.pop(USER_RESET_PASSWORD_STEP_DONE)
         return redirect(url_for('user.reset_password'))
     form = ResetPasswordNextForm()
     if request.method == 'POST':

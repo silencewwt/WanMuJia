@@ -2,8 +2,7 @@
 from flask import request, Response, jsonify, redirect, url_for, session
 from flask.ext.login import current_user
 
-from app.constants import CONFIRM_EMAIL, USER_REGISTER_STEP_DONE, USER_REGISTER_EMAIL, USER_RESET_PASSWORD_STEP_DONE, \
-    USER_RESET_PASSWORD_USERNAME
+from app.constants import CONFIRM_EMAIL, USER_RESET_PASSWORD_STEP_DONE, USER_RESET_PASSWORD_USERNAME
 from app.models import User, Vendor, Area
 from app.sms import USER_REGISTER_TEMPLATE, VENDOR_REGISTER_TEMPLATE, RESET_PASSWORD_TEMPLATE
 from app.wmj_email import VENDOR_EMAIL_CONFIRM, USER_EMAIL_CONFIRM, USER_REGISTER, USER_RESET_PASSWORD
@@ -49,8 +48,8 @@ def email_service():
     email_type = request.args.get('type', '', type=str)
     if email_type in (VENDOR_EMAIL_CONFIRM, USER_EMAIL_CONFIRM):
         form = EmailForm(email_type)
-    elif email_type == USER_REGISTER:
-        form = EmailRegisterForm(email_type)
+    # elif email_type == USER_REGISTER:
+    #     form = EmailRegisterForm(email_type)
     elif email_type == USER_RESET_PASSWORD:
         form = EmailResetPasswordForm(email_type)
     else:
@@ -67,11 +66,11 @@ def verify():
     token = request.args.get('token', '', type=str)
     info = redis_get(CONFIRM_EMAIL, token, delete=True)
     if info:
-        if info['action'] == 'register':
-            session[USER_REGISTER_STEP_DONE] = 1
-            session[USER_REGISTER_EMAIL] = info['email']
-            return redirect(url_for('user.register_next'))
-        elif info['action'] == 'confirm':
+        # if info['action'] == 'register':
+        #     session[USER_REGISTER_STEP] = 2
+        #     session[USER_REGISTER_EMAIL] = info['email']
+        #     return redirect(url_for('user.register', step=2))
+        if info['action'] == 'confirm':
             role = models[info['role']].query.get(info['id'])
             if role:
                 if 'email' in info and info['email'] != role.email:
