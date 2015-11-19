@@ -254,7 +254,8 @@
         + price
     + selected
       + 已选条件
-      + 结构与available相同, 单个筛选条件只会在available或selected其中之一出现
+      + 结构与available相同, 单个筛选条件(除category)只会在available或selected其中之一出现
+      + category为分级筛选, 选择第一级条件后, 会返回第二级条件
   + items
     + amount
       + 符合条件的所有商品数量
@@ -303,6 +304,16 @@
 			}
 		},
 		"selected": {
+		    "category": {
+		        "id": {
+		            "category": "",
+		            "children": {
+		                "id": {
+		                    "category": ""
+		                }
+		            }
+		        }
+		    }
 		}
 	},
 	"items": {

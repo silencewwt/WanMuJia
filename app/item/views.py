@@ -12,14 +12,14 @@ from . import item as item_blueprint
 
 @item_blueprint.route("/")
 def item_list():
-    return render_template("user/display.html", user=current_user)
+    return render_template("user/search.html", user=current_user)
 
 
 @item_blueprint.route("/filter")
 def item_filter():
     materials = request.args.getlist('material', type=int)
     styles = request.args.getlist('style', type=int)
-    scene = request.args.get('scene', None, type=int)
+    scenes = request.args.getlist('scene', type=int)
     brands = request.args.getlist('brand', type=int)
     category = request.args.get('category', None, type=int)
     price = request.args.get('price', type=int)
@@ -64,17 +64,11 @@ def item_filter():
                         category_ids.extend(children[child]['children'].keys())
         if category_ids:
             query = query.filter(Item.category_id.in_(category_ids))
-    if scene is not None:
-        scene = Scene.query.get(scene)
-        scene_ids = []
-        if scene is not None:
-            if scene.level == 2:
-                scene_ids = [scene.id]
-            else:
-                children = statisitc.scenes['available'][scene.id]['children']
-                scene_ids.extend(children.keys())
-        if scene_ids:
-            query = query.filter(Item.scene_id.in_(scene_ids))
+    if scenes:
+        scenes = list(
+            statisitc.scenes['available_set'] - (statisitc.scenes['available_set'] - set(scenes))
+        )
+        query = query.filter(Item.scene_id.in_(scenes))
     if styles:
         styles = list(
             statisitc.styles['available_set'] - (statisitc.styles['available_set'] - set(styles))
@@ -145,28 +139,10 @@ def item_filter():
                 }
             }
         }
-    if scene is None:
-        data['filters']['available']['scene'] = {key: {'scene': statisitc.scenes['available'][key]['scene']} for key in statisitc.scenes['available']}
-    elif scene.level == 1:
-        data['filters']['selected']['scene'] = {
-            scene.id: {
-                'scene': scene.scene,
-            }
-        }
-        children = statisitc.scenes['available'][scene.id]['children']
-        if children:
-            data['filters']['available']['scene'] = {child: {'scene': children[child]['scene']} for child in children}
+    if not scenes:
+        data['filters']['available']['scene'] = statisitc.scenes['available']
     else:
-        data['filters']['selected']['scene'] = {
-            scene.father_id: {
-                'scene': scene.father.scene,
-                'children': {
-                    scene.id: {
-                        'scene': scene.scene
-                    }
-                }
-            }
-        }
+        data['filters']['selected']['scene'] = statisitc.selected(statisitc.scenes['total'], scenes)
     if not styles:
         data['filters']['available']['style'] = statisitc.styles['available']
     else:
