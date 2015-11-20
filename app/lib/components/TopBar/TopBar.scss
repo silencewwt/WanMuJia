@@ -1,3 +1,4 @@
+$page-width: 1200px;
 
 $topbar-height: 40px;
 $text-color: #666;
@@ -5,6 +6,23 @@ $text-active-color: #5e2c00;
 
 $topbar-bgc: #f4f4f4;
 $topbar-boder: 2px solid #eee;
+
+
+@mixin link($color: #333) {
+  color: $color;
+  text-decoration: none;
+}
+
+@mixin linkHover($color: #333, $amount: 12) {
+  color: darken($color, $amount);
+}
+
+.container {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  width: $page-width;
+}
 
 .top-bar {
   background-color: $topbar-bgc;
@@ -38,6 +56,22 @@ $topbar-boder: 2px solid #eee;
           }
         }
       }
+
+      .profile,
+      .logout {
+        & > a {
+          @include link($text-color);
+
+          &:hover {
+            @include linkHover($text-color);
+          }
+        }
+      }
+
+      .logout {
+        margin-left: 20px;
+      }
+
     }
 
     .site-info {

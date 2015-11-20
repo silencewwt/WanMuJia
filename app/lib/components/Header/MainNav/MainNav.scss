@@ -20,9 +20,29 @@ $nav-item-img-size: $nav-cate-height * 5 / 3 - 20;
   text-align: center;
 
   .nav-title {
+    width: 100%;
     height: $nav-title-height;
     color: #fafafa;
     line-height: $nav-title-height;
+
+    &:before {
+      position: absolute;
+      top: 16px;
+      right: 55px;
+      font-size: 15px,
+    }
+  }
+
+  &:hover {
+    & > .nav-title.am-icon-chevron-down {
+      &:before {
+        content: "\f077";
+      }
+    }
+
+    & > ul {
+      display: block !important;
+    }
   }
 
   .category-list {
@@ -101,7 +121,7 @@ $nav-item-img-size: $nav-cate-height * 5 / 3 - 20;
         cursor: pointer;
         // outline: 1px solid green;
 
-        & > img {
+        img {
           width: $nav-item-img-size;
           height: $nav-item-img-size;
           vertical-align: middle;

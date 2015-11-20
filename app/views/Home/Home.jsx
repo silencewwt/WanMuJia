@@ -1,5 +1,16 @@
 'use strict';
 
+//  ==================================================
+//  Component: Header
+//
+//  Props: mainNav => object 主导航数据
+//         shrink => boolean 主导航是否折叠
+//
+//  Dependence: ItemGroup Header Slider Footer
+//
+//  TODO:
+//  ==================================================
+
 require('../../assets/pages/index.html');
 require('./Home.scss');
 
@@ -12,6 +23,7 @@ let ReactDOM = require('react-dom');
 
 let ItemGroup = require('./views/ItemGroup/ItemGroup.jsx');
 let Header = require('../../lib/components/Header/Header.jsx');
+let Slider = require('../../lib/components/Slider/Slider.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 
 const MOCK_NAV_ITEMS = [
@@ -211,40 +223,36 @@ const MOCK_SLIDES = [
   }
 ];
 
-ReactDOM.render(
-  <Header
-    slides={MOCK_SLIDES}
-    mainNav={MOCK_NAV_ITEMS}
-  />,
-  document.getElementById('header')
-);
+let Home = React.createClass({
+  render: function() {
+    return (
+      <div>
+        <Header
+          mainNav={MOCK_NAV_ITEMS}
+          shrink={false}
+        >
+          <Slider slides={MOCK_SLIDES} />
+        </Header>
+        <ItemGroup
+          guide={MOCK_GUIDE}
+          items={MOCK_ITEMS}
+        />
+        <ItemGroup
+          guide={MOCK_GUIDE}
+          items={MOCK_ITEMS}
+          color="rgb(27, 188, 155)"
+        />
+        <ItemGroup
+          guide={MOCK_GUIDE}
+          items={MOCK_ITEMS}
+        />
+        <Footer />
+      </div>
+    );
+  }
+});
 
 ReactDOM.render(
-  <ItemGroup
-    guide={MOCK_GUIDE}
-    items={MOCK_ITEMS}
-  />,
-  document.getElementById('item-group-1')
-);
-
-ReactDOM.render(
-  <ItemGroup
-    guide={MOCK_GUIDE}
-    items={MOCK_ITEMS}
-  />,
-  document.getElementById('item-group-2')
-);
-
-ReactDOM.render(
-  <ItemGroup
-    guide={MOCK_GUIDE}
-    items={MOCK_ITEMS}
-    color="rgb(27, 188, 155)" 
-  />,
-  document.getElementById('item-group-3')
-);
-
-ReactDOM.render(
-  <Footer />,
-  document.getElementById('footer')
+  <Home />,
+  document.getElementById('content')
 );

@@ -1,0 +1,53 @@
+.login-popup {
+  display: none;
+  .login-dimmer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,.6);
+    z-index: 1100;
+    opacity: 0;
+    transition: opacity .5s ease-in-out;
+  }
+  .login-wrap {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -250px;
+    margin-top: -220px;
+    width: 500px;
+    z-index: 1110;
+    opacity: 0;
+    transition: opacity .5s ease-in-out;
+
+    .close {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      height: 30px;
+      width: 30px;
+      text-align: center;
+      line-height: 30px;
+      font-size: 20px;
+      color: gray;
+      transform: rotate(45deg);
+      cursor: pointer;
+      transition: all .5s ease-in-out;
+      z-index: 1200;
+    }
+    .close:hover {
+      transform: rotate(225deg);
+    }
+  }
+}
+.login-popup.show {
+  display: block;
+  .login-dimmer {
+    opacity: 1;
+  }
+  .login-wrap {
+    opacity: 1;
+  }
+}
