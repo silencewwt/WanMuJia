@@ -46,6 +46,3 @@ def send_sms_captcha(template, mobile):
         return True
     return False
 
-
-def verify_sms_captcha(mobile, sms_captcha):
-    return redis_verify(SMS_CAPTCHA, mobile, sms_captcha)

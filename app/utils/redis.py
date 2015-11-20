@@ -30,5 +30,5 @@ def redis_get(content_type, key, delete=False, **kwargs):
     return value
 
 
-def redis_verify(content_type, key, value):
-    return value == redis_get(content_type, key)
+def redis_verify(content_type, key, value, delete=False):
+    return value == redis_get(content_type, key, delete)
