@@ -52,7 +52,7 @@ def register():
         return redirect(url_for('user.register', step=session[USER_REGISTER_STEP]))
 
     if request.method == 'GET':
-        return render_template('user/register.html')
+        return render_template('user/signed_up.html')
 
     if step == 1:
         form = MobileRegistrationForm()
