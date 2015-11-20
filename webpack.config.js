@@ -8,6 +8,14 @@ var path = require('path');
 
 var entryPath = './app/views';
 var outputDir;
+var entries = function () {
+  return fs.readdirSync(entryPath).reduce(function (o, filename) {
+    !/\./.test(filename) &&
+    (o[filename] = './' + path.join(entryPath, filename, filename + '.jsx'));
+    return o;
+  }, {});
+}();
+
 var plugins = [
   new CommonsChunkPlugin({
     name: "commons"
@@ -15,19 +23,12 @@ var plugins = [
   new ProvidePlugin({
     React: 'react',
     ReactDOM: 'react-dom',
+    Ajax: 'reqwest',
     Utils: '/app/lib/utils/utils',
     Header: path.join(__dirname, 'app/lib/components/Header/Header'),
     Footer: path.join(__dirname, 'app/lib/components/Footer/Footer')
   })
 ];
-
-var entries = function () {
-  return fs.readdirSync(entryPath).reduce(function (o, filename) {
-    !/\./.test(filename) &&
-      (o[filename] = './' + path.join(entryPath, filename, filename + '.jsx'));
-    return o;
-  }, {});
-}();
 
 if (env === 'build') {
   plugins.push(new UglifyJsPlugin({
