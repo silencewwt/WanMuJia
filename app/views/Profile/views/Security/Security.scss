@@ -1,0 +1,84 @@
+
+$backgroud-color: #f5f5f5;
+
+$main-hd-height: 60px;
+
+$divide-color: $border-color-base;
+
+$input-width: 340px;
+$input-height: 40px;
+
+$input-group-width: $input-width;
+$input-group-height: 60px;
+
+$verify-btn-width: 120px;
+
+@import "./Validate/Validate.scss";
+
+.security {
+  padding: 40px 180px;
+  margin-top: 40px;
+  background-color: $backgroud-color;
+
+  .sec-title {
+    margin-bottom: 30px;
+    color: $main-color-base;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .sec-main {
+    & > h2 {
+
+    }
+
+    .main-content {
+      margin: 25px auto;
+      background-color: #fff;
+    }
+
+    .main-hd {
+      padding: 0 40px;
+      height: $main-hd-height;
+      line-height: $main-hd-height;
+      cursor: pointer;
+
+      .main-hd-text {
+        margin-left: 15px;
+      }
+
+      .main-hd-btn {
+        float: right;
+        color: $main-color-base;
+        font-size: 14px;
+      }
+    }
+
+    .main-bd {
+      padding: 40px 0;
+      border-top: 1px solid $divide-color;
+
+      & > form > button {
+        display: block;
+        margin: 5px auto 0;
+        width: $input-width;
+        height: $input-height;
+        background-color: $main-color-base;
+        border: 1px solid $main-color-base;
+        color: #fff;
+        transition: background-color 0.2s ease;
+
+        @extend .button;
+
+        &:hover {
+          background-color: darken($main-color-base, 4);
+        }
+
+        &:active {
+          background-color: darken($main-color-base, 6);
+        }
+      }
+    }
+  }
+
+}
