@@ -52,6 +52,7 @@ def register():
         return redirect(url_for('user.register', step=session[USER_REGISTER_STEP]))
 
     if request.method == 'GET':
+        MobileRegistrationForm()  # generate csrf_token in cookie
         return render_template('user/signed_up.html')
 
     if step == 1:
