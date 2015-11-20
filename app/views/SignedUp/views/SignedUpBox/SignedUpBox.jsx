@@ -3,17 +3,30 @@
 require('./SignedupBox.scss');
 let React = require('react');
 
-var utils = require("../../../../lib/utils/utils.js");
-var reg = utils.getRegs();
-var queryStringToJson = utils.queryStringToJson;
+let utils = require("../../../../lib/utils/utils.js");
+let reg = utils.getRegs();
+let queryStringToJson = utils.queryStringToJson;
+let setCookie = utils.setCookie;
+let getCookie = utils.getCookie;
+let encryptMd5 = utils.encryptMd5;
+
+let reqwest = require('reqwest');
 
 var SignedupBox = React.createClass({
   getInitialState: function() {
     return {
       step: 1,
+      user: null,
     };
   },
-  toNext: function() {
+  toNext: function(user) {
+    window.history.pushState({} , 0 , "?step=" + (++this.state.step));
+    if(this.state.step == 2) {
+      this.setState({user: user}, function() {
+        this.setState({step: ++this.state.step});
+      }.bind(this));
+      return ;
+    }
     this.setState({step: ++this.state.step});
   },
   componentWillMount: function() {
@@ -27,7 +40,7 @@ var SignedupBox = React.createClass({
     return (
       <div className="su-box">
         <SuStep step={this.state.step} />
-        <SuMain step={this.state.step} toNext={this.toNext} />
+        <SuMain user={this.state.user} step={this.state.step} toNext={this.toNext} />
       </div>
     );
   }
@@ -61,7 +74,7 @@ var SuMain = React.createClass({
         break;
       case "2": suStep = (<SuStep2 toNext={this.props.toNext} />);
         break;
-      case "3": suStep = (<SuStep3 />);
+      case "3": suStep = (<SuStep3 user={this.props.user} />);
         break;
       default: suStep = (<SuStep1 toNext={this.props.toNext} />);
     }
@@ -81,6 +94,9 @@ var SuStep1 = React.createClass({
       captcha: "",
       captchaErrTip: "",
       agree: true,
+      captchaTip: "获取短信验证码",
+      isCaptchaBtnClick: true,
+      isNextClick: true,
     };
   },
   setMp: function(value) {
@@ -115,14 +131,61 @@ var SuStep1 = React.createClass({
     }
     return true;
   },
-  getCaptcha: function() {
+
+  getCaptcha: function(e) {
     var mp = this.state.mp;
     if(this.state.mpErrTip) {
       return false;
     }
     // TODO: ajax
-    this.setState({mpErrTip: "手机号码已经被注册"});
+    if(!this.state.isCaptchaBtnClick) {return false;}
+    reqwest({
+      url: "/service/mobile_register_sms",
+      type: "json",
+      method: "POST",
+      data: {mobile: this.state.mp},
+      success: function(data) {
+        if(data.success) {
+          // success
+          setCookie('clickTime', Date.now());
+          this.setCountDown(60000);
+        } else {
+          // 失败
+          this.setState({mpErrTip: data.message});
+        }
+      }.bind(this)
+    });
+
   },
+  getCaptchaEnable: function(text) {
+    this.setState({captchaTip: text, isCaptchaBtnClick: true});
+  },
+  getCaptchaDisable: function(time, delayTime) {
+    var timePass = parseInt((delayTime - time + parseInt(getCookie('clickTime'))) / 1000);
+    this.setState({captchaTip: timePass+'秒后再次发送', isCaptchaBtnClick: false});
+  },
+  setCountDown: function(DELAYTIME) {
+    this.countDown = setInterval(function () {
+      if (Date.now() - getCookie('clickTime') >= DELAYTIME - 1000) {
+        clearTimeout(this.countDown);
+        this.getCaptchaEnable("获取短信验证码");
+        setCookie('clickTime', '', new Date(0));
+      }
+      else {
+        this.getCaptchaDisable(Date.now(), DELAYTIME);
+      }
+    }.bind(this), 200);
+  },
+  componentDidMount: function() {
+    if(getCookie("clickTime")) {
+      this.getCaptchaDisable(Date.now(), 60000);
+      this.setCountDown(60000);
+    }
+  },
+  componentWillUnmount: function() {
+    clearTimeout(this.countDown);
+  },
+
   setAgree: function() {
     this.setState({agree: !this.state.agree});
   },
@@ -150,9 +213,30 @@ var SuStep1 = React.createClass({
     }else if(this.state.mpErrTip||this.state.captchaErrTip) {
       return false;
     }
-    alert('ok');
     // TODO: ajax请求，返回结果，错误，提示，正确，改变状态到下一步
-    this.props.toNext();
+    if(!this.state.isNextClick) {return false;}
+    this.setState({isNextClick: false});
+    reqwest({
+      url: "/register?step=1",
+      type: "json",
+      method: "POST",
+      data: {
+        csrf_token: getCookie("csrf_token"),
+        mobile: this.state.mp,
+        captcha: this.state.captcha
+      },
+      success: function(data) {
+        this.setState({isNextClick: true});
+        if(data.success) {
+          this.props.toNext(null);
+        } else {
+          this.setState({captchaErrTip: data.message});
+        }
+      }.bind(this),
+      error: function() {
+        this.setState({isNextClick: true});
+      }.bind(this)
+    });
   },
   render: function() {
     return (
@@ -171,14 +255,17 @@ var SuStep1 = React.createClass({
           clear={this.clear}
           check={this.checkCaptcha}
           errTip={this.state.captchaErrTip}
-          value={this.state.captcha} />
+          value={this.state.captcha}
+          captchaTip={this.state.captchaTip}
+          isCaptchaBtnClick={this.state.isCaptchaBtnClick} />
 
         <AgreeInputGroup
           setValue={this.setAgree}
           agree={this.state.agree} />
 
         <NextButton
-          next={this.doNext}>
+          next={this.doNext}
+          isNextClick={this.state.isNextClick}>
           同意协议且注册
         </NextButton>
 
@@ -238,8 +325,9 @@ var CaptchaInputGroup = React.createClass({
         <input
           onClick={this.props.getCaptcha}
           type="button"
-          className="send-captcha able"
-          value="获取短信验证码" />
+          className={(this.props.isCaptchaBtnClick?"able ":"")+"send-captcha"}
+          value={this.props.captchaTip}
+          disabled={!this.props.isCaptchaBtnClick} />
 
         <span onClick={this.props.clear.bind(null, "captcha",0)} className="del-icon captcha">+</span>
         <div className="tip err" >{errTip}</div>
@@ -275,7 +363,12 @@ var NextButton = React.createClass({
     return (
       <div className="input-group">
 
-        <input onClick={this.props.next} type="button" value={this.props.children} className="next" />
+        <input
+          disabled={!this.props.isNextClick}
+          onClick={this.props.next}
+          type="button"
+          value={this.props.children}
+          className="next" />
 
         <div className="tip err" ></div>
 
@@ -290,7 +383,8 @@ var SuStep2 = React.createClass({
       psw: "",
       pswErrTip: "",
       pswagain: "",
-      pswagainErrTip: ""
+      pswagainErrTip: "",
+      isNextClick: true,
     };
   },
   setPsw: function(value) {
@@ -346,9 +440,31 @@ var SuStep2 = React.createClass({
     }else if(this.state.pswErrTip||this.state.pswagainErrTip) {
       return false;
     }
-    alert('ok');
     // TODO: ajax请求，返回结果，错误，提示，正确，改变状态到下一步
-    this.props.toNext();
+    if(!this.state.isNextClick) {return false;}
+    this.setState({isNextClick: false});
+    reqwest({
+      url: "register?step=2",
+      method: "POST",
+      type: "json",
+      data: {
+        password: encryptMd5(this.state.psw),
+        confirm_password: encryptMd5(this.state.pswagain),
+        csrf_token: getCookie("csrf_token"),
+      },
+      success: function(data) {
+        this.setState({isNextClick: true});
+        console.log(data);
+        if(data.success) {
+          this.props.toNext(data.user);
+        }else {
+          this.setState({pswErrTip: data.message});
+        }
+      }.bind(this),
+      error: function() {
+        this.setState({isNextClick: true});
+      }.bind(this)
+    });
   },
   render: function() {
     return (
@@ -368,7 +484,9 @@ var SuStep2 = React.createClass({
           value={this.state.pswagain}
           errTip={this.state.pswagainErrTip} />
 
-        <NextButton next={this.doNext}>完成</NextButton>
+        <NextButton
+          next={this.doNext}
+          isNextClick={this.state.isNextClick}>完成</NextButton>
 
       </form>
     );
@@ -444,7 +562,7 @@ var SuStep3 = React.createClass({
     setInterval(function() {
       this.setState({second: --this.state.second}, function() {
         if(this.state.second === 0) {
-          //window.location.href = "/";
+          window.location.href = "/";
         }
       });
     }.bind(this) , 1000);
@@ -458,8 +576,8 @@ var SuStep3 = React.createClass({
         </div>
 
         <p className="result-detail">
-          你的登录账号是：<span className="d">18710899072</span>
-          会员名是：<span className="d">123456789</span>
+          你的登录账号是：<span className="d">{this.props.user.mobile}</span>
+        会员名是：<span className="d">{this.props.user.username}</span>
         </p>
 
         <p className="result-detail">
@@ -471,7 +589,7 @@ var SuStep3 = React.createClass({
             系统将在{this.state.second}秒后自动跳转
           </div>
 
-          <a href="#">立即跳转</a>
+          <a href="/">立即跳转</a>
         </div>
 
       </div>

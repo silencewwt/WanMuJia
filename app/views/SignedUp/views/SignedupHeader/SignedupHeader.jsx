@@ -7,13 +7,17 @@ var SignedupHeader = React.createClass({
   render: function() {
     return (
       <div className="header">
+
         <div className="logo-box">
-          <a href="#" className="">
-            <img src="sd" alt="" />
+          <a href="/">
+            <div className="logo"></div>
           </a>
+
+          <div className="title">欢迎注册</div>
         </div>
+
         <p className="notice">
-            dsds
+            我已注册，马上<a href="/login">{"登录>"}</a>
         </p>
       </div>
     );

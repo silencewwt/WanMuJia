@@ -3,9 +3,30 @@
   height: 120px;
 
   .logo-box {
-    float: left:
+    float: left;
+    padding-top: 50px;
+    position: relative;
+
+    .logo {
+      height: 60px;
+      width: 150px;
+      background: url('/app/assets/images/login_wmj_logo.png') center no-repeat;
+      background-size: auto 100%;
+    }
+
+    .title {
+      position: absolute;
+      right: -95px;
+      top: 62px;
+      color: #333;
+      font-size: 20px;
+    }
   }
   .notice {
     float: right;
+    font-size: 14px;
+    color: #999;
+    margin-top: 90px;
+    margin-right: 5px;
   }
 }
