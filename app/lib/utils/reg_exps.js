@@ -1,6 +1,6 @@
 let reg = {
   getRegs: (key) => {
-    return {
+    let regs = {
       email: /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,5}$/,
       mobile: /^((1[3-8][0-9])+\d{8})$/,
       captcha: /^\d{6}$/,
@@ -10,7 +10,8 @@ let reg = {
       password: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/,
       userPassword: /^[0-9A-Za-z_.]{6,16}$/,
       date: /^(\d{4})\/((0?([1-9]))|(1[0|1|2]))\/((0?[1-9])|([12]([0-9]))|(3[0|1]))$/
-    }[key];
+    };
+    return key ? regs[key] : regs;
   }
 };
 
