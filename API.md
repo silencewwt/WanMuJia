@@ -279,6 +279,31 @@
 }
 ```
 
+### furniture
++ **URL**
+  + /furniture
++ **method**
+  + GET
++ **return**
+```json
+{
+    "id1": {
+        "style": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "style": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+}
+```
+
 ## Item
 ### item list
 + **URL**
