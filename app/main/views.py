@@ -55,6 +55,39 @@ def navbar():
     return Response(data, mimetype='application/json')
 
 
+@main.route('/brands')
+def brand_list():
+    data = redis_get('BRANDS', 'ITEMS')
+    if data is None:
+        brands = statisitc.brands['total']
+        data = {vendor_id: {'brand': brands[vendor_id]['brand']} for vendor_id in brands}
+        for vendor_id in data:
+            item_list = Item.query.filter(Item.vendor_id == vendor_id, Item.is_deleted == False,
+                                          Item.is_component == False).all()
+            items = [random.SystemRandom().choice(item_list) for _ in range(5)]
+            data[vendor_id]['items'] = items_json(items)
+        data = json.dumps(data)
+        redis_set('BRANDS', 'ITEMS', data, expire=86400)
+    return Response(data, mimetype='application/json')
+
+
+@main.route('/brands/<int:vendor_id>')
+def vendor_detail(vendor_id):
+    data = redis_get('BRAND_ITEMS', vendor_id)
+    if data is None:
+        data = {}
+        for scene_id in range(2, 6):
+            scene = Scene.query.get(scene_id)
+            item_list = statisitc.item_query.filter(Item.vendor_id == vendor_id, Item.scene_id == scene_id).all()
+            if not item_list:
+                continue
+            items = [random.SystemRandom().choice(item_list) for _ in range(10)]
+            data[scene_id] = {'scene': scene.scene, 'items': items_json(items)}
+        data = json.dumps(data)
+        redis_set('BRAND_ITEMS', vendor_id, data, expire=86400)
+    return Response(data, mimetype='application/json')
+
+
 @main.route('/legal/<string:role>')
 def legal(role):
     if role == 'user':

@@ -229,6 +229,56 @@
 }
 ```
 
+### brand list
++ **URL**
+  + /brands
++ **method**
+  + GET
++ **return**
+```json
+{
+    "id1": {
+        "brand": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "brand": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+}
+```
+
+### brand dettail
++ **URL**
+  + /brands/\<int:brand_id\>
++ **method**
+  + GET
++ **return**
+```json
+{
+    "id1": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+}
+```
+
 ## Item
 ### item list
 + **URL**
