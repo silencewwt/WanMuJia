@@ -102,3 +102,8 @@ def city_list():
             city_dict[city.pinyin_index] = {}
         city_dict[city.pinyin_index][city.pinyin] = {'city': city.area, 'dist_amount': city.distributor_amount}
     return jsonify(city_dict)
+
+
+@service_blueprint.route('/client_ip')
+def client_ip():
+    return jsonify({'ip': request.remote_addr})

@@ -1041,3 +1041,11 @@
 + **return**
   + json
   + `{"A": {"ankang": {"city": "安康", "dist_count": "5"}}}`
+
+### client ip
++ **URL**
+  + /service/client_ip
++ **method**
+  + GET
++ **return**
+  + `{"ip": ""}`
