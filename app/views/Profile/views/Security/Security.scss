@@ -9,7 +9,7 @@ $input-width: 340px;
 $input-height: 40px;
 
 $input-group-width: $input-width;
-$input-group-height: 60px;
+$input-group-height: 70px;
 
 $verify-btn-width: 120px;
 
@@ -28,10 +28,6 @@ $verify-btn-width: 120px;
   }
 
   .sec-main {
-    & > h2 {
-
-    }
-
     .main-content {
       margin: 25px auto;
       background-color: #fff;

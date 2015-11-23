@@ -15,8 +15,8 @@
 let Validate = React.createClass({
   getInitialState: function() {
     return {
-      tip: null,
-      value: null
+      tip: this.props.tip || null,
+      value: ''
     }
   },
   getDefaultProps: function() {
@@ -28,19 +28,16 @@ let Validate = React.createClass({
     };
   },
   handleInputBlur: function(e) {
-    if(!this.props.validate) {
-      return;
-    }
-
     let value = e.target.value;
     let tip = null;
 
-    for(let i in validate) {
-      if(!this.props.validate[i].rule.test(value)) {
-        tip = this.props.validate[i].text;
-        value = null;
-        break;
-      }
+    if(!this.props.validate || !value) {
+      return;
+    }
+
+    if(!this.props.validate.rule.test(value)) {
+      tip = this.props.validate.text;
+      value = null;
     }
 
     this.setState({
@@ -62,7 +59,7 @@ let Validate = React.createClass({
       }
     });
 
-    if(status !== 'success') {
+    if(status !== 'success' && status !== 'tip') {
       this.setState({
         value: null
       });
@@ -76,8 +73,9 @@ let Validate = React.createClass({
           type={this.props.inputType}
           onBlur={this.handleInputBlur}
           placeholder={this.props.placeholder}
+          tip={this.state.tip}
         />
-        {this.props.children}
+          {this.props.children}
         <ValidateTip tip={this.state.tip} />
       </div>
     );
@@ -86,12 +84,18 @@ let Validate = React.createClass({
 
 let ValidateInput = React.createClass({
   render: function() {
+    let tipStyle =
+      this.props.tip && (this.props.tip.status !== 'success' && this.props.tip.status !== 'tip') ?
+      {
+        borderColor: '#833e00'
+      } : null;
     return (
       <input
         className={this.props.theme === 'verify' ? 'verify' : null}
         type={this.props.inputType}
-        onBlur={this.handleInputBlur}
+        onBlur={this.props.onBlur}
         placeholder={this.props.placeholder}
+        style={tipStyle}
       />
     );
   }
@@ -99,9 +103,9 @@ let ValidateInput = React.createClass({
 
 let ValidateTip = React.createClass({
   render: function() {
-    let tipClass = this.props.tip ? 'input-tip ' + this.props.tip.status : 'input-tip';
+    let tipClass = this.props.tip ? ('input-tip ' + this.props.tip.status) : 'input-tip';
     return (
-      <span className="input-tip">
+      <span className={tipClass}>
         {
           this.props.tip ?
           this.props.tip.text :

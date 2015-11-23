@@ -38,9 +38,11 @@ var Logo = React.createClass({
   render: function() {
     return (
       <div className="logo">
-        <div className="img">
-          logo
-        </div>
+        <a href="/">
+          <div className="img">
+            logo
+          </div>
+        </a>
         <div className="title">
           <p>我的万木家</p>
           <a href="/" title="返回首页">返回万木家首页</a>

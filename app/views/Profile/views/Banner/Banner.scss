@@ -17,7 +17,7 @@ $tab-btn-active-color: #f2f2f2;
     height: $banner-height;
 
     .logo,
-    .logo > .img,
+    .logo .img,
     .logo > .title,
     .tabs {
       display: inline-block;
@@ -28,7 +28,7 @@ $tab-btn-active-color: #f2f2f2;
       height: 100%;
       text-align: center;
 
-      & > .img {
+      .img {
         margin-right: 20px;
         width: $logo-img-width;
         height: $logo-img-height;
