@@ -198,12 +198,36 @@
 
 ### index navbar
 + **URL**
-  + /navbar/\<int: num\>
-  + 目前num可用范围是\[1, 2\]
+  + /navbar
 + **method**
   + GET
 + **return**
-  + `{"items": [{"id": "", "item": "", "price": "", "image_url": "", "is_suite": ""}, ]}`
+  + items列表长度正常情况下为8 (但是有可能商品数量确实不够的情况...)
+```json
+{
+    "id1": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id3": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    }
+}
+```
 
 ## Item
 ### item list
