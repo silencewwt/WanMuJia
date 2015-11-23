@@ -1,0 +1,15 @@
+.back-top {
+  background-image: url('/app/assets/images/back_top_icon.png');
+  background-repeat: no-repeat;
+  background-size: 50% auto;
+  background-position: center;
+  position: relative;
+
+  .back-top-tip {
+    position: absolute;
+    width: 2.5em;
+    line-height: 1em;
+    left: 40px;
+    top: 3px;
+  }
+}

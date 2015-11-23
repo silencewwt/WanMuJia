@@ -1,0 +1,23 @@
+.float-bottom-tip {
+  position: fixed;
+  bottom: 20px;
+  right: 40px;
+}
+.float-bottom-tip>div {
+  background-color: rgba(255, 255, 255, .7);;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  border-radius: 36px;
+  text-align: center;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  margin-bottom: 2px;
+  transition: background .6s;
+  color: #666;
+  font-size: 12px;
+}
+.float-bottom-tip>div:hover {
+  background-color: #ccc;
+  color: #000;
+}
