@@ -74,10 +74,15 @@ def data_table_params():
     return draw, start, length
 
 
-def items_json(item_ids):
+def items_json(items):
     from app.models import Item
+    if not items:
+        return []
+    elif isinstance(items[0], Item):
+        item_query = items
+    else:
+        item_query = Item.query.filter(Item.id.in_(items))
     item_list = []
-    item_query = Item.query.filter(Item.id.in_(item_ids))
     for item in item_query:
         image = item.images.first()
         image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
