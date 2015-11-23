@@ -4,12 +4,13 @@ require('./FloatBottomTip.scss');
 
 let React = require('react');
 let BackTop = require('./BackTop/BackTop.jsx');
+let CompareBar = require('../CompareBar/CompareBar.jsx');
 
 var FloatBottomTip = React.createClass({
   render: function() {
     return (
       <div className="float-bottom-tip">
-        <div>对比</div>
+        <CompareBar />
         <BackTop />
       </div>
     );
