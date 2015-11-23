@@ -41,15 +41,13 @@ def navbar():
     if data is None:
         data = {}
         for scene_id in range(3, 6):
-            item_ids = redis_get('INDEX_NAVBAR_%d' % scene_id, 'ITEMS')
-            if item_ids:
-                item_ids = json.loads(item_ids)
-            else:
-                item_list = statisitc.item_query.filter(Item.scene_id == scene_id).all()
-                item_ids = [random.SystemRandom().choice(item_list).id for _ in range(8)]
-                redis_set('INDEX_NAVBAR_%d' % scene_id, 'ITEMS', json.dumps(item_ids), expire=86400)
             scene = Scene.query.get(scene_id)
-            data[scene.id] = {'scene': scene.scene, 'items': items_json(item_ids)}
+            item_list = statisitc.item_query.filter(Item.scene_id == scene_id).all()
+            if not item_list:
+                items = []
+            else:
+                items = [random.SystemRandom().choice(item_list) for _ in range(8)]
+            data[scene.id] = {'scene': scene.scene, 'items': items_json(items)}
         data = json.dumps(data)
         redis_set('INDEX_NAVBAR', 'ITEMS', data, expire=86400)
     return Response(data, mimetype='application/json')
