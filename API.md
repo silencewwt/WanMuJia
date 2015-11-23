@@ -189,6 +189,22 @@
   + 未登录
     + `{"logined": false}`
 
+## Main
+### index
++ **URL**
+  + /
++ **method**
+  + GET
+
+### index navbar
++ **URL**
+  + /navbar/\<int: num\>
+  + 目前num可用范围是\[1, 2\]
++ **method**
+  + GET
++ **return**
+  + `{"items": [{"id": "", "item": "", "price": "", "image_url": "", "is_suite": ""}, ]}`
+
 ## Item
 ### item list
 + **URL**
