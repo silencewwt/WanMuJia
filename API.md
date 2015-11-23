@@ -185,7 +185,7 @@
   + GET
 + **return**
   + 已登录
-    + `{"logined": true, "username": "", "mobile": "", "email": ""}`
+    + `{"logined": true, "username": "", "mobile": "", "email": "", "username_revisable": ""}`
   + 未登录
     + `{"logined": false}`
 
