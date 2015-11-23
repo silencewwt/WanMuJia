@@ -27,7 +27,8 @@ def login():
             user = form.login()
             if user is not False:
                 return jsonify({'success': True, 'user': {'username': user.username,
-                                                          'mobile': user.mobile, 'email': user.email}})
+                                                          'mobile': user.mobile, 'email': user.email,
+                                                          'username_revisable': user.username_revisable}})
         if 'csrf_token' in form.errors:
             return jsonify({'success': False, 'message': '登录失败, 请刷新页面重试'})
         return jsonify({'success': False, 'message': '用户名或密码错误'})
@@ -182,6 +183,7 @@ def address():
 def logined():
     if current_user.is_authenticated and current_user.id_prefix == 'u':
         return jsonify({'logined': True, 'username': current_user.username,
-                        'mobile': current_user.mobile, 'email': current_user.email})
+                        'mobile': current_user.mobile, 'email': current_user.email,
+                        'username_revisable': current_user.username_revisable})
     else:
         return jsonify({'logined': False})
