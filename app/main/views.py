@@ -2,7 +2,7 @@
 import random
 import json
 
-from flask import render_template, abort, jsonify
+from flask import render_template, abort, Response
 from sqlalchemy import func
 from flask.ext.login import current_user
 
@@ -35,19 +35,24 @@ def index():
                            group1=items[:6], group2=items[6:12], group3=items[12:18])
 
 
-@main.route('/navbar/<int:num>')
-def navbar(num):
-    if num not in (1, 2):
-        abort(404)
-    item_ids = redis_get('INDEX_NAVBAR_%d' % num, 'ITEMS')
-    if item_ids:
-        item_ids = json.loads(item_ids)
-    else:
-        item_list = statisitc.item_query.filter(Item.scene_id == 2 + num).all()
-        item_ids = [random.SystemRandom().choice(item_list).id for _ in range(8)]
-        redis_set('INDEX_NAVBAR_%d' % num, 'ITEMS', json.dumps(item_ids), expire=86400)
-    data = {'items': items_json(item_ids)}
-    return jsonify(data)
+@main.route('/navbar')
+def navbar():
+    data = redis_get('INDEX_NAVBAR', 'ITEMS')
+    if data is None:
+        data = {}
+        for scene_id in range(3, 6):
+            item_ids = redis_get('INDEX_NAVBAR_%d' % scene_id, 'ITEMS')
+            if item_ids:
+                item_ids = json.loads(item_ids)
+            else:
+                item_list = statisitc.item_query.filter(Item.scene_id == scene_id).all()
+                item_ids = [random.SystemRandom().choice(item_list).id for _ in range(8)]
+                redis_set('INDEX_NAVBAR_%d' % scene_id, 'ITEMS', json.dumps(item_ids), expire=86400)
+            scene = Scene.query.get(scene_id)
+            data[scene.id] = {'scene': scene.scene, 'items': items_json(item_ids)}
+        data = json.dumps(data)
+        redis_set('INDEX_NAVBAR', 'ITEMS', data, expire=86400)
+    return Response(data, mimetype='application/json')
 
 
 @main.route('/legal/<string:role>')
