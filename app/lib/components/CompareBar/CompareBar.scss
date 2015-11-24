@@ -55,6 +55,16 @@
       .close-btn:hover {
         color: #666;
       }
+
+      .err-tip {
+        position: absolute;
+        top: 0;
+        width: 60%;
+        text-align: center;
+        height: 100%;
+        left: 20%;
+        color: #db9a9a;
+      }
     }
 
     .cb-content {

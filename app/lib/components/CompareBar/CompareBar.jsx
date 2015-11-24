@@ -30,8 +30,8 @@ const MOCK_ITEMS = [
 var CompareBar = React.createClass({
   getInitialState: function() {
     return {
-      show: true,
-      data: MOCK_ITEMS,
+      show: false,
+      data: [],
       errTip: null,
     };
   },
@@ -67,10 +67,10 @@ var CompareBar = React.createClass({
     let _data = this.state.data;
     _data.push(item);
     this.setState({data: _data});
-    let _cookieStr =  getCookie("compareItems") || "";
-    let _cookieArr = _cookieStr.split(',');
-    let cookieArr = _cookieArr.push(item.id);
-    let cookieStr = cookieArr.join(',');
+    let _cookieStr =  getCookie("compareItems");
+    let _cookieArr = _cookieStr?_cookieStr.split(','):[];
+    _cookieArr.push(item.id.toString());
+    let cookieStr = _cookieArr.join(',');
     let now = new Date();
     setCookie('compareItems', cookieStr, now.setHours(now.getHours() + 30 * 24) , '/' );
   },
@@ -86,8 +86,8 @@ var CompareBar = React.createClass({
     var _data = this.state.data;
     _data.splice(idNum , 1);
     this.setState({data: _data});
-    let _cookieStr =  getCookie("compareItems") || "";
-    let _cookieArr = _cookieStr.split(',');
+    let _cookieStr =  getCookie("compareItems");
+    let _cookieArr = _cookieStr?_cookieStr.split(','):[];
     if(_cookieArr[idNum] == id) {
       let cookieArr = _cookieArr.splice(idNum , 1);
       let cookieStr = cookieArr.join(',');
@@ -98,18 +98,21 @@ var CompareBar = React.createClass({
   // 删除所有
   deleteAll: function() {
     this.setState({data: []});
+    this.hide();
     let now = new Date();
     setCookie('compareItems', "", now.setHours(now.getHours() + 30 * 24) , '/' );
   },
   // 根据 cookie id 获取对比项数据
   getItem: function(id , num) {
     reqwest({
-      url: "/",
+      url: "/item/"+id,
       method: "get",
-      data: {id: id},
+      data: {format: "json"},
       success: function(itemData) {
         let _data = this.state.data;
         _data[num] = itemData;
+//        _data[num].image_url = itemData.images[0];
+        _data[num].id = id;
         this.setState({data: _data});
       }.bind(this)
     });
@@ -129,7 +132,7 @@ var CompareBar = React.createClass({
     this.setState({errTip: err});
     setTimeout(function() {
       this.setState({errTip: null});
-    }.bind(this) , 3000);
+    }.bind(this) , 5000);
   },
   render: function() {
     return (
@@ -137,13 +140,14 @@ var CompareBar = React.createClass({
         <span className="compare-bar-btn" onClick={this.toggle}>对比</span>
         <div className={(this.state.show?"show ":"" )+ "compare-bar"}>
           <CompareBarHeader
+            errTip={this.state.errTip}
             hide={this.hide}
           />
-        <CompareBarContent
-          data={this.state.data}
-          delete={this.deleteItem}
-          deleteAll={this.deleteAll}
-        />
+          <CompareBarContent
+            data={this.state.data}
+            delete={this.deleteItem}
+            deleteAll={this.deleteAll}
+          />
         </div>
       </div>
     );
@@ -152,10 +156,17 @@ var CompareBar = React.createClass({
 
 var CompareBarHeader = React.createClass({
   render: function() {
+    let errTip = null;
+    if(this.props.errTip) {
+      errTip = (<div className="err-tip">{this.props.errTip}</div>);
+    }
     return (
       <div className="cb-header">
         <h1>对比栏</h1>
         <div className="close-btn" onClick={this.props.hide}>隐藏</div>
+
+        {errTip}
+
       </div>
     );
   }
@@ -211,7 +222,7 @@ var CompareBarOperation = React.createClass({
   render: function() {
     return (
       <div className="cb-operation">
-        <a className="compare-link" href="#">对比</a>
+        <a className="compare-link" target="_blank" href="/item/compare">对比</a>
         <div className="delete-all" onClick={this.props.deleteAll}>清空对比栏</div>
       </div>
     );
