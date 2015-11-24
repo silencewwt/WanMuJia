@@ -9,6 +9,7 @@ from app import db
 from app.models import Collection, Item
 from app.constants import *
 from app.permission import user_permission
+from app.utils import items_json
 from . import user as user_blueprint
 from .forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, RegistrationForm, \
     SettingForm, PasswordForm, ResetPasswordForm, ResetPasswordNextForm
@@ -119,21 +120,12 @@ def profile():
 def collection():
     if request.method == 'GET':
         page = request.args.get('page', 1, type=int)
-        per_page = 18
+        per_page = 10
         query = Collection.query.filter_by(user_id=current_user.id)
         amount = query.count()
         collections = query.paginate(page, per_page, False).items
-        collection_dict = {'collections': [], 'amout': amount, 'page': page, 'pages': ceil(amount / per_page)}
-        for collection in collections:
-            image = collection.item.images.first()
-            image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
-            collection_dict['collections'].append({
-                'item': collection.item.item,
-                'price': collection.item.price,
-                'deleted': collection.item.is_deleted,
-                'item_id': collection.item.id,
-                'image_url': image_url
-            })
+        collection_dict = {'collections': items_json([collection.item for collection in collections]),
+                           'amount': amount, 'page': page, 'pages': ceil(amount / per_page)}
         return jsonify(collection_dict)
 
     item_id = request.form.get('item', 0, type=int)
