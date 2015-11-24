@@ -137,7 +137,7 @@
   + item: item id, 仅POST, DELETE方式需要
 + **return**
   + GET
-    + `{"collections": [{"item": "", "price": "", "item_id": "", "deleted": "", "image_url": ""}], "amount": "", "page": "", "pages": ""}`
+    + `{"collections": [{"item": "", "price": "", "item_id": "", "deleted": "", "image_url": "", "is_suite": ""}], "amount": "", "page": "", "pages": ""}`
     + **amount**
       + 收藏总数
     + **page**
@@ -449,7 +449,7 @@
     + 如果format == json, 返回json, 否则为html
 + **return**
   + format == json
-    + `{"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": ""}`
+    + `{"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": "", "brand": ""}`
     + **item**
       + 商品名称
     + **price**
@@ -482,6 +482,8 @@
       + 商品寓意
     + **image_url**
       + 图片url
+    + **brand**
+      + 品牌
 + item object(**单件**)
   + id
   + vendor
