@@ -1,0 +1,83 @@
+
+$banner-height: 80px;
+
+$banner-bgc: #6e3800;
+
+$logo-img-width: 140px;
+$logo-img-height: 48px;
+$logo-title-width: 120px;
+
+$tab-btn-color: #aaa;
+$tab-btn-active-color: #f2f2f2;
+
+.banner {
+  background-color: $banner-bgc;
+
+  & > .container {
+    height: $banner-height;
+
+    .logo,
+    .logo .img,
+    .logo > .title,
+    .tabs {
+      display: inline-block;
+    }
+
+    .logo {
+      padding: 8px 0;
+      height: 100%;
+      text-align: center;
+
+      .img {
+        margin-right: 20px;
+        width: $logo-img-width;
+        height: $logo-img-height;
+        background: url(../../assets/images/logo_white.png) no-repeat;
+        background-size: contain;
+        font-size: 0;
+        vertical-align: middle;
+      }
+
+      & > .title {
+        padding: 0 12px;
+        width: $logo-title-width;
+        height: 100%;
+        border-left: 1px solid #fff;
+        vertical-align: middle;
+        box-sizing: content-box;
+
+        & > p {
+          margin: 2px auto;
+          font-size: 18px;
+          color: #fff;
+        }
+
+        & > a {
+          padding: 4px 8px;
+          border: 1px solid #aaa;
+          border-radius: 20px;
+          font-size: 12px;
+          color: #aaa;
+        }
+      }
+    }
+
+    .tabs {
+      margin-left: 10px;
+      font-size: 16px;
+
+      .tab-btn {
+        margin: 0 40px;
+        color: $tab-btn-color;
+
+        &:hover {
+          color: $tab-btn-active-color;
+        }
+
+        &.active {
+          color: $tab-btn-active-color;
+        }
+      }
+    }
+  }
+}

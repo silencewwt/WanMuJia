@@ -1,0 +1,87 @@
+
+$item-height: 140px;
+$item-bgc: #f5f5f5;
+$thumb-size: 110px;
+
+$text-color: #666;
+$price-color: #cf0a0a;
+
+$item-title-width: 360px;
+$item-price-width: 140px;
+
+$divide-color: $border-color-base;
+
+.favorite {
+  .item {
+    padding: ($item-height - $thumb-size) / 2 30px;
+    margin: 15px auto;
+    height: $item-height;
+    border: 1px solid $divide-color;
+    background-color: $item-bgc;
+
+    & > a {
+      color: inherit;
+    }
+
+    .thumb,
+    .title,
+    .price {
+      display: inline-block;
+    }
+
+    .thumb {
+      width: $thumb-size;
+      height: $thumb-size;
+      font-size: 0;
+      vertical-align: middle;
+    }
+
+    .title {
+      margin: 0 30px;
+      width: $item-title-width;
+      text-align: center;
+      vertical-align: middle;
+
+      @extend .overflow;
+
+      @include link($text-color);
+
+      &:hover {
+        @include linkHover($text-color);
+      }
+    }
+
+    .price {
+      width: $item-price-width;
+      text-align: center;
+      vertical-align: middle;
+      color: $price-color;
+    }
+
+    .compare,
+    .unfavorite {
+      @extend .button;
+
+      color: $text-color;
+      background-color: $item-bgc;
+
+      &:hover {
+        @include linkHover($text-color);
+      }
+    }
+
+    .compare {
+      margin-left: 240px;
+    }
+
+    .unfavorite {
+      margin-left: 50px;
+    }
+  }
+
+  .pagination {
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+  }
+}

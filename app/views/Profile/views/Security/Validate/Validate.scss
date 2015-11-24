@@ -1,0 +1,62 @@
+
+.form-validate {
+  margin: 0 auto;
+  width: $input-group-width;
+  height: $input-group-height;
+  font-size: 14px;
+
+  input,
+  button {
+    display: inline-block;
+  }
+
+  input {
+    padding: 0 8px;
+    width: $input-width;
+    height: $input-height;
+    border: 1px solid $divide-color;
+
+    &.verify {
+      width: $input-width - $verify-btn-width - 10;
+      margin-right: 10px;
+    }
+
+    @extend .input;
+  }
+
+  button {
+    width: $verify-btn-width;
+    height: $input-height;
+    background-color: #f2f2f2;
+    border: 1px solid $divide-color;
+    color: #666;
+    transition: background-color 0.2s ease;
+
+    &:hover:not(.disabled) {
+      background-color: darken(#f2f2f2, 4);
+    }
+
+    &:active:not(.disabled) {
+      background-color: darken(#f2f2f2, 6);
+    }
+
+    &.disabled {
+      background-color: darken(#f2f2f2, 10);
+      color: #777;
+    }
+
+    @extend .button;
+  }
+
+  .input-tip {
+    display: block;
+    margin-top: 4px;
+    height: 20px;
+    font-size: 13px;
+    color: $main-color-base;
+
+    &.success {
+      color: #666;
+    }
+  }
+}
