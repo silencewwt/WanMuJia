@@ -1,6 +1,6 @@
 'use strict';
 
-require('./SignedupBox.scss');
+require('./SignedUpBox.scss');
 let React = require('react');
 
 let utils = require("../../../../lib/utils/utils.js");
