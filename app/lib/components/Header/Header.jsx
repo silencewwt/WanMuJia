@@ -10,7 +10,7 @@ let React= require('react');
 //  Props: userInfo => object|null 登录状态
 //         shrink => boolean 主导航是否折叠
 //
-//  Dependence:
+//  Dependence: liib::TopBar lib::Banner lib::HeaderNav lib::MainNav
 //
 //  TODO:
 //  ==================================================
@@ -33,10 +33,7 @@ var Header = React.createClass({
         <TopBar userInfo={this.props.userInfo} />
         <Banner />
         <div className="container">
-          <MainNav
-            items={this.props.mainNav}
-            shrink={this.props.shrink}
-          />
+          <MainNav shrink={this.props.shrink} />
           <HeaderNav />
         </div>
         {this.props.children}
