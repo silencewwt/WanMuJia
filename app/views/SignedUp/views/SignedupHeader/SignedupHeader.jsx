@@ -3,6 +3,7 @@
 require('./SignedUpHeader.scss');
 let React = require('react');
 
+
 var SignedupHeader = React.createClass({
   render: function() {
     return (
