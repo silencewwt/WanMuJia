@@ -189,6 +189,121 @@
   + 未登录
     + `{"logined": false}`
 
+## Main
+### index
++ **URL**
+  + /
++ **method**
+  + GET
+
+### index navbar
++ **URL**
+  + /navbar
++ **method**
+  + GET
++ **return**
+  + items列表长度正常情况下为8 (但是有可能商品数量确实不够的情况...)
+```json
+{
+    "id1": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id3": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    }
+}
+```
+
+### brand list
++ **URL**
+  + /brands
++ **method**
+  + GET
++ **return**
+```json
+{
+    "id1": {
+        "brand": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "brand": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+}
+```
+
+### brand dettail
++ **URL**
+  + /brands/\<int:brand_id\>
++ **method**
+  + GET
++ **return**
+```json
+{
+    "id1": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+}
+```
+
+### furniture
++ **URL**
+  + /furniture
++ **method**
+  + GET
++ **return**
+```json
+{
+    "id1": {
+        "style": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "style": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+}
+```
+
 ## Item
 ### item list
 + **URL**
@@ -241,7 +356,8 @@
         + price
     + selected
       + 已选条件
-      + 结构与available相同, 单个筛选条件只会在available或selected其中之一出现
+      + 结构与available相同, 单个筛选条件(除category)只会在available或selected其中之一出现
+      + category为分级筛选, 选择第一级条件后, 会返回第二级条件
   + items
     + amount
       + 符合条件的所有商品数量
@@ -259,6 +375,7 @@
       + item
       + price
       + image_url
+      + is_suite
 
 ```json
 {
@@ -290,6 +407,16 @@
 			}
 		},
 		"selected": {
+		    "category": {
+		        "id": {
+		            "category": "",
+		            "children": {
+		                "id": {
+		                    "category": ""
+		                }
+		            }
+		        }
+		    }
 		}
 	},
 	"items": {
@@ -299,8 +426,8 @@
 		"search": "",
 		"order": "",
 		"query": [
-			{"id": "", "item": "", "price": "", "image_url": ""},
-			{"id": "", "item": "", "price": "", "image_url": ""},
+			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": false},
+			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
 		]
 	}
 }
