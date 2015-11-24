@@ -12,7 +12,7 @@ let encryptMd5 = utils.encryptMd5;
 
 let reqwest = require('reqwest');
 
-var SignedupBox = React.createClass({
+var SignedUpBox = React.createClass({
   getInitialState: function() {
     return {
       step: 1,
@@ -601,4 +601,4 @@ var SuStep3 = React.createClass({
   }
 });
 
-module.exports = SignedupBox;
+module.exports = SignedUpBox;
