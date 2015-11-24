@@ -39,8 +39,9 @@ $verify-btn-width: 120px;
       line-height: $main-hd-height;
       cursor: pointer;
 
-      .main-hd-text {
-        margin-left: 15px;
+      .main-hd-title {
+        display: inline-block;
+        width: 80px;
       }
 
       .main-hd-btn {

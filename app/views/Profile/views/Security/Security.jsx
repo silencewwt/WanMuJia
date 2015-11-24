@@ -5,12 +5,16 @@
 //
 //  Props:
 //
-//  State:
+//  State:  SecMain:: active => null|integer 激活的折叠面板
+//                    timeLeft => integer 短信倒计时
+//                    mainHdText => array 折叠面板 Header 文字
+//                    usernameRevisable => boolean 会员名是否可修改
+//
+//  Dependence: lib::utils npm::reqwest Profile::Security::Validate
 //
 //  Use: views::Profile
 //
-//  TODO: [add] 表单验证
-//        [add] 各种交互逻辑
+//  TODO:
 //  ==================================================
 
 let Utils = require('../../../../lib/utils/utils');
@@ -67,8 +71,10 @@ let SecTitle = React.createClass({
 let SecMain = React.createClass({
   getInitialState: function() {
     return {
-      active: null,
-      timeLeft: parseInt(Utils.getCookie('profile_time_left')) || 0
+      active: null, // 激活的折叠面板
+      timeLeft: parseInt(Utils.getCookie('profile_time_left')) || 0,  // 短信倒计时
+      mainHdText: [], // 折叠面板 Header 文字
+      usernameRevisable: true // 会员名是否可修改
     };
   },
   getDefaultProps: function() {
@@ -76,27 +82,43 @@ let SecMain = React.createClass({
       mainHd: [ // 折叠面板 header 内容
         {
           title: '会员名：',
-          text: 'username',
-          btn: '修改',
+          btn: '修改（只能修改一次）',
           type: 'username'
         }, {
           title: '手机号：',
-          text: 'phone',
           btn: null,
           type: null
         }, {
           title: '邮箱：',
-          text: 'email',
           btn: '绑定邮箱',
           type: 'email'
         }, {
           title: '密码：',
-          text: '×××××××××',
           btn: '修改密码',
           type: 'password'
         }
       ]
     };
+  },
+  componentWillMount: function() {
+    let _this = this;
+    Ajax({  // 获取个人信息
+      url: '/logined',
+      method: 'get',
+      success: function (res) {
+        if(res.logined) {
+          _this.setState({
+            mainHdText: [
+              res.username,
+              res.mobile,
+              res.email,
+              '×××××××××'
+            ],
+            usernameRevisable: res.username_revisable
+          });
+        }
+      }
+    })
   },
   handleHdClick: function(index, btn) { // 折叠控制
     if(!btn) {
@@ -163,17 +185,20 @@ let SecMain = React.createClass({
             <div className="main-content" key={i}>
               <SecMainHd
                 item={item}
+                text={this.state.mainHdText[i]}
                 onClick={this.handleHdClick.bind(null, i)}
                 active={this.state.active === i}
+                usernameRevisable={this.state.usernameRevisable}
               />
               {
-                this.state.active === i ?
+                this.state.active !== i || (!this.state.usernameRevisable && i === 0) ?
+                null :
                 <SecMainBd
                   item={item}
                   timeLeft={this.state.timeLeft}
                   sendVerify={this.sendVerify}
-                /> :
-                null
+                  usernameRevisable={this.state.usernameRevisable}
+                />
               }
             </div>
           );
@@ -185,6 +210,17 @@ let SecMain = React.createClass({
 
 let SecMainHd = React.createClass({
   render: function() {
+    let btnText;
+    if(!this.props.usernameRevisable && this.props.item.type === 'username') {
+      btnText = '您已修改过会员名，现在无法修改';
+    } else if (this.props.item.type === 'email' && this.props.text) {
+      btnText = '修改邮箱';
+    } else if (this.props.active) {
+      btnText = '收起';
+    } else {
+      btnText = this.props.item.btn;
+    }
+
     return (
       <div
         className="main-hd"
@@ -195,14 +231,10 @@ let SecMainHd = React.createClass({
           {this.props.item.title}
         </span>
         <span className="main-hd-text">
-          {this.props.item.text}
+          {this.props.text}
         </span>
         <span className="main-hd-btn" >
-          {
-            this.props.active ?
-            '收起' :
-            this.props.item.btn
-          }
+          {btnText}
         </span>
       </div>
     );
@@ -260,14 +292,26 @@ let UsernameBd = React.createClass({
       this.refs.refName.setTip('会员名不能为空');
     }
 
-    phone && verify && username && (function() {
-      console.log({
-        phone,
-        verify,
-        username
-      });
-      this.refs.usName.setTip('success', 'success');
-    }.bind(this))();
+    phone && verify && username && this.changeUsername(username, verify);
+  },
+  changeUsername: function(username, verify) {
+    let _this = this;
+    Ajax({  // 修改密码
+      url: '/settings',
+      method: 'post',
+      data: {
+        csrf_token: Utils.getCookie('csrf_token'),
+        username: username,
+        captcha: verify
+      },
+      success: function (res) {
+        if(res.success) {
+          _this.refs.refName.setTip(':) 修改成功', 'success');
+        } else {
+          _this.refs.refName.setTip(':( ' + res.message, 'tip');
+        }
+      }
+    })
   },
   handleVerifyClick: function() {
     let phone = this.refs.refPhone.getValue();
@@ -338,11 +382,26 @@ let EmailBd = React.createClass({
       this.refs.refEmail.setTip('邮箱不能为空');
     }
 
-    phone && verify && email && console.log({
-      phone,
-      verify,
-      email
-    });
+    phone && verify && email && this.changeEmail(email, verify);
+  },
+  changeEmail: function(email, verify) {
+    let _this = this;
+    Ajax({  // 修改密码
+      url: '/settings',
+      method: 'post',
+      data: {
+        csrf_token: Utils.getCookie('csrf_token'),
+        email: email,
+        captcha: verify
+      },
+      success: function (res) {
+        if(res.success) {
+          _this.refs.refName.setTip(':) 修改成功', 'success');
+        } else {
+          _this.refs.refName.setTip(':( ' + res.message, 'tip');
+        }
+      }
+    })
   },
   handleVerifyClick: function() {
     let phone = this.refs.refPhone.getValue();
@@ -412,6 +471,10 @@ let PasswordBd = React.createClass({
     if(conPwd  === '') {
       this.refs.refConfirmpwd.setTip('密码不能为空');
     }
+    if(newPwd !== conPwd) {
+      this.refs.refConfirmpwd.setTip('两次密码不一致');
+      return;
+    }
 
     currPwd && newPwd && conPwd && this.changePassword(currPwd, newPwd, conPwd);
   },
@@ -430,7 +493,7 @@ let PasswordBd = React.createClass({
         if(res.success) {
           _this.refs.refConfirmpwd.setTip(':) 密码修改成功，请重新登录', 'success');
         } else {
-          _this.refs.refConfirmpwd.setTip(':( 密码修改失败，请重试', 'tip');
+          _this.refs.refConfirmpwd.setTip(':( ' + res.message, 'tip');
         }
       }
     })
@@ -442,11 +505,13 @@ let PasswordBd = React.createClass({
           placeholder='当前密码'
           ref="refPwd"
           validate={rules.password}
+          inputType="password"
         />
         <Validate
           placeholder='新密码'
           ref="refNewpwd"
           validate={rules.password}
+          inputType="password"
           tip={{
             status: 'success',
             text: '6-16 位，大小写字母、数字及 \"\_\" 、 \"\.\" 的组合'
@@ -456,6 +521,7 @@ let PasswordBd = React.createClass({
           placeholder='新密码'
           ref="refConfirmpwd"
           validate={rules.password}
+          inputType="password"
         />
         <button
           type="button"
@@ -468,7 +534,5 @@ let PasswordBd = React.createClass({
     );
   }
 });
-
-
 
 module.exports = Security;

@@ -3,11 +3,18 @@
 //  ==================================================
 //  Component: Validate
 //
-//  Props:
+//  State: tip => string|null 提示语
+//         value => string 输入框的值
 //
-//  Methods:
+//  Props:  inputType => string|null 提示语
+//          validate => object|null 验证规则
+//          placeholder => string|null 输入框自身提示
+//          theme => string 主题
 //
-//  Use: views::Profile
+//  Methods:  getValue() => 获取输入框的值
+//            setTip(tip, status) => 设置提示语和状态 @status => string(error, success, tip)
+//
+//  Use: views::Profile::Security
 //
 //  TODO:
 //  ==================================================
@@ -15,16 +22,16 @@
 let Validate = React.createClass({
   getInitialState: function() {
     return {
-      tip: this.props.tip || null,
-      value: ''
+      tip: this.props.tip || null,  // 提示语
+      value: ''  // 输入框的值
     }
   },
   getDefaultProps: function() {
     return {
-      inputType: 'text',
-      validate: null,
-      placeholder: null,
-      theme: 'default'
+      inputType: 'text',  // 输入框的类型
+      validate: null, // 验证规则
+      placeholder: null,  // 输入框自身提示
+      theme: 'default'  // 主题
     };
   },
   handleInputBlur: function(e) {
@@ -92,7 +99,7 @@ let ValidateInput = React.createClass({
     return (
       <input
         className={this.props.theme === 'verify' ? 'verify' : null}
-        type={this.props.inputType}
+        type={this.props.type}
         onBlur={this.props.onBlur}
         placeholder={this.props.placeholder}
         style={tipStyle}

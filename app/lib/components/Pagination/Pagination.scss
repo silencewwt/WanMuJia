@@ -7,7 +7,7 @@
 //  ==================================================
 
 $teal: #1BBC9B;
-$coral: #FD605B;
+$coral: #6e3800;
 
 $itemSize: 35px;
 $itemBackground: #FFF;
@@ -30,8 +30,14 @@ $qickGoColor: #A0A0A0;
 
 .pagination {
   padding-right: 10px;
-  &, .pagi-main, .overview, .quick-go, .item {
+  &,
+  .pagi-main,
+  .overview,
+  .quick-go,
+  .item {
     display: inline-block;
+    padding: 0;
+    margin: 0;
   }
   .item {
     width: $itemSize;

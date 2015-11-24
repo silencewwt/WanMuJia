@@ -19,6 +19,10 @@ $divide-color: $border-color-base;
     border: 1px solid $divide-color;
     background-color: $item-bgc;
 
+    & > a {
+      color: inherit;
+    }
+
     .thumb,
     .title,
     .price {
@@ -73,6 +77,11 @@ $divide-color: $border-color-base;
     .unfavorite {
       margin-left: 50px;
     }
+  }
 
+  .pagination {
+    display: block;
+    margin-top: 30px;
+    text-align: center;
   }
 }
