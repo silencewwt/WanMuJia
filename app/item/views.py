@@ -195,7 +195,8 @@ def detail(item_id):
             'story': item.story,
             'image_url': image_url,
             'carve': item.carve,
-            'tenon': item.tenon
+            'tenon': item.tenon,
+            'brand': item.vendor.brand
         }
         return jsonify(item_dict)
     return render_template("user/detail.html", item=item, user=current_user, form=LoginForm())
