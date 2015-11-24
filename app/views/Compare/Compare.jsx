@@ -12,6 +12,7 @@ let ReactDOM = require('react-dom');
 let Header = require('../../lib/components/Header/Header.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
+let LoginPopup = require('../../lib/components/LoginPopup/LoginPopup.jsx');
 
 let CompareTable = require('./views/CompareTable/CompareTable.jsx');
 
@@ -25,7 +26,7 @@ let Compare = React.createClass({
   },
   componentDidMount: function() {
     reqwest({
-      url: "",
+      url: "/logined",
       method: "get",
       success: function(resp) {
         if(resp.logined) {
@@ -35,7 +36,8 @@ let Compare = React.createClass({
     });
   },
   toLogin: function() {
-    alert('...');
+    // 登录
+    this.refs.loginPopup.show();
   },
   render: function() {
     return (
@@ -47,6 +49,12 @@ let Compare = React.createClass({
       <CompareTable logined={this.state.logined} toLogin={this.toLogin} />
         <Footer />
         <FloatBottomTip />
+
+        {
+          !this.state.logined?
+            <LoginPopup ref="loginPopup" />:null
+        }
+
       </div>
     );
   }

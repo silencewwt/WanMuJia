@@ -11,7 +11,7 @@ var FloatBottomTip = React.createClass({
     this.refs.compareBar.addItem(item);
   },
   componentDidMount: function() {
-    
+
   },
   render: function() {
     return (
