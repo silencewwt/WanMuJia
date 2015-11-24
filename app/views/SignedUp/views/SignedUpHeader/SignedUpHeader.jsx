@@ -1,9 +1,9 @@
 'use strict';
 
-require('./SignedupHeader.scss');
+require('./SignedUpHeader.scss');
 let React = require('react');
 
-var SignedupHeader = React.createClass({
+var SignedUpHeader = React.createClass({
   render: function() {
     return (
       <div className="header">
@@ -24,4 +24,4 @@ var SignedupHeader = React.createClass({
   }
 });
 
-module.exports = SignedupHeader;
+module.exports = SignedUpHeader;

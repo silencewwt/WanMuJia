@@ -72,7 +72,8 @@ var LoginIn = React.createClass({
              window.location.href = this.props.nextUrl;
              return ;
            }
-           this.props.callback(resp);
+           window.location.reload();
+           //this.props.callback(resp);
            return ;
         }
         this.setState({nextErrTip: resp.message});
@@ -183,9 +184,9 @@ var RemdLoginGroup = React.createClass({
         </label>
 
         <div className="a-group">
-          <a href="#">忘记密码</a>
+          <a href="/reset_password">忘记密码</a>
           |
-          <a href="#">免费注册</a>
+          <a href="/register">免费注册</a>
         </div>
 
         <div className="tip err" ></div>

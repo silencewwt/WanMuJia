@@ -1,6 +1,6 @@
 'use strict';
 
-require('./SignedupBox.scss');
+require('./SignedUpBox.scss');
 let React = require('react');
 
 let utils = require("../../../../lib/utils/utils.js");
@@ -12,7 +12,7 @@ let encryptMd5 = utils.encryptMd5;
 
 let reqwest = require('reqwest');
 
-var SignedupBox = React.createClass({
+var SignedUpBox = React.createClass({
   getInitialState: function() {
     return {
       step: 1,
@@ -20,14 +20,14 @@ var SignedupBox = React.createClass({
     };
   },
   toNext: function(user) {
-    window.history.pushState({} , 0 , "?step=" + (++this.state.step));
+    window.history.pushState({} , 0 , "?step=" + (parseInt(this.state.step)+1));
     if(this.state.step == 2) {
       this.setState({user: user}, function() {
-        this.setState({step: ++this.state.step});
+        this.setState({step: parseInt(this.state.step)+1});
       }.bind(this));
       return ;
     }
-    this.setState({step: ++this.state.step});
+    this.setState({step: parseInt(this.state.step)+1});
   },
   componentWillMount: function() {
     let step = queryStringToJson(window.location.search.substring(1,window.location.search.length)).step;
@@ -416,7 +416,10 @@ var SuStep2 = React.createClass({
     return true;
   },
   checkPswagain: function() {
-
+    if(this.state.pswagain !== this.state.psw) {
+      this.setState({pswagainErrTip: "两次输入密码不一致"});
+      return false;
+    }
   },
   // 'psw'/'pswagain'   0/1 0 clear value and errtip 1 clear errtip
   clear: function(ipt, num) {
@@ -439,6 +442,8 @@ var SuStep2 = React.createClass({
       return false;
     }else if(this.state.pswErrTip||this.state.pswagainErrTip) {
       return false;
+    }else if(this.state.psw != this.state.pswagain) {
+      return ;
     }
     // TODO: ajax请求，返回结果，错误，提示，正确，改变状态到下一步
     if(!this.state.isNextClick) {return false;}
@@ -454,7 +459,6 @@ var SuStep2 = React.createClass({
       },
       success: function(data) {
         this.setState({isNextClick: true});
-        console.log(data);
         if(data.success) {
           this.props.toNext(data.user);
         }else {
@@ -597,4 +601,4 @@ var SuStep3 = React.createClass({
   }
 });
 
-module.exports = SignedupBox;
+module.exports = SignedUpBox;
