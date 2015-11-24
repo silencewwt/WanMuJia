@@ -7,26 +7,6 @@ let utils = require("../../utils/utils.js");
 let setCookie = utils.setCookie;
 let getCookie = utils.getCookie;
 
-const MOCK_ITEMS = [
-  {
-    id: 13826,
-    image_url: 'http://static.wanmujia.com/images/item/26/a48932eefa2b4dad3993371075ce494a/df749d2f7c4e6e569c89e84d39a27a70.jpg',
-    item: '二闷橱',
-    price: 168000
-  }, {
-    id: 13851,
-    image_url: 'http://static.wanmujia.com/images/item/51/8fd2b6a905998718475dc7247ef2b9bc/e46a0c76b5b4067acbf2361fba71daeb.jpg',
-    item: '小叶檀梅花条案',
-    price: 368000
-  },
-  {
-    id: 13892,
-    image_url: 'http://static.wanmujia.com/images/item/92/ea1dc35074d70be99f0cc54198b6bf74/3de87dd30c03d45d33175ffdb52ca458.jpg',
-    item: '书架书架书架书架书架书架书架书架',
-    price: 600000
-  },
-];
-
 var CompareBar = React.createClass({
   getInitialState: function() {
     return {
@@ -89,8 +69,8 @@ var CompareBar = React.createClass({
     let _cookieStr =  getCookie("compareItems");
     let _cookieArr = _cookieStr?_cookieStr.split(','):[];
     if(_cookieArr[idNum] == id) {
-      let cookieArr = _cookieArr.splice(idNum , 1);
-      let cookieStr = cookieArr.join(',');
+      _cookieArr.splice(idNum , 1);
+      let cookieStr = _cookieArr.join(',');
       let now = new Date();
       setCookie('compareItems', cookieStr, now.setHours(now.getHours() + 30 * 24) , '/' );
     }
@@ -111,7 +91,6 @@ var CompareBar = React.createClass({
       success: function(itemData) {
         let _data = this.state.data;
         _data[num] = itemData;
-//        _data[num].image_url = itemData.images[0];
         _data[num].id = id;
         this.setState({data: _data});
       }.bind(this)
@@ -199,7 +178,7 @@ var CompareBarItem = React.createClass({
     } else {
       return (
         <div className="cb-item">
-          <a href="#">
+          <a href={"/item/"+this.props.data.id}>
             <div className="pic">
               <img src={this.props.data.image_url} alt={this.props.data.item} />
             </div>
