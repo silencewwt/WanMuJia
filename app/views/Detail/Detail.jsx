@@ -1,7 +1,7 @@
 'use strict';
 
-require('../../assets/pages/compare.html');
-require('./Compare.scss');
+require('../../assets/pages/detail.html');
+require('./Detail.scss');
 require('../../assets/images/favicon.png');
 
 let utils = require('../../lib/utils/utils');
@@ -13,12 +13,11 @@ let Header = require('../../lib/components/Header/Header.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 let LoginPopup = require('../../lib/components/LoginPopup/LoginPopup.jsx');
-
-let CompareTable = require('./views/CompareTable/CompareTable.jsx');
+let DetailBox = require('./views/DetailBox/DetailBox.jsx');
 
 let reqwest = require('reqwest');
 
-let Compare = React.createClass({
+var Detail = React.createClass({
   getInitialState: function() {
     return {
       logined: false,
@@ -46,21 +45,19 @@ let Compare = React.createClass({
           mainNav={[]}
           shrink={true}
         />
-        <CompareTable logined={this.state.logined} toLogin={this.toLogin} />
+        <DetailBox />
         <Footer />
         <FloatBottomTip />
-
         {
           !this.state.logined?
             <LoginPopup ref="loginPopup" />:null
         }
-
       </div>
     );
   }
 });
 
 ReactDOM.render(
-  <Compare />,
+  <Detail />,
   document.getElementById('content')
 );
