@@ -1,25 +1,49 @@
 'use strict';
 
-require('./TopBar.scss');
-
-let React = require('react');
-
 //  ==================================================
 //  Component: TopBar
 //
 //  Props: userInfo => object|null 登录状态
 //
-//  Include:
+//  State:
 //
-//  Use: Header
+//  Dependence: npm::reqwest
+//
+//  Use:
 //
 //  TODO:
 //  ==================================================
 
+require('./TopBar.scss');
+
+let TopBar = React.createClass({
+  getDefaultProps: function() {
+    return {
+      userInfo: null  // 登录状态
+    };
+  },
+  render: function() {
+    return (
+      <div className="top-bar">
+        <div className="container">
+          <UserInfo userInfo={this.props.userInfo} />
+          <SiteInfo userInfo={this.props.userInfo} />
+        </div>
+      </div>
+    );
+  }
+});
+
 let LoginedUserInfo = React.createClass({
   handleLogout: function(e) {
     e.preventDefault();
-
+    Ajax({
+      url: '/logout',
+      method: 'get',
+      success: function (res) {
+        window.location.reload();
+      }
+    })
     console.log('logout');
   },
   render: function() {
@@ -97,7 +121,7 @@ let SiteInfo = React.createClass({
       <div className="site-info">
         <span className="fav">
           <a
-            href="/profile?favorite"
+            href="/profile#favorite"
             onClick={this.checkLoginStatus}
           >
             收藏夹
@@ -105,7 +129,7 @@ let SiteInfo = React.createClass({
         </span>
         <span className="my">
           <a
-            href="/profile?my"
+            href="/profile#my"
             onClick={this.checkLoginStatus}
           >
             我的万木家
@@ -120,24 +144,6 @@ let SiteInfo = React.createClass({
         <span className="tel">
           服务电话：400 0117 440
         </span>
-      </div>
-    );
-  }
-});
-
-let TopBar = React.createClass({
-  getDefaultProps: function() {
-    return {
-      userInfo: null  // 登录状态
-    };
-  },
-  render: function() {
-    return (
-      <div className="top-bar">
-        <div className="container">
-          <UserInfo userInfo={this.props.userInfo} />
-          <SiteInfo userInfo={this.props.userInfo} />
-        </div>
       </div>
     );
   }
