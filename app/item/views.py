@@ -180,6 +180,7 @@ def detail(item_id):
         image = item.images.first()
         image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
         item_dict = {
+            'id': item.id,
             'item': item.item,
             'price': item.price,
             'second_material': item.second_material,

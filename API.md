@@ -449,7 +449,9 @@
     + 如果format == json, 返回json, 否则为html
 + **return**
   + format == json
-    + `{"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": "", "brand": ""}`
+    + `{"id": "", "item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": "", "brand": ""}`
+    + **id**
+      + 商品id
     + **item**
       + 商品名称
     + **price**
