@@ -4,8 +4,8 @@ require("./CityPickerWithTab.scss");
 
 let React = require("react");
 let ReactDOM = require('react-dom');
-let addressData = require("../../../../assets/data/addressData.json");
-let cookieOperation = require("../../../utils/cookie.js");
+let addressData = require("../../../../../assets/data/addressData.json");
+let cookieOperation = require("../../../../utils/cookie.js");
 
 // props : callback -- return a object of address
 var CityPickerWithTab = React.createClass({

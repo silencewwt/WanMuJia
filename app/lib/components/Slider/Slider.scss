@@ -1,3 +1,9 @@
+$page-width: 1200px;
+
+$main-color: #833e00;
+$main-nav-width: 239px;
+
+$slider-height: 300px;
 
 $slider-ctrl-color: rgba(#fff, 0.2);
 $slider-ctrl-active-color: $main-color;
@@ -6,15 +12,6 @@ $slider-ctrl-active-color: $main-color;
   height: $slider-height;
 
   & > .container {
-    &:before {
-      content: "";
-      position: absolute;
-      top: -2px;
-      right: 0;
-      width: $page-width - $main-nav-width;
-      height: 2px;
-      background-color: $main-color;
-    }
 
     .am-slider {
       margin: 0;

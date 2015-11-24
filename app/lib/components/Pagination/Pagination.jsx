@@ -1,82 +1,69 @@
 'use strict'
 
 //  ==================================================
-//  Component: ProgressBar
+//  Component: Pagination
 //
-//  Include: PaginationBtn
+//  Props: pages => integer 总页数
+//
+//  Theme: light dark
 //
 //  TODO:
 //  ==================================================
 
-/* PaginationBtn */
-var PaginationBtn = React.createClass({
-  getDefaultProps: function() {
-    return {
-      text: 1,
-      type: "num"
-    };
+require('./Pagination.scss');
+
+var Pagination = React.createClass({
+  propTypes: {
+    pages: React.PropTypes.number
   },
-  render: function() {
-    var text = (this.props.type === 'dot') ? '...' : this.props.text;
-    var itemClass = this.props.active
-      ? "item active"
-      : "item";
-    if(this.props.type !== 'num') {
-      itemClass += (" page " + this.props.type);
-    }
-    if(this.props.disabled) {
-      itemClass += ' disabled';
-    }
-    return (
-      <li className={itemClass} onClick={this.props.changePage}>
-        <a>{text}</a>
-      </li>
-    );
-  }
-});
-
-/* Pagination Overview */
-var PagiOverview = React.createClass({
-  render: function() {
-    return (
-      <div className="overview">共 {this.props.pages} 页，</div>
-    );
-  }
-});
-
-/* Pagination QuickGo */
-var PagiQuickGo = React.createClass({
   getInitialState: function() {
     return {
-      pageInput: null
+      activePage: this.props.activePage
     };
   },
-  inputChange: function(e) {
-    this.setState({
-      pageInput: e.target.value
-    });
-  },
-  quickGo: function() {
-    if(this.state.pageInput) {
-      var nextPage = +this.state.pageInput;
-      nextPage = nextPage < 1 ? 1 : nextPage;
-      nextPage = nextPage > this.props.pages ? this.props.pages : nextPage;
-      this.props.setActivePage(nextPage)
+  getDefaultProps: function() {
+    return {
+      activePage: 1, // 激活页初始值
+      first: null, // 首页 null || string
+      prev: "上一页", // 上一页 null || string
+      basePages: 2, // first prev base ... mid ... next last
+      midPages: 5, // first prev base ... mid ... next last
+      ellipsis: true, // 省略号 boolen
+      next: "下一页", // 下一页 null || string
+      last: null, // 末页 null || string
+      theme: "light", // 主题
+      quickGo: false, // 概览和快速切换 boolen
+      selected: function(page) { // 页码切换时回调
+        console.log('当前页：' + page);
+      }
     }
   },
+  componentWillReceiveProps: function(nextProps) {
+    if(nextProps.activePage !== this.props.activePage) {
+      this.setActivePage(nextProps.activePage);
+    }
+  },
+  setActivePage: function(page) {
+    this.setState({
+      activePage: page
+    });
+  },
   render: function() {
+    var pagiClass = (this.props.theme === 'light') ? 'pagination' : 'pagination ' + this.props.theme;
     return (
-      <div className="quick-go">
-        <span>到第</span>
-        <input className="go-page" type="number" min="1" max={this.props.pages} onChange={this.inputChange} />
-        <span>页</span>
-        <button className="go-submit" onClick={this.quickGo}>确认</button>
+      <div className={pagiClass}>
+        <PagiMain
+          {...this.props}
+          activePage={this.state.activePage}
+          setActivePage={this.setActivePage}
+        />
+        {this.props.quickGo ? <PagiOverview pages={this.props.pages} /> : null}
+        {this.props.quickGo ? <PagiQuickGo pages={this.props.pages} setActivePage={this.setActivePage} /> : null}
       </div>
-    );
+  )
   }
 });
 
-/* Pagination Main */
 var PagiMain = React.createClass({
   getInitialState: function() {
     return {
@@ -85,14 +72,14 @@ var PagiMain = React.createClass({
   },
   componentWillReceiveProps: function(nextProps) {
     if(nextProps.activePage !== this.props.activePage || nextProps.pages !== this.props.pages) {
-      var pageItems = this.getPageItems(nextProps.activePage);
+      var pageItems = this.getPageItems(nextProps.activePage, nextProps);
       this.setState({
         pageItems: pageItems
       });
       this.props.selected(nextProps.activePage);
     }
   },
-  handleItemClick: function(type, page) {
+  handleItemClick: function(type, page, pages) {
     if (type === "first") {
       page = 1;
     } else if (type === "prev") {
@@ -108,28 +95,28 @@ var PagiMain = React.createClass({
       this.props.setActivePage(page);
     }
   },
-  getPageItems: function(n) {
+  getPageItems: function(n, nextProps) {
     var list = [];
-    var b = this.props.basePages;
-    var m = this.props.midPages;
-    var p = this.props.pages;
+    var b = nextProps ? nextProps.basePages : this.props.basePages;
+    var m = nextProps ? nextProps.midPages : this.props.midPages;
+    var p = nextProps ? nextProps.pages : this.props.pages;
     if(n <= parseInt(m / 2) + 1) { // 1
       list = this._getSeriesNumber(1, p <= b + m ? p : m);
     } else if((n <= parseInt(m / 2) + 1 + b) || p <= b + m)  { // 1'
       list = this._getSeriesNumber(1, p <= b + m ? p : n + 2);
     } else if((n < p - parseInt(m / 2) - 1)) {  // 2
-      list = this._getSeriesNumber(1, this.props.basePages);
+      list = this._getSeriesNumber(1, nextProps ? nextProps.basePages : this.props.basePages);
       list.push(0);
       list = list.concat(this._getSeriesNumber(n-2, m));
       if(p > m + b + 2) {
         list.push(0);
       }
     } else if(n === p - parseInt(m / 2) - 1) {  // 3
-      list = this._getSeriesNumber(1, this.props.basePages);
+      list = this._getSeriesNumber(1, nextProps ? nextProps.basePages : this.props.basePages);
       list.push(0);
       list = list.concat(this._getSeriesNumber(p - m, m + 1));
     } else {  // 4
-      list = this._getSeriesNumber(1, this.props.basePages);
+      list = this._getSeriesNumber(1, nextProps ? nextProps.basePages : this.props.basePages);
       list.push(0);
       list = list.concat(this._getSeriesNumber(p - m + 1, m));
     }
@@ -177,51 +164,69 @@ var PagiMain = React.createClass({
   }
 });
 
-/* Pagination */
-var Pagination = React.createClass({
-  propTypes: {
-    pages: React.PropTypes.number
-  },
-  getInitialState: function() {
-    return {
-      activePage: this.props.activePage
-    };
-  },
+var PaginationBtn = React.createClass({
   getDefaultProps: function() {
     return {
-      activePage: 1, // 激活页初始值
-      first: null, // 首页 null || string
-      prev: "上一页", // 上一页 null || string
-      basePages: 2, // first prev base ... mid ... next last
-      midPages: 5, // first prev base ... mid ... next last
-      ellipsis: true, // 省略号 boolen
-      next: "下一页", // 下一页 null || string
-      last: null, // 末页 null || string
-      theme: "light", // 主题
-      quickGo: false, // 概览和快速切换 boolen
-      selected: function(page) { // 页码切换时回调
-        console.log(page);
-      }
-    }
-  },
-  componentWillReceiveProps: function(nextProps) {
-    if(nextProps.activePage !== this.props.activePage) {
-      this.setActivePage(nextProps.activePage);
-    }
-  },
-  setActivePage: function(page) {
-    this.setState({
-      activePage: page
-    });
+      text: 1,
+      type: "num"
+    };
   },
   render: function() {
-    var pagiClass = (this.props.theme === 'light') ? 'pagination' : 'pagination ' + this.props.theme;
+    var text = (this.props.type === 'dot') ? '...' : this.props.text;
+    var itemClass = this.props.active
+      ? "item active"
+      : "item";
+    if(this.props.type !== 'num') {
+      itemClass += (" page " + this.props.type);
+    }
+    if(this.props.disabled) {
+      itemClass += ' disabled';
+    }
     return (
-      <div className={pagiClass}>
-        <PagiMain {...this.props} activePage={this.state.activePage} setActivePage={this.setActivePage} />
-        {this.props.quickGo ? <PagiOverview pages={this.props.pages} /> : null}
-        {this.props.quickGo ? <PagiQuickGo pages={this.props.pages} setActivePage={this.setActivePage} /> : null}
-      </div>
-  )
+      <li className={itemClass} onClick={this.props.changePage}>
+        <a>{text}</a>
+      </li>
+    );
   }
 });
+
+var PagiOverview = React.createClass({
+  render: function() {
+    return (
+      <div className="overview">共 {this.props.pages} 页，</div>
+    );
+  }
+});
+
+var PagiQuickGo = React.createClass({
+  getInitialState: function() {
+    return {
+      pageInput: null
+    };
+  },
+  inputChange: function(e) {
+    this.setState({
+      pageInput: e.target.value
+    });
+  },
+  quickGo: function() {
+    if(this.state.pageInput) {
+      var nextPage = +this.state.pageInput;
+      nextPage = nextPage < 1 ? 1 : nextPage;
+      nextPage = nextPage > this.props.pages ? this.props.pages : nextPage;
+      this.props.setActivePage(nextPage)
+    }
+  },
+  render: function() {
+    return (
+      <div className="quick-go">
+        <span>到第</span>
+        <input className="go-page" type="number" min="1" max={this.props.pages} onChange={this.inputChange} />
+        <span>页</span>
+        <button className="go-submit" onClick={this.quickGo}>确认</button>
+      </div>
+    );
+  }
+});
+
+module.exports = Pagination;
