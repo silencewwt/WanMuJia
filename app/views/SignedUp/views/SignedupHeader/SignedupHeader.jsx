@@ -1,6 +1,6 @@
 'use strict';
 
-require('./SignedupHeader.scss');
+require('./SignedUpHeader.scss');
 let React = require('react');
 
 var SignedupHeader = React.createClass({
