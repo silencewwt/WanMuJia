@@ -1,0 +1,58 @@
+'use strict';
+
+require('../../assets/pages/compare.html');
+require('./Compare.scss');
+require('../../assets/images/favicon.png');
+
+let utils = require('../../lib/utils/utils');
+
+let React = require('react');
+let ReactDOM = require('react-dom');
+
+let Header = require('../../lib/components/Header/Header.jsx');
+let Footer = require('../../lib/components/Footer/Footer.jsx');
+let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
+
+let CompareTable = require('./views/CompareTable/CompareTable.jsx');
+
+let reqwest = require('reqwest');
+
+let Compare = React.createClass({
+  getInitialState: function() {
+    return {
+      logined: false,
+    };
+  },
+  componentDidMount: function() {
+    reqwest({
+      url: "",
+      method: "get",
+      success: function(resp) {
+        if(resp.logined) {
+          this.setState({logined: true});
+        }
+      }.bind(this)
+    });
+  },
+  toLogin: function() {
+    alert('...');
+  },
+  render: function() {
+    return (
+      <div>
+        <Header
+          mainNav={[]}
+          shrink={true}
+        />
+      <CompareTable logined={this.state.logined} toLogin={this.toLogin} />
+        <Footer />
+        <FloatBottomTip />
+      </div>
+    );
+  }
+});
+
+ReactDOM.render(
+  <Compare />,
+  document.getElementById('content')
+);
