@@ -4,7 +4,6 @@ require('../../assets/pages/signed_up.html');
 require('./SignedUp.scss');
 require('../../assets/images/favicon.png');
 
-
 let React = require('react');
 let ReactDOM = require('react-dom');
 let utils = require('../../lib/utils/utils');
