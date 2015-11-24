@@ -137,7 +137,7 @@
   + item: item id, 仅POST, DELETE方式需要
 + **return**
   + GET
-    + `{"collections": [{"item": "", "price": "", "item_id": "", "deleted": "", "image_url": ""}], "amount": "", "page": "", "pages": ""}`
+    + `{"collections": [{"item": "", "price": "", "item_id": "", "deleted": "", "image_url": "", "is_suite": ""}], "amount": "", "page": "", "pages": ""}`
     + **amount**
       + 收藏总数
     + **page**
