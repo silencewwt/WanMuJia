@@ -446,10 +446,14 @@
   + GET
 + **parameters**
   + format
-    + 如果format == json, 返回json, 否则为html
+    + 若format != json, 返回html
+    + 若format == json && action == detail, 返回商品详情
+    + 若format == json && action != detail, 返回商品对比详情
 + **return**
-  + format == json
-    + `{"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": "", "brand": ""}`
+  + format == json && action != detail
+    + `{"id": "", "item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": "", "brand": ""}`
+    + **id**
+      + 商品id
     + **item**
       + 商品名称
     + **price**
@@ -458,7 +462,7 @@
       + 二级材料
     + **category**
       + 商品分类
-    + **second_scene**
+    + **scene**
       + 二级场景分类
     + **outside_sand**
       + 外表面打磨砂纸
@@ -484,130 +488,180 @@
       + 图片url
     + **brand**
       + 品牌
-+ item object(**单件**)
-  + id
-  + vendor
-    + id
-      + vendor id
-  	+ brand
-  	  + 品牌名
-  + item
-    + 商品名
-  + price
-    + 指导价格
-  + length
-    + 长
-  + width
-    + 宽
-  + height
-    + 高
-  + size()
-    + 长 * 宽 * 高
-  + area
-    + 适用面积
-  + second_material
-    + 材料
-  + category
-    + 分类
-  + second_scene
-    + 场景
-  + stove
-    + 烘干工艺
-  + outside_sand
-    + 外表面打磨砂纸
-  + inside_sand
-    + 内表面打磨砂纸
-  + paint
-    + 涂饰工艺
-  + decoration
-    + 装饰工艺
-  + style
-    + 风格
-  + story
-    + 商品寓意
-  + images
-    + 商品图片(使用for遍历)
-  + is_suite
-    + value = False
-  + is_component
-    + value = False
- + item object(**套件**)
-   + id
-   + vendor
-     + id
-     + brand
-   + item
-     + 商品名称
-   + area
-     + 适用面积
-   + price
-     + 指导价格
-   + second_material
-     + 材料
-   + second_scene
-     + 场景
-   + style
-     + 风格
-   + outside_sand
-     + 外表面砂纸
-   + inside_sand
-     + 内表面砂纸
-   + stove
-     + 烘干工艺
-   + story
-     + 寓意
-   + amount
-     + 该套件中所有组件数量和
-   + images
-     + 套件图片(使用for遍历)
-   + components
-     + 套件中的组件(使用for遍历)
-   + is_suite
-     + value = True
-   + is_component
-     + value = False
- + item object(**组件**)
-   + id
-   + vendor
-     + id
-     + brand
-   + item
-     + 组件名称
-   + length
-     + 长
-   + width
-     + 宽
-   + height
-     + 高
-   + size()
-     + 长 * 宽 * 高
-   + area
-     + 适用面积
-   + category
-     + 组件分类
-   + carve
-     + 雕刻工艺
-   + tenon
-     + 榫卯结构
-   + paint
-     + 涂饰工艺
-   + decoration
-     + 装饰工艺
-   + amount
-     + 该组件的数量
-   + is_suite
-     + value = False
-   + is_component
-     + value = True
+    + **is_suite**
+      + value = False
+  + format == json && action == detail
+    + item object(**单件**)
+      + id
+      + vendor_id
+        厂家 id
+      + brand
+        + 品牌名
+      + item
+        + 商品名
+      + price
+        + 指导价格
+      + size
+        + 长 * 宽 * 高
+      + area
+        + 适用面积
+      + second_material
+        + 材料
+      + category
+        + 分类
+      + scene
+        + 场景
+      + stove
+        + 烘干工艺
+      + outside_sand
+        + 外表面打磨砂纸
+      + inside_sand
+        + 内表面打磨砂纸
+      + paint
+        + 涂饰工艺
+      + decoration
+        + 装饰工艺
+      + style
+        + 风格
+      + images
+        + 商品图片
+      + is_suite
+        + value = False
+      + is_component
+        + value = False
+    + item object(**套件**)
+      + id
+      + vendor_id
+        + 厂家id
+      + brand
+        + 商品品牌
+      + item
+        + 商品名称
+      + area
+        + 适用面积
+      + price
+        + 指导价格
+      + second_material
+        + 材料
+      + scene
+        + 场景
+      + style
+        + 风格
+      + outside_sand
+        + 外表面砂纸
+      + inside_sand
+        + 内表面砂纸
+      + stove
+        + 烘干工艺
+      + amount
+        + 该套件中所有组件数量和
+      + images
+        + 套件图片
+      + components
+        + 套件中的组件
+      + is_suite
+        + value = True
+    + item object(**组件**)
+      + item
+        + 组件名称
+      + size
+        + 长 * 宽 * 高
+      + area
+        + 适用面积
+      + category
+        + 组件分类
+      + carve
+        + 雕刻工艺
+      + tenon
+        + 榫卯结构
+      + paint
+        + 涂饰工艺
+      + decoration
+        + 装饰工艺
+      + amount
+        + 该组件的数量
+      + is_component
+        + value = True
 
-### item distributors
-+ **URL**
-  + /item/\<int:item_id\>/distributors
-+ **method**
-  + GET
-+ **return**
-  + json
-  + `{"distributors": [""]}`
+```js
+{
+    "item": {
+        "collected": "",  // true or false
+        
+        // 单件
+        "id": "",
+        "item": "",
+        "vendor_id": "",
+        "brand": "",
+        "price": "",
+        "second_material": "",
+        "category": "",
+        "scene": "",
+        "style": "",
+        "outside_sand": "",
+        "inside_sand": "",
+        "size": "",
+        "area": "",
+        "stove": "",
+        "paint": "",
+        "decoration": "",
+        "carve": ["", ""],
+        "tenon": ["", ""],  // 榫卯结构为选填, 可能为[]
+        "images": ["", ""],
+        "is_suite": false,
+        
+        // 套件
+        "id": "",
+        "item": "",
+        "vendor_id": "",
+        "brand": "",
+        "price": "",
+        "second_material": "",
+        "scene": "",
+        "style": "",
+        "outside_sand": "",
+        "inside_sand": "",
+        "area": "",
+        "stove": "",
+        "amount": "",
+        "images": ["", ""],
+        "is_suite": true,
+        "components": [
+            {
+                "item": "",
+                "category": "",
+                "area": "",
+                "size": "",
+                "paint": "",
+                "decoration": "",
+                "carve": ["", ""],
+                "tenon": ["", ""],  // 榫卯结构为选填, 可能为[]
+                "amount": "",
+                "is_component": true
+            },
+        ]
+    },
+    "distributors": {
+        "id1": {
+            "area": "",
+            "children": {
+                "id2": {
+                    "area": "",
+                    "children": {
+                        "id3": {
+                            "area": "",
+                            "distributors": {
+                                "id5": "",
+                                "id6": ""
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
 
 ## Distributor
 ### distributor register
@@ -856,7 +910,7 @@
     + 商品分类id
     + type = text
     + required
-  + **second_scene_id**
+  + **scene_id**
     + 二级场景id
     + type = text
     + required
