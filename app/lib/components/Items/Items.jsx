@@ -1,18 +1,88 @@
 'use strict';
 
-let React = require('react');
+require('./Items.scss');
 
 //  ==================================================
 //  Component: Items
 //
-//  Props: items theme guide
+//  Props: items => array 商品列表
+//         theme => enum(normal, tight) 主题
+//         itemTipClick => array ItemTip 的回调
 //
-//  Include: Item ItemBadge ItemImg ItemInfo ItemTip
-//
-//  Use: Home Search
+//  State:
 //
 //  TODO:
 //  ==================================================
+
+var Items = React.createClass({
+  getDefaultProps: function() {
+    return {
+      theme: 'normal',  // 风格
+      itemTipClick: [ // theme 为 tight 时 ItemTip 的回调
+        function(id) {
+          console.log(id);
+        },
+        function(id) {
+          console.log(id);
+        }
+      ]
+    }
+  },
+  render: function() {
+    var flagStyle = {
+      backgroundColor: this.props.color
+    };
+    return (
+      <div className={'items ' + this.props.theme}>
+        {
+          this.props.theme === 'tight' ?
+          <div className="items-flag" style={flagStyle}></div> :
+          null
+        }
+        {this.props.items.map(function(item, i) {
+          return (
+            <Item
+              item={item}
+              key={i}
+              theme={this.props.theme}
+              itemTipClick={this.props.itemTipClick}
+            />
+          );
+        }.bind(this))}
+      </div>
+    );
+  }
+});
+
+var Item = React.createClass({
+  render: function() {
+    return (
+      <div className="item">
+        {
+          // <ItemBadge  />
+        }
+        <ItemImg
+          id={this.props.item.id}
+          imgUrl={this.props.item.image_url}
+          item={this.props.item.item}
+        />
+        <ItemInfo
+          id={this.props.item.id}
+          item={this.props.item.item}
+          price={this.props.item.price}
+        />
+        {
+          this.props.theme === 'normal' ?
+          <ItemTip
+            id={this.props.item.id}
+            itemTipClick={this.props.itemTipClick}
+          /> :
+          null
+        }
+      </div>
+    );
+  }
+});
 
 var ItemBadge = React.createClass({
   getDefaultProps: function() {
@@ -50,7 +120,7 @@ var ItemInfo = React.createClass({
     } else if(price / 1000 >= 1) {
       return (price / 1000).toFixed(2) + '千';
     } else {
-      return price.toFixed(2);
+      return price.toFixed(2) + '元';
     }
   },
   render: function() {
@@ -70,67 +140,29 @@ var ItemInfo = React.createClass({
 });
 
 var ItemTip = React.createClass({
+  handleTipClick: function(i, id, e) {
+    e.preventDefault();
+    this.props.itemTipClick[i](this.props.id);
+  },
   render: function() {
     return (
       <div className="item-tip">
         <span className="go-expe">
-          <a href={'/item/' + this.props.id + '?open'}>去体验馆</a>
+          <a
+            href='#'
+            onClick={this.handleTipClick.bind(null, 0, this.props.id)}
+          >
+            去体验馆
+          </a>
         </span>
         <span className="go-comp">
-          <a href="#">对比</a>
+          <a
+            href="#"
+            onClick={this.handleTipClick.bind(null, 1, this.props.id)}
+          >
+            对比
+          </a>
         </span>
-      </div>
-    );
-  }
-});
-
-var Item = React.createClass({
-  render: function() {
-    return (
-      <div className="item">
-        {
-          // <ItemBadge  />
-        }
-        <ItemImg
-          id={this.props.item.id}
-          imgUrl={this.props.item.image_url}
-          item={this.props.item.item}
-        />
-        <ItemInfo
-          id={this.props.item.id}
-          item={this.props.item.item}
-          price={this.props.item.price}
-        />
-        {
-          this.props.theme === 'normal' ?
-          <ItemTip id={this.props.item.id} /> :
-          null
-        }
-      </div>
-    );
-  }
-});
-
-var Items = React.createClass({
-  getDefaultProps: function() {
-    return {
-      theme: 'normal'
-    }
-  },
-  render: function() {
-    var flagStyle = {
-      backgroundColor: this.props.color
-    };
-    return (
-      <div className={'items ' + this.props.theme}>
-        {
-          this.props.theme === 'tight' ?
-          <div className="items-flag" style={flagStyle}></div> :
-          null
-        }
-        {this.props.items.map(function(item, i) {
-          return <Item item={item} key={i} theme={this.props.theme} />;
-        }.bind(this))}
       </div>
     );
   }
