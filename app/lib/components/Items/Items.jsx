@@ -1,6 +1,6 @@
 'use strict';
 
-let React = require('react');
+require('./Items.scss');
 
 //  ==================================================
 //  Component: Items
