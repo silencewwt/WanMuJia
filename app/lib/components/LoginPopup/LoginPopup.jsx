@@ -7,7 +7,7 @@ let React = require("react");
 let LoginIn = require("../LoginIn/LoginIn.jsx");
 
 /**
-* prop: callback return login msg back , show: true/false 
+* prop: callback return login msg back , show: true/false
 *
 **/
 
@@ -20,10 +20,10 @@ var LoginPopup = React.createClass({
     };
   },
   componentWillReceiveProps: function(props) {
-    if(this.props.show != props.show) {
-      if(!this.state.show) {
+    if (this.props.show != props.show) {
+      if (!this.state.show) {
         this.show();
-      }else {
+      } else {
         this.hide();
       }
     }
