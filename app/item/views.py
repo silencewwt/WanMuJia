@@ -174,42 +174,46 @@ def detail(item_id):
     if item.is_deleted or item.is_component:
         abort(404)
     format = request.args.get('format', '', type=str)
+    action = request.args.get('action', 'compare', type=str)
+    print(getattr(item, 'item'))
     if format == 'json':
-        if item.is_suite or item.is_component:
-            return '套件商品无法对比'
-        image = item.images.first()
-        image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
-        item_dict = {
-            'id': item.id,
-            'item': item.item,
-            'price': item.price,
-            'second_material': item.second_material,
-            'category': item.category,
-            'scene': item.scene,
-            'outside_sand': item.outside_sand,
-            'inside_sand': item.inside_sand,
-            'size': item.size(),
-            'area': item.area if item.area else '——',
-            'stove': item.stove,
-            'paint': item.paint,
-            'decoration': item.decoration,
-            'story': item.story,
-            'image_url': image_url,
-            'carve': item.carve,
-            'tenon': item.tenon,
-            'brand': item.vendor.brand
-        }
+        if action == 'detail':
+            item_dict = {'item': item.dumps()}
+            if item.id in statisitc.items:
+                item_dict['distributors'] = statisitc.items[item.id]
+            else:
+                item_dict['distributors'] = {}
+            if current_user.is_authenticated and current_user.id_prefix == 'u':
+                item_dict['item']['collected'] = current_user.item_collected(item.id)
+            else:
+                item_dict['item']['collected'] = False
+        else:
+            if item.is_suite:
+                return '套件商品无法对比'
+            image = item.images.first()
+            image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
+            item_dict = {
+                'id': item.id,
+                'item': item.item,
+                'price': item.price,
+                'second_material': item.second_material,
+                'category': item.category,
+                'scene': item.scene,
+                'outside_sand': item.outside_sand,
+                'inside_sand': item.inside_sand,
+                'size': item.size,
+                'area': item.area if item.area else '——',
+                'stove': item.stove,
+                'paint': item.paint,
+                'decoration': item.decoration,
+                'story': item.story,
+                'image_url': image_url,
+                'carve': item.carve,
+                'tenon': item.tenon,
+                'brand': item.vendor.brand
+            }
         return jsonify(item_dict)
-    return render_template("user/detail.html", item=item, user=current_user, form=LoginForm())
-
-
-@item_blueprint.route('/<int:item_id>/distributors')
-def distributors(item_id):
-    item = Item.query.get_or_404(item_id)
-    if item.is_deleted or item.is_component:
-        abort(404)
-    distributor_id = {'distributors': [distributor.id for distributor in item.in_stock_distributors()]}
-    return jsonify(distributor_id)
+    return render_template("user/detail.html")
 
 
 @item_blueprint.route("/compare")

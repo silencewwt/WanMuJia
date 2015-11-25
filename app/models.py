@@ -665,6 +665,30 @@ class Item(db.Model, Property):
             components = self.components
             self.amount = sum([component.amount for component in components])
 
+    def dumps(self):
+        data = {}
+        if not self.is_suite and not self.is_component:  # single
+            attrs = ('id', 'item', 'price', 'second_material', 'category', 'scene', 'style', 'outside_sand', 'inside_sand', 'size', 'area', 'stove', 'paint', 'decoration', 'carve', 'tenon', 'vendor_id', 'is_suite')
+            for attr in attrs:
+                data[attr] = getattr(self, attr)
+            data['brand'] = self.vendor.brand
+            data['images'] = [image.url for image in self.images]
+        elif self.is_suite:
+            attrs = ('id', 'item', 'price', 'second_material', 'scene', 'style', 'outside_sand', 'inside_sand', 'area', 'stove', 'amount', 'vendor_id', 'is_suite')
+            for attr in attrs:
+                data[attr] = getattr(self, attr)
+            component_dumps = []
+            for component in self.components:
+                component_dumps.append(component.dumps())
+            data['components'] = component_dumps
+            data['brand'] = self.vendor.brand
+            data['images'] = [image.url for image in self.images]
+        else:  # component
+            attrs = ('item', 'area', 'size', 'category', 'carve', 'tenon', 'paint', 'decoration', 'amount', 'is_component')
+            for attr in attrs:
+                data[attr] = getattr(self, attr)
+        return data
+
     @staticmethod
     def images_dump():
         for item in Item.query.filter_by(is_deleted=False):
