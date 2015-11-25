@@ -595,6 +595,7 @@ class Item(db.Model, Property):
                                                             Distributor.is_revoked == False)
         return distributors
 
+    @property
     def size(self):
         if self.length and self.width and self.height:
             return '%s * %s * %s' % (self.length, self.width, self.height)
@@ -664,6 +665,30 @@ class Item(db.Model, Property):
             components = self.components
             self.amount = sum([component.amount for component in components])
 
+    def dumps(self):
+        data = {}
+        if not self.is_suite and not self.is_component:  # single
+            attrs = ('id', 'item', 'price', 'second_material', 'category', 'scene', 'style', 'outside_sand', 'inside_sand', 'size', 'area', 'stove', 'paint', 'decoration', 'carve', 'tenon', 'vendor_id', 'is_suite')
+            for attr in attrs:
+                data[attr] = getattr(self, attr)
+            data['brand'] = self.vendor.brand
+            data['images'] = [image.url for image in self.images]
+        elif self.is_suite:
+            attrs = ('id', 'item', 'price', 'second_material', 'scene', 'style', 'outside_sand', 'inside_sand', 'area', 'stove', 'amount', 'vendor_id', 'is_suite')
+            for attr in attrs:
+                data[attr] = getattr(self, attr)
+            component_dumps = []
+            for component in self.components:
+                component_dumps.append(component.dumps())
+            data['components'] = component_dumps
+            data['brand'] = self.vendor.brand
+            data['images'] = [image.url for image in self.images]
+        else:  # component
+            attrs = ('item', 'area', 'size', 'category', 'carve', 'tenon', 'paint', 'decoration', 'amount', 'is_component')
+            for attr in attrs:
+                data[attr] = getattr(self, attr)
+        return data
+
     @staticmethod
     def images_dump():
         for item in Item.query.filter_by(is_deleted=False):
@@ -681,7 +706,7 @@ class Item(db.Model, Property):
                 shutil.copyfile(src_path, dst_path)
             story_path = os.path.join(item_dir, '商品信息.txt')
             with open(story_path, 'w', encoding='utf8') as f:
-                f.writelines(['寓意: %s\n' % item.story, '尺寸(cm): %s\n' % item.size(), '适用面积(m^2): %s\n' % (item.area if item.area else '——')])
+                f.writelines(['寓意: %s\n' % item.story, '尺寸(cm): %s\n' % item.size, '适用面积(m^2): %s\n' % (item.area if item.area else '——')])
 
     @staticmethod
     def generate_fake(num=10):
@@ -1098,6 +1123,20 @@ class Area(db.Model):
         if self.level == 2:
             return self
         return self.father()
+
+    def experience_dict(self, distributor_id):
+        if self.level == 3:
+            third_area = self
+            second_area = self.father()
+            first_area = second_area.father()
+        else:
+            third_area = second_area = self
+            first_area = second_area.father()
+        return {first_area.cn_id: {'area': first_area.area, 'children': {
+            second_area.cn_id: {'area': second_area.area, 'children': {
+                third_area.cn_id: {'area': third_area.area, 'distributors': [distributor_id]}
+            }}
+        }}}
 
 
 class Province(db.Model):
