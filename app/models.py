@@ -1099,6 +1099,20 @@ class Area(db.Model):
             return self
         return self.father()
 
+    def experience_dict(self, distributor_id):
+        if self.level == 3:
+            third_area = self
+            second_area = self.father()
+            first_area = second_area.father()
+        else:
+            third_area = second_area = self
+            first_area = second_area.father()
+        return {first_area.cn_id: {'area': first_area.area, 'children': {
+            second_area.cn_id: {'area': second_area.area, 'children': {
+                third_area.cn_id: {'area': third_area.area, 'distributors': [distributor_id]}
+            }}
+        }}}
+
 
 class Province(db.Model):
     __tablename__ = 'provinces'
