@@ -275,7 +275,7 @@ $active-color: #6e3800;
           width: 100%;
           height: 100%;
           line-height: $item-tip-height;
-          background: $item-tip-back-color url('/app/lib/assets/images/item-tip.png') no-repeat;
+          background: $item-tip-back-color url('/app/assets/images/item-tip.png') no-repeat;
           font-size: 0;
           transition: background-position 0.3s ease;
         }
