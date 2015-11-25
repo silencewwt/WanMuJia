@@ -1,3 +1,6 @@
+'use strict';
+
+require('./FilterGroup.scss');
 
 //  ==================================================
 //  Component: FilterGroup
@@ -44,7 +47,7 @@ var FilterAction = React.createClass({
       <div className="filter-action">
         <a style={{display: this.props.multiToggleStatus ? 'inline' : 'none'}}
           onClick={this.props.multiToggle} href="#" className="multi-toggle">多选</a>
-        <a onClick={this.props.expandToggle} href="#">
+        <a onClick={this.props.expandToggle} className="expand-toggle" href="#">
           {this.props.expandToggleStatus ? '更多' : '收起'}
         </a>
       </div>
@@ -75,7 +78,7 @@ var FilterStateTag = React.createClass({
             {
               index == values.length - 1 ?
                 null :
-                (<span>&gt;</span>)
+                (<span>&nbsp;&nbsp;&gt;&nbsp;&nbsp;</span>)
             }
           </span>
         );
@@ -102,7 +105,7 @@ var FilterStateTag = React.createClass({
 
     return (
       <div className="filter-tag">
-        <div className="tag-name">{this.props.name + ':'}&nbsp;</div>
+        <div className="tag-name">{this.props.name + ':'}&nbsp;&nbsp;</div>
         <div className="tag-value">
           {tagValueNodes}
         </div>
@@ -274,6 +277,9 @@ var FilterGroup = React.createClass({
       }, {});
     this.setState({defIndex: defs});
   },
+  componentWillReceiveProps: function (nextProps) {
+    this.updateFilterValue(nextProps.filterValues);
+  },
   updateFilterValue: function (values) {
     this.setState({filterValues: values});
   },
@@ -444,3 +450,5 @@ var FilterGroup = React.createClass({
     );
   }
 });
+
+module.exports = FilterGroup;
