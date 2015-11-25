@@ -133,7 +133,7 @@ def items_data_table():
         'item': {'orderable': False, 'data': lambda x: x.item},
         'scene_id': {'orderable': False, 'data': lambda x: x.scene},
         'price': {'orderable': True, 'order_key': Item.price, 'data': lambda x: x.price},
-        'size': {'orderable': False, 'data': lambda x: x.size()}}
+        'size': {'orderable': False, 'data': lambda x: x.size}}
     query = Item.query.filter_by(vendor_id=current_user.id, is_deleted=False, is_component=False)
     data_table_handler = DataTableHandler(params)
     data = data_table_handler.query_params(query)

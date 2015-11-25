@@ -595,6 +595,7 @@ class Item(db.Model, Property):
                                                             Distributor.is_revoked == False)
         return distributors
 
+    @property
     def size(self):
         if self.length and self.width and self.height:
             return '%s * %s * %s' % (self.length, self.width, self.height)
@@ -681,7 +682,7 @@ class Item(db.Model, Property):
                 shutil.copyfile(src_path, dst_path)
             story_path = os.path.join(item_dir, '商品信息.txt')
             with open(story_path, 'w', encoding='utf8') as f:
-                f.writelines(['寓意: %s\n' % item.story, '尺寸(cm): %s\n' % item.size(), '适用面积(m^2): %s\n' % (item.area if item.area else '——')])
+                f.writelines(['寓意: %s\n' % item.story, '尺寸(cm): %s\n' % item.size, '适用面积(m^2): %s\n' % (item.area if item.area else '——')])
 
     @staticmethod
     def generate_fake(num=10):
