@@ -130,7 +130,7 @@ let UnloginedUserInfo = React.createClass({
         </span>
         <span className="reg">
           免费
-          <a className="reg-btn" href="/reg">注册</a>
+          <a className="reg-btn" href="/register">注册</a>
         </span>
       </div>
     );

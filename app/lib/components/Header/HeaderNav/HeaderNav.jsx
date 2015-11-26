@@ -34,16 +34,16 @@ let HeaderNav = React.createClass({
         {
           id: 0,
           title: '首页',
-          link: '/index',
+          link: '/',
           active: true
         }, {
           id: 1,
           title: '家具城',
-          link: '/overview'
+          link: '/furniture'
         }, {
           id: 2,
           title: '品牌馆',
-          link: '/brand'
+          link: '/brands'
         }, {
           id: 3,
           title: '红木百科',
