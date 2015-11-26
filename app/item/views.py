@@ -175,7 +175,6 @@ def detail(item_id):
         abort(404)
     format = request.args.get('format', '', type=str)
     action = request.args.get('action', 'compare', type=str)
-    print(getattr(item, 'item'))
     if format == 'json':
         if action == 'detail':
             item_dict = {'item': item.dumps()}
