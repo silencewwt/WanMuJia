@@ -21,6 +21,7 @@ var Detail = React.createClass({
   getInitialState: function() {
     return {
       logined: false,
+      mobile: "",
     };
   },
   componentDidMount: function() {
@@ -29,7 +30,7 @@ var Detail = React.createClass({
       method: "get",
       success: function(resp) {
         if(resp.logined) {
-          this.setState({logined: true});
+          this.setState({logined: true, mobile: resp.mobile});
         }
       }.bind(this)
     });
@@ -38,6 +39,9 @@ var Detail = React.createClass({
     // 登录
     this.refs.loginPopup.show();
   },
+  addCompare: function(item) {
+    this.refs.floatBottomTip.compareBarAddItem(item);
+  },
   render: function() {
     return (
       <div>
@@ -45,9 +49,13 @@ var Detail = React.createClass({
           mainNav={[]}
           shrink={true}
         />
-        <DetailBox />
+        <DetailBox
+          mobile={this.state.mobile}
+          toLogin={this.toLogin}
+          addCompare={this.addCompare}
+        />
         <Footer />
-        <FloatBottomTip />
+        <FloatBottomTip ref="floatBottomTip" />
         {
           !this.state.logined?
             <LoginPopup ref="loginPopup" />:null

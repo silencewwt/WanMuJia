@@ -30,7 +30,7 @@ var CompareBar = React.createClass({
   // 添加到state.data，存cookie
   addItem: function(item) {
     this.show();
-    if(item.is_suit) {
+    if(item.is_suite) {
       this.setErrTip('套件不可对比，请选择单件商品对比～');
       return false;
     }

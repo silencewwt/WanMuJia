@@ -1,0 +1,84 @@
+.d-content {
+  width: 100%;
+  height: auto;
+  .clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+  .clearfix { display: block; }
+  .tab {
+    width: 100%;
+    height: 49px;
+    background-color: #f0f0f0;
+    font-size: 22px;
+    border: 1px solid #f0f0f0;
+    border-bottom: none;
+
+    .detail-tab,
+    .suite-tab {
+      width: 250px;
+      height: 48px;
+      line-height: 48px;
+      font-size: 22px;
+      float: left;
+      text-align: center;
+      cursor: pointer;
+      color: #666;
+    }
+    .detail-tab.active,
+    .suite-tab.active {
+      background: #fff;
+      color: #333;
+    }
+    .detail-tab.active:hover,
+    .suite-tab.active:hover {
+      cursor: default;
+    }
+  }
+
+  .cont {
+    width: 100%;
+    .cont-detail {
+      width: 100%;
+
+      .attr-box {
+        width: 100%;
+        border: 1px solid #f0f0f0;
+        border-top: none;
+        padding: 30px 60px 0px 60px;
+
+        .i-box {
+          width: 25%;
+          min-height: 50px;
+          padding: 0 10px;
+          font-size: 14px;
+          float: left;
+          color: #666;
+          .title {
+            height: 100%;
+            float: left;
+          }
+          .attr {
+            height: 100%;
+            overflow: hidden;
+          }
+        }
+      }
+
+      .d-imgs {
+        width: 100%;
+        margin-top: 15px;
+        .img {
+          width: 100%;
+          img {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
