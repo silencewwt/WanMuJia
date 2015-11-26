@@ -6,6 +6,7 @@
 //  Props: active => integer 激活的 tab 的索引
 //
 //  State:  active => integer 激活的 tab 的索引
+//          userInfo => object|null 用户登录信息
 //
 //  Dependence: lib::TopBar Profile::Banner Profile::Favorite Profile::Security lib::Footer
 //
@@ -20,6 +21,7 @@ require('./Profile.scss');
 let Ajax = require('reqwest');
 
 let TopBar = require('../../lib/components/TopBar/TopBar.jsx');
+let LoginPopup = require('../../lib/components/LoginPopup/LoginPopup.jsx');
 let Banner = require('./views/Banner/Banner.jsx');
 let Favorite = require('./views/Favorite/Favorite.jsx');
 let Security = require('./views/Security/Security.jsx');
@@ -28,7 +30,8 @@ let Footer = require('../../lib/components/Footer/Footer.jsx');
 let Profile = React.createClass({
   getInitialState: function() {
     return {
-      active: this.props.active || 0 // 激活的 tab 的索引
+      active: this.props.active || 0, // 激活的 tab 的索引
+      userInfo: null // 用户登录信息
     };
   },
   handleTabChange: function(id, e) {  // tab 改变时回调
@@ -36,18 +39,39 @@ let Profile = React.createClass({
       active: id
     });
   },
+  componentDidMount: function() {
+    let _this = this;
+    Ajax({  // 获取个人信息
+      url: '/logined',
+      method: 'get',
+      success: function (res) {
+        if(res.logined) {
+          _this.setState({
+            userInfo: res
+          });
+        }
+      }
+    })
+  },
   render: function() {
     return (
       <div>
-        <TopBar />
+        <TopBar
+          userInfo={this.state.userInfo}
+        />
         <Banner
           active={this.state.active}
           onClick={this.handleTabChange}
         />
+        {
+          this.state.userInfo ?
+          null :
+          <LoginPopup show={true} />
+        }
         <div className="container">
           {
             this.state.active ?
-            <Security /> :
+            <Security userInfo={this.state.userInfo} /> :
             <Favorite />
           }
         </div>

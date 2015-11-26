@@ -5,9 +5,9 @@
 //
 //  Props: userInfo => object|null 登录状态
 //
-//  State:
+//  State:  loginPopupShow => boolean 登录弹窗是否显示
 //
-//  Dependence: npm::reqwest
+//  Dependence:  lib::LoginPopup npm::reqwest
 //
 //  Use:
 //
@@ -15,21 +15,69 @@
 //  ==================================================
 
 require('./TopBar.scss');
+let LoginPopup = require("../LoginPopup/LoginPopup.jsx");
 
 let TopBar = React.createClass({
+  getInitialState: function() {
+    return {
+      userInfo: this.props.userInfo || null,  // 登录状态
+      loginPopupShow: false  // 登录弹窗是否显示
+    };
+  },
   getDefaultProps: function() {
     return {
-      userInfo: null  // 登录状态
+      loginCallback: function(data) { // 登录成功后回调
+        console.log(data);
+      }
     };
+  },
+  componentWillReceiveProps: function(nextProps) {
+    if (this.props.userInfo !== nextProps.userInfo) {
+      this.setUserInfo(nextProps.userInfo);
+    }
+  },
+  setUserInfo: function(userInfo) {
+    this.setState({
+      userInfo: userInfo
+    });
+  },
+  handleNeedLogin: function(e) {
+    e.preventDefault();
+
+    this.refs.refLogin.show();
+    // this.setState({
+    //   loginPopupShow: true
+    // });
   },
   render: function() {
     return (
       <div className="top-bar">
         <div className="container">
-          <UserInfo userInfo={this.props.userInfo} />
-          <SiteInfo userInfo={this.props.userInfo} />
+          <UserInfo
+            userInfo={this.state.userInfo}
+            handleNeedLogin={this.handleNeedLogin}
+          />
+          <SiteInfo
+            userInfo={this.state.userInfo}
+            handleNeedLogin={this.handleNeedLogin}
+          />
         </div>
+        <LoginPopup
+          show={false}
+          ref="refLogin"
+          callback={this.props.loginCallback}
+        />
       </div>
+    );
+  }
+});
+
+let UserInfo = React.createClass({
+  render: function() {
+    return (
+      this.props.userInfo ?
+      <LoginedUserInfo userInfo={this.props.userInfo} /> :
+      <UnloginedUserInfo handleNeedLogin={this.props.handleNeedLogin} />
     );
   }
 });
@@ -44,7 +92,6 @@ let LoginedUserInfo = React.createClass({
         window.location.reload();
       }
     })
-    console.log('logout');
   },
   render: function() {
     return (
@@ -74,23 +121,18 @@ let UnloginedUserInfo = React.createClass({
       <div className="user-info">
         <span className="hello">欢迎来到万木家，</span>
         <span className="login">
-          <a href="/login">请登录</a>
+          <a
+            href="/login"
+            onClick={this.props.handleNeedLogin}
+          >
+            请登录
+          </a>
         </span>
         <span className="reg">
           免费
-          <a className="reg-btn" href="/reg">注册</a>
+          <a className="reg-btn" href="/register">注册</a>
         </span>
       </div>
-    );
-  }
-});
-
-let UserInfo = React.createClass({
-  render: function() {
-    return (
-      this.props.userInfo ?
-      <LoginedUserInfo userInfo={this.props.userInfo} /> :
-      <UnloginedUserInfo />
     );
   }
 });
@@ -112,8 +154,7 @@ let SiteInfo = React.createClass({
   },
   checkLoginStatus: function(e) {
     if(!this.props.userInfo) {
-      console.log('未登录!!!!!');
-      e.preventDefault();
+      this.props.handleNeedLogin(e);
     }
   },
   render: function() {

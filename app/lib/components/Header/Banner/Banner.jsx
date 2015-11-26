@@ -55,6 +55,7 @@ let Search = React.createClass({
             type="text"
             className="am-form-field"
             placeholder="搜索您喜欢的红木产品"
+            defaultValue={this.props.defaultValue}
             onBlur={this.handleSearchBlur}
           />
           <span
@@ -92,7 +93,7 @@ let Banner = React.createClass({
         <div className="container">
           <Logo />
           <CityPickerWithTab callback={this.handleChangeCity} />
-          <Search />
+          <Search defaultValue={this.props.defaultSearchValue}/>
           <Qrcode />
         </div>
       </div>
