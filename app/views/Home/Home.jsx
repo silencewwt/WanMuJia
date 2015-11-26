@@ -6,6 +6,9 @@
 //  Props: mainNav => object 主导航数据
 //         shrink => boolean 主导航是否折叠
 //
+//  State: userInfo => object|null 登录状态
+//         itemGroupData => object 商品组数据
+//
 //  Dependence: ItemGroup Header Slider Footer
 //
 //  TODO:
@@ -24,57 +27,6 @@ let ItemGroup = require('./views/ItemGroup/ItemGroup.jsx');
 let Header = require('../../lib/components/Header/Header.jsx');
 let Slider = require('../../lib/components/Slider/Slider.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
-
-const MOCK_GUIDE = {
-  title: '客厅',
-  img: '',
-  url: '/item/?scene=5',
-  color: '#6e3800'
-};
-
-const MOCK_ITEMS = [
-  {
-    id: 13826,
-    image_url: 'http://static.wanmujia.com/images/item/26/a48932eefa2b4dad3993371075ce494a/df749d2f7c4e6e569c89e84d39a27a70.jpg',
-    item: '二闷橱',
-    price: 168000
-  }, {
-    id: 13851,
-    image_url: 'http://static.wanmujia.com/images/item/51/8fd2b6a905998718475dc7247ef2b9bc/e46a0c76b5b4067acbf2361fba71daeb.jpg',
-    item: '小叶檀梅花条案',
-    price: 368000
-  }, {
-    id: 13892,
-    image_url: 'http://static.wanmujia.com/images/item/92/ea1dc35074d70be99f0cc54198b6bf74/3de87dd30c03d45d33175ffdb52ca458.jpg',
-    item: '书架书架书架书架书架书架书架书架',
-    price: 600000
-  }, {
-    id: 13892,
-    image_url: 'http://static.wanmujia.com/images/item/92/ea1dc35074d70be99f0cc54198b6bf74/3de87dd30c03d45d33175ffdb52ca458.jpg',
-    item: '书架书架书架书架书架书架书架书架',
-    price: 6000
-  }, {
-    id: 13851,
-    image_url: 'http://static.wanmujia.com/images/item/51/8fd2b6a905998718475dc7247ef2b9bc/e46a0c76b5b4067acbf2361fba71daeb.jpg',
-    item: '小叶檀梅花条案',
-    price: 368000
-  }, {
-    id: 13892,
-    image_url: 'http://static.wanmujia.com/images/item/92/ea1dc35074d70be99f0cc54198b6bf74/3de87dd30c03d45d33175ffdb52ca458.jpg',
-    item: '书架书架书架书架书架书架书架书架',
-    price: 6000
-  }, {
-    id: 13851,
-    image_url: 'http://static.wanmujia.com/images/item/51/8fd2b6a905998718475dc7247ef2b9bc/e46a0c76b5b4067acbf2361fba71daeb.jpg',
-    item: '小叶檀梅花条案',
-    price: 368000
-  }, {
-    id: 13851,
-    image_url: 'http://static.wanmujia.com/images/item/51/8fd2b6a905998718475dc7247ef2b9bc/e46a0c76b5b4067acbf2361fba71daeb.jpg',
-    item: '小叶檀梅花条案',
-    price: 368000
-  }
-];
 
 const MOCK_SLIDES = [
   {
@@ -99,7 +51,8 @@ const MOCK_SLIDES = [
 let Home = React.createClass({
   getInitialState: function() {
     return {
-      userInfo: null  // 登录状态
+      userInfo: null,  // 登录状态
+      itemGroupData: {}  // 商品组数据
     };
   },
   componentDidMount: function() {
@@ -115,8 +68,22 @@ let Home = React.createClass({
         }
       }
     })
+    Ajax({  // 获取商品组信息
+      url: '/navbar',
+      method: 'get',
+      success: function (res) {
+        _this.setState({
+          itemGroupData: res
+        });
+      }
+    })
   },
   render: function() {
+    let colors = [
+      '#6e3800',
+      '#5f0077',
+      '#3abfb4'
+    ];
     return (
       <div>
         <Header
@@ -125,19 +92,22 @@ let Home = React.createClass({
         >
           <Slider slides={MOCK_SLIDES} />
         </Header>
-        <ItemGroup
-          guide={MOCK_GUIDE}
-          items={MOCK_ITEMS}
-        />
-        <ItemGroup
-          guide={MOCK_GUIDE}
-          items={MOCK_ITEMS}
-          color="rgb(27, 188, 155)"
-        />
-        <ItemGroup
-          guide={MOCK_GUIDE}
-          items={MOCK_ITEMS}
-        />
+        {Object.keys(this.state.itemGroupData).map((item, i) => {
+          let guide = {
+            title: this.state.itemGroupData[item].scene,
+            img: '',
+            url: '/item/?scene=' + item,
+            color: colors[i]
+          };
+          return (
+            <ItemGroup
+              key={i}
+              guide={guide}
+              items={this.state.itemGroupData[item].items}
+              color={colors[i]}
+            />
+          );
+        })}
         <Footer />
       </div>
     );

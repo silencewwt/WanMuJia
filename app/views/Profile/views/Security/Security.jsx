@@ -3,7 +3,7 @@
 //  ==================================================
 //  Component: Security
 //
-//  Props:
+//  Props:  userInfo => object|null 用户登录信息
 //
 //  State:  SecMain:: active => null|integer 激活的折叠面板
 //                    timeLeft => integer 短信倒计时
