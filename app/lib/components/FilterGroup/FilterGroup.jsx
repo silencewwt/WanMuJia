@@ -59,8 +59,9 @@ let FilterAction = React.createClass({
 let FilterStateTag = React.createClass({
   render: function () {
     let tagValueNodes;
-    let removeTag = function (value, event) {
+    let removeTag = function (value, fromRemoveButton, event) {
       event && event.preventDefault();
+      fromRemoveButton && event.stopPropagation();
       this.props.onTagRemove(value);
     }.bind(this);
     let currStateValues =  Array.isArray(this.props.value) ?
@@ -73,7 +74,7 @@ let FilterStateTag = React.createClass({
           <span key={index}>
             {value.value}&nbsp;
             <span className="tag-remove">
-              <a onClick={removeTag.bind(this, value)} href="#">&times;</a>
+              <a onClick={removeTag.bind(this, value, true)} href="#">&times;</a>
             </span>
             {
               index == values.length - 1 ?
@@ -89,7 +90,7 @@ let FilterStateTag = React.createClass({
           <span key={index}>
             {value.value}&nbsp;
             <span className="tag-remove">
-              <a onClick={removeTag.bind(this, value)} href="#">&times;</a>
+              <a onClick={removeTag.bind(this, value, true)} href="#">&times;</a>
             </span>
           </span>
         );
@@ -104,7 +105,7 @@ let FilterStateTag = React.createClass({
     }.bind(this));
 
     return (
-      <div className="filter-tag">
+      <div className="filter-tag" onClick={removeTag.bind(this, currStateValues[0], false)}>
         <div className="tag-name">{this.props.name + ':'}&nbsp;&nbsp;</div>
         <div className="tag-value">
           {tagValueNodes}
@@ -265,6 +266,7 @@ let FilterGroup = React.createClass({
   },
   getDefaultProps: function () {
     return {
+      filterDefs: [],
       filterValues: {},
       onStateChange: function () {}
     };

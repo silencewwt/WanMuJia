@@ -2,6 +2,7 @@
 $fg-font-size: 14px;
 $fg-bgc: #f0f0f0;
 $fg-border-color: #ccc;
+$fg-hover-color: #833e00;
 
 // filter-state
 $filter-state-vertical-spacing: 10px;
@@ -95,6 +96,9 @@ $confirm-button-color: #221715;
 
 .cu-filter-group {
   font-size: $fg-font-size;
+  a:hover {
+    color: $fg-hover-color !important;
+  }
 
   .filter-state {
     @extend .clearfix;
@@ -117,6 +121,7 @@ $confirm-button-color: #221715;
   .filter-tags .filter-tag {
     box-sizing: content-box;
     display: inline-block;
+    cursor: pointer !important;
     margin-right: $filter-tag-spacing;
     margin-bottom: $filter-state-vertical-spacing;
     padding: 0 $filter-tag-horizontal-padding;
@@ -134,6 +139,10 @@ $confirm-button-color: #221715;
     }
     .tag-value, .tag-remove a {
       color: $filter-tag-value-color;
+    }
+
+    &:hover {
+      border-color: $fg-hover-color;
     }
   }
 
