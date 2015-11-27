@@ -1,0 +1,131 @@
+// base
+$sb-font-size: 14px;
+$sb-bgc: #f0f0f0;
+$sb-border-color: #ccc;
+$sb-link-hover-color: #833e00;
+
+// sort bar
+$sortbar-bgc: $sb-bgc;
+$sortbar-divede-width: 1px;
+$sortbar-divide-border: $sortbar-divede-width solid $sb-border-color;
+$sortbar-expanded-divide-border: $sortbar-divede-width solid #e4e4e4;
+$sortbar-horizontal-padding: 0;
+
+// sortbar name
+$sortbar-name-min-width: 110px;
+$sortbar-name-height: 55px;
+$sortbar-name-spacing-left: 20px;
+$sortbar-name-font-size: inherit;
+$sortbar-name-color: #666;
+$sortbar-name-line-height: inherit;
+
+// sortbar head and foot
+$sortbar-head-bgc: transparent;
+$sortbar-head-left: $sortbar-horizontal-padding;
+$sortbar-foot-right: $sortbar-horizontal-padding;
+// sortbar body
+$sortbar-body-left-padding: $sortbar-head-left + $sortbar-name-min-width;
+$sortbar-body-right-padding: 120px;
+$sortbar-body-bgc: #fff;
+
+// sortbar items
+$sortbar-items-height: $sortbar-name-height;
+
+// sortbar item
+$sortbar-item-height: $sortbar-items-height;
+$sortbar-item-horizontal-spacing: 26px;
+$sortbar-item-link-font-size: $sortbar-name-line-height;
+$sortbar-item-link-color: inherit;
+$sortbar-item-link-hover-color: $sb-link-hover-color;
+
+.clearfix {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+.unstyled-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.inline-list {
+  @extend .clearfix;
+  li {
+    float: left;
+  }
+}
+.absolute-middle {
+  position: absolute;
+  top: 50%;
+  transform: translatey(-50%);
+}
+
+
+.sortbar {
+  position: relative;
+  border: $sortbar-divide-border;
+  background-color: $sortbar-bgc;
+  font-size: $sb-font-size;
+
+  .head {
+    position: absolute;
+    top: 0;
+    left: $sortbar-head-left;
+    background-color: $sortbar-head-bgc;
+
+    .sortbar-name {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      margin: 0;
+      padding-left: $sortbar-name-spacing-left;
+      min-width: $sortbar-name-min-width;
+      height: $sortbar-name-height;
+      font-size: $sortbar-name-font-size;
+      font-weight: normal;
+      line-height: $sortbar-name-height;
+      color: $sortbar-name-color;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .body {
+    @extend .clearfix;
+
+    margin: 0 0 0 $sortbar-body-left-padding;
+    padding:  0 $sortbar-body-right-padding 0 0;
+    background-color: $sortbar-body-bgc;
+
+    .sortbar-items {
+      @extend .unstyled-list;
+      @extend .inline-list;
+      height: $sortbar-items-height;
+      padding-left: 20px;
+      overflow: hidden;
+
+      .sortbar-item {
+        margin-right: $sortbar-item-horizontal-spacing;
+        height: $sortbar-item-height;
+        line-height: $sortbar-item-height;
+        a, label {
+          font-size: $sortbar-item-link-font-size;
+          color: $sortbar-item-link-color;
+          text-decoration: none;
+          cursor: pointer;
+
+          &:hover {
+            color: $sortbar-item-link-hover-color;
+          }
+        }
+        &.active {
+          color: $sortbar-item-link-hover-color;
+        }
+      }
+    }
+  }
+
+}
