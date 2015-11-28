@@ -1,0 +1,27 @@
+
+$title-height: 52px;
+
+.item-group {
+  margin-top: 30px;
+  overflow: hidden;
+
+  .title {
+    padding: 0 30px;
+    height: $title-height;
+    line-height: $title-height;
+    color: #fff;
+
+    .more {
+      float: right;
+
+      & > a {
+        color: #fff;
+      }
+
+      &:after {
+        content: "\F105";
+        margin-left: 3px;
+      }
+    }
+  }
+}
