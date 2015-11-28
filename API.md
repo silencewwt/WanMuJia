@@ -234,6 +234,10 @@
   + /brands
 + **method**
   + GET
++ **parameters**
+  + format
+    + 若format != json, 返回html(brands.html)
+    + 若format == json, 返回json
 + **return**
 ```json
 {
@@ -259,6 +263,10 @@
   + /brands/\<int:brand_id\>
 + **method**
   + GET
++ **parameters**
+  + format
+    + 若format != json, 返回html(brand_detail.html)
+    + 若format == json, 返回json
 + **return**
 ```json
 {
@@ -284,6 +292,10 @@
   + /furniture
 + **method**
   + GET
++ **parameters**
+  + format
+    + 若format != json, 返回html(furniture.html)
+    + 若format == json, 返回json
 + **return**
 ```json
 {
