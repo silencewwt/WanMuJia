@@ -97,15 +97,18 @@ $active-color: #6e3800;
   &.tight {
     float: left;
     margin-left: 0;
-    width: $items-width-tg;
 
-    .items-flag {
-      position: absolute;
-      left: -$divide-width;
-      width: 100%;
-      height: 2px;
-      background-color: $active-color;
-      z-index: 100;
+    &:not(.lg) {
+      width: $items-width-tg;
+
+      .items-flag {
+        position: absolute;
+        left: -$divide-width;
+        width: 100%;
+        height: 2px;
+        background-color: $active-color;
+        z-index: 100;
+      }
     }
 
     .item {
@@ -147,6 +150,14 @@ $active-color: #6e3800;
         .price {
           width: $item-width-tg - $item-padding-left * 2;
         }
+      }
+    }
+
+    &.lg {
+      border-left: $divide-border;
+
+      & > .item:first-child {
+        border-left: none;
       }
     }
   }
