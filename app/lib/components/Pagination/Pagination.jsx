@@ -76,7 +76,7 @@ var PagiMain = React.createClass({
       this.setState({
         pageItems: pageItems
       });
-      this.props.selected(nextProps.activePage);
+      (nextProps.activePage !== this.props.activePage) && this.props.selected(nextProps.activePage);
     }
   },
   handleItemClick: function(type, page, pages) {

@@ -1,0 +1,16 @@
+@import "../../assets/styles/main";
+
+$divide-color: $border-color-base;
+
+// .container {
+//   position: relative;
+//   display: block;
+//   margin: 0 auto;
+//   width: $page-width;
+// }
+
+@import "./views/Brand/Brand.scss";
+
+.brand {
+  margin-top: 40px;
+}
