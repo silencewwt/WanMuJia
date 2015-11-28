@@ -4,6 +4,8 @@ require('./DetailMeta.scss')
 let React = require('react');
 let reqwest = require('reqwest');
 
+let InfoSelectShop = require('./views/InfoSelectShop/InfoSelectShop.jsx');
+
 var DetailMeta = React.createClass({
   render: function() {
     var data = this.props.data;
@@ -79,9 +81,10 @@ var InfoBox = React.createClass({
           mobile={this.props.mobile}
         />
 
-        <InfoPhoneNum />
-
-        <InfoSelectShop />
+        <InfoSelectShop
+          mobile={this.props.mobile}
+          data={this.props.data.distributors}
+        />
 
       </div>
     );
@@ -112,6 +115,7 @@ var InfoButtonBox = React.createClass({
   addCollect: function(method) {
     if(!this.props.mobile) {
       this.props.toLogin();
+      return ;
     }
     this.setState({cDisabled: true});
     var id = this.props.data.item.id;
@@ -140,26 +144,6 @@ var InfoButtonBox = React.createClass({
           onClick={this.addCompare}>
           加入对比
         </button>
-      </div>
-    );
-  }
-});
-
-var InfoPhoneNum = React.createClass({
-  render: function() {
-    return (
-      <div className="phone">
-        电话咨询：请先选择体验馆
-      </div>
-    );
-  }
-});
-
-var InfoSelectShop = React.createClass({
-  render: function() {
-    return (
-      <div className="select-shop">
-
       </div>
     );
   }
