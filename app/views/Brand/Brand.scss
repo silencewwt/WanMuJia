@@ -1,0 +1,36 @@
+@import "../../assets/styles/main";
+
+$divide-color: $border-color-base;
+$banner-height: 360px;
+// .container {
+//   position: relative;
+//   display: block;
+//   margin: 0 auto;
+//   width: $page-width;
+// }
+
+@import "./views/ItemGroup/ItemGroup.scss";
+
+body {
+  background-color: #f5f5f5;
+}
+
+.header {
+  background-color: #fff;
+}
+
+.brand-banner {
+  background-color: #fff;
+
+  & > img {
+    width: 100%;
+    height: $banner-height;
+    border-top: 2px solid #833e00;
+    background-color: #f5f5f5;
+  }
+
+  .brand-desc {
+    padding: 37px 50px;
+    font-size: 18px;
+  }
+}

@@ -156,7 +156,7 @@ $active-color: #6e3800;
     &.lg {
       border-left: $divide-border;
 
-      & > .item:first-child {
+      & > .item:nth-child(5n+0) {
         border-left: none;
       }
     }
