@@ -90,6 +90,7 @@ def verify():
 @service_blueprint.route('/captcha/<string:token>.jpg')
 def serve_captcha(token):
     captcha = get_image_captcha(token)
+    session['captcha_token'] = token
     return Response(captcha, mimetype='image/jpeg')
 
 
