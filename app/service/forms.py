@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-from flask import current_app, url_for, request
+from flask import url_for
 from flask.ext.login import current_user
 from wtforms import StringField, IntegerField
 
-from app.constants import SMS_CAPTCHA, CONFIRM_EMAIL
-from app.models import User, Vendor
+from app.constants import CONFIRM_EMAIL, IMAGE_CAPTCHA
+from app.models import User, Vendor, Distributor
 from app.forms import Form
-from app.sms import RESET_PASSWORD_TEMPLATE
+from app.sms import RESET_PASSWORD_TEMPLATE, sms_generator
 from app.wmj_email import send_email, USER_EMAIL_CONFIRM, VENDOR_EMAIL_CONFIRM, EMAIL_CONFIRM_SUBJECT, USER_REGISTER, \
     USER_RESET_PASSWORD
 from app.utils import md5_with_time_salt
 from app.utils.myj_captcha import send_sms_captcha
 from app.utils.redis import redis_set
-from app.utils.validator import Mobile, Captcha, ValidationError, Email
+from app.utils.validator import Mobile, Captcha, ValidationError, Email, QueryID
 
 
 class MobileSMSForm(Form):
@@ -26,6 +26,20 @@ class MobileSMSForm(Form):
 
     def send_sms(self):
         send_sms_captcha(self.template, self.mobile.data)
+
+
+class UserGuideSMSForm(Form):
+    mobile = StringField(validators=[Mobile(available=False)])
+    distributor_id = IntegerField(validators=[QueryID(Distributor)])
+    captcha = StringField(validators=[Captcha(IMAGE_CAPTCHA, '')])
+
+    def __init__(self, template, **kwargs):
+        super(UserGuideSMSForm, self).__init__(**kwargs)
+        self.template = template
+
+    def send_sms(self):
+        distributor = Distributor.query.get(self.distributor_id.data)
+        sms_generator(self.template, self.mobile.data, distributor.address.precise_address(), '1234')
 
 
 class EmailForm(Form):
