@@ -55,6 +55,7 @@ class Captcha(object):
                 if 'captcha_token' not in session:
                     raise ValidationError(self.message)
                 if not redis_verify(self.captcha_type, session['captcha_token'], field.data.upper(), delete=True):
+                    session.pop('captcha_token')
                     raise ValidationError(self.message)
             else:
                 if not redis_verify(self.captcha_type, form[self.key_field].data, field.data, delete=True):

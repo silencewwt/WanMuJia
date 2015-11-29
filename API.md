@@ -1161,10 +1161,20 @@
 + **parametes**
   + **type**
     + USER_RESET_PASSWORD
+    + USER_GUIDE
 + **postData**
-  + **csrf_token**
-  + **mobile**
-    + required
+  + type == USER_RESET_PASSWORD
+    + **csrf_token**
+    + **mobile**
+      + required
+  + type == USER_GUIDE
+    + **csrf_token**
+    + **distributor_id**
+      + required
+    + **mobile**
+      + required
+    + **captcha**
+      + required
     
 ### send email
 + **URL**
