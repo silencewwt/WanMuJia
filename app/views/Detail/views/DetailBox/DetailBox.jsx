@@ -31,6 +31,8 @@ var DetailBox = React.createClass({
     if(!this.state.data) {
       return <div className="detail-box"></div>;
     }
+    var vendorId = this.state.data.item.vendor_id;
+    if(vendorId == 1) {vendorId = 12801;}
     return (
       <div className="detail-box">
         <DetailMeta
@@ -40,7 +42,11 @@ var DetailBox = React.createClass({
           toLogin={this.props.toLogin}
         />
 
-        <div className="brand-banner"></div>
+        <a href={"/brands/"+vendorId}>
+          <div className="brand-banner">
+            <img src={require('../../../../assets/images/detail_vendor'+vendorId+'.png')} />
+          </div>
+        </a>
 
         <DetailContent data={this.state.data.item} />
       </div>

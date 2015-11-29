@@ -97,7 +97,7 @@ var ContDetailArr = React.createClass({
           </div>
           <div className="i-box">
             <div className="title">商品尺寸：</div>
-            <div className="attr">{data.size + " cm * cm * cm"}</div>
+            <div className="attr">{data.size + " cm*cm*cm"}</div>
           </div>
           <div className="i-box">
             <div className="title">适用面积：</div>
@@ -228,10 +228,51 @@ var ContDetailImgs = React.createClass({
 var ContSuite = React.createClass({
   render: function() {
     var componentsData = this.props.data.components;
-    console.log(componentsData);
+    var comNodes = componentsData.map(function(data,idx) {
+      return (
+        <div className="attr-box clearfix" key={'com'+idx}>
+          <div className="i-box">
+            <div className="title">商品名称：</div>
+            <div className="attr">{data.item}</div>
+          </div>
+          <div className="i-box">
+            <div className="title">商品尺寸：</div>
+            <div className="attr">{data.size + " cm*cm*cm"}</div>
+          </div>
+          <div className="i-box">
+            <div className="title">适用面积：</div>
+            <div className="attr">{data.area + "平方米"}</div>
+          </div>
+          <div className="i-box">
+            <div className="title">种类：</div>
+            <div className="attr">{data.category}</div>
+          </div>
+          <div className="i-box">
+            <div className="title">雕刻工艺：</div>
+            <div className="attr">{data.carve}</div>
+          </div>
+          <div className="i-box">
+            <div className="title">涂饰工艺：</div>
+            <div className="attr">{data.paint}</div>
+          </div>
+          <div className="i-box">
+            <div className="title">装饰工艺：</div>
+            <div className="attr">{data.decoration}</div>
+          </div>
+          <div className="i-box">
+            <div className="title">结构：</div>
+            <div className="attr">{data.tenon || "榫卯"}</div>
+          </div>
+          <div className="i-box">
+            <div className="title">该组件数量：</div>
+            <div className="attr">{data.amount + "件"}</div>
+          </div>
+        </div>
+      );
+    });
     return (
       <div className="cont-suite">
-        {componentsData.toString()}
+        {comNodes}
       </div>
     );
   }

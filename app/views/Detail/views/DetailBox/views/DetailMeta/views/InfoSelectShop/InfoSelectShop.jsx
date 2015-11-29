@@ -38,7 +38,7 @@ var InfoSelectShop = React.createClass({
         shopId={this.state.shopId}
       />
 
-        <div className="shop-img"></div>
+      <div className="shop-img"><img src={require('../../../../../../../../assets/images/shop.png')} /></div>
       </div>
     );
   }
@@ -298,6 +298,7 @@ var SendBox = React.createClass({
     console.log(this.state.captcha);
     console.log(this.props.shopId);
     alert(';;;;;');
+    this.hide();
   },
   render: function() {
     return (
