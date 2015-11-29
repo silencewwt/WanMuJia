@@ -20,13 +20,10 @@ def redis_get(content_type, key, delete=False, **kwargs):
     value = local_redis.get(key)
     if value:
         value = value.decode()
-    if value and delete:
-        local_redis.delete(key)
+        if delete:
+            local_redis.delete(key)
     if content_type == CONFIRM_EMAIL and value is not None:
         value = json.loads(value)
-    if content_type == IMAGE_CAPTCHA and value != '':
-        token = key[-32:]
-        redis_set(IMAGE_CAPTCHA, token, '', 7200)
     return value
 
 
