@@ -24,27 +24,44 @@ let React = require('react');
 let ReactDOM = require('react-dom');
 
 let ItemGroup = require('./views/ItemGroup/ItemGroup.jsx');
+let Elevator = require('./views/Elevator/Elevator.jsx');
 let Header = require('../../lib/components/Header/Header.jsx');
 let Slider = require('../../lib/components/Slider/Slider.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 
-const MOCK_SLIDES = [
+const SLIDER_IMG = [
   {
-    title: '标题',
-    img: 'http://s.amazeui.org/media/i/demos/bing-1.jpg',
-    url: ''
+    title: '劲飞红木',
+    img: require('../../assets/images/slider_01_brand_jf.png'),
+    url: '/12806'
   }, {
-    title: '标题',
-    img: 'http://s.amazeui.org/media/i/demos/bing-2.jpg',
-    url: '/'
+    title: '东城红木',
+    img: require('../../assets/images/slider_02_brand_dc.png'),
+    url: '/12836'
   }, {
-    title: '标题',
-    img: 'http://s.amazeui.org/media/i/demos/bing-3.jpg',
-    url: '/'
+    title: '君得益红木',
+    img: require('../../assets/images/slider_03_brand_jdy.png'),
+    url: '/12803'
   }, {
-    title: '标题',
-    img: 'http://s.amazeui.org/media/i/demos/bing-4.jpg',
-    url: '/'
+    title: '九龙堂红木',
+    img: require('../../assets/images/slider_04_brand_jlt.png'),
+    url: '/brand/12801'
+  }
+];
+
+const ELEVATOR_ITEMS = [
+  {
+    id: 3,
+    title: '客厅',
+    offset: ''
+  }, {
+    id: 4,
+    title: '卧室',
+    offset: ''
+  }, {
+    id: 5,
+    title: '厨卫',
+    offset: ''
   }
 ];
 
@@ -90,7 +107,7 @@ let Home = React.createClass({
           userInfo={this.state.userInfo}
           shrink={false}
         >
-          <Slider slides={MOCK_SLIDES} />
+          <Slider slides={SLIDER_IMG} />
         </Header>
         {Object.keys(this.state.itemGroupData).map((item, i) => {
           let guide = {
@@ -108,6 +125,7 @@ let Home = React.createClass({
             />
           );
         })}
+        <Elevator items={ELEVATOR_ITEMS} />
         <Footer />
       </div>
     );
