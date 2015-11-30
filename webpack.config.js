@@ -23,14 +23,14 @@ var plugins = [
   new ProvidePlugin({
     React: 'react',
     ReactDOM: 'react-dom',
-    Ajax: 'reqwest',
-    Utils: '/app/lib/utils/utils',
+    reqwest: 'reqwest',
+    Utils: path.join(__dirname, 'app/lib/utils/utils'),
     Header: path.join(__dirname, 'app/lib/components/Header/Header'),
     Footer: path.join(__dirname, 'app/lib/components/Footer/Footer')
   })
 ];
 
-if (env === 'build') {
+if (env === 'product') {
   plugins.push(new UglifyJsPlugin({
     test: /(\.jsx|\.js)$/
   }));
@@ -41,22 +41,21 @@ if (env === 'build') {
 
 var config = {
   entry: entries,
-  devtool: env === 'build' ? null : 'source-map',
   output: {
     path: path.join(__dirname, outputDir, 'static'),
     filename: 'js/user/[name].bundle.js',
-    publicPath: env === 'build' ?  'http://static.wanmujia.com/' : 'http://localhost:5000/'
+    publicPath: env === 'product' ?  'http://static.wanmujia.com/' : 'http://localhost:5000/'
   },
   module: {
     loaders: [
       {
         test: /(\.jsx|\.js)$/,
-        loader: 'babel?presets[]=es2015&presets[]=react',
+        loaders: ['babel?presets[]=es2015&presets[]=react', 'source-map'],
         exclude: /node_modules/
       },
       {
         test: /\.scss$/,
-        loaders: ['style', 'css?root=' + __dirname, 'resolve-url', 'sass']
+        loaders: ['style', 'css?root=' + __dirname, 'resolve-url', 'sass', 'source-map']
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/,

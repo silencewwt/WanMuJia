@@ -1,0 +1,28 @@
+@import "../../assets/styles/main";
+
+.filter .filter-item label {
+  font-weight: normal;
+}
+
+.amount {
+  padding-right: 28px;
+  background: url("/app/assets/images/arrow_right.png") no-repeat right;
+}
+
+.filter-wrapper, .sort-wrapper, .items-wrapper, .pagination-wrapper {
+  @extend .wrapper;
+}
+
+.filter-wrapper {
+  margin-bottom: 24px;
+}
+
+.sort-wrapper {
+  margin-bottom: 0px;
+}
+
+.pagination-wrapper {
+  margin-top: 100px;
+  margin-bottom: 20px;
+  text-align: center;
+}

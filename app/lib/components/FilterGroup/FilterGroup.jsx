@@ -1,3 +1,6 @@
+'use strict';
+
+require('./FilterGroup.scss');
 
 //  ==================================================
 //  Component: FilterGroup
@@ -8,16 +11,16 @@
 //  ==================================================
 
 /* 每条过滤器的每个选项 */
-var FilterOption = React.createClass({
+let FilterOption = React.createClass({
   render: function () {
-    var optionValue = this.props.value;
-    // var select = this.props.onSelect.bind(null, optionValue);
-    var select = function (event) {
+    let optionValue = this.props.value;
+    // let select = this.props.onSelect.bind(null, optionValue);
+    let select = function (event) {
       !this.props.isMultiSelect && event && event.preventDefault();
       this.props.onSelect(optionValue);
     }.bind(this);
-    var optionElement;
-    var optionValueElement = <span>{optionValue.value}</span>;
+    let optionElement;
+    let optionValueElement = <span>{optionValue.value}</span>;
     if (this.props.isMultiSelect) {
       optionElement = (
         <label href="#" htmlFor={optionValue.name}>
@@ -38,13 +41,13 @@ var FilterOption = React.createClass({
 });
 
 /* 每条过滤器的额外操作 */
-var FilterAction = React.createClass({
+let FilterAction = React.createClass({
   render: function () {
     return (
       <div className="filter-action">
         <a style={{display: this.props.multiToggleStatus ? 'inline' : 'none'}}
           onClick={this.props.multiToggle} href="#" className="multi-toggle">多选</a>
-        <a onClick={this.props.expandToggle} href="#">
+        <a onClick={this.props.expandToggle} className="expand-toggle" href="#">
           {this.props.expandToggleStatus ? '更多' : '收起'}
         </a>
       </div>
@@ -53,14 +56,15 @@ var FilterAction = React.createClass({
 });
 
 /* 状态标签 */
-var FilterStateTag = React.createClass({
+let FilterStateTag = React.createClass({
   render: function () {
-    var tagValueNodes;
-    var removeTag = function (value, event) {
+    let tagValueNodes;
+    let removeTag = function (value, fromRemoveButton, event) {
       event && event.preventDefault();
+      fromRemoveButton && event.stopPropagation();
       this.props.onTagRemove(value);
     }.bind(this);
-    var currStateValues =  Array.isArray(this.props.value) ?
+    let currStateValues =  Array.isArray(this.props.value) ?
                           this.props.value :
                           [this.props.value];
     tagValueNodes = currStateValues.map(function (value, index, values) {
@@ -70,12 +74,12 @@ var FilterStateTag = React.createClass({
           <span key={index}>
             {value.value}&nbsp;
             <span className="tag-remove">
-              <a onClick={removeTag.bind(this, value)} href="#">&times;</a>
+              <a onClick={removeTag.bind(this, value, true)} href="#">&times;</a>
             </span>
             {
               index == values.length - 1 ?
                 null :
-                (<span>&gt;</span>)
+                (<span>&nbsp;&nbsp;&gt;&nbsp;&nbsp;</span>)
             }
           </span>
         );
@@ -86,7 +90,7 @@ var FilterStateTag = React.createClass({
           <span key={index}>
             {value.value}&nbsp;
             <span className="tag-remove">
-              <a onClick={removeTag.bind(this, value)} href="#">&times;</a>
+              <a onClick={removeTag.bind(this, value, true)} href="#">&times;</a>
             </span>
           </span>
         );
@@ -101,8 +105,8 @@ var FilterStateTag = React.createClass({
     }.bind(this));
 
     return (
-      <div className="filter-tag">
-        <div className="tag-name">{this.props.name + ':'}&nbsp;</div>
+      <div className="filter-tag" onClick={removeTag.bind(this, currStateValues[0], false)}>
+        <div className="tag-name">{this.props.name + ':'}&nbsp;&nbsp;</div>
         <div className="tag-value">
           {tagValueNodes}
         </div>
@@ -112,13 +116,13 @@ var FilterStateTag = React.createClass({
 });
 
 /* 状态标签栏 */
-var FilterStateBar = React.createClass({
+let FilterStateBar = React.createClass({
   render: function () {
-    var filterState = this.props.filterState;
-    var stateTagNodes = Object.keys(filterState)
+    let filterState = this.props.filterState;
+    let stateTagNodes = Object.keys(filterState)
       .map(function (field, index) {
-        var state = filterState[field];
-        var def = this.props.getFilterDef(field);
+        let state = filterState[field];
+        let def = this.props.getFilterDef(field);
         return (
           <FilterStateTag
             key={index}
@@ -143,7 +147,7 @@ var FilterStateBar = React.createClass({
 });
 
 /* 单条过滤器 */
-var Filter = React.createClass({
+let Filter = React.createClass({
   getInitialState: function () {
     return {
       isMultiSelect: false,
@@ -176,7 +180,7 @@ var Filter = React.createClass({
   },
   // 用于更新暂时被多选中的选项状态
   updateMultiSelected: function (value) {
-    var multiSelected = this.state.multiSelected;
+    let multiSelected = this.state.multiSelected;
     multiSelected[value.value] ?
       multiSelected[value.value] = null :
       multiSelected[value.value] = value;
@@ -185,9 +189,9 @@ var Filter = React.createClass({
   // 确认多选的状态
   confirmMultiSelect: function (event) {
     event && event.preventDefault();
-    var selectedObj = this.state.multiSelected;
-    var selectedArr = [];
-    for (var key in selectedObj) {
+    let selectedObj = this.state.multiSelected;
+    let selectedArr = [];
+    for (let key in selectedObj) {
       if (selectedObj.hasOwnProperty(key) && selectedObj[key]) {
         selectedArr.push(selectedObj[key]);
       }
@@ -199,14 +203,14 @@ var Filter = React.createClass({
     this.multiSelectToggle();
   },
   render: function () {
-    var handleSelect = function (value) {
+    let handleSelect = function (value) {
       if (!this.state.isMultiSelect) {
         this.props.onSelectOption(value);
         return;
       }
       this.updateMultiSelected(value);
     }.bind(this);
-    var optionNodes = this.props.options.map(function (option, index) {
+    let optionNodes = this.props.options.map(function (option, index) {
       return (
         <li key={index} className="filter-item">
           <FilterOption value={option} onSelect={handleSelect} isMultiSelect={this.state.isMultiSelect} />
@@ -253,7 +257,7 @@ var Filter = React.createClass({
  * {object} filterValues
  * {function} onStateChange
  */
-var FilterGroup = React.createClass({
+let FilterGroup = React.createClass({
   getInitialState: function () {
     return {
       filterValues: this.props.filterValues,
@@ -262,17 +266,21 @@ var FilterGroup = React.createClass({
   },
   getDefaultProps: function () {
     return {
+      filterDefs: [],
       filterValues: {},
       onStateChange: function () {}
     };
   },
   componentDidMount: function () {
-    var defs = this.props.filterDefs
+    let defs = this.props.filterDefs
       .reduce(function (defs, filterDef) {
         defs[filterDef.field] = filterDef;
         return defs;
       }, {});
     this.setState({defIndex: defs});
+  },
+  componentWillReceiveProps: function (nextProps) {
+    this.updateFilterValue(nextProps.filterValues);
   },
   updateFilterValue: function (values) {
     this.setState({filterValues: values});
@@ -283,23 +291,23 @@ var FilterGroup = React.createClass({
     // }
   },
   addFilterState: function (field, value) {
-    var that = this;
-    var defs = that.state.defIndex;
-    var state = this.state.filterState;
-    var changed = false;
-    var hasValue = !!state[field];
+    let that = this;
+    let defs = that.state.defIndex;
+    let state = this.state.filterState;
+    let changed = false;
+    let hasValue = !!state[field];
 
     if (defs[field].treeView) {
-      var indexOfTree = hasValue ?
+      let indexOfTree = hasValue ?
         that.findIndex(state[field], value) :
         -1;
       // 判断当前点击的和上一个选项是否是同一个层级
-      var isSameLevel = function () {
+      let isSameLevel = function () {
         if (!hasValue) {
           return false;
         }
-        var len = state[field].length;
-        var currentState = that.props.filterValues[field] || [];
+        let len = state[field].length;
+        let currentState = that.props.filterValues[field] || [];
         return that.findIndex(currentState, value) > -1 &&
           that.findIndex(currentState, state[field][len - 1]) > -1;
       };
@@ -344,9 +352,9 @@ var FilterGroup = React.createClass({
     }
   },
   removeFilterState: function (field, value) {
-    var defs = this.state.defIndex;
-    var state = this.state.filterState;
-    var indexOfTree;
+    let defs = this.state.defIndex;
+    let state = this.state.filterState;
+    let indexOfTree;
     if (defs[field].treeView) {
       indexOfTree = this.findIndex(state[field], value);
       if (indexOfTree === 0) {
@@ -370,7 +378,7 @@ var FilterGroup = React.createClass({
 
   // util fn
   isSameState: function (o, n) {
-    var that = this;
+    let that = this;
     if (that.isEmptyObj(o) && !that.isEmptyObj(n) ||
       !that.isEmptyObj(o) && that.isEmptyObj(n)) {
       return false;
@@ -403,7 +411,7 @@ var FilterGroup = React.createClass({
   },
   // 用于在设置了 treeView 选项的 filter state 中寻找已选状态位置
   findIndex: function (arr, value) {
-    for (var i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
       if (arr[i].value === value.value) {
         return i;
       }
@@ -412,8 +420,8 @@ var FilterGroup = React.createClass({
   },
 
   render: function () {
-    var filterNodes = this.props.filterDefs.map(function (def, index) {
-      var options = this.state.filterValues[def.field] || [];
+    let filterNodes = this.props.filterDefs.map(function (def, index) {
+      let options = this.state.filterValues[def.field] || [];
       return (
         <li key={index} style={{display: options.length > 0 ? 'block' : 'none'}}>
           <Filter
@@ -444,3 +452,5 @@ var FilterGroup = React.createClass({
     );
   }
 });
+
+module.exports = FilterGroup;

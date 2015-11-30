@@ -1,44 +1,56 @@
-// filter-state
-$filter-state-padding: 10px 0;
+// base
+$fg-font-size: 14px;
+$fg-bgc: #f0f0f0;
+$fg-border-color: #ccc;
+$fg-hover-color: #833e00;
 
-// table count
+// filter-state
+$filter-state-vertical-spacing: 10px;
+
+// custom content
 $filter-custom-content-spacing: 18px;
-$filter-custom-content-height: 28px;
+$filter-custom-content-height: 24px;
+$filter-custom-content-color: #999;
 
 // filter tag
+$filter-tag-bgc: $fg-bgc;
 $filter-tag-border-width: 1px;
-$filter-tag-border: $filter-tag-border-width solid #c9c9c9;
+$filter-tag-border: $filter-tag-border-width solid $fg-border-color;
 $filter-tag-height: $filter-custom-content-height - 2 * $filter-tag-border-width;
 $filter-tag-spacing: 10px;
-$filter-tag-horizontal-padding: 5px;
+$filter-tag-horizontal-padding: 12px;
+$filter-tag-value-color: #88582D;
 
 // filter group
 $filter-group-border-width: 1px;
-$filter-group-border: $filter-group-border-width solid #323232;
+$filter-group-border: $filter-group-border-width solid $fg-border-color;
 $filter-group-vertical-padding: 0;
-$filter-group-horizontal-padding: 8px;
+$filter-group-horizontal-padding: 0;
 
 // filter
+$filter-bgc: $fg-bgc;
 $filter-divede-width: 1px;
-$filter-divide-border: $filter-divede-width dashed #323232;
+$filter-divide-border: $filter-divede-width solid $fg-border-color;
 $filter-expanded-divide-border: $filter-divede-width solid #e4e4e4;
 $filter-horizontal-padding: 0;
 $filter-expanded-box-shadow: 0 6px 5px -2px rgba(0, 0, 0, 0.2);
 
 // filter name
-$filter-name-min-width: 75px;
-$filter-name-height: 50px;
+$filter-name-min-width: 110px;
+$filter-name-height: 55px;
+$filter-name-spacing-left: 20px;
 $filter-name-font-size: inherit;
-$filter-name-color: #fff;
+$filter-name-color: #666;
 $filter-name-line-height: inherit;
 
 // filter head and foot
-$filter-head-left: $filter-horizontal-padding + 2px;
-$filter-foot-right: $filter-horizontal-padding + 2px;
+$filter-head-bgc: transparent;
+$filter-head-left: $filter-horizontal-padding;
+$filter-foot-right: $filter-horizontal-padding;
 // filter body
-$filter-body-left-padding: $filter-horizontal-padding +
-                          $filter-name-min-width + 8px;
+$filter-body-left-padding: $filter-head-left + $filter-name-min-width;
 $filter-body-right-padding: 120px;
+$filter-body-bgc: #fff;
 
 // filter items
 $filter-items-height: $filter-name-height;
@@ -47,11 +59,12 @@ $filter-items-height: $filter-name-height;
 $filter-item-height: $filter-items-height;
 $filter-item-horizontal-spacing: 26px;
 $filter-item-link-font-size: $filter-name-line-height;
-$filter-item-link-color: #c8c8c8;
+$filter-item-link-color: inherit;
 
 // filter action
+$filter-action-spacing-right: $filter-name-spacing-left;
 $filter-action-height: $filter-name-height;
-$filter-action-font-color: #929292;
+$filter-action-font-color: inherit;
 
 // multi-confirm
 $multi-confirm-width: 130px;
@@ -82,31 +95,40 @@ $confirm-button-color: #221715;
 }
 
 .cu-filter-group {
+  font-size: $fg-font-size;
+  a:hover {
+    color: $fg-hover-color !important;
+  }
 
   .filter-state {
     @extend .clearfix;
-    padding: $filter-state-padding;
+    margin-top: $filter-state-vertical-spacing;
 
     .custom-content {
       float: left;
       margin-right: $filter-custom-content-spacing;
+      margin-bottom: $filter-state-vertical-spacing;
       height: $filter-custom-content-height;
       line-height: $filter-custom-content-height;
+      color: $filter-custom-content-color;
     }
 
     .filter-tags {
-      float: left;
+      overflow: hidden;
     }
   }
 
   .filter-tags .filter-tag {
     box-sizing: content-box;
     display: inline-block;
+    cursor: pointer !important;
     margin-right: $filter-tag-spacing;
+    margin-bottom: $filter-state-vertical-spacing;
     padding: 0 $filter-tag-horizontal-padding;
     height: $filter-tag-height;
     line-height: $filter-tag-height;
-    border: $filter-group-border;
+    border: $filter-tag-border;
+    background-color: $filter-tag-bgc;
 
     .tag-name, .tag-value, .tag-remove {
       display: inline-block;
@@ -114,6 +136,13 @@ $confirm-button-color: #221715;
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         text-decoration: none;
       }
+    }
+    .tag-value, .tag-remove a {
+      color: $filter-tag-value-color;
+    }
+
+    &:hover {
+      border-color: $fg-hover-color;
     }
   }
 
@@ -130,6 +159,9 @@ $confirm-button-color: #221715;
       height: auto !important;
       overflow: auto;
     }
+    .foot .filter-action .expand-toggle {
+      background: url('/app/assets/images/arrow_up.png') no-repeat right !important;
+    }
   }
 
   .filter-group li:last-child .filter {
@@ -138,14 +170,20 @@ $confirm-button-color: #221715;
   .filter-group .filter {
     position: relative;
     border-bottom: $filter-divide-border;
+    background-color: $filter-bgc;
 
     .head {
       position: absolute;
       top: 0;
       left: $filter-head-left;
+      background-color: $filter-head-bgc;
 
       .filter-name {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
         margin: 0;
+        padding-left: $filter-name-spacing-left;
         min-width: $filter-name-min-width;
         height: $filter-name-height;
         font-size: $filter-name-font-size;
@@ -159,12 +197,17 @@ $confirm-button-color: #221715;
     }
 
     .body {
-      padding: 0 $filter-body-right-padding 0 $filter-body-left-padding;
+      @extend .clearfix;
+
+      margin: 0 0 0 $filter-body-left-padding;
+      padding:  0 $filter-body-right-padding 0 0;
+      background-color: $filter-body-bgc;
 
       .filter-items {
         @extend .unstyled-list;
         @extend .inline-list;
         height: $filter-items-height;
+        padding-left: 20px;
         overflow: hidden;
 
         .filter-item {
@@ -218,6 +261,10 @@ $confirm-button-color: #221715;
       top: 0;
       right: $filter-foot-right;
       .filter-action {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        padding-right: $filter-action-spacing-right;
         height: $filter-action-height;
         line-height: $filter-action-height;
         a {
@@ -229,6 +276,10 @@ $confirm-button-color: #221715;
           padding: 2px 4px;
           border: $filter-group-border;
           font-size: 0.9em;
+        }
+        .expand-toggle {
+          padding-right: 20px;
+          background: url('/app/assets/images/arrow_down.png') no-repeat right;
         }
       }
     }

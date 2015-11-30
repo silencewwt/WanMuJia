@@ -10,6 +10,8 @@
 //  TODO: [fix] 修正初始时 transition 不生效的问题
 //  ==================================================
 
+require('./ProgressBar.scss');
+
 /* Spinner */
 var Spinner = React.createClass({
   render: function() {
@@ -157,3 +159,5 @@ var ProgressBar = React.createClass({
       : null;
   }
 });
+
+module.exports = ProgressBar;

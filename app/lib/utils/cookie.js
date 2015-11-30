@@ -1,4 +1,4 @@
-let cookieOperation = {
+  let cookieOperation = {
   setCookie: (cookieName, coockieValue, expiredays, path) => {
     var cookieText = encodeURIComponent(cookieName) + '=' +
       encodeURIComponent(coockieValue);
