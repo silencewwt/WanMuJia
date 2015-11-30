@@ -24,7 +24,7 @@ var plugins = [
     React: 'react',
     ReactDOM: 'react-dom',
     reqwest: 'reqwest',
-    Utils: '/app/lib/utils/utils',
+    Utils: path.join(__dirname, 'app/lib/utils/utils'),
     Header: path.join(__dirname, 'app/lib/components/Header/Header'),
     Footer: path.join(__dirname, 'app/lib/components/Footer/Footer')
   })
@@ -41,7 +41,6 @@ if (env === 'product') {
 
 var config = {
   entry: entries,
-  devtool: env === 'product' ? null : 'source-map',
   output: {
     path: path.join(__dirname, outputDir, 'static'),
     filename: 'js/user/[name].bundle.js',
@@ -51,12 +50,12 @@ var config = {
     loaders: [
       {
         test: /(\.jsx|\.js)$/,
-        loader: 'babel?presets[]=es2015&presets[]=react',
+        loaders: ['babel?presets[]=es2015&presets[]=react', 'source-map'],
         exclude: /node_modules/
       },
       {
         test: /\.scss$/,
-        loaders: ['style', 'css?root=' + __dirname, 'resolve-url', 'sass']
+        loaders: ['style', 'css?root=' + __dirname, 'resolve-url', 'sass', 'source-map']
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/,
