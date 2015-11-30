@@ -25,16 +25,29 @@ let ReactDOM = require('react-dom');
 
 let Header = require('../../lib/components/Header/Header.jsx');
 let Brand = require('./views/Brand/Brand.jsx');
+let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 
 let Brands = React.createClass({
   getInitialState: function() {
     return {
+      userInfo: null,  // 登录状态
       brands: {}
     };
   },
   componentDidMount: function() {
     let _this = this;
+    Ajax({  // 获取个人信息
+      url: '/logined',
+      method: 'get',
+      success: function (res) {
+        if(res.logined) {
+          _this.setState({
+            userInfo: res
+          });
+        }
+      }
+    });
     Ajax({  // 获取品牌信息列表
       url: '/brands',
       method: 'get',
@@ -48,12 +61,16 @@ let Brands = React.createClass({
           });
         }
       }
-    })
+    });
   },
   render: function() {
     return (
       <div>
-        <Header shrink={true} />
+        <Header
+          shrink={true}
+          userInfo={this.state.userInfo}
+          navActive={2}
+        />
         <div className="container">
           {Object.keys(this.state.brands).map((id) => {
             return (
@@ -66,6 +83,7 @@ let Brands = React.createClass({
           );
           })}
         </div>
+        <FloatBottomTip />
         <Footer />
       </div>
     );

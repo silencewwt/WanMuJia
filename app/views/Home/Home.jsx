@@ -25,6 +25,7 @@ let ReactDOM = require('react-dom');
 
 let ItemGroup = require('./views/ItemGroup/ItemGroup.jsx');
 let Elevator = require('./views/Elevator/Elevator.jsx');
+let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 let Header = require('../../lib/components/Header/Header.jsx');
 let Slider = require('../../lib/components/Slider/Slider.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
@@ -33,19 +34,19 @@ const SLIDER_IMG = [
   {
     title: '劲飞红木',
     img: require('../../assets/images/slider_01_brand_jf.png'),
-    url: '/12806'
+    url: '/brands/12806'
   }, {
     title: '东城红木',
     img: require('../../assets/images/slider_02_brand_dc.png'),
-    url: '/12836'
+    url: '/brands/12836'
   }, {
     title: '君得益红木',
     img: require('../../assets/images/slider_03_brand_jdy.png'),
-    url: '/12803'
+    url: '/brands/12803'
   }, {
     title: '九龙堂红木',
     img: require('../../assets/images/slider_04_brand_jlt.png'),
-    url: '/brand/12801'
+    url: '/brands/12801'
   }
 ];
 
@@ -84,7 +85,7 @@ let Home = React.createClass({
           });
         }
       }
-    })
+    });
     Ajax({  // 获取商品组信息
       url: '/navbar',
       method: 'get',
@@ -93,7 +94,7 @@ let Home = React.createClass({
           itemGroupData: res
         });
       }
-    })
+    });
   },
   render: function() {
     let colors = [
@@ -126,6 +127,7 @@ let Home = React.createClass({
           );
         })}
         <Elevator items={ELEVATOR_ITEMS} />
+        <FloatBottomTip />
         <Footer />
       </div>
     );

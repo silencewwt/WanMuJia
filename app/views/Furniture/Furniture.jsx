@@ -22,6 +22,7 @@ let ReactDOM = require('react-dom');
 
 let Header = require('../../lib/components/Header/Header.jsx');
 let ItemGroup = require('../Home/views/ItemGroup/ItemGroup.jsx');
+let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 
 let Furniture = React.createClass({
@@ -43,7 +44,7 @@ let Furniture = React.createClass({
           });
         }
       }
-    })
+    });
     Ajax({  // 获取商品列表
       url: '/furniture',
       method: 'get',
@@ -57,7 +58,7 @@ let Furniture = React.createClass({
           });
         }
       }
-    })
+    });
   },
   render: function() {
     let colors = [
@@ -70,6 +71,7 @@ let Furniture = React.createClass({
         <Header
           userInfo={this.state.userInfo}
           shrink={true}
+          navActive={1}
         />
         {Object.keys(this.state.items).map((id) => {
           let guide = {
@@ -87,6 +89,7 @@ let Furniture = React.createClass({
             />
           );
         })}
+        <FloatBottomTip />
         <Footer />
       </div>
     );

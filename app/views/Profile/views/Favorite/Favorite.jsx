@@ -77,6 +77,7 @@ let Favorite = React.createClass({
             getItemsByPage={this.getItemsByPage}
             activePage={this.state.activePage}
             getItemsByPage={this.getItemsByPage}
+            handleCompare={this.props.handleCompare}
           />;
         })}
         <Pagination
@@ -91,6 +92,9 @@ let Favorite = React.createClass({
 });
 
 let Item = React.createClass({
+  handleCompare: function(item) {
+    this.props.handleCompare(item);
+  },
   formatPrice: function(price) {
     if(price / 10000 >= 1) {
       return (price / 10000).toFixed(2) + '万';
@@ -123,7 +127,7 @@ let Item = React.createClass({
     return (
       <div className="item">
         <a
-          href={'item/' + this.props.item.item_id}
+          href={'item/' + this.props.item.id}
           className="thumb"
           style={thumbStyle}
           alt={this.props.item.item}
@@ -132,7 +136,7 @@ let Item = React.createClass({
           {this.props.item.item}
         </a>
         <a
-          href={'item/' + this.props.item.item_id}
+          href={'item/' + this.props.item.id}
           className="title"
           title={this.props.item.item}
         >
@@ -144,13 +148,14 @@ let Item = React.createClass({
         <button
           className='compare'
           title="对比"
+          onClick={this.handleCompare.bind(null, this.props.item)}
         >
           对比
         </button>
         <button
           className='unfavorite'
           title="取消收藏"
-          onClick={this.handleUnfavBtnClick.bind(null, this.props.item.item_id)}
+          onClick={this.handleUnfavBtnClick.bind(null, this.props.item.id)}
         >
           取消收藏
         </button>
