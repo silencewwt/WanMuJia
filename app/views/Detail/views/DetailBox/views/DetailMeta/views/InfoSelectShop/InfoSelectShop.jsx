@@ -1,21 +1,33 @@
 // TODO: 验证码图片的获取和点击变化，发送地址ajax以及发送成功提示
-
-
 'use strict';
 
 require('./InfoSelectShop.scss');
 let React = require('react');
 let reqwest = require('reqwest');
 let ReactDOM = require('react-dom');
+let utils = require('../../../../../../../../lib/utils/utils.js');
+let getCookie = utils.getCookie;
+
+const STR = ["0","1","2","3","4","5","6","7","8","9","A",
+"B","C","D","E","F","G","H","I","J","K","L","M","N","O",
+"P","Q","R","S","T","U","V","W","X","Y","Z","a","b","c",
+"d","e","f","g","h","i","j","k","l","m","n","o","p","q","r",
+"s","t","u","v","w","x","y","z"];
 
 var InfoSelectShop = React.createClass({
   getInitialState: function() {
     return {
       shopId: null,
+      extNum: null,
     };
   },
-  selectShop: function(id) {
+  selectShop: function(id, extNum) {
     this.setState({shopId: id});
+    if(extNum) {
+      this.setState({extNum: extNum});
+    } else {
+      this.setState({extNum: null});
+    }
   },
   showSendBox: function() {
     this.refs.sendBox.show();
@@ -23,7 +35,7 @@ var InfoSelectShop = React.createClass({
   render: function() {
     return (
       <div className="info-select">
-        <div className="phone">电话咨询：{this.state.shopId?"400-400-400":"请先选择体验馆"}</div>
+        <div className="phone">电话咨询：{this.state.shopId?("400-863-7896 转 "+this.state.extNum||""):"请先选择体验馆"}</div>
 
         <SelectShop
           shopId={this.state.shopId}
@@ -75,15 +87,15 @@ var SelectBox = React.createClass({
   selectProvince: function(id) {
     if(id == this.state.provinceId) return ;
     this.setState({provinceId: id, cityId: null, shopId: null});
-    this.props.selectShop(null);
+    this.props.selectShop(null,null);
   },
   selectCity: function(id) {
     if(id == this.state.cityId) return ;
     this.setState({cityId: id, shopId: null});
-    this.props.selectShop(null);
+    this.props.selectShop(null,null);
   },
-  selectShop: function(id) {
-    this.props.selectShop(id);
+  selectShop: function(id, extNum) {
+    this.props.selectShop(id,extNum);
     if(id == this.state.shopId) return ;
     this.setState({shopId: id});
   },
@@ -96,7 +108,8 @@ var SelectBox = React.createClass({
       for(let key1 in data) {
         for(let key2 in data[key1].distributors) {
           shopData[key2] = {
-            area: data[key1].distributors[key2]
+            area: data[key1].distributors[key2].name,
+            extNum: data[key1].distributors[key2].ext_number,
           };
         }
       }
@@ -176,9 +189,9 @@ var Dropdown = React.createClass({
     if(!this.props.data) return ;
     this.setState({active: !this.state.active});
   },
-  liClick: function(id,area) {
+  liClick: function(id,area,extNum) {
     this.setState({active: false});
-    this.props.liClick(id);
+    this.props.liClick(id, extNum);
     setTimeout(function() {
       this.setState({area: area});
     }.bind(this) , 50);
@@ -197,7 +210,7 @@ var Dropdown = React.createClass({
         liNodes[i] =
         <li
           key={key}
-          onClick={this.liClick.bind(null,key,this.props.data[key].area)}>
+          onClick={this.liClick.bind(null,key,this.props.data[key].area, this.props.data[key].extNum||"")}>
           {this.props.data[key].area}
         </li>;
         i++;
@@ -223,6 +236,8 @@ var SendBox = React.createClass({
       captcha: "",
       mobileTip: "",
       captchaTip: "",
+      allTip: "",
+      captchaSrc: "",
     };
   },
   allClick: function(e) {
@@ -233,6 +248,7 @@ var SendBox = React.createClass({
   },
   componentDidMount: function() {
     document.addEventListener('mousedown', this.allClick, false);
+    this.createCaptcha();
   },
   componentWillUnmount: function () {
     document.removeEventListener('mousedown', this.allClick, false);
@@ -288,17 +304,50 @@ var SendBox = React.createClass({
       return false;
     }
   },
-  send: function() {
-    if(this.state.mobile.length===0||this.state.mobileTip) return ;
-    if(this.state.isCaptcha) {
-      if(this.state.captcha.length===0||this.state.captchaTip) return ;
+  createCaptcha: function() {
+    var result="";
+    for(var i=0;i<32;i++){
+        var r = Math.floor(Math.random()*62);
+        result+=STR[r];
     }
-    // TODO:
-    console.log(this.state.mobile);
-    console.log(this.state.captcha);
-    console.log(this.props.shopId);
-    alert(';;;;;');
-    this.hide();
+    var captchaSrc = '/service/captcha/' + result + '.jpg';
+    this.setState({captchaSrc: captchaSrc});
+  },
+  send: function() {
+    if(this.state.mobile.length===0||this.state.mobileTip||this.state.captcha.length===0||this.state.captchaTip) return ;
+//    if(this.state.isCaptcha) {
+//      if(this.state.captcha.length===0||this.state.captchaTip) return ;
+//    }
+    var csrfToken = utils.getCookie('csrf_token');
+    reqwest({
+      url: '/service/mobile_sms?type=USER_GUIDE',
+      method: 'post',
+      data: {
+        mobile: this.state.mobile,
+        captcha: this.state.captcha,
+        distributor_id: this.props.shopId,
+        csrf_token: csrfToken
+      },
+      success: function(resp) {
+        if(resp.success) {
+          this.setState({allTip: "发送地址成功，请查收"});
+          setTimeout(function() {
+            this.setState({allTip: ""});
+            this.hide();
+          }.bind(this) , 2800);
+        } else {
+          this.createCaptcha();
+          this.setState({allTip: resp.message});
+          setTimeout(function() {
+            this.setState({allTip: ""});
+          }.bind(this) , 2000);
+        }
+        setTimeout(function() {
+//          this.hide();
+          this.setState({allTip: ""});
+        }.bind(this) , 2800);
+      }.bind(this),
+    });
   },
   render: function() {
     return (
@@ -319,7 +368,6 @@ var SendBox = React.createClass({
           <div className="tip">{this.state.mobileTip}</div>
         </div>
 
-        {this.state.isCaptcha?
         <div className="ipt-group">
           <label>验证码：</label>
           <input
@@ -330,12 +378,11 @@ var SendBox = React.createClass({
             className="captcha"
             type="text"
           />
-          <div className="cap-img">
-            <img />
+        <div className="cap-img" onClick={this.createCaptcha}>
+            <img src={this.state.captchaSrc } />
           </div>
           <div className="tip">{this.state.captchaTip}</div>
         </div>
-        :null}
 
         <div className="ipt-group">
           <label></label>
@@ -344,6 +391,7 @@ var SendBox = React.createClass({
             onClick={this.send}>
             免费发送地址到手机
           </button>
+          <div className="tip">{this.state.allTip}</div>
         </div>
 
       </div>
