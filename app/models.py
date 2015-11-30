@@ -356,9 +356,10 @@ class Distributor(BaseUser, db.Model, Property):
     contact_mobile = db.Column(db.CHAR(11), default='', nullable=False)
     # 联系人
     contact = db.Column(db.Unicode(10), nullable=False)
+    # 400分机号码
+    ext_number = db.Column(db.CHAR(10), default='', nullable=False)
     # 已解约
     is_revoked = db.Column(db.Boolean, default=False, nullable=False)
-
     # 手机号码
     mobile = None
     # 邮箱
