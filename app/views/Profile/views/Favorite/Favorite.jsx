@@ -77,7 +77,7 @@ let Favorite = React.createClass({
             getItemsByPage={this.getItemsByPage}
             activePage={this.state.activePage}
             getItemsByPage={this.getItemsByPage}
-            handleCompare={this.props.compareBarAddItem}
+            handleCompare={this.props.handleCompare}
           />;
         })}
         <Pagination
@@ -127,7 +127,7 @@ let Item = React.createClass({
     return (
       <div className="item">
         <a
-          href={'item/' + this.props.item.item_id}
+          href={'item/' + this.props.item.id}
           className="thumb"
           style={thumbStyle}
           alt={this.props.item.item}
@@ -136,7 +136,7 @@ let Item = React.createClass({
           {this.props.item.item}
         </a>
         <a
-          href={'item/' + this.props.item.item_id}
+          href={'item/' + this.props.item.id}
           className="title"
           title={this.props.item.item}
         >
@@ -155,7 +155,7 @@ let Item = React.createClass({
         <button
           className='unfavorite'
           title="取消收藏"
-          onClick={this.handleUnfavBtnClick.bind(null, this.props.item.item_id)}
+          onClick={this.handleUnfavBtnClick.bind(null, this.props.item.id)}
         >
           取消收藏
         </button>
