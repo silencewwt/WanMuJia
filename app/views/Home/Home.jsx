@@ -25,6 +25,7 @@ let ReactDOM = require('react-dom');
 
 let ItemGroup = require('./views/ItemGroup/ItemGroup.jsx');
 let Elevator = require('./views/Elevator/Elevator.jsx');
+let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 let Header = require('../../lib/components/Header/Header.jsx');
 let Slider = require('../../lib/components/Slider/Slider.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
@@ -84,7 +85,7 @@ let Home = React.createClass({
           });
         }
       }
-    })
+    });
     Ajax({  // 获取商品组信息
       url: '/navbar',
       method: 'get',
@@ -93,7 +94,7 @@ let Home = React.createClass({
           itemGroupData: res
         });
       }
-    })
+    });
   },
   render: function() {
     let colors = [
@@ -126,6 +127,7 @@ let Home = React.createClass({
           );
         })}
         <Elevator items={ELEVATOR_ITEMS} />
+        <FloatBottomTip />
         <Footer />
       </div>
     );

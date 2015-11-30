@@ -25,6 +25,7 @@ let LoginPopup = require('../../lib/components/LoginPopup/LoginPopup.jsx');
 let Banner = require('./views/Banner/Banner.jsx');
 let Favorite = require('./views/Favorite/Favorite.jsx');
 let Security = require('./views/Security/Security.jsx');
+let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 
 let Profile = React.createClass({
@@ -38,6 +39,9 @@ let Profile = React.createClass({
     this.setState({
       active: id
     });
+  },
+  handleCompare: function(item) {
+    this.refs.compareBar.compareBarAddItem(item);
   },
   componentDidMount: function() {
     let _this = this;
@@ -72,9 +76,10 @@ let Profile = React.createClass({
           {
             this.state.active ?
             <Security userInfo={this.state.userInfo} /> :
-            <Favorite />
+            <Favorite handleCompare={this.handleCompare} />
           }
         </div>
+        <FloatBottomTip ref="compareBar" />
         <Footer />
       </div>
     );

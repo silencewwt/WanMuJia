@@ -77,6 +77,7 @@ let Favorite = React.createClass({
             getItemsByPage={this.getItemsByPage}
             activePage={this.state.activePage}
             getItemsByPage={this.getItemsByPage}
+            handleCompare={this.props.compareBarAddItem}
           />;
         })}
         <Pagination
@@ -91,6 +92,9 @@ let Favorite = React.createClass({
 });
 
 let Item = React.createClass({
+  handleCompare: function(item) {
+    this.props.handleCompare(item);
+  },
   formatPrice: function(price) {
     if(price / 10000 >= 1) {
       return (price / 10000).toFixed(2) + '万';
@@ -144,6 +148,7 @@ let Item = React.createClass({
         <button
           className='compare'
           title="对比"
+          onClick={this.handleCompare.bind(null, this.props.item)}
         >
           对比
         </button>
