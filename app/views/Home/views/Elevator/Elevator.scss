@@ -1,0 +1,40 @@
+
+$item-size: 48px;
+$active-bgc: $main-color-base;
+$divide-color: $border-color-base;
+$item-interval: 40px;
+
+.elevator {
+  z-index: 200;
+
+  .item {
+    position: relative;
+    margin-bottom: $item-interval;
+    width: $item-size;
+    height: $item-size;
+    line-height: $item-size;
+    background-color: #fff;
+    border: 1px solid $divide-color;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:not(:last-child):after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: $item-size - 1;
+      left: $item-size / 2 - 2;
+      width: 2px;
+      height: $item-interval;
+      background-color: $divide-color;
+    }
+
+    &.active {
+      background-color: $active-bgc;
+      border-color: $active-bgc;
+      color: #fafafa;
+    }
+  }
+}

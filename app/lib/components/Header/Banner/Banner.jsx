@@ -35,9 +35,9 @@ let Search = React.createClass({
     };
   },
   handleSubmitClick: function(e) {
-    if(!this.state.keyword) {
-      return;
-    }
+    // if(!this.state.keyword) {
+    //   return;
+    // }
 
     let url = '/item/?search=' + this.state.keyword;
     location.href = url;

@@ -53,7 +53,7 @@ $nav-item-img-size: $nav-cate-height * 5 / 3 - 20;
 
   .category {
     height: $nav-cate-height;
-    background-color: rgba($nav-cate-bgc, 0.95);
+    background-color: $nav-cate-bgc;
     line-height: $nav-cate-height;
     color: #fff;
     // transition: background-color .4s ease, color .4s ease;
