@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from app import db
-from app.models import Category, Item, Vendor, SecondMaterial, Style, Scene
+from app.models import Category, Item, Vendor, SecondMaterial, Style, Scene, Distributor
 
 materials = None
 categories = None
@@ -182,10 +182,12 @@ class DistributorAreaNode(DistributorAreaTree):
         distributors = {}
         self.distributors = sorted(list(set(self.distributors)))
         if len(self.distributors) == 1:
-            distributors = {k: '%s体验馆' % self.area for k in self.distributors}
+            distributor = Distributor.query.get(self.distributors[0])
+            distributors = {distributor.id: {'name': '%s体验馆' % self.area, 'ext_number': distributor.ext_number}}
         else:
             for index, key in zip(range(1, len(self.distributors) + 1), self.distributors):
-                distributors[key] = '%s体验馆%d' % (self.area, index)
+                distributor = Distributor.query.get(key)
+                distributors[key] = {'name': '%s体验馆%d' % (self.area, index), 'ext_number': distributor.ext_number}
         return {self.id: {'area': self.area, 'distributors': distributors}}
 
 
