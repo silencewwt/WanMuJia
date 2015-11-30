@@ -119,7 +119,7 @@ var CompareTableThGroup = React.createClass({
         <li className="th th11">雕刻工艺</li>
         <li className="th th12">涂饰工艺</li>
         <li className="th th13">装饰工艺</li>
-        <li className="th th14">榫卯结构</li>
+        <li className="th th14">结构</li>
       </ul>
     );
   }
@@ -152,7 +152,7 @@ var CompareTableTdGroup = React.createClass({
         <li className="td td2 price">{(data.price?"￥"+data.price/10000+"万":"")}</li>
         <li className="td td3">{data.brand||""}</li>
         <li className="td td4">{data.area?data.area+"平方米":""}</li>
-        <li className="td td5">{data.size||""}</li>
+        <li className="td td5">{data.size?data.size+" ｜ cm * cm * cm":""}</li>
         <li className="td td6">{data.scene||""}</li>
         <li className="td td7">{data.category||""}</li>
         <li className="td td8">{data.stove||""}</li>
@@ -161,7 +161,7 @@ var CompareTableTdGroup = React.createClass({
         <li className="td td11">{data.carve||""}</li>
         <li className="td td12">{data.paint||""}</li>
         <li className="td td13">{data.decoration||""}</li>
-        <li className="td td14">{data.tenon||""}</li>
+        <li className="td td14">{data.item?data.tenon||"榫卯":""}</li>
       </ul>
     );
   }

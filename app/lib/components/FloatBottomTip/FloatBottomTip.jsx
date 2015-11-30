@@ -1,5 +1,13 @@
 'use strict';
 
+/**
+*
+* compareBarAddItem(item)
+*
+*         item = { id: "", image_url: "", item: "", price: "", is_suite: boolean }
+*
+**/
+
 require('./FloatBottomTip.scss');
 
 let React = require('react');
