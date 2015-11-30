@@ -663,8 +663,14 @@
                         "id3": {
                             "area": "",
                             "distributors": {
-                                "id5": "",
-                                "id6": ""
+                                "id5": {
+                                    "name": "xxx体验馆",
+                                    "ext_number": ""
+                                },
+                                "id6": {
+                                    "name": "xxx体验馆",
+                                    "ext_number": ""
+                                },
                             }
                         }
                     }
