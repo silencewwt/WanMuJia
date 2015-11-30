@@ -2,7 +2,7 @@
 
 let React = require('react');
 let LogoImg = require('../../../../assets/images/logo.png');
-let QrcodeImg = require('../../../../assets/images/qrcode.png');
+let QrcodeImg = require('../../../../assets/images/qrcode.jpg');
 
 //  ==================================================
 //  Component: Banner
@@ -21,8 +21,10 @@ let CityPickerWithTab = require('./CityPickerWithTab/CityPickerWithTab');
 let Logo = React.createClass({
   render: function() {
     return (
-      <div className="logo">
-        <img src={LogoImg} title="万木家" />
+      <div className="logo" title="进入万木家首页">
+        <a href="/">
+          <img src={LogoImg} alt="万木家" />
+        </a>
       </div>
     );
   }

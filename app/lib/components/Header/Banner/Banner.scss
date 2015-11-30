@@ -16,7 +16,7 @@ $btn-bgc: $input-border-color; // #833e00
     .logo {
       margin: ($banner-height - 45) / 2 0;
 
-      & > img {
+      & > a > img {
         width: 130px;
       }
     }

@@ -25,7 +25,6 @@ $progressbar-size: 2px;
 
 /* main */
 .#{$ns}progress {
-  z-index: 2000;
   .#{$ns}progress-bar {
     position: fixed;
     top: 0;
@@ -33,6 +32,7 @@ $progressbar-size: 2px;
     height: $progressbar-size;
     border-top-right-radius: $progressbar-size;
     border-bottom-right-radius: $progressbar-size;
+    z-index: 2000;
   }
   .#{$ns}spinner {
     position: fixed;
