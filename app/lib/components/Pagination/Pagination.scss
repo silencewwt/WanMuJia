@@ -49,6 +49,11 @@ $qickGoColor: #A0A0A0;
     text-align: center;
     cursor: pointer;
     transition: border-color .1s ease, color .1s ease;
+
+    & > a {
+      color: inherit;
+    }
+
     &:not(.dot):not(.active):not(.disabled):hover {
       color: $itemActive;
       border-color: $itemActive;
