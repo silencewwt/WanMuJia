@@ -19,27 +19,27 @@ const BRANDS_INFO = {
   '1': {
     id: 1,
     brand: '创汇传媒',
-    image: require('../../../../assets/images/slider_01_brand_jf.png')
+    image: require('../../../../assets/images/slider/slider_01_brand_jf.png')
   },
   '12801': {
     id: 12801,
     brand: '九龙堂',
-    image: require('../../../../assets/images/brand_banner_jlt.png')
+    image: require('../../../../assets/images/brand/brand_banner_jlt.png')
   },
   '12803': {
     id: 12803,
     brand: '君得益',
-    image: require('../../../../assets/images/brand_banner_jdy.png')
+    image: require('../../../../assets/images/brand/brand_banner_jdy.png')
   },
   '12806': {
     id: 12806,
     brand: '劲飞红木',
-    image: require('../../../../assets/images/brand_banner_jf.png')
+    image: require('../../../../assets/images/brand/brand_banner_jf.png')
   },
   '12836': {
     id: 12836,
     brand: '东成',
-    image: require('../../../../assets/images/brand_banner_dc.png')
+    image: require('../../../../assets/images/brand/brand_banner_dc.png')
   }
 };
 

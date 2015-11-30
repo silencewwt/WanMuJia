@@ -33,19 +33,19 @@ let Footer = require('../../lib/components/Footer/Footer.jsx');
 const SLIDER_IMG = [
   {
     title: '劲飞红木',
-    img: require('../../assets/images/slider_01_brand_jf.png'),
+    img: require('../../assets/images/slider/slider_01_brand_jf.png'),
     url: '/brands/12806'
   }, {
     title: '东城红木',
-    img: require('../../assets/images/slider_02_brand_dc.png'),
+    img: require('../../assets/images/slider/slider_02_brand_dc.png'),
     url: '/brands/12836'
   }, {
     title: '君得益红木',
-    img: require('../../assets/images/slider_03_brand_jdy.png'),
+    img: require('../../assets/images/slider/slider_03_brand_jdy.png'),
     url: '/brands/12803'
   }, {
     title: '九龙堂红木',
-    img: require('../../assets/images/slider_04_brand_jlt.png'),
+    img: require('../../assets/images/slider/slider_04_brand_jlt.png'),
     url: '/brands/12801'
   }
 ];
@@ -97,11 +97,20 @@ let Home = React.createClass({
     });
   },
   render: function() {
-    let colors = [
-      '#6e3800',
-      '#5f0077',
-      '#3abfb4'
+    const colors = [
+      '#6c0087',
+      '#459cc3',
+      '#549031',
+      '#a24b00',
+      '#86ad00'
     ];
+    const imgs = {
+      '2': require('../../assets/images/scene/scene_02_sf.jpg'),
+      '3': require('../../assets/images/scene/scene_03_kt.jpg'),
+      '4': require('../../assets/images/scene/scene_04_ws.jpg'),
+      '5': require('../../assets/images/scene/scene_05_cw.jpg'),
+      '6': require('../../assets/images/scene/scene_06_ct.jpg')
+    };
     return (
       <div>
         <Header
@@ -113,9 +122,10 @@ let Home = React.createClass({
         {Object.keys(this.state.itemGroupData).map((item, i) => {
           let guide = {
             title: this.state.itemGroupData[item].scene,
-            img: '',
+            img: imgs[item],
             url: '/item/?scene=' + item,
-            color: colors[i]
+            color: colors[i],
+            id: item
           };
           return (
             <ItemGroup
