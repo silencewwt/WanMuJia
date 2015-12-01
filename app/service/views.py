@@ -70,7 +70,7 @@ def email_service():
 def verify():
     models = {'user': User, 'vendor': Vendor}
     token = request.args.get('token', '', type=str)
-    info = redis_get(CONFIRM_EMAIL, token, delete=True)
+    info = redis_get(CONFIRM_EMAIL, token, delete=True, serialize=True)
     if info:
         # if info['action'] == 'register':
         #     session[USER_REGISTER_STEP] = 2

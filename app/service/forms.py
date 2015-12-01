@@ -79,7 +79,8 @@ class EmailForm(Form):
         if (self.email_type == VENDOR_EMAIL_CONFIRM or self.email_type == USER_EMAIL_CONFIRM) \
                 and not self.email_confirmed:
             token = md5_with_time_salt(self.role.data, self.id.data)
-            redis_set(CONFIRM_EMAIL, token, '', role=self.role.data, id=self.id.data, email=self.email.data, action='confirm')
+            redis_set(CONFIRM_EMAIL, token, {'role': self.role.data, 'id': self.id.data,
+                                             'email': self.email.data, 'action': 'confirm'}, serialize=True)
             url = url_for('service.verify', token=token, _external=True)
             send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, self.email_type, url=url)
 
@@ -94,7 +95,7 @@ class EmailRegisterForm(Form):
     def send_email(self):
         if self.email_type == USER_REGISTER:
             token = md5_with_time_salt(self.email.data)
-            redis_set(CONFIRM_EMAIL, token, '', email=self.email.data, action='register')
+            redis_set(CONFIRM_EMAIL, token, {'email': self.email.data, 'action': 'register'}, serialize=True)
             url = url_for('service.verify', token=token, _external=True)
             send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, self.email_type, url=url)
 
@@ -109,6 +110,6 @@ class EmailResetPasswordForm(Form):
     def send_email(self):
         if self.email_type == USER_RESET_PASSWORD:
             token = md5_with_time_salt(self.email.data)
-            redis_set(CONFIRM_EMAIL, token, '', email=self.email.data, action='reset_password')
+            redis_set(CONFIRM_EMAIL, token, {'email': self.email.data, 'action': 'reset_password'}, serialize=True)
             url = url_for('service.verify', token=token, _external=True)
             send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, self.email_type, url=url)
