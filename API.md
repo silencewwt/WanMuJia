@@ -1061,7 +1061,46 @@
 	+ story
 	  + 商品寓意
 	  + length: [0, 5000]
-    
+
+### vendor oss signature
++ **URL**
+  + /vendor/items/oss_signature
++ **method**
+  + GET
++ **parameters**
+  + item_id
+  + filename
++ **return**
+  + 成功
+    + `{"success": true, "url": "", "headers": {"Authorization": "", "x-oss-callback": ""}}`
+    + url
+      + ajax请求的url. 请求此url成功上传后, OSS会回调万木家的接口, 并将万木家返回的信息返回给前端
+    + headers
+      + 需要设置的header
+  + 失败
+    + `{"success": false}`
+
+### vendor item image
++ **URL**
+  + `vendor oss signature`返回的url
+  + /vendor/items/image
++ **method**
+  + PUT
+  + DELETE
++ PUT image
+  + **postData**
+    + 图片
+  + **return**
+    + `{"success": true, "image": {"url": "", "hash": "", "created": ""}}`
++ DELETE image
+  + **postData**
+    + image_hash
+  + **return**
+    + 成功
+      + {"success": true}
+    + 失败
+      + {"success": false}
+
 ### vendor distributors
 + **URL**
   + /vendor/distributors

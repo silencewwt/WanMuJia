@@ -10,12 +10,13 @@ from werkzeug.datastructures import ImmutableMultiDict
 
 from app import db
 from app.core import reset_password as model_reset_password
-from app.models import Vendor, Item, Distributor
+from app.models import Vendor, Item, Distributor, ItemImage
 from app.permission import vendor_permission
 from app.forms import MobileRegistrationForm
 from app.constants import *
 from app.utils import md5_with_time_salt, DataTableHandler
-from app.utils.redis import redis_set
+from app.utils.redis import redis_set, redis_get
+from app.utils.image import oss_authorization
 from app.wmj_email import ADMIN_REMINDS, ADMIN_REMINDS_SUBJECT, send_email
 from . import vendor as vendor_blueprint
 from .forms import LoginForm, RegistrationDetailForm, ItemForm, SettingsForm, ItemImageForm, ItemImageSortForm, \
@@ -269,7 +270,7 @@ def new_item():
         abort(404)
 
 
-@vendor_blueprint.route('/items/image', methods=['PUT', 'DELETE'])
+@vendor_blueprint.route('/items/image', methods=['DELETE'])
 @vendor_permission.require(401)
 @vendor_item_permission
 def upload_item_image():
@@ -288,6 +289,34 @@ def upload_item_image():
             form.delete_image()
             return jsonify({'success': True})
         return jsonify({'success': False})
+
+
+@vendor_blueprint.route('/items/oss_signature')
+@vendor_permission.require(401)
+def oss_signature():
+    item_id = request.args.get('item_id', 0, type=int)
+    filename = request.args.get('filename', '', type=str)
+    item = Item.query.get(item_id)
+    if not item or item.is_deleted or item.vendor_id != current_user.id:
+        return jsonify({'success': False})
+    oss_dict = oss_authorization(item_id, filename)
+    oss_dict['success'] = True
+    return jsonify(oss_dict)
+
+
+@vendor_blueprint.route('/items/image_callback', methods=['POST'])
+def image_callback():
+    image_path = request.values.get('object', '', type=str)
+    item_dict = redis_get('OSS', image_path, delete=True, serialize=True)
+    if item_dict:
+        image_name = image_path.rsplit('/', 1)[-1]
+        image_hash = image_name.split('.', 1)[0]
+        item_image = ItemImage(item_dict['item_id'], image_path, image_hash, item_dict['filename'][:30], 999)  # 新上传的图片默认在最后
+        db.session.add(item_image)
+        db.session.commit()
+        return jsonify({'success': True,
+                        'image': {'hash': item_image.hash, 'url': item_image.url, 'created': item_image.created}})
+    return jsonify({'success': False})
 
 
 @vendor_blueprint.route('/items/image_sort', methods=['POST'])
