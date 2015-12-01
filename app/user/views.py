@@ -4,7 +4,6 @@ from flask import current_app, request, render_template, redirect, session, json
 from flask.ext.cdn import url_for
 from flask.ext.login import logout_user, current_user
 from flask.ext.principal import identity_changed, AnonymousIdentity
-
 from app import db
 from app.models import Collection, Item
 from app.constants import *
@@ -12,7 +11,7 @@ from app.permission import user_permission
 from app.utils import items_json
 from . import user as user_blueprint
 from .forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, RegistrationForm, \
-    SettingForm, PasswordForm, ResetPasswordForm, ResetPasswordNextForm
+    SettingForm, ResetPasswordForm, ResetPasswordNextForm
 
 
 @user_blueprint.errorhandler(401)
@@ -149,19 +148,12 @@ def collection():
 @user_blueprint.route('/settings', methods=['POST'])
 @user_permission.require(401)
 def settings():
-    form = SettingForm()
+    type = request.args.get('type', '', type=str)
+    if type not in (USER_USERNAME_SETTING, USER_PASSWORD_SETTING, USER_EMAIL_SETTING):
+        return jsonify({'success': False, 'message': '参数错误'})
+    form = SettingForm(type)
     if form.validate():
         form.update()
-        return jsonify({'success': True})
-    return jsonify({'success': False, 'message': form.error2str()})
-
-
-@user_blueprint.route('/change_password', methods=['POST'])
-@user_permission.require(401)
-def change_password():
-    form = PasswordForm()
-    if form.validate():
-        form.update_password()
         return jsonify({'success': True})
     return jsonify({'success': False, 'message': form.error2str()})
 

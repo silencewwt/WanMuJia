@@ -150,33 +150,48 @@
   + DELETE
     + `{"success": true}`
 
-### user setting
+### user change username
 + **URL**
   + /settings
 + **method**
   + POST
 + **postData**
-  + **csrf_token**
-  + **username**
-    + not required
-  + **mobile**
-    + required
-  + **captcha**
-    + 若需要修改手机号, 则必须填写验证码
-    
-### user change password
+  + captcha
+  + username
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
+
+### user change email
 + **URL**
-  + /change_password
+  + /settings
 + **method**
   + POST
 + **postData**
-  + **csrf_token**
-  + **old_password**
-    + required
-  + **new_password**
-    + required
-  + **confirm_password**
-    + required
+  + captcha
+  + email
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
+
+### user change password
++ **URL**
+  + /settings
++ **method**
+  + POST
++ **postData**
+  + captcha
+  + password
+  + confirm_password
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
 
 ### user logined
 + **URL**
@@ -1204,7 +1219,7 @@
 + **method**
   + POST
 + **parametes**
-  + **type**
+  + type
     + USER_RESET_PASSWORD
     + USER_GUIDE
 + **postData**
@@ -1220,7 +1235,22 @@
       + required
     + **captcha**
       + required
-    
+
+### mobile sms login required
++ **URL**
+  + /service/mobile_sms_login_required
++ **method**
+  + POST
++ **parameters**
+  + type
+    + USER_SMS_CAPTCHA(适用于用户修改用户名/密码/email)
++ **postData**
+  + type == USER_SMS_CAPTCHA
+    + **csrf_token**
+      + required
+    + **mobile**
+      + required
+
 ### send email
 + **URL**
   + /service/send_email
