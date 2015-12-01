@@ -10,6 +10,7 @@ from app.constants import *
 from app.models import User
 from app.utils.forms import Form
 from app.utils.validator import Email, Mobile, Captcha, UserName, ValidationError
+from app.wmj_email import send_email, USER_EMAIL_CONFIRM, EMAIL_CONFIRM_SUBJECT
 
 
 class LoginForm(Form):
@@ -93,32 +94,28 @@ class ResetPasswordNextForm(Form):
 
 
 class SettingForm(Form):
-    username = StringField(validators=[UserName(required=False, exist_owner=current_user)])
-    mobile = StringField(validators=[Mobile(required=False, model=User, exist_owner=current_user)])
-    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile', required=False)])
+    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, current_user.mobile, required=False)])
 
-    def update_mobile(self):
-        if current_user.mobile != self.mobile.data and getattr(self, 'captcha_verified', False) is True:
-            current_user.mobile = self.mobile.data
+    def __init__(self, type, *args, **kwargs):
+        self.type = type
+        if self.type == USER_USERNAME_SETTING:
+            self.username = StringField(validators=[UserName(required=False, exist_owner=current_user)])
+        elif self.type == USER_PASSWORD_SETTING:
+            self.password = StringField(validators=[Length(32, 32)])
+            self.confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('new_password', '两次密码不一致')])
+        else:  # email
+            self.email = StringField(validators=Email())
+        super(SettingForm, self).__init__(*args, **kwargs)
 
     def update(self):
-        if self.username.data != current_user.username and current_user.username_revisable:
-            current_user.username = self.username.data
-            current_user.username_revisable = False
-        if self.mobile.data and not current_user.mobile:
-            self.update_mobile()
-        db.session.commit()
-
-
-class PasswordForm(Form):
-    old_password = PasswordField(validators=[Length(32, 32)])
-    new_password = PasswordField(validators=[Length(32, 32)])
-    confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('new_password', '两次密码不一致')])
-
-    def validate_old_password(self, field):
-        if not current_user.verify_password(field.data):
-            raise ValidationError('原密码不正确!')
-
-    def update_password(self):
-        current_user.password = self.new_password.data
+        if self.type == USER_USERNAME_SETTING:
+            if self.username.data != current_user.username and current_user.username_revisable:
+                current_user.username = self.username.data
+                current_user.username_revisable = False
+        elif self.type == USER_PASSWORD_SETTING:
+            current_user.password = self.password.data
+        else:  # email
+            current_user.email = self.email.data
+            current_user.email_confirmed = False
+            send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, USER_EMAIL_CONFIRM)
         db.session.commit()
