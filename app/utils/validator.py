@@ -58,7 +58,11 @@ class Captcha(object):
                     session.pop('captcha_token')
                     raise ValidationError(self.message)
             else:
-                if not redis_verify(self.captcha_type, form[self.key_field].data, field.data, delete=True):
+                if self.key_field == 'mobile':
+                    mobile = form[self.key_field].data
+                else:
+                    mobile = self.key_field
+                if not redis_verify(self.captcha_type, mobile, field.data, delete=True):
                     raise ValidationError(self.message)
             form.captcha_verified = True
 
