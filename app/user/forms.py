@@ -94,7 +94,6 @@ class ResetPasswordNextForm(Form):
 
 
 class SettingForm(Form):
-    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, current_user.mobile, required=False)])
 
     def __init__(self, type, *args, **kwargs):
         self.type = type
@@ -105,6 +104,7 @@ class SettingForm(Form):
             self.confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('new_password', '两次密码不一致')])
         else:  # email
             self.email = StringField(validators=Email())
+        self.captcha = StringField(validators=[Captcha(SMS_CAPTCHA, current_user.mobile, required=False)])
         super(SettingForm, self).__init__(*args, **kwargs)
 
     def update(self):
