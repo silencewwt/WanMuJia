@@ -2,14 +2,16 @@
 from flask import request, Response, jsonify, redirect, url_for, session
 from flask.ext.login import current_user
 
-from app.constants import CONFIRM_EMAIL, USER_RESET_PASSWORD_STEP_DONE, USER_RESET_PASSWORD_USERNAME, USER_GUIDE
+from app.constants import CONFIRM_EMAIL, USER_RESET_PASSWORD_STEP_DONE, USER_RESET_PASSWORD_USERNAME, USER_GUIDE, \
+    USER_REGISTER, VENDOR_REGISTER, VENDOR_EMAIL_CONFIRM, USER_EMAIL_CONFIRM, USER_RESET_PASSWORD, USER_SMS_CAPTCHA
 from app.models import User, Vendor, Area
-from app.sms import USER_REGISTER_TEMPLATE, VENDOR_REGISTER_TEMPLATE, RESET_PASSWORD_TEMPLATE, USER_GUIDE_TEMPLATE
-from app.wmj_email import VENDOR_EMAIL_CONFIRM, USER_EMAIL_CONFIRM, USER_REGISTER, USER_RESET_PASSWORD
+from app.sms import USER_REGISTER_TEMPLATE, VENDOR_REGISTER_TEMPLATE, RESET_PASSWORD_TEMPLATE, USER_GUIDE_TEMPLATE, \
+    USER_SMS_CAPTCHA_TEMPLATE
+from app.permission import user_permission
 from app.utils.redis import redis_get
 from app.utils.myj_captcha import get_image_captcha
 from . import service as service_blueprint
-from .forms import MobileSMSForm, EmailForm, EmailRegisterForm, EmailResetPasswordForm, UserGuideSMSForm
+from .forms import MobileSMSForm, EmailForm, EmailRegisterForm, EmailResetPasswordForm
 
 
 @service_blueprint.route('/mobile_register_sms', methods=['POST'])
@@ -18,11 +20,29 @@ def mobile_register_sms():
     referrer = request.referrer
     if referrer and 'vendor' in referrer.split('/'):
         template = VENDOR_REGISTER_TEMPLATE
+        sms_type = VENDOR_REGISTER
     else:
         template = USER_REGISTER_TEMPLATE
-    form = MobileSMSForm(template, csrf_enabled=False)
+        sms_type = USER_REGISTER
+    form = MobileSMSForm(sms_type, template, csrf_enabled=False)
     if current_user.is_authenticated and current_user.mobile:
         return jsonify({'success': False, 'message': '用户已绑定手机号, 暂时无法修改'})
+    if form.validate():
+        form.send_sms()
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': form.error2str()})
+
+
+@service_blueprint.route('/mobile_sms_login_required', methods=['POST'])
+@user_permission.require(401)
+def mobile_sms_login_required():
+    sms_type = request.args.get('type', '', type=str)
+    template_dir = {USER_SMS_CAPTCHA: USER_SMS_CAPTCHA_TEMPLATE}
+    try:
+        template = template_dir[sms_type]
+    except KeyError:
+        return jsonify({'success': False, 'message': u'参数错误!'})
+    form = MobileSMSForm(sms_type, template)
     if form.validate():
         form.send_sms()
         return jsonify({'success': True})
@@ -32,20 +52,15 @@ def mobile_register_sms():
 @service_blueprint.route('/mobile_sms', methods=['POST'])
 def mobile_sms():
     sms_type = request.args.get('type', '', type=str)
-    if sms_type == USER_RESET_PASSWORD:
-        template = RESET_PASSWORD_TEMPLATE
-        form = MobileSMSForm(template, csrf_enabled=False)
-        if form.validate():
-            form.send_sms()
-            return jsonify({'success': True})
-    elif sms_type == USER_GUIDE:
-        template = USER_GUIDE_TEMPLATE
-        form = UserGuideSMSForm(template, csrf_enabled=False)
-        if form.validate():
-            form.send_sms()
-            return jsonify({'success': True})
-    else:
+    template_dir = {USER_RESET_PASSWORD: RESET_PASSWORD_TEMPLATE, USER_GUIDE: USER_GUIDE_TEMPLATE}
+    try:
+        template = template_dir[sms_type]
+    except KeyError:
         return jsonify({'success': False, 'message': u'参数错误!'})
+    form = MobileSMSForm(sms_type, template, csrf_enabled=False)
+    if form.validate():
+        form.send_sms()
+        return jsonify({'success': True})
     return jsonify({'success': False, 'message': form.error2str()})
 
 
