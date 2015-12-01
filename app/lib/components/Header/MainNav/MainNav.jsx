@@ -17,125 +17,145 @@ let React = require('react');
 
 const MOCK_NAV_ITEMS = [
   {
-    id: 0,
+    id: 2,
     title: '客厅',
     subpart: [
       {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/48/ec24e25b1b35f42c93efb219b2c9efe2/8a943ecab51d4d30b0a1e3bf2412bcbc.jpg'
+        id: 71,
+        title: '月牙桌',
+        img: require('../../../../assets/images/main_nav/nav_01_01.jpg')
       }, {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/48/ec24e25b1b35f42c93efb219b2c9efe2/8a943ecab51d4d30b0a1e3bf2412bcbc.jpg'
+        id: 156,
+        title: '联三橱',
+        img: require('../../../../assets/images/main_nav/nav_01_02.jpg')
       }, {
-        id: 1223,
-        title: '圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/26/a48932eefa2b4dad3993371075ce494a/2b78d158cd2474ed941b1e782b995711.jpg'
+        id: 99,
+        title: '条桌',
+        img: require('../../../../assets/images/main_nav/nav_01_03.jpg')
       }, {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/26/a48932eefa2b4dad3993371075ce494a/df749d2f7c4e6e569c89e84d39a27a70.jpg'
+        id: 109,
+        title: '四足方香几',
+        img: require('../../../../assets/images/main_nav/nav_01_04.jpg')
       }, {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/4/a6222f8ec9329b83fde06479e35a4558/8a16497a488e1bebce79803b06fd43d8.jpg'
+        id: 26,
+        title: '皇宫椅',
+        img: require('../../../../assets/images/main_nav/nav_01_05.jpg')
       }, {
-        id: 1223,
-        title: '圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/76/ae51fa24c7c4fa6243d9d15272c1a854/80630a0eae3bf2f129bce648853dd456.jpg'
+        id: 200,
+        title: '电视柜',
+        img: require('../../../../assets/images/main_nav/nav_01_06.jpg')
       }, {
-        id: 1223,
-        title: '圈椅',
-        img: 'http://static.wanmujia.com/images/item/19/cc63c7dd760ea712b691b2f7c461b1e0/f1347f321d61444c1a7261e326acb40e.jpg'
+        id: 19,
+        title: '官帽椅',
+        img: require('../../../../assets/images/main_nav/nav_01_07.jpg')
       }, {
-        id: 1223,
-        title: '圈椅',
-        img: 'http://static.wanmujia.com/images/item/30/37d43b2f5ade643361cd1aaad044a6c3/9b9d71fd85ad09f9adb72c11b62b979c.jpg'
+        id: 71,
+        title: '抽屉桌',
+        img: require('../../../../assets/images/main_nav/nav_01_08.jpg')
       }, {
-        id: 1223,
-        title: '圈椅',
-        img: 'http://static.wanmujia.com/images/item/68/7eae98baa74e9e765393753444acaa2c/56318d3866295125f817f2ca43f66111.jpg'
-      }
-    ]
-  }, {
-    id: 1,
-    title: '书房',
-    subpart: [
-      {
-        id: 1223,
-        title: '圈椅',
-        img: 'http://static.wanmujia.com/images/item/4/a6222f8ec9329b83fde06479e35a4558/8a16497a488e1bebce79803b06fd43d8.jpg'
-      }
-    ]
-  }, {
-    id: 2,
-    title: '卧室',
-    subpart: [
-      {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/48/ec24e25b1b35f42c93efb219b2c9efe2/8a943ecab51d4d30b0a1e3bf2412bcbc.jpg'
-      }, {
-        id: 1223,
-        title: '圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/26/a48932eefa2b4dad3993371075ce494a/2b78d158cd2474ed941b1e782b995711.jpg'
-      }, {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/26/a48932eefa2b4dad3993371075ce494a/df749d2f7c4e6e569c89e84d39a27a70.jpg'
-      }, {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/4/a6222f8ec9329b83fde06479e35a4558/8a16497a488e1bebce79803b06fd43d8.jpg'
+        id: 78,
+        title: '茶几',
+        img: require('../../../../assets/images/main_nav/nav_01_09.jpg')
       }
     ]
   }, {
     id: 3,
-    title: '餐厅',
+    title: '书房',
     subpart: [
       {
-        id: 1223,
-        title: '圈椅',
-        img: 'http://static.wanmujia.com/images/item/30/37d43b2f5ade643361cd1aaad044a6c3/9b9d71fd85ad09f9adb72c11b62b979c.jpg'
+        id: 68,
+        title: '书桌',
+        img: require('../../../../assets/images/main_nav/nav_03_01.jpg')
       }, {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/48/ec24e25b1b35f42c93efb219b2c9efe2/8a943ecab51d4d30b0a1e3bf2412bcbc.jpg'
+        id: 201,
+        title: '书柜',
+        img: require('../../../../assets/images/main_nav/nav_03_02.jpg')
       }, {
-        id: 1223,
-        title: '圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/26/a48932eefa2b4dad3993371075ce494a/2b78d158cd2474ed941b1e782b995711.jpg'
+        id: 134,
+        title: '罗汉床',
+        img: require('../../../../assets/images/main_nav/nav_03_03.jpg')
       }, {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/26/a48932eefa2b4dad3993371075ce494a/df749d2f7c4e6e569c89e84d39a27a70.jpg'
+        id: 255,
+        title: '写字台',
+        img: require('../../../../assets/images/main_nav/nav_03_04.jpg')
       }, {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/4/a6222f8ec9329b83fde06479e35a4558/8a16497a488e1bebce79803b06fd43d8.jpg'
+        id: 202,
+        title: '多宝格',
+        img: require('../../../../assets/images/main_nav/nav_03_05.jpg')
+      }, {
+        id: 177,
+        title: '博古架',
+        img: require('../../../../assets/images/main_nav/nav_03_06.jpg')
       }
     ]
   }, {
     id: 4,
+    title: '卧室',
+    subpart: [
+      {
+        id: 182,
+        title: '变体圆角柜',
+        img: require('../../../../assets/images/main_nav/nav_02_01.jpg')
+      }, {
+        id: 207,
+        title: '衣帽柜',
+        img: require('../../../../assets/images/main_nav/nav_02_02.jpg')
+      }, {
+        id: 206,
+        title: '鞋柜',
+        img: require('../../../../assets/images/main_nav/nav_02_03.jpg')
+      }, {
+        id: 208,
+        title: '梳妆台',
+        img: require('../../../../assets/images/main_nav/nav_02_04.jpg')
+      }, {
+        id: 150,
+        title: '大床',
+        img: require('../../../../assets/images/main_nav/nav_02_05.jpg')
+      }, {
+        id: 161,
+        title: '上箱下柜',
+        img: require('../../../../assets/images/main_nav/nav_02_06.jpg')
+      }, {
+        id: 199,
+        title: '大衣柜',
+        img: require('../../../../assets/images/main_nav/nav_02_07.jpg')
+      }, {
+        id: 165,
+        title: '大方角柜',
+        img: require('../../../../assets/images/main_nav/nav_02_08.jpg')
+      }
+    ]
+  }, {
+    id: 5,
+    title: '餐厅',
+    subpart: [
+      {
+        id: 76,
+        title: '圆桌（圆台）',
+        img: require('../../../../assets/images/main_nav/nav_04_01.jpg')
+      }, {
+        id: 104,
+        title: '四方桌',
+        img: require('../../../../assets/images/main_nav/nav_04_02.jpg')
+      }, {
+        id: 204,
+        title: '酒柜',
+        img: require('../../../../assets/images/main_nav/nav_04_03.jpg')
+      }
+    ]
+  }, {
+    id: 6,
     title: '厨卫',
     subpart: [
       {
-        id: 1223,
-        title: '圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/26/a48932eefa2b4dad3993371075ce494a/2b78d158cd2474ed941b1e782b995711.jpg'
+        id: 80,
+        title: '翘头案',
+        img: require('../../../../assets/images/main_nav/nav_06_01.jpg')
       }, {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/26/a48932eefa2b4dad3993371075ce494a/df749d2f7c4e6e569c89e84d39a27a70.jpg'
-      }, {
-        id: 1223,
-        title: '圈椅圈椅圈椅圈椅',
-        img: 'http://static.wanmujia.com/images/item/4/a6222f8ec9329b83fde06479e35a4558/8a16497a488e1bebce79803b06fd43d8.jpg'
-      }, {
-        id: 1223,
-        title: '圈椅',
-        img: 'http://static.wanmujia.com/images/item/30/37d43b2f5ade643361cd1aaad044a6c3/9b9d71fd85ad09f9adb72c11b62b979c.jpg'
+        id: 220,
+        title: '屏风',
+        img: require('../../../../assets/images/main_nav/nav_06_02.jpg')
       }
     ]
   }
@@ -166,7 +186,7 @@ let MainNav = React.createClass({
           style={ulStyle}
         >
           {this.props.items.map(function(category, i) {
-            return <Category category={category} key={i} index={i} />;
+            return <Category category={category} key={i} />;
           }.bind(this))}
         </ul>
       </div>
@@ -176,9 +196,10 @@ let MainNav = React.createClass({
 
 let CategoryItem = React.createClass({
   render: function() {
+    let url = '/item/?category=' + this.props.category + '&scene=' + this.props.item.id;
     return (
       <li className="category-item">
-        <a href={'/item/' + this.props.item.id}>
+        <a href={url}>
           <img
             src={this.props.item.img}
             alt={this.props.item.title}
@@ -192,7 +213,7 @@ let CategoryItem = React.createClass({
           </span>
         </a>
         <a
-          href={'/item/' + this.props.item.id}
+          href={url}
           className="item-btn"
         >
           查看
@@ -206,9 +227,15 @@ let CategoryItemGroup = React.createClass({
   render: function() {
     return (
       <ul className="category-items">
-        {this.props.items.map(function(item, i) {
-          return <CategoryItem item={item} key={i} />;
-        }.bind(this))}
+        {this.props.items.map((item, i) => {
+          return (
+            <CategoryItem
+              item={item}
+              key={i}
+              category={this.props.category}
+            />
+          );
+        })}
       </ul>
     );
   }
@@ -222,19 +249,42 @@ let CategoryItems = React.createClass({
     };
     if(this.props.items.subpart.length > 6) {
       itemsGroups = [
-        <CategoryItemGroup items={this.props.items.subpart.slice(0, 3)} key={0} />,
-        <CategoryItemGroup items={this.props.items.subpart.slice(3, 6)} key={1} />,
-        <CategoryItemGroup items={this.props.items.subpart.slice(6, 9)} key={2} />
+        <CategoryItemGroup
+          items={this.props.items.subpart.slice(0, 3)}
+          key={0}
+          category={this.props.items.id}
+        />,
+        <CategoryItemGroup
+          items={this.props.items.subpart.slice(3, 6)}
+          key={1}
+          category={this.props.items.id} />,
+        <CategoryItemGroup
+          items={this.props.items.subpart.slice(6, 9)}
+          key={2}
+          category={this.props.items.id}
+        />
       ];
     } else if (this.props.items.subpart.length > 3) {
       itemsGroups = [
-        <CategoryItemGroup items={this.props.items.subpart.slice(0, 3)} key={0} />,
-        <CategoryItemGroup items={this.props.items.subpart.slice(3, 6)} key={1} />
+        <CategoryItemGroup
+          items={this.props.items.subpart.slice(0, 3)}
+          key={0}
+          category={this.props.items.id}
+        />,
+        <CategoryItemGroup
+          items={this.props.items.subpart.slice(3, 6)}
+          key={1}
+          category={this.props.items.id}
+        />
       ];
       subpartStyle.width -= 270;
     } else {
       itemsGroups = [
-        <CategoryItemGroup items={this.props.items.subpart.slice(0, 3)} key={0} />
+        <CategoryItemGroup
+          items={this.props.items.subpart.slice(0, 3)}
+          key={0}
+          category={this.props.items.id}
+        />
       ];
       subpartStyle.width -= 270 * 2;
     }
