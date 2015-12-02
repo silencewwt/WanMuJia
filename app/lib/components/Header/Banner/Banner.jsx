@@ -33,13 +33,17 @@ let Logo = React.createClass({
 let Search = React.createClass({
   getInitialState: function() {
     return {
-      keyword: null
+      keyword: ''
     };
   },
   handleSubmitClick: function(e) {
     // if(!this.state.keyword) {
     //   return;
     // }
+
+    if(e.type === 'keydown' && e.keyCode !== 13) {
+      return;
+    }
 
     let url = '/item/?search=' + this.state.keyword;
     location.href = url;
@@ -59,6 +63,7 @@ let Search = React.createClass({
             placeholder="搜索您喜欢的红木产品"
             defaultValue={this.props.defaultValue}
             onBlur={this.handleSearchBlur}
+            onKeyDown={this.handleSubmitClick}
           />
           <span
             className="am-input-group-btn"

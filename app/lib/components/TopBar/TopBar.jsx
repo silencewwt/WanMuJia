@@ -15,6 +15,8 @@
 //  ==================================================
 
 require('./TopBar.scss');
+
+let Ajax = require('reqwest');
 let LoginPopup = require("../LoginPopup/LoginPopup.jsx");
 
 let TopBar = React.createClass({

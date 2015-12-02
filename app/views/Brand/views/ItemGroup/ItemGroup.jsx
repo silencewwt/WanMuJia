@@ -24,6 +24,7 @@ const ItemGroup = React.createClass({
     return (
       <div className="item-group">
         <Title
+          brand={this.props.brand}
           titleBgc={this.props.titleBgc}
           scene={this.props.scene}
           id={this.props.id}
@@ -49,7 +50,7 @@ const Title = React.createClass({
           {this.props.scene + '系列'}
         </span>
         <span className="more">
-          <a href={'/item/?scene=' + this.props.id}>
+          <a href={'/item/?brand=' + this.props.brand + '&scene=' + this.props.id}>
             查看更多
           </a>
         </span>

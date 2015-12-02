@@ -25,6 +25,8 @@ let ItemGroup = require('../Home/views/ItemGroup/ItemGroup.jsx');
 let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 
+const STYLE_SORT = [2, 3, 1, 4, 5, 6];
+
 let Furniture = React.createClass({
   getInitialState: function() {
     return {
@@ -61,11 +63,21 @@ let Furniture = React.createClass({
     });
   },
   render: function() {
-    let colors = [
-      '#6e3800',
-      '#5f0077',
-      '#3abfb4'
+    const colors = [
+      '#6c0087',
+      '#459cc3',
+      '#549031',
+      '#a24b00',
+      '#86ad00'
     ];
+    const imgs = {
+      '1': require('../../assets/images/style/style_01_gd.jpg'),
+      '2': require('../../assets/images/style/style_02_ms.jpg'),
+      '3': require('../../assets/images/style/style_03_qs.jpg'),
+      '4': require('../../assets/images/style/style_04_xzs.jpg'),
+      '5': require('../../assets/images/style/style_05_xgd.jpg'),
+      '6': require('../../assets/images/style/style_06_qt.jpg')
+    };
     return (
       <div>
         <Header
@@ -73,12 +85,15 @@ let Furniture = React.createClass({
           shrink={true}
           navActive={1}
         />
-        {Object.keys(this.state.items).map((id) => {
+      {STYLE_SORT.map((id, i) => {
+          if(!this.state.items.hasOwnProperty(id)) {
+            return;
+          }
           let guide = {
             title: this.state.items[id].style,
-            img: '',
+            img: imgs[id],
             url: '/item/?style=' + id,
-            color: colors[id] || colors[0]
+            color: colors[i]
           };
           return (
             <ItemGroup

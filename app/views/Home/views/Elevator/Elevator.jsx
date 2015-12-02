@@ -15,8 +15,15 @@
 const Elevator = React.createClass({
   getInitialState: function() {
     return {
-      active: null  // 激活的 btn
+      active: this.props.active  // 激活的 btn
     };
+  },
+  componentWillReceiveProps: function(nextProps) {
+    if(nextProps.active !== this.state.active) {
+      this.setState({
+        active: nextProps.active
+      });
+    }
   },
   selected: function(id) {
     this.setState({
@@ -46,11 +53,16 @@ const Elevator = React.createClass({
 const Item = React.createClass({
   render: function() {
     let itemClass = this.props.extraClass ? 'item ' + this.props.extraClass : 'item';
+    let itemStyle = this.props.extraClass ? {
+      backgroundColor: this.props.item.color,
+      borderColor: this.props.item.color
+    } : null;
     return (
       <div
         className={itemClass}
         title={this.props.item.title}
         onClick={this.props.onClick}
+        style={itemStyle}
       >
         <span className="title">
           {this.props.item.title}

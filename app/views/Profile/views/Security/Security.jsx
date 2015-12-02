@@ -9,6 +9,7 @@
 //                    timeLeft => integer 短信倒计时
 //                    mainHdText => array 折叠面板 Header 文字
 //                    usernameRevisable => boolean 会员名是否可修改
+//                    emailConfirmed => boolean 邮箱是否验证
 //
 //  Dependence: lib::utils npm::reqwest Profile::Security::Validate
 //
@@ -114,7 +115,8 @@ let SecMain = React.createClass({
               res.email,
               '×××××××××'
             ],
-            usernameRevisable: res.username_revisable
+            usernameRevisable: true,
+            emailConfirmed: res.email_confirmed
           });
         }
       }
@@ -139,7 +141,7 @@ let SecMain = React.createClass({
       return;
     } else {
       Ajax({  // 发送验证码
-        url: '/service/mobile_sms?type=USER_CHANGE_USERNAME',
+        url: '/service/mobile_sms_login_required?type=USER_SMS_CAPTCHA',
         method: 'post',
         data: {
           csrf_token: Utils.getCookie('csrf_token'),
@@ -198,6 +200,9 @@ let SecMain = React.createClass({
                   timeLeft={this.state.timeLeft}
                   sendVerify={this.sendVerify}
                   usernameRevisable={this.state.usernameRevisable}
+                  emailConfirmed={this.state.emailConfirmed}
+                  phone={this.state.mainHdText[1]}
+                  email={this.state.mainHdText[2]}
                 />
               }
             </div>
@@ -250,12 +255,16 @@ let SecMainBd = React.createClass({
         bdInstance = <UsernameBd
           timeLeft={this.props.timeLeft}
           sendVerify={this.props.sendVerify}
+          phone={this.props.phone}
         />;
         break;
       case 'email':
         bdInstance = <EmailBd
           timeLeft={this.props.timeLeft}
           sendVerify={this.props.sendVerify}
+          emailConfirmed={this.props.emailConfirmed}
+          phone={this.props.phone}
+          email={this.props.email}
        />;
         break;
       case 'password':
@@ -296,7 +305,7 @@ let UsernameBd = React.createClass({
   },
   changeUsername: function(username, verify) {
     let _this = this;
-    Ajax({  // 修改密码
+    Ajax({  // 修改会员名
       url: '/settings',
       method: 'post',
       data: {
@@ -331,6 +340,7 @@ let UsernameBd = React.createClass({
           placeholder='请输入你的手机号'
           ref="refPhone"
           validate={rules.phone}
+          value={this.props.phone}
         />
         <Validate
           placeholder='请输入短信验证码'
@@ -368,6 +378,11 @@ let UsernameBd = React.createClass({
 });
 
 let EmailBd = React.createClass({
+  getInitialState: function() {
+    return {
+      sendEmailTip: null
+    };
+  },
   handleSbtClick: function() {
     let phone = this.refs.refPhone.getValue();
     let verify = this.refs.refVerify.getValue();
@@ -386,7 +401,7 @@ let EmailBd = React.createClass({
   },
   changeEmail: function(email, verify) {
     let _this = this;
-    Ajax({  // 修改密码
+    Ajax({  // 修改邮箱
       url: '/settings',
       method: 'post',
       data: {
@@ -399,6 +414,29 @@ let EmailBd = React.createClass({
           _this.refs.refName.setTip(':) 修改成功', 'success');
         } else {
           _this.refs.refName.setTip(':( ' + res.message, 'tip');
+        }
+      }
+    })
+  },
+  sendEmail: function(email) {
+    let _this = this;
+    Ajax({  // 修改邮箱
+      url: '/service/send_email?type=USER_EMAIL_CONFIRM',
+      method: 'post',
+      data: {
+        csrf_token: Utils.getCookie('csrf_token'),
+        role: 'user',
+        email: email
+      },
+      success: function (res) {
+        if(res.success) {
+          _this.setState({
+            sendEmailTip: '发送成功。请查收 :)'
+          });
+        } else {
+          _this.setState({
+            sendEmailTip: ':( 发送失败。' + res.message
+          });
         }
       }
     })
@@ -416,43 +454,70 @@ let EmailBd = React.createClass({
   },
   render: function() {
     return (
-      <form>
-        <Validate
-          placeholder='请输入你的手机号'
-          ref="refPhone"
-          validate={rules.phone}
-        />
-        <Validate
-          placeholder='请输入短信验证码'
-          ref="refVerify"
-          theme="verify"
-          validate={rules.verify}
-        >
+        (this.props.emailConfirmed || !this.props.email) ?
+        <form>
+          <Validate
+            placeholder='请输入你的手机号'
+            ref="refPhone"
+            validate={rules.phone}
+            value={this.props.phone}
+          />
+          <Validate
+            placeholder='请输入短信验证码'
+            ref="refVerify"
+            theme="verify"
+            validate={rules.verify}
+          >
+            <button
+              type="button"
+              className={this.props.timeLeft ? 'disabled' : null}
+              onClick={this.handleVerifyClick}
+            >
+              {
+                this.props.timeLeft ?
+                this.props.timeLeft + 's 后可重发' :
+                '获取短信验证码'
+              }
+            </button>
+          </Validate>
+          <Validate
+            placeholder='请输入邮箱地址'
+            ref="refEmail"
+            validate={rules.email}
+          />
           <button
             type="button"
-            className={this.props.timeLeft ? 'disabled' : null}
-            onClick={this.handleVerifyClick}
+            className="email-sbt"
+            onClick={this.handleSbtClick}
           >
-            {
-              this.props.timeLeft ?
-              this.props.timeLeft + 's 后可重发' :
-              '获取短信验证码'
-            }
+            发送验证邮件
           </button>
-        </Validate>
-        <Validate
-          placeholder='请输入邮箱地址'
-          ref="refEmail"
-          validate={rules.email}
-        />
-        <button
-          type="button"
-          className="email-sbt"
-          onClick={this.handleSbtClick}
-        >
-          发送验证邮件
-        </button>
-      </form>
+        </form> :
+        <form>
+          <div
+            style={{
+              marginBottom: '20px',
+              textAlign: 'center',
+              color: '#666'
+            }}
+          >
+            验证邮件已发送至邮箱，请查收
+          </div>
+          <div
+            style={{
+              marginBottom: '20px',
+              textAlign: 'center',
+              color: '#666'
+            }}
+          >
+            {this.state.sendEmailTip}
+          </div>
+          <button
+            onClick={this.sendEmail.bind(null, this.props.email)}
+          >
+            重新发送
+          </button>
+        </form>
     );
   }
 });
@@ -481,17 +546,20 @@ let PasswordBd = React.createClass({
   changePassword: function(currPwd, newPwd, conPwd) {
     let _this = this;
     Ajax({  // 修改密码
-      url: '/change_password',
+      url: '/settings?type=USER_PASSWORD_SETTING',
       method: 'post',
       data: {
         csrf_token: Utils.getCookie('csrf_token'),
         old_password: Utils.encryptMd5(currPwd),
-        new_password: Utils.encryptMd5(newPwd),
+        password: Utils.encryptMd5(newPwd),
         confirm_password: Utils.encryptMd5(conPwd)
       },
       success: function (res) {
         if(res.success) {
-          _this.refs.refConfirmpwd.setTip(':) 密码修改成功，请重新登录', 'success');
+          _this.refs.refConfirmpwd.setTip(':) 密码修改成功，请重新登录。1s后返回登录页', 'success');
+          setTimeout(function() {
+            window.location.reload();
+          }, 2000);
         } else {
           _this.refs.refConfirmpwd.setTip(':( ' + res.message, 'tip');
         }
