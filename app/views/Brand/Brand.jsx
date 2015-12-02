@@ -44,7 +44,7 @@ const BRANDS_INFO = {
     description: '东阳市盛世九龙堂红木家具有限公司，坐落于“歌山画水之地，人文荟萃之乡”的浙江东阳。主营黑酸枝木类的东非黑黄檀木雕收藏类家具及工艺品--紫光檀。是当今最重最硬的木材。本公司秉承“慢工出细活，细活出精品”的理念，打造出各种古典而时尚的红木家具。品种齐全、典雅大方、美观耐用、价格合理，集艺术价值、收藏价值、实用价值于一体。'
   }
 }
-
+const SCENE_SORT = [3, 2, 4, 6, 5];
 let Brands = React.createClass({
   getDefaultProps: function() {
     return {
@@ -104,7 +104,10 @@ let Brands = React.createClass({
           brandInfo={BRANDS_INFO[this.props.brandId]}
         />
         <div className="container">
-          {Object.keys(this.state.items).map((id, i) => {
+          {SCENE_SORT.map((id, i) => {
+            if(!this.state.items.hasOwnProperty(id)) {
+              return;
+            }
             return (
               <ItemGroup
                 brand={this.props.brandId}

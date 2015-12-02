@@ -60,7 +60,10 @@ var FooterLink = React.createClass({
               {link.map(function(item, j) {
                 return (
                   <li key={i + '.' + j}>
-                    <a href={item.link}>
+                    <a
+                      href={j === 0 ? null : item.link}
+                      className={j === 0 ? 'title' : null}
+                    >
                       {item.title}
                     </a>
                   </li>

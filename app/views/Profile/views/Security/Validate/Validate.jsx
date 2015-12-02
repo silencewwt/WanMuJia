@@ -23,7 +23,7 @@ let Validate = React.createClass({
   getInitialState: function() {
     return {
       tip: this.props.tip || null,  // 提示语
-      value: ''  // 输入框的值
+      value: this.props.value ? this.props.value : ''  // 输入框的值
     }
   },
   getDefaultProps: function() {
@@ -31,7 +31,8 @@ let Validate = React.createClass({
       inputType: 'text',  // 输入框的类型
       validate: null, // 验证规则
       placeholder: null,  // 输入框自身提示
-      theme: 'default'  // 主题
+      theme: 'default',  // 主题
+      value: null // 值
     };
   },
   handleInputBlur: function(e) {
@@ -81,6 +82,7 @@ let Validate = React.createClass({
           onBlur={this.handleInputBlur}
           placeholder={this.props.placeholder}
           tip={this.state.tip}
+          value={this.props.value}
         />
           {this.props.children}
         <ValidateTip tip={this.state.tip} />
@@ -103,6 +105,7 @@ let ValidateInput = React.createClass({
         onBlur={this.props.onBlur}
         placeholder={this.props.placeholder}
         style={tipStyle}
+        value={this.props.value}
       />
     );
   }

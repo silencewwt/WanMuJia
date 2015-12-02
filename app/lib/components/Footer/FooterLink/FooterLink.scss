@@ -27,10 +27,17 @@ $linkColor: #666;
       margin: 20px 0;
 
       & > a {
-        @include link($linkColor);
+        &.title {
+          font-size: 18px;
+          color: #333;
+        }
 
-        &:hover {
-          @include linkHover($linkColor);
+        &:not(.title) {
+          @include link($linkColor);
+
+          &:hover {
+            @include linkHover($linkColor);
+          }
         }
       }
     }

@@ -25,6 +25,8 @@ let ItemGroup = require('../Home/views/ItemGroup/ItemGroup.jsx');
 let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 
+const STYLE_SORT = [2, 3, 1, 4, 5, 6];
+
 let Furniture = React.createClass({
   getInitialState: function() {
     return {
@@ -83,7 +85,10 @@ let Furniture = React.createClass({
           shrink={true}
           navActive={1}
         />
-      {Object.keys(this.state.items).map((id, i) => {
+      {STYLE_SORT.map((id, i) => {
+          if(!this.state.items.hasOwnProperty(id)) {
+            return;
+          }
           let guide = {
             title: this.state.items[id].style,
             img: imgs[id],

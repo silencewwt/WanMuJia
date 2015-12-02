@@ -17,7 +17,7 @@ let React = require('react');
 
 const MOCK_NAV_ITEMS = [
   {
-    id: 2,
+    id: 3,
     title: '客厅',
     subpart: [
       {
@@ -59,7 +59,7 @@ const MOCK_NAV_ITEMS = [
       }
     ]
   }, {
-    id: 3,
+    id: 2,
     title: '书房',
     subpart: [
       {
@@ -127,7 +127,7 @@ const MOCK_NAV_ITEMS = [
       }
     ]
   }, {
-    id: 5,
+    id: 6,
     title: '餐厅',
     subpart: [
       {
@@ -145,7 +145,7 @@ const MOCK_NAV_ITEMS = [
       }
     ]
   }, {
-    id: 6,
+    id: 5,
     title: '厨卫',
     subpart: [
       {
@@ -196,7 +196,7 @@ let MainNav = React.createClass({
 
 let CategoryItem = React.createClass({
   render: function() {
-    let url = '/item/?category=' + this.props.category + '&scene=' + this.props.item.id;
+    let url = '/item/?scene=' + this.props.category + '&category=' + this.props.item.id;
     return (
       <li className="category-item">
         <a href={url}>

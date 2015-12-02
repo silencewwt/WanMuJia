@@ -52,6 +52,8 @@ const SLIDER_IMG = [
   }
 ];
 
+const SCENE_SORT = [3, 2, 4, 6, 5];
+
 let Home = React.createClass({
   getInitialState: function() {
     return {
@@ -98,7 +100,7 @@ let Home = React.createClass({
         elevator: false
       });
     }
-    console.log(scrollTop);
+    console.log('scrollTop: ' + scrollTop);
   },
   render: function() {
     const colors = {
@@ -133,7 +135,10 @@ let Home = React.createClass({
         >
           <Slider slides={SLIDER_IMG} />
         </Header>
-        {Object.keys(this.state.itemGroupData).map((item, i) => {
+        {SCENE_SORT.map((item, i) => {
+          if(!this.state.itemGroupData.hasOwnProperty(item)) {
+            return;
+          }
           let guide = {
             title: this.state.itemGroupData[item].scene,
             img: imgs[item],

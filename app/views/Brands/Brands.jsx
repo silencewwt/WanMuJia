@@ -28,6 +28,8 @@ let Brand = require('./views/Brand/Brand.jsx');
 let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 
+const BRANDS_SORT = [12806, 12803, 12836, 12801];
+
 let Brands = React.createClass({
   getInitialState: function() {
     return {
@@ -72,7 +74,10 @@ let Brands = React.createClass({
           navActive={2}
         />
         <div className="container">
-          {Object.keys(this.state.brands).map((id) => {
+          {BRANDS_SORT.map((id) => {
+            if(!this.state.brands.hasOwnProperty(id)) {
+              return;
+            }
             return (
               <Brand
                 key={id}
