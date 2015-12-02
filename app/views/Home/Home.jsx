@@ -90,7 +90,7 @@ let Home = React.createClass({
   },
   handleWindowScroll: function(e) {
     let scrollTop = document.body.scrollTop;
-    if(scrollTop > 320) {
+    if(scrollTop > 320 && scrollTop < 2400) {
       this.setState({
         elevator: true,
         elevatorActive: parseInt((scrollTop - 320) / (560 + 20))
@@ -100,15 +100,15 @@ let Home = React.createClass({
         elevator: false
       });
     }
-    console.log('scrollTop: ' + scrollTop);
+    // console.log('scrollTop: ' + scrollTop);
   },
   render: function() {
     const colors = {
       '2': '#6c0087',
-      '3': '#549031',
+      '3': '#86ad00',
       '4': '#a24b00',
       '5': '#459cc3',
-      '6': '#86ad00'
+      '6': '#549031'
     };
 
     const imgs = {
@@ -119,11 +119,14 @@ let Home = React.createClass({
       '6': require('../../assets/images/scene/scene_06_ct.jpg')
     };
     let elevatorItems = [];
-    for(let i in this.state.itemGroupData) {
+    for(let i in SCENE_SORT) {
+      if(!this.state.itemGroupData[SCENE_SORT[i]]) {
+        continue;
+      }
       elevatorItems.push({
-        id: i,
-        title: this.state.itemGroupData[i].scene,
-        color: colors[i]
+        id: SCENE_SORT[i],
+        title: this.state.itemGroupData[SCENE_SORT[i]].scene,
+        color: colors[SCENE_SORT[i]]
       });
     }
 
