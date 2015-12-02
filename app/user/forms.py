@@ -78,28 +78,32 @@ class ResetPasswordForm(Form):
     mobile = StringField(validators=[Mobile(available=False)])
     captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
 
+    def validate_mobile(self, field):
+        if not User.query.filter_by(mobile=field.data).first():
+            raise ValidationError('该手机号码未注册用户!')
 
-class ResetPasswordNextForm(Form):
-    password = PasswordField(validators=[Length(32, 32)])
-    confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('password', '前后密码不一致')])
 
-    def reset_password(self):
-        user = User.query.filter_by(mobile=session[USER_RESET_PASSWORD_USERNAME]).first() or\
-            User.query.filter_by(email=session[USER_RESET_PASSWORD_USERNAME]).first()
-        if user is not None:
+class ResetPasswordDetailForm(Form):
+    password = PasswordField(validators=[Length(6, 32, '请填写密码'), EqualTo('confirm_password', u'前后密码不一致哦!')])
+    confirm_password = PasswordField(validators=[Length(6, 32, '请填写确认密码')])
+    mobile = StringField()
+
+    def __init__(self, *args, **kwargs):
+        super(ResetPasswordDetailForm, self).__init__(*args, **kwargs)
+        if USER_RESET_PASSWORD_MOBILE not in session:
+            raise ValidationError('参数错误, 注册失败')
+        self.mobile.data = session[USER_RESET_PASSWORD_MOBILE]
+
+    def update_password(self):
+        user = User.query.filter_by(mobile=self.mobile.data).first()
+        if user:
             user.password = self.password.data
             db.session.commit()
-            return True
-        return False
+        return user
 
 
 class SettingForm(Form):
     nothing = StringField()
-
-    def validate_nothing(self, field):
-        if self.type == USER_PASSWORD_SETTING:
-            if not current_user.verify_password(self.old_password.data):
-                raise ValidationError('原密码错误!')
 
     def __init__(self, type, *args, **kwargs):
         self.type = type
@@ -114,6 +118,11 @@ class SettingForm(Form):
             self.email = StringField(validators=Email())
             self.captcha = StringField(validators=[Captcha(SMS_CAPTCHA, current_user.mobile, required=False)])
         super(SettingForm, self).__init__(*args, **kwargs)
+
+    def validate_nothing(self, field):
+        if self.type == USER_PASSWORD_SETTING:
+            if not current_user.verify_password(self.old_password.data):
+                raise ValidationError('原密码错误!')
 
     def update(self):
         if self.type == USER_USERNAME_SETTING:
