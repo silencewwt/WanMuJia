@@ -91,7 +91,6 @@ jQuery(document).ready(function($) {
                 init: function () {
                     this
                         .on('sending', function (file, xhr) {
-                            console.log('sending...');
                             $.ajax({
                                 url: '/vendor/items/oss_signature',
                                 method: 'get',
