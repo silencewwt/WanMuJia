@@ -184,7 +184,7 @@
 + **method**
   + POST
 + **postData**
-  + captcha
+  + old_password
   + password
   + confirm_password
 + **return**
