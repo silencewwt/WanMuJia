@@ -94,17 +94,25 @@ class ResetPasswordNextForm(Form):
 
 
 class SettingForm(Form):
+    nothing = StringField()
+
+    def validate_nothing(self, field):
+        if self.type == USER_PASSWORD_SETTING:
+            if not current_user.verify_password(self.old_password.data):
+                raise ValidationError('原密码错误!')
 
     def __init__(self, type, *args, **kwargs):
         self.type = type
         if self.type == USER_USERNAME_SETTING:
             self.username = StringField(validators=[UserName(required=False, exist_owner=current_user)])
+            self.captcha = StringField(validators=[Captcha(SMS_CAPTCHA, current_user.mobile, required=False)])
         elif self.type == USER_PASSWORD_SETTING:
+            self.old_password = StringField(validators=[Length(32, 32)])
             self.password = StringField(validators=[Length(32, 32)])
             self.confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('new_password', '两次密码不一致')])
         else:  # email
             self.email = StringField(validators=Email())
-        self.captcha = StringField(validators=[Captcha(SMS_CAPTCHA, current_user.mobile, required=False)])
+            self.captcha = StringField(validators=[Captcha(SMS_CAPTCHA, current_user.mobile, required=False)])
         super(SettingForm, self).__init__(*args, **kwargs)
 
     def update(self):
