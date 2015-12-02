@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, session
-from flask.ext.login import login_user, current_user
-from flask.ext.principal import identity_changed, Identity
+from flask.ext.login import login_user, current_user, logout_user
+from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length, EqualTo
 
@@ -131,6 +131,10 @@ class SettingForm(Form):
                 current_user.username_revisable = False
         elif self.type == USER_PASSWORD_SETTING:
             current_user.password = self.password.data
+            db.session.commit()
+            logout_user()
+            identity_changed(current_app._get_current_object(), identity=AnonymousIdentity())
+            return
         else:  # email
             current_user.email = self.email.data
             current_user.email_confirmed = False

@@ -159,6 +159,8 @@
   + /settings
 + **method**
   + POST
++ **parameters**
+  + type = USER_USERNAME_SETTING
 + **postData**
   + captcha
   + username
@@ -173,6 +175,8 @@
   + /settings
 + **method**
   + POST
++ **parameters**
+  + type = USER_EMAIL_SETTING
 + **postData**
   + captcha
   + email
@@ -187,6 +191,8 @@
   + /settings
 + **method**
   + POST
++ **parameters**
+  + type = USER_PASSWORD_SETTING
 + **postData**
   + old_password
   + password
