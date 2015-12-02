@@ -16,6 +16,7 @@ from app.utils.myj_captcha import send_sms_captcha
 
 
 class MobileSMSForm(Form):
+    nothing = StringField()
 
     def __init__(self, sms_type, template, *args, **kwargs):
         self.template = template
@@ -31,6 +32,11 @@ class MobileSMSForm(Form):
         elif self.sms_type == VENDOR_REGISTER:
             self.mobile = StringField(validators=[Mobile(model=Vendor)])
         super(Form, self).__init__(*args, **kwargs)
+
+    def validate_nothing(self, field):
+        if self.sms_type == USER_RESET_PASSWORD:
+            if not User.query.filter_by(mobile=field.data).first():
+                raise ValidationError('该手机号码未注册用户!')
 
     def send_sms(self):
         if self.sms_type == USER_RESET_PASSWORD or self.sms_type == USER_REGISTER or self.sms_type == VENDOR_REGISTER \
