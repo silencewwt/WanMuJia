@@ -10,8 +10,8 @@ from app.constants import *
 from app.permission import user_permission
 from app.utils import items_json
 from . import user as user_blueprint
-from .forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, RegistrationForm, \
-    SettingForm, ResetPasswordForm, ResetPasswordNextForm
+from .forms import LoginForm, RegistrationDetailForm, MobileRegistrationForm, ResetPasswordDetailForm, \
+    SettingForm, ResetPasswordForm
 
 
 @user_blueprint.errorhandler(401)
@@ -78,40 +78,42 @@ def register():
 
 @user_blueprint.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
-    if USER_RESET_PASSWORD_STEP_DONE in session:
-        return redirect(url_for('user.reset_password_next'))
-    form = ResetPasswordForm()
-    if request.method == 'POST':
-        if form.validate():
-            session[USER_RESET_PASSWORD_STEP_DONE] = 1
-            session[USER_RESET_PASSWORD_USERNAME] = form.mobile.data
-            return jsonify({'success': True})
-        return jsonify({'success': False, 'message': form.error2str()})
-    return render_template('user/reset_password.html', form=form)
+    step = request.args.get('step', 1, type=int)
+    if USER_RESET_PASSWORD_STEP not in session:
+        if step not in (1, 2):
+            return redirect(url_for('main.index'))
+        session[USER_RESET_PASSWORD_STEP] = 1
+    elif session[USER_RESET_PASSWORD_STEP] != step:
+        return redirect(url_for('user.register', step=session[USER_RESET_PASSWORD_STEP]))
 
+    if request.method == 'GET':
+        ResetPasswordForm()  # generate csrf_token in cookie
+        return render_template('user/reset_password.html')
 
-@user_blueprint.route('/reset_password_next', methods=['GET', 'POST'])
-def reset_password_next():
-    if USER_RESET_PASSWORD_STEP_DONE not in session:
-        return redirect(url_for('user.reset_password'))
-    if USER_RESET_PASSWORD_USERNAME not in session:
-        session.pop(USER_RESET_PASSWORD_STEP_DONE)
-        return redirect(url_for('user.reset_password'))
-    form = ResetPasswordNextForm()
-    if request.method == 'POST':
+    if step == 1:
+        form = ResetPasswordForm()
         if form.validate():
-            form.reset_password()
-            session.pop(USER_RESET_PASSWORD_STEP_DONE)
-            session.pop(USER_RESET_PASSWORD_USERNAME)
+            session[USER_RESET_PASSWORD_MOBILE] = form.mobile.data
+            session[USER_RESET_PASSWORD_STEP] = 2
             return jsonify({'success': True})
+        else:
+            return jsonify({'success': False, 'message': form.error2str()})
+    elif step == 2:
+        if USER_RESET_PASSWORD_MOBILE not in session:
+            session[USER_RESET_PASSWORD_STEP] = 1
+            return redirect(url_for('user.register', step=1))
+        form = ResetPasswordDetailForm()
+        if form.validate():
+            user = form.update_password()
+            session.pop(USER_RESET_PASSWORD_STEP)
+            return jsonify({'success': True, 'user': {'username': user.username, 'mobile': user.mobile}})
         return jsonify({'success': False, 'message': form.error2str()})
-    return render_template('user/reset_password_next.html', form=form)
 
 
 @user_blueprint.route('/profile')
 @user_permission.require(401)
 def profile():
-    return render_template('user/profile.html', user=current_user, form=SettingForm())
+    return render_template('user/profile.html')
 
 
 @user_blueprint.route('/collection', methods=['GET', 'POST', 'DELETE'])

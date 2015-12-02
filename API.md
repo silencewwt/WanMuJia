@@ -77,46 +77,50 @@
 + **method**
   + GET
 
-### reset password
+### user reset password
 + **URL**
   + /reset_password
 + **method**
   + GET
   + POST
-+ **postData**
-  + **csrf_token**
-  + **mobile**
-    + required
-  + **captcha**
-    + required
-+ **return**
-  + 成功
-    + `{"success": true}`
-  + 失败
-    + `{"success": false, "message": ""}`
-+ **API**
-  + mobile
-    + mobile sms
-  + email
-    + send email
-
-### reset password next
-+ **URL**
-  + /reset_password_next
-+ **method**
-  + GET
-  + POST
-+ **postData**
-  + **csrf_token**
-  + **password**
-    + required
-  + **confirm_password**
-    + required
-+ **return**
-  + 成功
-    + `{"success": true}`
-  + 失败
-    + `{"success": false, "message": ""}`
++ step == 1
+  + **postData**
+    + **csrf_token**
+    + **mobile**
+      + 手机号码
+      + type = text
+      + length = 11
+      + require
+    + **captcha**
+      + 短信验证码
+      + type = text
+      + length = 6
+      + require
+  + **return**
+    + 成功
+      + `{"success": true}`
+    + 失败
+      + `{"success": false, "message": ""}`
++ step == 2
+  + **postData**
+    + **csrf_token**
+    + **password**
+      + 密码
+      + type = password
+      + length = [6, 32]
+      + require
+      + 需将用户的密码md5两次
+    + **confirm_password**
+      + 确认密码
+      + type = password
+      + length = [6, 32]
+      + require
+      + 需将用户的密码md5两次, 且与password相等
+  + **return**
+    + 成功
+      + `{"status": true, "user": {"username": "", "mobile": ""}}`
+    + 失败
+      + `{"status": false, "message": ""}`
 
 ### user home page
 + **URL**
