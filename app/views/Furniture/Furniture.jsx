@@ -64,10 +64,10 @@ let Furniture = React.createClass({
   },
   render: function() {
     const colors = [
-      '#6c0087',
-      '#459cc3',
-      '#549031',
       '#a24b00',
+      '#6c0087',
+      '#549031',
+      '#459cc3',
       '#86ad00'
     ];
     const imgs = {

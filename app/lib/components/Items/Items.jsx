@@ -140,17 +140,30 @@ var ItemInfo = React.createClass({
 });
 
 var ItemTip = React.createClass({
-  handleTipClick: function(i, id, e) {
+  getInitialState: function() {
+    return {
+      isFaved: false
+    };
+  },
+  handleFavClick: function(id, e) {
     e.preventDefault();
-    this.props.itemTipClick[i](this.props.id);
+    this.setState({
+      isFaved: true
+    });
+    this.props.itemTipClick[0](id);
+  },
+  handleCompClick: function(id, e) {
+    e.preventDefault();
+    this.props.itemTipClick[1](id);
   },
   render: function() {
+    let goFavClass = this.state.isFaved ? "go-fav faved" : "go-fav";
     return (
       <div className="item-tip">
-        <span className="go-expe">
+        <span className={goFavClass}>
           <a
             href='#'
-            onClick={this.handleTipClick.bind(null, 0, this.props.id)}
+            onClick={this.handleFavClick.bind(null, this.props.id)}
           >
             去体验馆
           </a>
@@ -158,7 +171,7 @@ var ItemTip = React.createClass({
         <span className="go-comp">
           <a
             href="#"
-            onClick={this.handleTipClick.bind(null, 1, this.props.id)}
+            onClick={this.handleCompClick.bind(null, this.props.id)}
           >
             对比
           </a>
