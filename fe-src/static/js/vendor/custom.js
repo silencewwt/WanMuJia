@@ -76,6 +76,7 @@ jQuery(document).ready(function($) {
     // Dropzone
     var dz = {
         initDropzone: function ($el, opt) {
+            var that = this;
             $el.dropzone({
                 url: opt.url,
                 method: 'put',
@@ -89,6 +90,27 @@ jQuery(document).ready(function($) {
 
                 init: function () {
                     this
+                        .on('sending', function (file, xhr) {
+                            console.log('sending...');
+                            $.ajax({
+                                url: '/vendor/items/oss_signature',
+                                method: 'get',
+                                data: {
+                                    item_id: opt.itemId,
+                                    filename: file.fileName
+                                },
+                                async: false,
+                                success: function (res) {
+                                    var headers = res.headers;
+                                    if (res.success) {
+                                        xhr.open('put', res.url);
+                                        Object.keys(headers).forEach(function (header) {
+                                            xhr.setRequestHeader(header, headers[header]);
+                                        });
+                                    }
+                                }
+                            });
+                        })
                         .on('removedfile', function (file) {
                             var hash = $(file.previewElement).data('hash');
                             if (hash) deleteImage(hash);
@@ -289,9 +311,11 @@ jQuery(document).ready(function($) {
         // init dropzone
         dz.initDropzone($('#img-upload'), {
             url: '/vendor/items/image?item_id=' + $itemEditForm.data('item-id'),
+            itemId: $itemEditForm.data('item-id'),
             success: function (file, data) {
                 var $previewElement = $(file.previewElement);
                 if (data.success) {
+
                     var image = data.image;
                     $previewElement.data('hash', image.hash);
 
@@ -417,7 +441,9 @@ jQuery(document).ready(function($) {
 
                         // init dropzone
                         dz.initDropzone($('#img-upload'), {
-                            url: '/vendor/items/image?item_id=' + data.item_id + '&' + urlSearch.slice(1),    // 去掉 '?'
+                            //url: '/vendor/items/image?item_id=' + data.item_id + '&' + urlSearch.slice(1),    // 去掉 '?'
+                            url: 'http://wanmujia.oss-cn-beijing.aliyuncs.com/images/item/',
+                            itemId: data.item_id,
                             success: function (file, data) {
                                 var $previewElement = $(file.previewElement);
                                 if (data.success) {
