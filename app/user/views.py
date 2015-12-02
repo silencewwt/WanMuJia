@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from math import ceil
-from flask import current_app, request, render_template, redirect, session, jsonify
+from flask import current_app, request, render_template, redirect, session, jsonify, g
 from flask.ext.cdn import url_for
 from flask.ext.login import logout_user, current_user
 from flask.ext.principal import identity_changed, AnonymousIdentity
@@ -165,7 +165,7 @@ def address():
 
 @user_blueprint.route('/logined')
 def logined():
-    if current_user.is_authenticated and current_user.id_prefix == 'u':
+    if g.identity.can(user_permission):
         return jsonify({'logined': True, 'username': current_user.username,
                         'mobile': current_user.mobile, 'email': current_user.email,
                         'username_revisable': current_user.username_revisable})
