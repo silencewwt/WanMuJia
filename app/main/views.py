@@ -22,7 +22,7 @@ def navbar():
     data = redis_get('INDEX_NAVBAR', 'ITEMS')
     if data is None:
         data = {}
-        for scene_id in range(3, 6):
+        for scene_id in [2, 3, 4, 6]:   # 客厅 书房 卧室 餐厅
             scene = Scene.query.get(scene_id)
             item_list = statisitc.item_query.filter(Item.scene_id == scene_id).all()
             if not item_list:
