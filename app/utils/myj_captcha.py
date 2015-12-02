@@ -40,4 +40,3 @@ def send_sms_captcha(template, mobile):
         redis_set(SMS_CAPTCHA_SENT, mobile, True, 60)
         return True
     return False
-

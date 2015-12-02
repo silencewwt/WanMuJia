@@ -17,25 +17,28 @@ from app.utils.myj_captcha import send_sms_captcha
 
 class MobileSMSForm(Form):
     nothing = StringField()
+    mobile = StringField()
+    captcha = StringField()
+    distributor_id = IntegerField()
 
     def __init__(self, sms_type, template, *args, **kwargs):
         self.template = template
         self.sms_type = sms_type
         if self.sms_type == USER_RESET_PASSWORD or self.sms_type == USER_SMS_CAPTCHA:
-            self.mobile = StringField(validators=[Mobile(available=False)])
+            self.mobile.validators = [Mobile(available=False)]
         elif self.sms_type == USER_GUIDE:
-            self.mobile = StringField(validators=[Mobile(available=False)])
-            self.distributor_id = IntegerField(validators=[QueryID(Distributor)])
-            self.captcha = StringField(validators=[Captcha(IMAGE_CAPTCHA, '')])
+            self.mobile.validators = [Mobile(available=False)]
+            self.distributor_id.validators = [QueryID(Distributor)]
+            self.captcha.validators = [Captcha(IMAGE_CAPTCHA, '')]
         elif self.sms_type == USER_REGISTER:
-            self.mobile = StringField(validators=[Mobile(model=User)])
+            self.mobile.validators = [Mobile(model=User)]
         elif self.sms_type == VENDOR_REGISTER:
-            self.mobile = StringField(validators=[Mobile(model=Vendor)])
+            self.mobile.validators = [Mobile(model=Vendor)]
         super(Form, self).__init__(*args, **kwargs)
 
     def validate_nothing(self, field):
         if self.sms_type == USER_RESET_PASSWORD:
-            if not User.query.filter_by(mobile=field.data).first():
+            if not User.query.filter_by(mobile=self.mobile.data).first():
                 raise ValidationError('该手机号码未注册用户!')
 
     def send_sms(self):
