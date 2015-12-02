@@ -139,7 +139,7 @@ class SettingForm(Form):
             current_user.password = self.password.data
             db.session.commit()
             logout_user()
-            identity_changed(current_app._get_current_object(), identity=AnonymousIdentity())
+            identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
             return
         else:  # email
             current_user.email = self.email.data
