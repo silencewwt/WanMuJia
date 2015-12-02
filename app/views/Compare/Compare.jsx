@@ -22,6 +22,7 @@ let Compare = React.createClass({
   getInitialState: function() {
     return {
       logined: false,
+      userInfo: null,
     };
   },
   componentDidMount: function() {
@@ -30,7 +31,7 @@ let Compare = React.createClass({
       method: "get",
       success: function(resp) {
         if(resp.logined) {
-          this.setState({logined: true});
+          this.setState({logined: true, userInfo: resp});
         }
       }.bind(this)
     });
@@ -45,6 +46,7 @@ let Compare = React.createClass({
         <Header
           mainNav={[]}
           shrink={true}
+          userInfo={this.state.userInfo}
         />
         <CompareTable logined={this.state.logined} toLogin={this.toLogin} />
         <Footer />
