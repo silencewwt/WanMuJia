@@ -36,7 +36,7 @@ var FooterLink = React.createClass({
           title: '企业入驻',
           link: '#'
         }, {
-          title: '入住条款',
+          title: '入驻条款',
           link: '#'
         }], [{
           title: '关于我们',

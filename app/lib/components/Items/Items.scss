@@ -251,14 +251,20 @@ $active-color: #6e3800;
       transform: translateY($item-tip-height);
       transition: transform 0.3s ease;
 
-      .go-expe {
+      .go-fav {
         border-top: 1px solid $divide-color;
-        margin-left: -1px;
+        border-right: 1px solid $divide-color;
         & > a {
-          background-position: 0 -3px;
+          background-position: 0 0;
 
           &:hover {
-            background-position: 0 -53px;
+            background-position: 0 -44px;
+          }
+        }
+        
+        &.faved {
+          & > a {
+            background-position: 0 -88px;
           }
         }
       }
@@ -266,10 +272,10 @@ $active-color: #6e3800;
       .go-comp {
         border-top: 1px solid $divide-color;
         & > a {
-          background-position: -110px -3px;
+          background-position: -110px 0;
 
           &:hover {
-            background-position: -110px -53px;
+            background-position: -110px -44px;
           }
         }
       }

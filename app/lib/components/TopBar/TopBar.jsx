@@ -179,7 +179,7 @@ let SiteInfo = React.createClass({
           </a>
         </span>
         <span className="comp">
-          <a href="/compare">商品对比</a>
+          <a href="/item/compare">商品对比</a>
         </span>
         <span className="crtl-d">
           <a href="#" onClick={this.addToFav}>收藏本站</a>
