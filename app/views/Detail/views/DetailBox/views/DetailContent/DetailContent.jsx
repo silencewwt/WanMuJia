@@ -217,6 +217,16 @@ var ContDetailImgs = React.createClass({
         </div>
       );
     });
+    imgsNode.push(
+      (<div className="img" key={"b-img-delivery"}>
+        <img src={require('../../../../../../assets/images/detail_cont_delivery.jpeg')} alt={"配送"} key={"d-img-delivery"} />
+      </div>)
+    );
+    imgsNode.push(
+      (<div className="img" key={"b-img-server"}>
+        <img src={require('../../../../../../assets/images/detail_cont_server.jpeg')} alt={"售后服务"} key={"d-img-server"} />
+      </div>)
+    );
     return (
       <div className="d-imgs">
         {imgsNode}
