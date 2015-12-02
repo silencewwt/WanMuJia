@@ -22,6 +22,7 @@ var Detail = React.createClass({
     return {
       logined: false,
       mobile: "",
+      userInfo: null,
     };
   },
   componentDidMount: function() {
@@ -30,7 +31,7 @@ var Detail = React.createClass({
       method: "get",
       success: function(resp) {
         if(resp.logined) {
-          this.setState({logined: true, mobile: resp.mobile});
+          this.setState({logined: true, mobile: resp.mobile, userInfo: resp});
         }
       }.bind(this)
     });
@@ -48,6 +49,7 @@ var Detail = React.createClass({
         <Header
           mainNav={[]}
           shrink={true}
+          userInfo={this.state.userInfo}
         />
         <DetailBox
           mobile={this.state.mobile}
