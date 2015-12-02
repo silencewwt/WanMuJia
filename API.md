@@ -210,7 +210,7 @@
   + GET
 + **return**
   + 已登录
-    + `{"logined": true, "username": "", "mobile": "", "email": "", "username_revisable": ""}`
+    + `{"logined": true, "username": "", "mobile": "", "email": "", "username_revisable": "", "email_confirmed": ""}`
   + 未登录
     + `{"logined": false}`
 
