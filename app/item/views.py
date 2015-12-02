@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from math import ceil
-from flask import render_template, request, current_app, abort, jsonify
+from flask import render_template, request, current_app, abort, jsonify, g
 from flask.ext.login import current_user
 from flask.ext.cdn import url_for
 
 from app import statisitc
 from app.models import Item, Category
-from app.user.forms import LoginForm
+from app.permission import user_permission
 from . import item as item_blueprint
 
 
@@ -182,7 +182,7 @@ def detail(item_id):
                 item_dict['distributors'] = statisitc.items[item.id]
             else:
                 item_dict['distributors'] = {}
-            if current_user.is_authenticated and current_user.id_prefix == 'u':
+            if g.identity.can(user_permission):
                 item_dict['item']['collected'] = current_user.item_collected(item.id)
             else:
                 item_dict['item']['collected'] = False
