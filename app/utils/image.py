@@ -49,7 +49,7 @@ def oss_authorization(item_id, filename):
     image_name = '%s.%s' % (image_hash, 'jpg')
     image_path = os.path.join(dir_path, image_name)
     resource_path = os.path.join('/', current_app.config['OSS_BUCKET_NAME'], image_path)
-    callback = '{"callbackUrl": %s, "callbackBody": "bucket=${bucket}&object=${object}&etag=${etag}"}' \
+    callback = '{"callbackUrl": "%s", "callbackBody": "bucket=${bucket}&object=${object}&etag=${etag}"}' \
                % url_for('vendor.image_callback', _external=True)
     signature = _oss_signature_generator(callback, resource_path)
     headers = {'Authorization': 'OSS %s:%s' % (current_app.config['OSS_ACCESS_ID'], signature),
