@@ -170,6 +170,7 @@ def logined():
     if g.identity.can(user_permission):
         return jsonify({'logined': True, 'username': current_user.username,
                         'mobile': current_user.mobile, 'email': current_user.email,
-                        'username_revisable': current_user.username_revisable})
+                        'username_revisable': current_user.username_revisable,
+                        'email_confirmed': current_user.email_confirmed})
     else:
         return jsonify({'logined': False})

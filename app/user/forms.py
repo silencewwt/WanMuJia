@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, session
-from flask.ext.login import login_user, current_user
-from flask.ext.principal import identity_changed, Identity
+from flask.ext.login import login_user, current_user, logout_user
+from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length, EqualTo
 
@@ -104,19 +104,25 @@ class ResetPasswordDetailForm(Form):
 
 class SettingForm(Form):
     nothing = StringField()
+    username = StringField()
+    captcha = StringField()
+    password = StringField()
+    old_password = StringField()
+    confirm_password = StringField()
+    email = StringField()
 
     def __init__(self, type, *args, **kwargs):
         self.type = type
         if self.type == USER_USERNAME_SETTING:
-            self.username = StringField(validators=[UserName(required=False, exist_owner=current_user)])
-            self.captcha = StringField(validators=[Captcha(SMS_CAPTCHA, current_user.mobile, required=False)])
+            self.username.validators = [UserName(required=False, exist_owner=current_user)]
+            self.captcha.validators = [Captcha(SMS_CAPTCHA, current_user.mobile, required=False)]
         elif self.type == USER_PASSWORD_SETTING:
-            self.old_password = StringField(validators=[Length(32, 32)])
-            self.password = StringField(validators=[Length(32, 32)])
-            self.confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('new_password', '两次密码不一致')])
+            self.old_password.validators = [Length(32, 32)]
+            self.password.validators = [Length(32, 32)]
+            self.confirm_password.validators = [Length(32, 32), EqualTo('new_password', '两次密码不一致')]
         else:  # email
-            self.email = StringField(validators=Email())
-            self.captcha = StringField(validators=[Captcha(SMS_CAPTCHA, current_user.mobile, required=False)])
+            self.email.validators = [Email()]
+            self.captcha.validators = [Captcha(SMS_CAPTCHA, current_user.mobile, required=False)]
         super(SettingForm, self).__init__(*args, **kwargs)
 
     def validate_nothing(self, field):
@@ -131,6 +137,10 @@ class SettingForm(Form):
                 current_user.username_revisable = False
         elif self.type == USER_PASSWORD_SETTING:
             current_user.password = self.password.data
+            db.session.commit()
+            logout_user()
+            identity_changed(current_app._get_current_object(), identity=AnonymousIdentity())
+            return
         else:  # email
             current_user.email = self.email.data
             current_user.email_confirmed = False
