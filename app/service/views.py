@@ -2,8 +2,8 @@
 from flask import request, Response, jsonify, redirect, url_for, session
 from flask.ext.login import current_user
 
-from app.constants import CONFIRM_EMAIL, USER_RESET_PASSWORD_STEP_DONE, USER_RESET_PASSWORD_USERNAME, USER_GUIDE, \
-    USER_REGISTER, VENDOR_REGISTER, VENDOR_EMAIL_CONFIRM, USER_EMAIL_CONFIRM, USER_RESET_PASSWORD, USER_SMS_CAPTCHA
+from app.constants import CONFIRM_EMAIL, USER_GUIDE, USER_REGISTER, VENDOR_REGISTER, VENDOR_EMAIL_CONFIRM, \
+    USER_EMAIL_CONFIRM, USER_RESET_PASSWORD, USER_SMS_CAPTCHA
 from app.models import User, Vendor, Area
 from app.sms import USER_REGISTER_TEMPLATE, VENDOR_REGISTER_TEMPLATE, RESET_PASSWORD_TEMPLATE, USER_GUIDE_TEMPLATE, \
     USER_SMS_CAPTCHA_TEMPLATE
@@ -71,8 +71,8 @@ def email_service():
         form = EmailForm(email_type)
     # elif email_type == USER_REGISTER:
     #     form = EmailRegisterForm(email_type)
-    elif email_type == USER_RESET_PASSWORD:
-        form = EmailResetPasswordForm(email_type)
+    # elif email_type == USER_RESET_PASSWORD:
+    #     form = EmailResetPasswordForm(email_type)
     else:
         return jsonify({'success': False, 'message': u'参数错误!'})
     if form.validate():
@@ -101,10 +101,10 @@ def verify():
                     return redirect(url_for('user.profile', _anchor='security'))
                 elif info['role'] == 'vendor':
                     return redirect(url_for('vendor.settings'))
-        elif info['action'] == 'reset_password':
-            session[USER_RESET_PASSWORD_STEP_DONE] = 1
-            session[USER_RESET_PASSWORD_USERNAME] = info['email']
-            return redirect(url_for('user.reset_password_next'))
+        # elif info['action'] == 'reset_password':
+        #     session[USER_RESET_PASSWORD_STEP] = 1
+            # session[USER_RESET_PASSWORD_USERNAME] = info['email']
+            # return redirect(url_for('user.reset_password_next'))
     return u'此链接已失效'
 
 
