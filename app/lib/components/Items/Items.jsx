@@ -147,14 +147,16 @@ var ItemTip = React.createClass({
   },
   handleFavClick: function(item, e) {
     e.preventDefault();
-    this.setState({
-      isFaved: true
-    });
     this.props.itemTipClick[0](item);
   },
   handleCompClick: function(item, e) {
     e.preventDefault();
     this.props.itemTipClick[1](item);
+  },
+  setFav: function(state) {
+    this.setState({
+      isFaved: state || true
+    });
   },
   render: function() {
     let goFavClass = this.state.isFaved ? "go-fav faved" : "go-fav";
