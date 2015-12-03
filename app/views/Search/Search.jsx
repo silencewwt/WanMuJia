@@ -120,7 +120,7 @@ let SearchPage = React.createClass({
       method: "get",
       success: function(res) {
         if(res.logined) {
-          this.setState({userInfo: res});
+          this.setState({userInfoState: res});
         }
       }.bind(this)
     });
