@@ -167,6 +167,7 @@ def address():
 
 @user_blueprint.route('/logined')
 def logined():
+    LoginForm()
     if g.identity.can(user_permission):
         return jsonify({'logined': True, 'username': current_user.username,
                         'mobile': current_user.mobile, 'email': current_user.email,
