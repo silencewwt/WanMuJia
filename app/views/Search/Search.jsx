@@ -95,7 +95,6 @@ let SearchPage = React.createClass({
   // Items
   handleCollectClick: function (itemReact, item) {
     if (!this.ifUserLogined()) {
-      itemReact.setFav();
       this.refs.loginPopup.show();
       return;
     }
