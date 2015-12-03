@@ -97,11 +97,11 @@ var ContDetailArr = React.createClass({
           </div>
           <div className="i-box">
             <div className="title">商品尺寸：</div>
-            <div className="attr">{data.size + " cm*cm*cm"}</div>
+            <div className="attr">{data.size + (data.size=="－－"?"":" cm*cm*cm")}</div>
           </div>
           <div className="i-box">
             <div className="title">适用面积：</div>
-            <div className="attr">{data.item + "平方米"}</div>
+            <div className="attr">{data.area + "平方米"}</div>
           </div>
           <div className="i-box">
             <div className="title">指导价格：</div>
@@ -247,7 +247,7 @@ var ContSuite = React.createClass({
           </div>
           <div className="i-box">
             <div className="title">商品尺寸：</div>
-            <div className="attr">{data.size + " cm*cm*cm"}</div>
+            <div className="attr">{data.size + (data.size=="－－"?"":" cm*cm*cm")}</div>
           </div>
           <div className="i-box">
             <div className="title">适用面积：</div>
