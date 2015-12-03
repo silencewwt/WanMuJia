@@ -1,199 +1,39 @@
-{% extends "user/layout.html" %}
-
-{% block title %}
-  {{ item.item }}
-{% endblock %}
-
-{% block styles %}
-    <link rel="stylesheet" href="{{url_for('static', filename='css/user/details.css')}}"/>
-{% endblock %}
-
-{% block content %}
-    <div class="overview">
-        <div class="wrapper-ov">
-            <div class="gallery">
-                <div class="booth">
-                    <img src="{{ item.images.first().url }}" alt="{{ item.item }}"/>
-                </div>
-                <ul class="thumbnail">
-                    {% for img in item.images.paginate(1, 5, False).items %}
-                        <li {% if loop.index == 1 %}'class="active"'{% endif %}>
-                            <a href="javascript:void(0);"><img src="{{ img.url }}" alt="{{ item.item }}"/></a>
-                        </li>
-                    {% endfor %}
-                </ul>
-
-                <!-- <div class="vendor">
-                    <h3 class="vendor-name">{{ item.vendor.brand }}</h3>
-                    <div class="vendor-info">
-                        <img src="{{ item.vendor.logo }}" alt="{{ item.vendor.brand }}" class="vendor-logo"/>
-                        <p class="vendor-desc">{{ item.vendor.introduction }}</p>
-                    </div>
-                </div> -->
-
-            </div>
-
-            <div class="property">
-                <div class="title">
-                    <h1>{{ item.item }}</h1>
-                    <!-- <p>{{ item.desc }}</p> -->
-                    <p>商品品牌：{{ item.vendor.brand }}</p>
-                </div>
-
-                <dl class="param price">
-                    <dt>指导价格:</dt>
-                    <dd>&yen; <span>{{ item.price }}</span></dd>
-                </dl>
-                <div class="action">
-                    <button class="vs" data-id="{{ item.id }}">加入对比</button>
-                    {% if user.is_authenticated and user.id_prefix == 'u' %}
-                    {% if user.item_collected(item.id) %}
-                    <button class="like" data-id="{{ item.id }}" data-method="DELETE">取消收藏</button>
-                    {% else %}
-                    <button class="like" data-id="{{ item.id }}" data-method="POST">收藏</button>
-                    {% endif %}
-                    {% else %}
-                    <button class="like-to-login" data-id="{{ item.id }}"  data-toggle="modal" data-method="LOGIN" data-target="#login_modal">收藏</button>
-                    {% endif %}
-                </div>
-
-                <dl class="param">
-                    <dt>详情</dt>
-                    <dd>
-                        <ul>
-                            <li>商品种类: {{ item.category }}</li>
-                            <li>使用场景: {{ item.scene }}</li>
-                            <li>商品尺寸: {{ item.size() }}</li>
-                        </ul>
-                    </dd>
-                    </dd>
-                </dl>
-
-                <div class="buy">
-                    <button class="negotiate"><a href="/address?item_id={{ item.id }}">去体验店</a></button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="description tab">
-        <div class="wrapper-desc">
-            <ul class="tabs">
-                <li class="active" data-tab="detail"><a href="javascript:void(0)">商品详情</a></li>
-                {% if item.is_suite %}
-                <li data-tab="com-detail"><a href="javascript:void(0)">组件规格</a></li>
-                {% endif %}
-                <li data-tab="story"><a href="javascript:void(0)">商品寓意</a></li>
-            </ul>
-
-            <div class="tab-content">
-                <div class="detail">
-                    <ul class="standard">
-                        <li title="商品名：{{ item.item }}">商品名：{{ item.item }}</li>
-                        <li title="品牌名：{{ item.vendor.brand }}">品牌名：{{ item.vendor.brand }}</li>
-                        <li title="指导价格：{{ item.price }}">指导价格：{{ item.price }}</li>
-
-                        {% if not item.is_suite %}
-                        <li title="长*宽*高：{{ item.size() }}">长*宽*高：{{ item.size() }}</li>
-                        {% endif %}
-
-                        <li title="适用面积：{{ item.area }}">适用面积：{{ item.area }}</li>
-                        <li title="材料：{{ item.second_material }}">材料：{{ item.second_material }}</li>
-
-                        {% if not item.is_suite %}
-                        <li title="分类：{{ item.category }}">分类：{{ item.category }}</li>
-                        {% endif %}
-
-                        <li title="场景：{{ item.scene }}">场景：{{ item.scene }}</li>
-                        <li title="烘干工艺：{{ item.stove }}">烘干工艺：{{ item.stove }}</li>
-                        <li title="外表面打磨砂纸：{{ item.outside_sand }}">外表面打磨砂纸：{{ item.outside_sand }}</li>
-                        <li title="内表面打磨砂纸：{{ item.inside_sand }}">内表面打磨砂纸：{{ item.inside_sand }}</li>
-
-                        {% if not item.is_suite %}
-                        <li title="涂饰工艺：{{ item.paint }}">涂饰工艺：{{ item.paint }}</li>
-                        {% endif %}
-
-                        {% if not item.is_suite %}
-                        <li title="装饰工艺：{{ item.decoration }}">装饰工艺：{{ item.decoration }}</li>
-                        {% endif %}
-
-                        <li title="风格：{{ item.style }}">风格：{{ item.style }}</li>
-
-                        {% if item.is_suite %}
-                        <li title="组件数量和：{{ item.amount }}">组件数量和：{{ item.amount }}</li>
-                        {% endif %}
-                    </ul>
-
-                    <div class="photo">
-                        {% for img in item.images %}
-                        <img src="{{ img.url }}" alt="{{ item.item }}"/>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                {% if item.is_suite %}
-                <div class="com-detail hide">
-                    <div class="detail">
-                        {% for item in item.components %}
-                        <h2>{{ item.item }}</h2>
-                        <ul class="standard">
-                            <li title="组件名：{{ item.item }}">组件名：{{ item.item }}</li>
-                            <li title="长*宽*高：{{ item.size() }}">长*宽*高：{{ item.size() }}</li>
-                            <li title="适用面积：{{ item.area }}">适用面积：{{ item.area }}</li>
-                            <li title="分类：{{ item.category }}">分类：{{ item.category }}</li>
-                            <li title="雕刻工艺：{{ item.carve }}">雕刻工艺：{{ item.carve }}</li>
-                            <li title="榫卯结构：{{ item.tenon }}">榫卯结构：{{ item.tenon }}</li>
-                            <li title="涂饰工艺：{{ item.paint }}">涂饰工艺：{{ item.paint }}</li>
-                            <li title="装饰工艺：{{ item.decoration }}">装饰工艺：{{ item.decoration }}</li>
-                            <li title="该组件的数量：{{ item.amount }}">该组件的数量：{{ item.amount }}</li>
-                        </ul>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-
-                <div class="story hide">
-                    <p>
-                        {{ item.story }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-     <!-- 对比添加的小红球 -->
-    <div class="addvs-tip-ball"></div>
-
-    <!-- 登录模态框 -->
-    <div class="modal fade" id="login_modal" tabindex="-1" role="dialog" aria-labelledby="loginModal">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="loginModal">登录万木家</h4>
-          </div>
-          <div class="modal-body">
-            <form>
-                {{ form.csrf_token }}
-              <div class="form-group">
-                <label for="username" class="control-label">登录名</label>
-                <input type="text" class="form-control" name="username" id="username" placeholder="手机号/邮箱/昵称">
-              </div>
-              <div class="form-group">
-                <label for="password" class="control-label">密码</label>
-                <input type="password" class="form-control" name="password" id="password">
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary login_btn">登录</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="{{url_for('static', filename='lib/md5.js')}}"></script>
-    <script src="{{url_for('static', filename='js/user/tab.js')}}"></script>
-    <script src="{{url_for('static', filename='js/user/details_ui.js')}}"></script>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>商品详情</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="keywords" content="红木、红木家具、万木家、明式家具、清式家具、大红酸枝、红木家具在哪买">
+  <meta name="description" content="万木家——北京静雅居科技有限公司旗下,中国权威的红木家具导购平台。专注于服务红木家具消费者，为用户提供一个品质保障的可信赖平台。">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+  <link rel="icon" type="image/png" href="{{url_for('static', filename='img/user/favicon.png')}}">
+  <script src="{{url_for('static', filename='js/user/commons.bundle.js')}}"></script>
+  <!--[if lte IE 8 ]>
+  <script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+  <![endif]-->
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?3622563fdbba6008d41083a8f1d8a384";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+  <script>
+    (function(){
+        var bp = document.createElement('script');
+        bp.src = '//push.zhanzhang.baidu.com/push.js';
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+</head>
+<body>
+  <div id="content"></div>
+  <script src="{{url_for('static', filename='js/user/Detail.bundle.js')}}"></script>
+</body>
+</html>

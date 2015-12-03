@@ -1,1 +1,0 @@
-$(function(){var e="/",t=$("#tip"),n=3e3,i=setInterval(function(){n-=1e3,t.text(n/1e3+"秒后自动跳转"),0===n&&(clearTimeout(i),window.location.href=e)},1e3)});

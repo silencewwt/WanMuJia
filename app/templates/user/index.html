@@ -1,81 +1,39 @@
-{% import 'user/macro/items_recommend.html' as recommend %}
-
-{% extends "user/layout.html" %}
-
-{% block title %}
-  首页
-{% endblock %}
-
-{% block styles %}
-    <link rel="stylesheet" href="{{url_for('static', filename='css/user/index.css')}}">
-{% endblock %}
-
-{% block content %}
-
-    <div id="banner" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-            <li data-target="#banner" data-slide-to="0" class="active"></li>
-            <li data-target="#banner" data-slide-to="1"></li>
-            <li data-target="#banner" data-slide-to="2"></li>
-        </ol>
-
-        <div class="carousel-inner slide-wrapper" role="listbox">
-            <div class="item active">
-                <a href="item/13863"><img src="img/user/carousel/13863.jpg" alt="红酸枝老料中式餐桌7件套"></a>
-                <div class="carousel-caption">
-
-                </div>
-            </div>
-            <div class="item">
-                <a href="/item/13896"><img src="img/user/carousel/13896.jpg" alt="曲尺罗汉床"></a>
-                <div class="carousel-caption">
-
-                </div>
-            </div>
-            <div class="item">
-                <a href="item/13916"><img src="img/user/carousel/13916.jpg" alt="小叶檀清明上河图罗汉床3件套"></a>
-                <div class="carousel-caption">
-
-                </div>
-            </div>
-
-            <div class="dialog"></div>
-        </div>
-
-        <a class="left carousel-control" href="#banner" role="button" data-slide="prev">
-            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="right carousel-control" href="#banner" role="button" data-slide="next">
-            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
-    </div>
-
-
-    <section class="container">
-        {{ recommend.title_divider('新品推荐') }}
-
-        <div class="wrapper">
-            {{ recommend.items(group1) }}
-        </div>
-    </section>
-
-    <section class="container">
-        {{ recommend.title_divider('猜你喜欢') }}
-
-        <div class="wrapper">
-            {{ recommend.items(group2) }}
-        </div>
-    </section>
-
-    <section class="container">
-        {{ recommend.title_divider('大师作品') }}
-
-        <div class="wrapper">
-            {{ recommend.items(group3) }}
-        </div>
-    </section>
-
-    <script src="{{url_for('static', filename='js/user/item.js')}}"></script>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>万木家-权威的红木家具导购平台,买红木,就到万木家</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="keywords" content="红木、红木家具、万木家、明式家具、清式家具、大红酸枝、红木家具在哪买">
+  <meta name="description" content="万木家——北京静雅居科技有限公司旗下,中国权威的红木家具导购平台。专注于服务红木家具消费者，为用户提供一个品质保障的可信赖平台。">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+  <link rel="icon" type="image/png" href="{{url_for('static', filename='img/user/favicon.png')}}">
+  <script src="{{url_for('static', filename='js/user/commons.bundle.js')}}"></script>
+  <!--[if lte IE 8 ]>
+  <script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+  <![endif]-->
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?3622563fdbba6008d41083a8f1d8a384";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+  <script>
+    (function(){
+        var bp = document.createElement('script');
+        bp.src = '//push.zhanzhang.baidu.com/push.js';
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+</head>
+<body>
+  <div id="content"></div>
+  <script src="{{url_for('static', filename='js/user/Home.bundle.js')}}"></script>
+</body>
+</html>

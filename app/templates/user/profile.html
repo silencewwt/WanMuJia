@@ -1,148 +1,39 @@
-{% import 'user/macro/items_recommend.html' as recommend %}
-{% from 'user/macro/paging.html' import paging %}
-{% extends "user/layout.html" %}
-
-{% block title %}
-  个人中心
-{% endblock %}
-
-{% block styles %}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/user/profile.css')}}" />
-{% endblock %}
-
-{% block content %}
-<div class="wrapper-personal">
-  <div class="overview">
-    <ul class="info">
-      <li>昵称：{{ user.nickname or "无" }}</li>
-      <li>邮箱：{{ user.email or "无" }}</li>
-      <li>手机号码：{{ user.mobile or "无" }}</li>
-    </ul>
-  </div>
-
-  <div class="tab">
-    <ul class="tabs">
-      <li data-tab="collections"><a href="javascript:void(0)">我的收藏</a></li>
-      <li data-tab="profile"><a href="javascript:void(0)">个人信息</a></li>
-      <li data-tab="security"><a href="javascript:void(0)">账号安全</a></li>
-    </ul>
-
-    <div class="tab-content">
-      <div class="collections hide">
-        <div class="main"></div>
-        <div class="pagi"></div>
-      </div>
-
-      <div class="profile hide">
-        <form action="">
-          {{ form.csrf_token }}
-          <div class="form-group">
-            <div class="wrapper-label">
-              <label class="control-label" for="nickname">昵称</label>
-            </div>
-            <input name="nickname" type="text" id="nickname" class="verified" placeholder="输入新昵称来修改它" />
-          </div>
-          <div class="form-tip"></div>
-          <div class="form-group offset action">
-            <input id="settingSubmit" type="submit" value="修改" />
-          </div>
-        </form>
-      </div>
-
-      <div class="security hide">
-          <div class="sec-group">
-            <form action="">
-              <div class="sec-title">修改密码</div>
-              <div class="form-group">
-                <div class="wrapper-label">
-                  <label class="control-label" for="password">原密码</label>
-                </div>
-                <input name="oriPwd" type="password" id="oriPwd" class="verified" placeholder="" />
-              </div>
-              <div class="form-group">
-                <div class="wrapper-label">
-                  <label class="control-label" for="password">新密码</label>
-                </div>
-                <input name="newPwd" type="password" id="newPwd" class="verified" placeholder="" />
-              </div>
-              <div class="form-group">
-                <div class="wrapper-label">
-                  <label class="control-label" for="password">确认密码</label>
-                </div>
-                <input name="conPwd" type="password" id="conPwd" class="verified" placeholder="" />
-              </div>
-              <div class="form-tip"></div>
-              <div class="form-group offset action">
-                <input id="pwdSubmit" type="submit" value="完成" />
-              </div>
-            </form>
-          </div>
-          <div class="sec-group">
-            {% if user.mobile %}
-              <div class="sec-title">绑定手机</div>
-              <div class="form-group">
-                <div class="wrapper-label">
-                  <label class="control-label" for="phone0">已绑定手机号码</label>
-                </div>
-                <input name="phone0" type="text" placeholder="{{ user.mobile }}" readonly="readonly" />
-              </div>
-            {% else %}
-              <form action="">
-                <div class="sec-title">绑定手机</div>
-                <div class="form-group">
-                  <div class="wrapper-label">
-                    <label class="control-label" for="phone">手机号码</label>
-                  </div>
-                  <input name="phone" type="text" id="newmobile" class="verified" placeholder="" />
-                </div>
-                <div class="form-group">
-                  <div class="wrapper-label">
-                    <label class="control-label" for="verify">验证码</label>
-                  </div>
-                  <input name="verify" type="text" id="newverify" class="verified" placeholder="" />
-                  <button class="send-verify">获取验证码</button>
-                </div>
-                <div class="form-tip"></div>
-                <div class="form-group offset action">
-                  <input id="phoneSubmit" type="submit" value="确认绑定" />
-                </div>
-              </form>
-            {% endif %}
-          </div>
-          <div class="sec-group">
-            {% if user.email %}
-              <div class="sec-title">绑定邮箱</div>
-              <div class="form-group">
-                <div class="wrapper-label">
-                  <label class="control-label" for="email0">已绑定邮箱</label>
-                </div>
-                <input name="email0" type="text" placeholder="{{ user.email }}" readonly="readonly" />
-              </div>
-            {% else %}
-              <form action="">
-                <div class="sec-title">绑定邮箱</div>
-                <div class="form-group">
-                  <div class="wrapper-label">
-                    <label class="control-label" for="email">邮箱地址</label>
-                  </div>
-                  <input name="email" type="text" id="newemail" class="verified" placeholder="" />
-                </div>
-                <div class="form-tip"></div>
-                <div class="form-group offset action">
-                  <input id="emailSubmit" type="submit" value="发送验证邮件" />
-                </div>
-              </form>
-            {% endif %}
-          </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<script src="{{url_for('static', filename='lib/md5.js')}}"></script>
-<script src="{{url_for('static', filename='js/util.js')}}"></script>
-<script src="{{url_for('static', filename='js/user/tab.js')}}"></script>
-<script src="{{url_for('static', filename='js/user/profile_ui.js')}}"></script>
-<script src="{{url_for('static', filename='js/user/paging_ui.js')}}"></script>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="Zh-cn">
+<head>
+  <meta charset="utf-8">
+  <title>万木家-个人中心,买红木,就到万木家</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="keywords" content="红木、红木家具、万木家、明式家具、清式家具、大红酸枝、红木家具在哪买">
+  <meta name="description" content="万木家——北京静雅居科技有限公司旗下,中国权威的红木家具导购平台。专注于服务红木家具消费者，为用户提供一个品质保障的可信赖平台。">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+  <link rel="icon" type="image/png" href="{{url_for('static', filename='img/user/favicon.png')}}">
+  <script src="{{url_for('static', filename='js/user/commons.bundle.js')}}"></script>
+  <!--[if lte IE 8 ]>
+  <script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+  <![endif]-->
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?3622563fdbba6008d41083a8f1d8a384";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+  <script>
+    (function(){
+        var bp = document.createElement('script');
+        bp.src = '//push.zhanzhang.baidu.com/push.js';
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+</head>
+<body>
+  <div id="content"></div>
+  <script src="{{url_for('static', filename='js/user/Profile.bundle.js')}}"></script>
+</body>
+</html>
