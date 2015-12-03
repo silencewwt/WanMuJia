@@ -179,7 +179,9 @@ def available_mobile(mobile, model, exist_owner):
             return False
     else:
         role = model.query.filter_by(mobile=mobile)
-        if role.count() > 1 or (role.first() and role.first().id != exist_owner.id):
+        if exist_owner is None and role.first() is not None:
+            return False
+        elif role.count() > 1 or (role.first() and role.first().id != exist_owner.id):
             return False
     return True
 
@@ -190,7 +192,9 @@ def available_email(email, model, exist_owner):
             return False
     else:
         role = model.query.filter_by(email=email)
-        if role.count() > 1 or (role.first() and role.first().id != exist_owner.id):
+        if exist_owner is None and role.first() is not None:
+            return False
+        elif role.count() > 1 or (role.first() and role.first().id != exist_owner.id):
             return False
     return True
 
