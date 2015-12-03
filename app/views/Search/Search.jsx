@@ -107,7 +107,7 @@ let SearchPage = React.createClass({
       }
     });
   },
-  handleCompareClick: function (item) {
+  handleCompareClick: function (itemReact, item) {
     this.refs.floatBottomTip.compareBarAddItem(item);
   },
 
