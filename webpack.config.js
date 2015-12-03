@@ -30,7 +30,7 @@ var plugins = [
   })
 ];
 
-if (env === 'product') {
+if (env === 'production') {
   plugins.push(new UglifyJsPlugin({
     test: /(\.jsx|\.js)$/
   }));
