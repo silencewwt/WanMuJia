@@ -19,10 +19,10 @@ var Items = React.createClass({
     return {
       theme: 'normal',  // 风格
       itemTipClick: [ // theme 为 tight 时 ItemTip 的回调
-        function(item) {
+        function(ins, item) {
           console.log(item);
         },
-        function(item) {
+        function(ins, item) {
           console.log(item);
         }
       ]
@@ -147,11 +147,11 @@ var ItemTip = React.createClass({
   },
   handleFavClick: function(item, e) {
     e.preventDefault();
-    this.props.itemTipClick[0](item);
+    this.props.itemTipClick[0](this, item);
   },
   handleCompClick: function(item, e) {
     e.preventDefault();
-    this.props.itemTipClick[1](item);
+    this.props.itemTipClick[1](this, item);
   },
   setFav: function(state) {
     this.setState({
