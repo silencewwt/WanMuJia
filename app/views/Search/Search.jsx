@@ -10,6 +10,8 @@ let FilterGroup = require('../../lib/components/FilterGroup/FilterGroup');
 let SortBar = require('../../lib/components/SortBar/SortBar');
 let Items = require('../../lib/components/Items/Items');
 let Pagination = require('../../lib/components/Pagination/Pagination');
+let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
+let LoginPopup = require('../../lib/components/LoginPopup/LoginPopup.jsx');
 let historyWatcher = Utils.historyWatcher;
 
 let SearchPage = React.createClass({
@@ -50,6 +52,7 @@ let SearchPage = React.createClass({
   getInitialState: function () {
     let queryParamsFromUrl = Utils.queryStringToJson(Utils.getUrlQuery());
     return {
+      userInfoState: null,
       queryParams: queryParamsFromUrl,    // 全部的搜索参数
       filterGroupState: {
         filterValues: []
@@ -65,28 +68,64 @@ let SearchPage = React.createClass({
     };
   },
   componentDidMount: function () {
+    this.getUserInfo();
     this.getSearchData('init', Utils.getUrlQuery(), true);
     historyWatcher.onPopstate((e) => {
       this.getSearchData('popstate', e.state);
     });
   },
 
-  // callbacks
+  /* callbacks */
+  // FilterGroup
   handleFilterStateChange: function (state) {
-    console.log('state change:', state);
     this.getSearchData('filter', this.genUrlQuery({
       filterSelected: state,
       otherParams: this.state.queryParams,
       isFromFilter: true
     }));
   },
+  // SortBar
   handleSortSelect: function (field, order) {
     this.getSearchData('pagination', Object.assign({}, this.state.queryParams, {order: order}));
   },
+  // Pagination
   handlePageChange: function (page) {
     this.getSearchData('pagination', Object.assign({}, this.state.queryParams, {page: page}));
   },
+  // Items
+  handleCollectClick: function (itemReact, item) {
+    if (!this.ifUserLogined()) {
+      itemReact.setFav();
+      this.refs.loginPopup.show();
+      return;
+    }
+    reqwest({
+      url: '/collection',
+      method: 'post',
+      data: {item: item.item_id},
+      success: function (res) {
+        res.success && itemReact.setFav();
+      }
+    });
+  },
+  handleCompareClick: function (item) {
+    this.refs.floatBottomTip.compareBarAddItem(item);
+  },
 
+  ifUserLogined: function () {
+    return this.state.userInfoState && this.state.userInfoState.logined;
+  },
+  getUserInfo: function () {
+    reqwest({
+      url: "/logined",
+      method: "get",
+      success: function(res) {
+        if(res.logined) {
+          this.setState({userInfo: res});
+        }
+      }.bind(this)
+    });
+  },
   getSearchData: function (origin, params) {
     params = params || Utils.getUrlQuery();
     let jsonToQueryString = Utils.jsonToQueryString;
@@ -220,13 +259,16 @@ let SearchPage = React.createClass({
   },
 
   render: function () {
-    let {progressBarConfig, headerConfig, filterGroupConfig, sortBarConfig, paginationConfig} = this.props;
-    let {filterGroupState, itemsState, paginationState} = this.state;
+    let {progressBarConfig, headerConfig, filterGroupConfig, sortBarConfig, itemsConfig, paginationConfig} = this.props;
+    let {userInfoState, filterGroupState, itemsState, paginationState} = this.state;
     return (
       <div>
         <ProgressBar {...progressBarConfig} ref="progressBar" />
 
-        <Header {...headerConfig} />
+        <Header
+          {...headerConfig}
+          userInfo={userInfoState}
+        />
 
         <div className="filter-wrapper">
           <FilterGroup
@@ -248,7 +290,10 @@ let SearchPage = React.createClass({
         </div>
 
         <div className="items-wrapper">
-          <Items items={itemsState.items} />
+          <Items
+            itemTipClick={[this.handleCollectClick, this.handleCompareClick]}
+            items={itemsState.items}
+          />
         </div>
 
         <div className="pagination-wrapper">
@@ -259,6 +304,9 @@ let SearchPage = React.createClass({
             selected={this.handlePageChange}
           />
         </div>
+
+        <FloatBottomTip ref="floatBottomTip" />
+        <LoginPopup ref="loginPopup" />
       </div>
     );
   }
