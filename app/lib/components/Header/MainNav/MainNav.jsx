@@ -147,17 +147,7 @@ const MOCK_NAV_ITEMS = [
   }, {
     id: 5,
     title: '厨卫',
-    subpart: [
-      {
-        id: 80,
-        title: '翘头案',
-        img: require('../../../../assets/images/main_nav/nav_06_01.jpg')
-      }, {
-        id: 220,
-        title: '屏风',
-        img: require('../../../../assets/images/main_nav/nav_06_02.jpg')
-      }
-    ]
+    subpart: []
   }
 ];
 
@@ -278,7 +268,7 @@ let CategoryItems = React.createClass({
         />
       ];
       subpartStyle.width -= 270;
-    } else {
+    } else if (this.props.items.subpart.length > 0) {
       itemsGroups = [
         <CategoryItemGroup
           items={this.props.items.subpart.slice(0, 3)}
@@ -287,13 +277,20 @@ let CategoryItems = React.createClass({
         />
       ];
       subpartStyle.width -= 270 * 2;
+    } else {
+      itemsGroups = [];
+      subpartStyle.width = 0;
     }
     return (
       <div className="category-subpart" style={subpartStyle}>
         {itemsGroups}
-        <div className="category-more">
-          <a href={'/item/?scene=' + this.props.items.id}>查看更多</a>
-        </div>
+        {
+          itemsGroups.length ?
+          <div className="category-more">
+            <a href={'/item/?scene=' + this.props.items.id}>查看更多</a>
+          </div> :
+          null
+        }
       </div>
     );
   }

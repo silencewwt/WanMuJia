@@ -33,8 +33,12 @@ const Elevator = React.createClass({
     document.body.scrollTop = offset;
   },
   render: function() {
+    let elevatorStyle = {
+      top: (window.innerHeight - 350) / 2 + 'px',
+      left: (window.innerWidth - 1200) / 2 - 70 + 'px'
+    };
     return (
-      <div className="elevator">
+      <div className="elevator" style={elevatorStyle}>
         {this.props.items.map((item, i) => {
           return (
             <Item
