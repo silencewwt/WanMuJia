@@ -85,9 +85,14 @@ var LoginIn = React.createClass({
       }.bind(this),
     });
   },
+  handleKeyUp: function(e) {
+    if(e.key == "Enter") {
+      this.doNext();
+    }
+  },
   render: function() {
     return (
-      <div className="login-box">
+      <div className="login-box" onKeyUp={this.handleKeyUp}>
 
         <div className="header-logo">
           <div className="logo"></div>
