@@ -93,7 +93,7 @@ let Home = React.createClass({
     if(scrollTop > 320 && scrollTop < 2400) {
       this.setState({
         elevator: true,
-        elevatorActive: parseInt((scrollTop - 320) / (560 + 20))
+        elevatorActive: parseInt((scrollTop - 200) / (560 + 20))
       });
     } else {
       this.setState({
