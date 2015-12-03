@@ -155,7 +155,7 @@ let MainNav = React.createClass({
   getDefaultProps: function() {
     return {
       title: '全部商品分类',
-      color: '#411e00',
+      color: '#502500',
       shrink: false,
       items: MOCK_NAV_ITEMS
     }
@@ -301,8 +301,10 @@ let Category = React.createClass({
     return (
       <li className="category">
         <a
-          href="#"
           className="am-icon-angle-right"
+          style={{
+            cursor: 'pointer'
+          }}
         >
           {this.props.category.title}
         </a>

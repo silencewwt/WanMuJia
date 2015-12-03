@@ -117,23 +117,26 @@ $active-color: #6e3800;
       width: $item-width-tg - $item-padding-left * 2 - $divide-width * 2;
       height: $item-height-tg - $item-padding-top * 2 - $divide-width * 1.5;
       box-sizing: content-box;
+      // transition: border-color 0.4s ease;
 
-      &:after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        display: block;
-        width: 100%;
-        height: 0;
-        background-color: #9e0808;
-        transition: height .2s ease;
-      }
-
+      // &:after {
+      //   content: "";
+      //   position: absolute;
+      //   left: 0;
+      //   bottom: 0;
+      //   display: block;
+      //   width: 100%;
+      //   height: 0;
+      //   background-color: #9e0808;
+      //   transition: height .2s ease;
+      // }
+      //
       &:hover {
-        &:after {
-          height: 2px;
-        }
+        z-index: 200;
+        border-color: #9e0808;
+        // &:after {
+        //   height: 2px;
+        // }
       }
 
       .item-img {
@@ -178,11 +181,12 @@ $active-color: #6e3800;
 
     &:hover {
       & > .item-img {
-        transform: translateY(-4px);
+        // transform: translateY(-4px);
+        transform: scale(1.1, 1.1);
       }
-      & > .item-info {
-        transform: translateY(-2px);
-      }
+      // & > .item-info {
+      //   transform: translateY(-2px);
+      // }
     }
 
     .item-badge {
@@ -204,7 +208,7 @@ $active-color: #6e3800;
       line-height: $img-height;
       font-size: 0;
       transform: translateY(0);
-      transition: transform 0.3s ease;
+      transition: transform 0.3s linear;
 
       & > img {
         max-width: 100%;
@@ -261,7 +265,7 @@ $active-color: #6e3800;
             background-position: 0 -44px;
           }
         }
-        
+
         &.faved {
           & > a {
             background-position: 0 -88px;

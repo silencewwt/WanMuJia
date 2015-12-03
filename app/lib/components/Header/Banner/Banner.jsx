@@ -36,22 +36,21 @@ let Search = React.createClass({
       keyword: ''
     };
   },
-  handleSubmitClick: function(e) {
+  handleKeywordRt: function(e) {
+    if(e.keyCode === 13) {
+      this.handleSubmitClick();
+    } else {
+      this.setState({
+        keyword: e.target.value
+      });
+    }
+  },
+  handleSubmitClick: function() {
     // if(!this.state.keyword) {
     //   return;
     // }
-
-    if(e.type === 'keydown' && e.keyCode !== 13) {
-      return;
-    }
-
     let url = '/item/?search=' + this.state.keyword;
     location.href = url;
-  },
-  handleSearchBlur: function(e) {
-    this.setState({
-      keyword: e.target.value
-    });
   },
   render: function() {
     return (
@@ -60,16 +59,16 @@ let Search = React.createClass({
           <input
             type="text"
             className="am-form-field"
-            placeholder="搜索您喜欢的红木产品"
+            placeholder="搜索你喜欢的红木产品"
             defaultValue={this.props.defaultValue}
             onBlur={this.handleSearchBlur}
-            onKeyDown={this.handleSubmitClick}
+            onKeyUp={this.handleKeywordRt}
           />
           <span
             className="am-input-group-btn"
             onClick={this.handleSubmitClick}
           >
-            <button className="am-btn am-btn-default" type="button">
+            <button className="am-btn am-btn-default" type="button" title="搜索">
               搜索
             </button>
           </span>

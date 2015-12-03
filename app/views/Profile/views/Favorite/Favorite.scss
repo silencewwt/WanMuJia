@@ -1,7 +1,7 @@
 
-$item-height: 140px;
+$item-height: 120px;
 $item-bgc: #f5f5f5;
-$thumb-size: 110px;
+$thumb-size: 90px;
 
 $text-color: #666;
 $price-color: #cf0a0a;
@@ -12,6 +12,8 @@ $item-price-width: 140px;
 $divide-color: $border-color-base;
 
 .favorite {
+  padding-top: 15px;
+
   .item {
     padding: ($item-height - $thumb-size) / 2 30px;
     margin: 15px auto;
@@ -71,11 +73,11 @@ $divide-color: $border-color-base;
     }
 
     .compare {
-      margin-left: 240px;
+      margin-left: 270px;
     }
 
     .unfavorite {
-      margin-left: 50px;
+      margin-left: 60px;
     }
   }
 

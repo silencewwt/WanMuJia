@@ -130,7 +130,7 @@ let Brands = React.createClass({
 const Banner = React.createClass({
   render: function() {
     return (
-      <div className="brand-banner">
+      <div className="brand-banner container">
         <img src={this.props.brandInfo.image} />
         <div className="container">
           <p className="brand-desc">

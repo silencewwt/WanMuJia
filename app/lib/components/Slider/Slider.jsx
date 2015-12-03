@@ -22,7 +22,7 @@ var Slider = React.createClass({
     return (
       <div className="slider">
         <div className="container">
-          <AMUIReact.Slider theme="a1" slideSpeed="350">
+          <AMUIReact.Slider theme="a1" slideSpeed={4000}>
             {this.props.slides.map(function(item, i) {
               return (
                 <AMUIReact.Slider.Item key={i}>

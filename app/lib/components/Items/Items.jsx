@@ -117,8 +117,6 @@ var ItemInfo = React.createClass({
   formatPrice: function(price) {
     if(price / 10000 >= 1) {
       return (price / 10000).toFixed(2) + '万';
-    } else if(price / 1000 >= 1) {
-      return (price / 1000).toFixed(2) + '千';
     } else {
       return price.toFixed(2) + '元';
     }

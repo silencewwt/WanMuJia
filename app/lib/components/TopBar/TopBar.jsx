@@ -108,6 +108,7 @@ let LoginedUserInfo = React.createClass({
           <a
             href="/logout"
             onClick={this.handleLogout}
+            title="退出登录"
           >
             退出登录
           </a>
@@ -126,13 +127,14 @@ let UnloginedUserInfo = React.createClass({
           <a
             href="/login"
             onClick={this.props.handleNeedLogin}
+            title="请登录"
           >
             请登录
           </a>
         </span>
         <span className="reg">
           免费
-          <a className="reg-btn" href="/register">注册</a>
+          <a className="reg-btn" href="/register" title="注册">注册</a>
         </span>
       </div>
     );
@@ -166,6 +168,7 @@ let SiteInfo = React.createClass({
           <a
             href="/profile#favorite"
             onClick={this.checkLoginStatus}
+            title="收藏夹"
           >
             收藏夹
           </a>
@@ -174,17 +177,18 @@ let SiteInfo = React.createClass({
           <a
             href="/profile#my"
             onClick={this.checkLoginStatus}
+            title="我的万木家"
           >
             我的万木家
           </a>
         </span>
         <span className="comp">
-          <a href="/item/compare">商品对比</a>
+          <a href="/item/compare" title="商品对比">商品对比</a>
         </span>
         <span className="crtl-d">
-          <a href="#" onClick={this.addToFav}>收藏本站</a>
+          <a href="#" onClick={this.addToFav} title="收藏本站">收藏本站</a>
         </span>
-        <span className="tel">
+        <span className="tel" title="400电话咨询">
           服务电话：400 0117 440
         </span>
       </div>
