@@ -32,7 +32,7 @@ let rules = { // 表单验证规则
   },
   username: {
     rule: Utils.getRegs('nickname'),
-    text: '请输入正确的会员名'
+    text: '会员名为大小写字母、数字或"_"的组合'
   },
   email: {
     rule: Utils.getRegs('email'),
@@ -40,7 +40,7 @@ let rules = { // 表单验证规则
   },
   password: {
     rule: Utils.getRegs('userPassword'),
-    text: '请输入正确的密码'
+    text: '6-16 位，大小写字母、数字及 "_" 、"." 的组合'
   }
 };
 
@@ -113,9 +113,9 @@ let SecMain = React.createClass({
               res.username,
               res.mobile,
               res.email,
-              '×××××××××'
+              '• • • • • •'
             ],
-            usernameRevisable: true,
+            usernameRevisable: res.username_revisable,
             emailConfirmed: res.email_confirmed
           });
         }
@@ -316,6 +316,9 @@ let UsernameBd = React.createClass({
       success: function (res) {
         if(res.success) {
           _this.refs.refName.setTip(':) 修改成功', 'success');
+          setTimeout(function() {
+            window.location.reload();
+          }, 1000);
         } else {
           _this.refs.refName.setTip(':( ' + res.message, 'tip');
         }
@@ -475,7 +478,7 @@ let EmailBd = React.createClass({
             >
               {
                 this.props.timeLeft ?
-                this.props.timeLeft + 's 后可重发' :
+                this.props.timeLeft + '秒后再次发送' :
                 '获取短信验证码'
               }
             </button>

@@ -301,8 +301,10 @@ let Category = React.createClass({
     return (
       <li className="category">
         <a
-          href="#"
           className="am-icon-angle-right"
+          style={{
+            cursor: 'pointer'
+          }}
         >
           {this.props.category.title}
         </a>
