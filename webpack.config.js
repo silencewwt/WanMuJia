@@ -8,6 +8,7 @@ var path = require('path');
 
 var entryPath = './app/views';
 var outputDir;
+var publicPath;
 var entries = function () {
   return fs.readdirSync(entryPath).reduce(function (o, filename) {
     !/\./.test(filename) &&
@@ -30,13 +31,20 @@ var plugins = [
   })
 ];
 
-if (env === 'production') {
+if (env === 'prev' || env === 'prod') {
   plugins.push(new UglifyJsPlugin({
     test: /(\.jsx|\.js)$/
   }));
-  outputDir = '../WanMuJia-fe-release/app'
+  outputDir = '../WanMuJia-fe-release/app';
+  if (env === 'prev') {
+    publicPath = 'http://static2.wanmujia.com/';
+  }
+  else {
+    publicPath = 'http://static.wanmujia.com/';
+  }
 } else {
   outputDir = '../WanMuJia/app';
+  publicPath = 'http://localhost:5000/';
 }
 
 var config = {
@@ -44,7 +52,7 @@ var config = {
   output: {
     path: path.join(__dirname, outputDir, 'static'),
     filename: 'js/user/[name].bundle.js',
-    publicPath: env === 'product' ?  'http://static.wanmujia.com/' : 'http://localhost:5000/'
+    publicPath: publicPath
   },
   module: {
     loaders: [
