@@ -75,7 +75,7 @@ def item_filter():
         )
         query = query.filter(Item.style_id.in_(styles))
     if price is not None and 0 <= price < len(price_list):
-        query.filter(Item.price >= price_list[price][0], Item.price <= price_list[price][1])
+        query = query.filter(Item.price >= price_list[price][0], Item.price <= price_list[price][1])
     else:
         price = None
     if search is not None and search != '':
