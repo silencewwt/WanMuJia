@@ -94,6 +94,7 @@ let SearchPage = React.createClass({
   },
   // Items
   handleCollectClick: function (itemReact, item) {
+    console.log(item);
     if (!this.ifUserLogined()) {
       this.refs.loginPopup.show();
       return;
@@ -101,7 +102,7 @@ let SearchPage = React.createClass({
     reqwest({
       url: '/collection',
       method: 'post',
-      data: {item: item.item_id},
+      data: {item: item.id},
       success: function (res) {
         res.success && itemReact.setFav();
       }
