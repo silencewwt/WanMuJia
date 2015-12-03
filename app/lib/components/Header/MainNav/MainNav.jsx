@@ -155,7 +155,7 @@ let MainNav = React.createClass({
   getDefaultProps: function() {
     return {
       title: '全部商品分类',
-      color: '#411e00',
+      color: '#502500',
       shrink: false,
       items: MOCK_NAV_ITEMS
     }
