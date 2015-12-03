@@ -306,7 +306,7 @@ let UsernameBd = React.createClass({
   changeUsername: function(username, verify) {
     let _this = this;
     Ajax({  // 修改会员名
-      url: '/settings',
+      url: '/settings?type=USER_USERNAME_SETTING',
       method: 'post',
       data: {
         csrf_token: Utils.getCookie('csrf_token'),
@@ -402,7 +402,7 @@ let EmailBd = React.createClass({
   changeEmail: function(email, verify) {
     let _this = this;
     Ajax({  // 修改邮箱
-      url: '/settings',
+      url: '/settings?type=USER_EMAIL_SETTING',
       method: 'post',
       data: {
         csrf_token: Utils.getCookie('csrf_token'),
@@ -420,7 +420,7 @@ let EmailBd = React.createClass({
   },
   sendEmail: function(email) {
     let _this = this;
-    Ajax({  // 修改邮箱
+    Ajax({  // 发送邮箱验证
       url: '/service/send_email?type=USER_EMAIL_CONFIRM',
       method: 'post',
       data: {
