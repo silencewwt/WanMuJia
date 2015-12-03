@@ -348,7 +348,7 @@ var AgreeInputGroup = React.createClass({
 
         <label className="instruct" htmlFor="agree">
           注册表示你同意万木家
-          <a href="#">《用户使用条款》</a>
+          <a href="/about#useterms" target="_black">《用户使用条款》</a>
         </label>
 
         <div className="tip err" >你必须同意万木家服务条款后，才能提交注册</div>

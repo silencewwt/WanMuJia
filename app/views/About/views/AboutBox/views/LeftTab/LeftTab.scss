@@ -1,0 +1,38 @@
+.left-tab {
+  width: 20%;
+  height: auto;
+  float: left;
+  border-right: 1px solid #ccc;
+
+  ul {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    padding: 20px 0 80px 0;
+
+    li {
+      list-style: none;
+      padding: 0 15px;
+      padding-top: 20px;
+
+      a {
+        display: block;
+        padding: 0 30px;
+        border-bottom: 1px solid #ccc;
+        color: #666;
+        font-size: 15px;
+        font-weight: bold;
+        line-height: 30px;
+      }
+      a:hover {
+        color: #333;
+      }
+      a.active {
+        color: #833e00;
+      }
+      a.active:hover {
+        color: #833e00;
+      }
+    }
+  }
+}
