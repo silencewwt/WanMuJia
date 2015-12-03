@@ -56,6 +56,12 @@ let Profile = React.createClass({
         }
       }
     })
+
+    window.addEventListener('hashchange', function() {
+      _this.setState({
+        active: window.location.hash === '#my' ? 1 : 0
+      });
+    });
   },
   render: function() {
     return (

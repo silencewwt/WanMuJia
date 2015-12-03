@@ -100,7 +100,7 @@ let LoginedUserInfo = React.createClass({
       <div className="user-info">
         <span className="hello">你好，</span>
         <span className="profile">
-          <a href="/profile">
+          <a href="/profile#my">
             {this.props.userInfo.username}
           </a>
         </span>

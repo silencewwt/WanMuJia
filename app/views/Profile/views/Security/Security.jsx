@@ -218,10 +218,10 @@ let SecMainHd = React.createClass({
     let btnText;
     if(!this.props.usernameRevisable && this.props.item.type === 'username') {
       btnText = '您已修改过会员名，现在无法修改';
-    } else if (this.props.item.type === 'email' && this.props.text) {
-      btnText = '修改邮箱';
     } else if (this.props.active) {
       btnText = '收起';
+    } else if (this.props.item.type === 'email' && this.props.text) {
+      btnText = '修改邮箱';
     } else {
       btnText = this.props.item.btn;
     }
