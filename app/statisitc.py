@@ -194,12 +194,12 @@ class DistributorAreaNode(DistributorAreaTree):
 def distributors_statistic(item_id=None):
     global items
     items = {}
-    root = DistributorAreaTree()
     if item_id is not None:
         query = [Item.query.get(item_id)]
     else:
         query = item_query
     for item in query:
+        root = DistributorAreaTree()
         for distributor in item.in_stock_distributors():
             area = distributor.address.area
             root.add_node(root, DistributorAreaNode.build_from_dict(area.experience_dict(distributor.id)))
