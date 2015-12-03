@@ -19,11 +19,11 @@ var Items = React.createClass({
     return {
       theme: 'normal',  // 风格
       itemTipClick: [ // theme 为 tight 时 ItemTip 的回调
-        function(id) {
-          console.log(id);
+        function(item) {
+          console.log(item);
         },
-        function(id) {
-          console.log(id);
+        function(item) {
+          console.log(item);
         }
       ]
     }
@@ -74,7 +74,7 @@ var Item = React.createClass({
         {
           this.props.theme === 'normal' ?
           <ItemTip
-            id={this.props.item.id}
+            item={this.props.item}
             itemTipClick={this.props.itemTipClick}
           /> :
           null
@@ -145,16 +145,16 @@ var ItemTip = React.createClass({
       isFaved: false
     };
   },
-  handleFavClick: function(id, e) {
+  handleFavClick: function(item, e) {
     e.preventDefault();
     this.setState({
       isFaved: true
     });
-    this.props.itemTipClick[0](id);
+    this.props.itemTipClick[0](item);
   },
-  handleCompClick: function(id, e) {
+  handleCompClick: function(item, e) {
     e.preventDefault();
-    this.props.itemTipClick[1](id);
+    this.props.itemTipClick[1](item);
   },
   render: function() {
     let goFavClass = this.state.isFaved ? "go-fav faved" : "go-fav";
@@ -163,7 +163,7 @@ var ItemTip = React.createClass({
         <span className={goFavClass}>
           <a
             href='#'
-            onClick={this.handleFavClick.bind(null, this.props.id)}
+            onClick={this.handleFavClick.bind(null, this.props.item)}
           >
             去体验馆
           </a>
@@ -171,7 +171,7 @@ var ItemTip = React.createClass({
         <span className="go-comp">
           <a
             href="#"
-            onClick={this.handleCompClick.bind(null, this.props.id)}
+            onClick={this.handleCompClick.bind(null, this.props.item)}
           >
             对比
           </a>
