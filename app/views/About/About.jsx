@@ -13,6 +13,8 @@ let Header = require('../../lib/components/Header/Header.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 
+let AboutBox = require('./views/AboutBox/AboutBox.jsx');
+
 let reqwest = require('reqwest');
 
 var About = React.createClass({
@@ -42,7 +44,7 @@ var About = React.createClass({
           shrink={true}
           userInfo={this.state.userInfo}
         />
-
+        <AboutBox />
         <Footer />
         <FloatBottomTip ref="floatBottomTip" />
       </div>

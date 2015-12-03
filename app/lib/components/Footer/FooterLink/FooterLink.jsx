@@ -25,28 +25,28 @@ var FooterLink = React.createClass({
           link: '#'
         }, {
           title: '使用流程',
-          link: '#'
+          link: '/about#progress'
         }, {
           title: '用户条款',
-          link: '#'
+          link: '/about#useterms'
         }], [{
           title: '企业指南',
           link: '#'
         }, {
           title: '企业入驻',
-          link: '#'
+          link: '/vendor/register'
         }, {
-          title: '入驻条款',
-          link: '#'
+          title: '平台服务',
+          link: '/about#server'
         }], [{
           title: '关于我们',
           link: '#'
         }, {
           title: '联系方式',
-          link: '#'
+          link: '/about#contact'
         }, {
           title: '平台介绍',
-          link: '#'
+          link: '/about#intro'
         }]
       ]
     }
