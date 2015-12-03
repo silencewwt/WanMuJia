@@ -86,11 +86,11 @@ let SearchPage = React.createClass({
   },
   // SortBar
   handleSortSelect: function (field, order) {
-    this.getSearchData('pagination', Object.assign({}, this.state.queryParams, {order: order}));
+    this.getSearchData('sortbar', Utils.oExtends({}, this.state.queryParams, {order: order}));
   },
   // Pagination
   handlePageChange: function (page) {
-    this.getSearchData('pagination', Object.assign({}, this.state.queryParams, {page: page}));
+    this.getSearchData('pagination', Utils.oExtends({}, this.state.queryParams, {page: page}));
   },
   // Items
   handleCollectClick: function (itemReact, item) {
@@ -107,7 +107,7 @@ let SearchPage = React.createClass({
       }
     });
   },
-  handleCompareClick: function (item) {
+  handleCompareClick: function (itemReact, item) {
     this.refs.floatBottomTip.compareBarAddItem(item);
   },
 
@@ -120,7 +120,7 @@ let SearchPage = React.createClass({
       method: "get",
       success: function(res) {
         if(res.logined) {
-          this.setState({userInfo: res});
+          this.setState({userInfoState: res});
         }
       }.bind(this)
     });

@@ -1,0 +1,42 @@
+@import "../../assets/styles/main";
+
+.not-found {
+  width: 1200px;
+  margin: 20px auto;
+  height: 500px;
+
+  .img {
+    float: left;
+    width: 50%;
+    height: 100%;
+    background: url('/app/assets/images/404.png') no-repeat;
+    background-position: 350px 95px;
+    background-size: 200px;
+  }
+
+  .cont {
+    float: left;
+    width: 50%;
+    height: 100%;
+
+    .title {
+      font-size: 23px;
+      margin-top: 150px;
+    }
+    .can {
+      margin: 5px 0;
+      font-size: 15px;
+      color: #999;
+    }
+    .back {
+      .tip {
+        font-size: 15px;
+        color: #999;
+      }
+      a {
+        font-size: 20px;
+        padding-left: 1em;
+      }
+    }
+  }
+}
