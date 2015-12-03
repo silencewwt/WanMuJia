@@ -114,10 +114,10 @@ $border-color: #e6e6e6;
           width: 3em;
         }
       }
-      .til:hover {
-        .delete-btn {
-          display: block;
-        }
+    }
+    .td-group:hover {
+      .delete-btn {
+        display: block;
       }
     }
   }
