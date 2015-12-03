@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, session
+from flask.ext.cdn import url_for
 from flask.ext.login import login_user, current_user, logout_user
 from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
 from wtforms import StringField, PasswordField, BooleanField
@@ -8,7 +9,9 @@ from wtforms.validators import DataRequired, Length, EqualTo
 from app import db
 from app.constants import *
 from app.models import User
+from app.utils import md5_with_time_salt
 from app.utils.forms import Form
+from app.utils.redis import redis_set
 from app.utils.validator import Email, Mobile, Captcha, UserName, ValidationError
 from app.wmj_email import send_email, USER_EMAIL_CONFIRM, EMAIL_CONFIRM_SUBJECT
 
@@ -144,5 +147,8 @@ class SettingForm(Form):
         else:  # email
             current_user.email = self.email.data
             current_user.email_confirmed = False
-            send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, USER_EMAIL_CONFIRM)
+            token = md5_with_time_salt(self.email.data)
+            redis_set(CONFIRM_EMAIL, token, {'email': self.email.data, 'action': 'confirm'}, serialize=True)
+            url = url_for('service.verify', token=token, _external=True)
+            send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, USER_EMAIL_CONFIRM, url=url)
         db.session.commit()
