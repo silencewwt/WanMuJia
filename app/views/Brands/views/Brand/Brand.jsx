@@ -60,12 +60,12 @@ let Banner = React.createClass({
   render: function() {
     return (
       <div className="banner">
-        <a href={'brands/' + this.props.brandInfo.id}>
+        <a href={'brands/' + this.props.brandInfo.id} title={this.props.brandInfo.brand}>
           <image src={this.props.brandInfo.image} />
         </a>
         <div className="title">
           <span className="text">精品推荐</span>
-          <a href={'brands/' + this.props.brandInfo.id} className="more">更多</a>
+          <a href={'brands/' + this.props.brandInfo.id} className="more" title="更多">更多</a>
         </div>
       </div>
     );

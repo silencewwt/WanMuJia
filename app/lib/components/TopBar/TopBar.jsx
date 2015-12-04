@@ -100,7 +100,7 @@ let LoginedUserInfo = React.createClass({
       <div className="user-info">
         <span className="hello">你好，</span>
         <span className="profile">
-          <a href="/profile#my">
+          <a href="/profile#my" title={'你好，' + this.props.userInfo.username}>
             {this.props.userInfo.username}
           </a>
         </span>
@@ -134,7 +134,7 @@ let UnloginedUserInfo = React.createClass({
         </span>
         <span className="reg">
           免费
-          <a className="reg-btn" href="/register" title="注册">注册</a>
+          <a className="reg-btn" href="/register" title="免费注册">注册</a>
         </span>
       </div>
     );

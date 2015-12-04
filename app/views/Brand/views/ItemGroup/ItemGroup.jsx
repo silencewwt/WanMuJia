@@ -50,7 +50,7 @@ const Title = React.createClass({
           {this.props.scene + '系列'}
         </span>
         <span className="more">
-          <a href={'/item/?brand=' + this.props.brand + '&scene=' + this.props.id}>
+          <a href={'/item/?brand=' + this.props.brand + '&scene=' + this.props.id} title="查看更多">
             查看更多
           </a>
         </span>

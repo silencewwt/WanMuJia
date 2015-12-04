@@ -131,7 +131,7 @@ const Banner = React.createClass({
   render: function() {
     return (
       <div className="brand-banner container">
-        <img src={this.props.brandInfo.image} />
+        <img src={this.props.brandInfo.image} title={this.props.brandInfo.description.slice(0,10) + '...'} />
         <div className="container">
           <p className="brand-desc">
             {this.props.brandInfo.description}

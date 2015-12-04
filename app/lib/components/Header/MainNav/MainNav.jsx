@@ -287,7 +287,9 @@ let CategoryItems = React.createClass({
         {
           itemsGroups.length ?
           <div className="category-more">
-            <a href={'/item/?scene=' + this.props.items.id}>查看更多</a>
+            <a href={'/item/?scene=' + this.props.items.id} title="查看更多">
+              查看更多
+            </a>
           </div> :
           null
         }
