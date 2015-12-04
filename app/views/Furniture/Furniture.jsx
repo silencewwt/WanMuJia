@@ -64,8 +64,8 @@ let Furniture = React.createClass({
   },
   render: function() {
     const colors = [
-      '#a24b00',
       '#6c0087',
+      '#a24b00',
       '#86ad00',
       '#549031',
       '#459cc3'
