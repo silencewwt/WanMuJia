@@ -25,6 +25,7 @@
       float: left;
       height: 100%;
       width: 350px;
+
       .address-box,
       .shop-box {
         height: 50%;
@@ -35,6 +36,9 @@
           height: 100%;
           font-size: 14px;
         }
+      }
+      .address-box {
+        padding-top: 17px;
       }
       .address-box .dropdown {
         margin-right: 10px;
@@ -47,7 +51,7 @@
       float: left;
       height: 100%;
       width: 200px;
-      padding-top: 10px;
+      padding-top: 16px;
 
       button {
         width: 180px;
