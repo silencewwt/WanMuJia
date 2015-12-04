@@ -27,10 +27,12 @@ const GroupGuide = React.createClass({
     return (
       <div className="group-guide">
         <div className="guide-title" style={titleStyle}>
-          <a href={this.props.guide.url}>
+          <a href={this.props.guide.url} title={this.props.guide.title} >
             {this.props.guide.title}
           </a>
-          <a href={this.props.guide.url} className="more am-icon-angle-right">更多</a>
+          <a href={this.props.guide.url} className="more am-icon-angle-right" title="更多">
+            更多
+          </a>
         </div>
         <a href={this.props.guide.url} title={this.props.guide.title}>
           <img

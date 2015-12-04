@@ -64,11 +64,11 @@ let Furniture = React.createClass({
   },
   render: function() {
     const colors = [
-      '#a24b00',
       '#6c0087',
-      '#549031',
+      '#a24b00',
+      '#86ad00',
       '#459cc3',
-      '#86ad00'
+      '#549031'
     ];
     const imgs = {
       '1': require('../../assets/images/style/style_01_gd.jpg'),

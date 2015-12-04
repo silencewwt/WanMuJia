@@ -105,8 +105,8 @@ let Home = React.createClass({
   render: function() {
     const colors = {
       '2': '#6c0087',
-      '3': '#86ad00',
-      '4': '#a24b00',
+      '3': '#a24b00',
+      '4': '#86ad00',
       '5': '#459cc3',
       '6': '#549031'
     };

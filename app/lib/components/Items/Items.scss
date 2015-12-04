@@ -159,8 +159,12 @@ $active-color: #6e3800;
     &.lg {
       border-left: $divide-border;
 
-      & > .item:nth-child(5n+0) {
-        border-left: none;
+      & > .item:nth-child(5n+3) {
+        border-right: none;
+
+        &:hover + .item {
+          border-left-color: #9e0808;
+        }
       }
     }
   }
