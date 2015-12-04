@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import base64
+import datetime
 import hashlib
 import hmac
+import json
 import os
 import time
 import urllib
@@ -35,13 +37,19 @@ def save_image(id_, dir_name, field, img_stream):
     return relative_path + image_name, image_hash
 
 
-def _oss_signature_generator(callback, resource):
-    expires = '%d' % (time.time() + 600)
-    msg = '{method}\n{content_md5}\n{content_type}\n{expires}\n{oss_headers}{oss_resource}'.\
-        format(method='PUT', content_md5='', content_type='image/jpeg', expires=expires,
-               oss_headers='x-oss-callback:%s\n' % callback, oss_resource=resource)
-    return expires, base64.encodebytes(hmac.new(current_app.config['OSS_ACCESS_SECRET'].encode(),
-                                                msg.encode(), hashlib.sha1).digest()).strip().decode()
+def _oss_signature_generator(policy):
+    return base64.encodebytes(hmac.new(current_app.config['OSS_ACCESS_SECRET'].encode(),
+                                       policy.encode(), hashlib.sha1).digest()).strip().decode()
+
+
+def _oss_policy_generator(callback):
+    return {
+        'expiration': (datetime.datetime.utcnow() + datetime.timedelta(minutes=6)).strftime('%FT%T.000Z'),
+        'conditions': [
+            {'bucket': current_app.config['OSS_BUCKET_NAME']},
+            {'callback': callback}
+        ]
+    }
 
 
 def oss_authorization(item_id, filename):
@@ -49,14 +57,17 @@ def oss_authorization(item_id, filename):
     image_hash = md5_with_time_salt(item_id, 'image')
     image_name = '%s.%s' % (image_hash, 'jpg')
     image_path = os.path.join(dir_path, image_name)
-    resource_path = os.path.join('/', current_app.config['OSS_BUCKET_NAME'], image_path)
     callback = '{"callbackUrl": "%s", "callbackBody": "bucket=${bucket}&object=${object}&etag=${etag}"}' \
                % url_for('vendor.image_callback', _external=True)
     callback_base64 = base64.b64encode(callback.encode()).decode()
-    expires, signature = _oss_signature_generator(callback_base64, resource_path)
-    headers = {'x-oss-callback': callback_base64, 'Content-Type': 'image/jpeg'}
-    params = urllib.parse.urlencode({'Expires': expires, 'Signature': signature,
-                                     'OSSAccessKeyId': current_app.config['OSS_ACCESS_ID']})
-    url = 'http://%s/%s?%s' % (current_app.config['OSS_HOST'], image_path, params)
+    policy_base64 = base64.b64encode(json.dumps(_oss_policy_generator(callback_base64)).encode()).decode()
+    signature = _oss_signature_generator(policy_base64)
+    params = {
+        'key': image_path,
+        'OSSAccessKeyId': current_app.config['OSS_ACCESS_ID'],
+        'Signature': signature,
+        'callback': callback_base64,
+        'policy': policy_base64,
+    }
     redis_set('OSS', image_path, {'item_id': item_id, 'filename': filename}, expire=600, serialize=True)
-    return {'url': url, 'headers': headers}
+    return {'success': True, 'url': 'http://%s' % current_app.config['OSS_HOST'], 'params': params}
