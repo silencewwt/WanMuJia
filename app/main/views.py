@@ -2,8 +2,7 @@
 import random
 import json
 
-from flask import render_template, abort, Response, request
-from flask.ext.login import current_user
+from flask import render_template, current_app, Response, request
 
 from app import statisitc
 from app.models import Item, Scene
@@ -24,11 +23,14 @@ def navbar():
         data = {}
         for scene_id in [2, 3, 4, 6]:   # 客厅 书房 卧室 餐厅
             scene = Scene.query.get(scene_id)
-            item_list = statisitc.item_query.filter(Item.scene_id == scene_id).all()
-            if not item_list:
-                items = []
+            if current_app.debug:
+                item_list = statisitc.item_query.filter(Item.scene_id == scene_id).all()
+                if not item_list:
+                    items = []
+                else:
+                    items = [random.SystemRandom().choice(item_list) for _ in range(8)]
             else:
-                items = [random.SystemRandom().choice(item_list) for _ in range(8)]
+                items = current_app.config['ITEMS']['navbars'][str(scene_id)]
             data[scene.id] = {'scene': scene.scene, 'items': items_json(items)}
         data = json.dumps(data)
         redis_set('INDEX_NAVBAR', 'ITEMS', data, expire=86400)
@@ -44,9 +46,12 @@ def brand_list():
             brands = statisitc.brands['total']
             data = {vendor_id: {'brand': brands[vendor_id]['brand']} for vendor_id in brands}
             for vendor_id in data:
-                item_list = Item.query.filter(Item.vendor_id == vendor_id, Item.is_deleted == False,
-                                              Item.is_component == False).all()
-                items = [random.SystemRandom().choice(item_list) for _ in range(5)]
+                if current_app.debug:
+                    item_list = Item.query.filter(Item.vendor_id == vendor_id, Item.is_deleted == False,
+                                                  Item.is_component == False).all()
+                    items = [random.SystemRandom().choice(item_list) for _ in range(5)]
+                else:
+                    items = current_app.config['ITEMS']['brands'][str(vendor_id)]
                 data[vendor_id]['items'] = items_json(items)
             data = json.dumps(data)
             redis_set('BRAND', 'ITEMS', data, expire=86400)
@@ -61,12 +66,15 @@ def vendor_detail(vendor_id):
         data = redis_get('BRAND_ITEMS', vendor_id)
         if data is None:
             data = {}
-            for scene_id in range(2, 6):
+            for scene_id in [2, 3, 4, 6]:
                 scene = Scene.query.get(scene_id)
-                item_list = statisitc.item_query.filter(Item.vendor_id == vendor_id, Item.scene_id == scene_id).all()
-                if not item_list:
-                    continue
-                items = [random.SystemRandom().choice(item_list) for _ in range(10)]
+                if current_app.debug:
+                    item_list = statisitc.item_query.filter(Item.vendor_id == vendor_id, Item.scene_id == scene_id).all()
+                    if not item_list:
+                        continue
+                    items = [random.SystemRandom().choice(item_list) for _ in range(10)]
+                else:
+                    items = current_app.config['ITEMS']['vendor_detail'][str(vendor_id)][str(scene_id)]
                 data[scene_id] = {'scene': scene.scene, 'items': items_json(items)}
             data = json.dumps(data)
             redis_set('BRAND_ITEMS', vendor_id, data, expire=86400)
@@ -83,8 +91,11 @@ def furniture():
             styles = statisitc.styles['available']
             data = {style_id: {'style': styles[style_id]['style']} for style_id in styles}
             for style_id in data:
-                item_list = Item.query.filter(Item.style_id == style_id).all()
-                items = [random.SystemRandom().choice(item_list) for _ in range(8)]
+                if current_app.debug:
+                    item_list = Item.query.filter(Item.style_id == style_id).all()
+                    items = [random.SystemRandom().choice(item_list) for _ in range(8)]
+                else:
+                    items = current_app.config['ITEMS']['furniture'][str(style_id)]
                 data[style_id]['items'] = items_json(items)
             data = json.dumps(data)
             redis_set('STYLE', 'ITEMS', data, expire=86400)
