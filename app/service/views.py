@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import request, Response, jsonify, redirect, url_for, session
+from flask import request, Response, jsonify, redirect, url_for, session, abort
 from flask.ext.login import current_user
 
 from app.constants import CONFIRM_EMAIL, USER_GUIDE, USER_REGISTER, VENDOR_REGISTER, VENDOR_EMAIL_CONFIRM, \
@@ -110,6 +110,8 @@ def verify():
 
 @service_blueprint.route('/captcha/<string:token>.jpg')
 def serve_captcha(token):
+    if len(token) != 32:
+        abort(404)
     captcha = get_image_captcha(token)
     session['captcha_token'] = token
     return Response(captcha, mimetype='image/jpeg')
