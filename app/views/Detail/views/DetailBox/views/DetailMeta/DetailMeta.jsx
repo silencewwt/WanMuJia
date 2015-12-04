@@ -70,7 +70,7 @@ var InfoBox = React.createClass({
           <h1>{this.props.data.item.item}</h1>
         </div>
         <div className="price">
-          平台价：
+          参考价格：
           <span className="price-num">{"￥"+this.props.data.item.price}</span>
         </div>
 

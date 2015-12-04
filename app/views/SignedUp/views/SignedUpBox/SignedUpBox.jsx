@@ -559,12 +559,12 @@ var PswCheckInputGroup = React.createClass({
 var SuStep3 = React.createClass({
   getInitialState: function() {
     return {
-      second: 3,
+      second: 5,
     };
   },
   componentDidMount: function() {
     setInterval(function() {
-      this.setState({second: --this.state.second}, function() {
+      this.setState({second: this.state.second-1}, function() {
         if(this.state.second === 0) {
           window.location.href = "/";
         }
