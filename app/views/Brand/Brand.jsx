@@ -27,10 +27,7 @@ let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 
 const BRANDS_INFO = {
-  '1': {
-    image: require('../../assets/images/slider/slider_01_brand_jf.png'),
-    description: '北京元亨利古典硬木家具以做“中华品牌、创世界品牌”为目标，经过多年的持续发展，积累了雄厚的实力，汇集了大批优秀的管理骨干和技艺精湛的艺术工匠。经典、传世的“元亨利通”明清古典硬木家具，精选印度、东南亚等国家的黄花梨、紫檀、黑檀、酸枝等名贵、珍稀硬木为原料，精心设计，由具有丰富宫廷家具制作经验的艺术工匠，采用纯手工精雕细琢，精心制作而成。'
-  }, '12806': {
+  '12806': {
     image: require('../../assets/images/brand/brand_banner_jf.png'),
     description: '劲飞红木家具厂位于北京回龙观北，它传承京作宫廷家具之风，创新发展现代古典居室文化。\n劲飞红木家具均为明清家具原款原版，品种齐全、用材考究，工艺严谨、精雕细琢，极具珍藏价值与保值增值潜力。\n劲飞红木家具以用料大气、造型严谨、重工雕琢，典雅端庄的宫廷家具风格，彰显出一派皇家的威仪和风范，是典藏、传世之首选。'
   }, '12836': {
@@ -87,11 +84,11 @@ let Brands = React.createClass({
   },
   render: function() {
     const colors = [
-      '#6c0087',
-      '#459cc3',
-      '#549031',
       '#a24b00',
-      '#86ad00'
+      '#6c0087',
+      '#86ad00',
+      '#549031',
+      '#459cc3'
     ];
     return (
       <div>

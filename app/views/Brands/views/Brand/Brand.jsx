@@ -16,11 +16,6 @@ let Ajax = require('reqwest');
 let Items = require('../../../../lib/components/Items/Items.jsx');
 
 const BRANDS_INFO = {
-  '1': {
-    id: 1,
-    brand: '创汇传媒',
-    image: require('../../../../assets/images/slider/slider_01_brand_jf.png')
-  },
   '12801': {
     id: 12801,
     brand: '九龙堂',

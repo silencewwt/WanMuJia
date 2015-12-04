@@ -35,7 +35,7 @@ const Elevator = React.createClass({
   render: function() {
     let elevatorStyle = {
       top: (window.innerHeight - 350) / 2 + 'px',
-      left: (window.innerWidth - 1200) / 2 - 70 + 'px'
+      left: window.innerWidth > 1360 ? ((window.innerWidth - 1200) / 2 - 70 + 'px') : '10px'
     };
     return (
       <div className="elevator" style={elevatorStyle}>
