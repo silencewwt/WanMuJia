@@ -95,7 +95,9 @@ def furniture():
                     item_list = Item.query.filter(Item.style_id == style_id).all()
                     items = [random.SystemRandom().choice(item_list) for _ in range(8)]
                 else:
-                    items = current_app.config['ITEMS']['furniture'][str(style_id)]
+                    items = []
+                    for item_id in current_app.config['ITEMS']['furniture'][str(style_id)]:
+                        items.append(Item.query.get(item_id))
                 data[style_id]['items'] = items_json(items)
             data = json.dumps(data)
             redis_set('STYLE', 'ITEMS', data, expire=86400)
