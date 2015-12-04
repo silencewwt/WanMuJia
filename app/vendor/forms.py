@@ -255,6 +255,7 @@ class ItemForm(Form):
         for attr in self.attributes:
             if not getattr(self, attr).data == getattr(item, attr):
                 setattr(item, attr, getattr(self, attr).data)
+        item.inside_sand_id = self.inside_sand_id.data
 
         item_tenons = item.get_tenon_id()
         add_tenons = set(self.tenon_id.data) - set(item_tenons)
