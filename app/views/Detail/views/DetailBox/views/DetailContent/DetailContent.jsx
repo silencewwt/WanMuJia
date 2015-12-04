@@ -133,7 +133,7 @@ var ContDetailArr = React.createClass({
           </div>
           <div className="i-box">
             <div className="title">内表面打磨砂纸：</div>
-            <div className="attr">{data.inside_sand}</div>
+            <div className="attr">{data.inside_sand=="5000"?"－－":data.inside_sand}</div>
           </div>
           <div className="i-box">
             <div className="title">雕刻工艺：</div>
@@ -194,7 +194,7 @@ var ContDetailArr = React.createClass({
           </div>
           <div className="i-box">
             <div className="title">内表面打磨砂纸：</div>
-            <div className="attr">{data.inside_sand}</div>
+            <div className="attr">{data.inside_sand=="5000"?"－－":data.inside_sand}</div>
           </div>
           <div className="i-box">
             <div className="title">组件数量和：</div>

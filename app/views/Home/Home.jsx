@@ -29,7 +29,7 @@ let ItemGroup = require('./views/ItemGroup/ItemGroup.jsx');
 let Elevator = require('./views/Elevator/Elevator.jsx');
 let FloatBottomTip = require('../../lib/components/FloatBottomTip/FloatBottomTip.jsx');
 let Header = require('../../lib/components/Header/Header.jsx');
-let Slider = require('../../lib/components/Slider/Slider.jsx');
+let Slide = require('../../lib/components/Slide/Slide.jsx');
 let Footer = require('../../lib/components/Footer/Footer.jsx');
 
 const SLIDER_IMG = [
@@ -136,7 +136,7 @@ let Home = React.createClass({
           userInfo={this.state.userInfo}
           shrink={false}
         >
-          <Slider slides={SLIDER_IMG} />
+          <Slide slides={SLIDER_IMG} />
         </Header>
         {SCENE_SORT.map((item, i) => {
           if(!this.state.itemGroupData.hasOwnProperty(item)) {
