@@ -136,7 +136,7 @@ var PagiMain = React.createClass({
     var endBlock = [];
     if(this.props.pages > 0) {
       if(this.props.first) {
-        startBlock.push(<PaginationBtn key='first' text={this.props.first} disabled={(this.props.activePage === 1) ? true : false} type="prev" type="first" changePage={this.handleItemClick.bind(this, 'first')} />);
+        startBlock.push(<PaginationBtn key='first' text={this.props.first} disabled={(this.props.activePage === 1) ? true : false} type="first" changePage={this.handleItemClick.bind(this, 'first')} />);
       }
       if(this.props.prev) {
         startBlock.push(<PaginationBtn key='prev' text={this.props.prev} disabled={(this.props.activePage === 1) ? true : false} type="prev" changePage={this.handleItemClick.bind(this, 'prev')} />);
