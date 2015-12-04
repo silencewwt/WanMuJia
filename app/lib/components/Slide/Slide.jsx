@@ -10,7 +10,7 @@ var Slider = React.createClass({
   },
   getDefaultProps: function() {
     return {
-      speed: 1,
+      speed: 0.8,
       delay: 4,
       pause: true,
       autoplay: true,
@@ -59,8 +59,8 @@ var Slider = React.createClass({
       );
     }.bind(this));
     var arrows = [];
-    arrows[0] = <SliderArrows key="arrows1" option={-1} click={this.turn} >&lt;</SliderArrows>;
-    arrows[1] = <SliderArrows key="arrows2" option={1} click={this.turn} >&gt;</SliderArrows>;
+    arrows[0] = <SliderArrows key="arrows1" option={-1} click={this.turn} ><i className="am-icon-angle-left"></i></SliderArrows>;
+    arrows[1] = <SliderArrows key="arrows2" option={1} click={this.turn} ><i className="am-icon-angle-right"></i></SliderArrows>;
     var dots = [];
     dots = <SliderDots click={this.turn} count={this.props.slides.length} nowLocal={this.state.nowLocal} />;
     return (

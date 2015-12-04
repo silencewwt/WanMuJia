@@ -40,6 +40,10 @@
     padding: 20px;
     cursor: pointer;
     font-weight: bold;
+    display: none;
+}
+.slider:hover .slider-arrows {
+  display: inline-block;
 }
 .slider .slider-arrows:hover {
     background: rgba(0,0,0,.35);
