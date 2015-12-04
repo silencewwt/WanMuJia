@@ -305,6 +305,8 @@ let SearchPage = React.createClass({
           />
         </div>
 
+        <Footer />
+
         <FloatBottomTip ref="floatBottomTip" />
         <LoginPopup ref="loginPopup" />
       </div>
