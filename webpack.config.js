@@ -63,7 +63,7 @@ var config = {
       },
       {
         test: /\.scss$/,
-        loaders: ['style', 'css?root=' + __dirname, 'resolve-url', 'sass', 'source-map']
+        loaders: ['style?-singleton', 'css?root=' + __dirname, 'resolve-url', 'sass', 'source-map']
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/,
