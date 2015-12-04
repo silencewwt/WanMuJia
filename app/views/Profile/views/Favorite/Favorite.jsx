@@ -76,7 +76,6 @@ let Favorite = React.createClass({
             key={i}
             getItemsByPage={this.getItemsByPage}
             activePage={this.state.activePage}
-            getItemsByPage={this.getItemsByPage}
             handleCompare={this.props.handleCompare}
           />;
         })}
