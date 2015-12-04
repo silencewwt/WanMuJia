@@ -1097,11 +1097,11 @@
   + filename
 + **return**
   + 成功
-    + `{"success": true, "url": "", "headers": {"Content-Type": "image/jpeg", "x-oss-callback": ""}}`
+    + `{"success": true, "url": "", "params": {"key": "", "OSSAccessKeyId": "", "Signature": "", "callback": "", "policy": ""}`
     + url
       + ajax请求的url. 请求此url成功上传后, OSS会回调万木家的接口, 并将万木家返回的信息返回给前端
-    + headers
-      + 需要设置的header
+    + params
+      + 需要设置的表单域name与value
   + 失败
     + `{"success": false}`
 
