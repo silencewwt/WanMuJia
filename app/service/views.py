@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import request, Response, jsonify, redirect, url_for, session, abort
-from flask.ext.login import current_user
+from flask import request, Response, jsonify, redirect, url_for, session, abort, g
 
 from app.constants import CONFIRM_EMAIL, USER_GUIDE, USER_REGISTER, VENDOR_REGISTER, VENDOR_EMAIL_CONFIRM, \
     USER_EMAIL_CONFIRM, USER_RESET_PASSWORD, USER_SMS_CAPTCHA
@@ -25,8 +24,8 @@ def mobile_register_sms():
         template = USER_REGISTER_TEMPLATE
         sms_type = USER_REGISTER
     form = MobileSMSForm(sms_type, template, csrf_enabled=False)
-    if current_user.is_authenticated and current_user.mobile:
-        return jsonify({'success': False, 'message': '用户已绑定手机号, 暂时无法修改'})
+    if g.identity.can(user_permission) and sms_type == USER_REGISTER:
+        return jsonify({'success': False, 'message': '请先退出当前账号'})
     if form.validate():
         form.send_sms()
         return jsonify({'success': True})
@@ -98,7 +97,7 @@ def verify():
                     role.email = info['email']
                 role.email_confirmed = True
                 if info['role'] == 'user':
-                    return redirect(url_for('user.profile', _anchor='security'))
+                    return redirect(url_for('user.profile', _anchor='my'))
                 elif info['role'] == 'vendor':
                     return redirect(url_for('vendor.settings'))
         # elif info['action'] == 'reset_password':

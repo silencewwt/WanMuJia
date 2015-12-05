@@ -22,6 +22,7 @@ class MobileSMSForm(Form):
     distributor_id = IntegerField()
 
     def __init__(self, sms_type, template, *args, **kwargs):
+        super(Form, self).__init__(*args, **kwargs)
         self.template = template
         self.sms_type = sms_type
         if self.sms_type == USER_RESET_PASSWORD or self.sms_type == USER_SMS_CAPTCHA:
@@ -34,7 +35,6 @@ class MobileSMSForm(Form):
             self.mobile.validators = [Mobile(model=User)]
         elif self.sms_type == VENDOR_REGISTER:
             self.mobile.validators = [Mobile(model=Vendor)]
-        super(Form, self).__init__(*args, **kwargs)
 
     def validate_nothing(self, field):
         if self.sms_type == USER_RESET_PASSWORD:
