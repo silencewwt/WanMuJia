@@ -2,7 +2,7 @@
 import random
 import json
 
-from flask import render_template, current_app, Response, request
+from flask import render_template, current_app, Response, request, abort
 
 from app import statisitc
 from app.models import Item, Scene
@@ -61,21 +61,31 @@ def brand_list():
 
 @main.route('/brands/<int:vendor_id>')
 def vendor_detail(vendor_id):
+    if not current_app.debug and vendor_id not in [12801, 12803, 12806, 12836]:
+        abort(404)
     format = request.args.get('format', '', type=str)
     if format == 'json':
         data = redis_get('BRAND_ITEMS', vendor_id)
         if data is None:
             data = {}
-            for scene_id in [2, 3, 4, 6]:
-                scene = Scene.query.get(scene_id)
-                if current_app.debug:
-                    item_list = statisitc.item_query.filter(Item.vendor_id == vendor_id, Item.scene_id == scene_id).all()
-                    if not item_list:
-                        continue
-                    items = [random.SystemRandom().choice(item_list) for _ in range(10)]
-                else:
-                    items = current_app.config['ITEMS']['vendor_detail'][str(vendor_id)][str(scene_id)]
-                data[scene_id] = {'scene': scene.scene, 'items': items_json(items)}
+            if current_app.debug:
+                for scene_id in [2, 3, 4, 6]:
+                    scene = Scene.query.get(scene_id)
+                    if current_app.debug:
+                        item_list = statisitc.item_query.filter(Item.vendor_id == vendor_id, Item.scene_id == scene_id).all()
+                        if not item_list:
+                            continue
+                        items = [random.SystemRandom().choice(item_list) for _ in range(10)]
+                    else:
+                        items = current_app.config['ITEMS']['vendor_detail'][str(vendor_id)][str(scene_id)]
+                    data[scene_id] = {'scene': scene.scene, 'items': items_json(items)}
+            else:
+                for scene_id in current_app.config['ITEMS']['vendor_detail'][str(vendor_id)].keys():
+                    scene = Scene.query.get(scene_id)
+                    items = []
+                    for item_id in current_app.config['ITEMS']['vendor_detail'][str(vendor_id)][scene_id]:
+                        items.append(Item.query.get(item_id))
+                    data[scene_id] = {'scene': scene.scene, 'items': items_json(items)}
             data = json.dumps(data)
             redis_set('BRAND_ITEMS', vendor_id, data, expire=86400)
         return Response(data, mimetype='application/json')
