@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import request, Response, jsonify, redirect, url_for, session, abort, g
 
+from app import db
 from app.constants import CONFIRM_EMAIL, USER_GUIDE, USER_REGISTER, VENDOR_REGISTER, VENDOR_EMAIL_CONFIRM, \
     USER_EMAIL_CONFIRM, USER_RESET_PASSWORD, USER_SMS_CAPTCHA
 from app.models import User, Vendor, Area
@@ -96,14 +97,15 @@ def verify():
                 if 'email' in info and info['email'] != role.email:
                     role.email = info['email']
                 role.email_confirmed = True
+                db.session.commit()
                 if info['role'] == 'user':
                     return redirect(url_for('user.profile', _anchor='my'))
                 elif info['role'] == 'vendor':
                     return redirect(url_for('vendor.settings'))
-        # elif info['action'] == 'reset_password':
-        #     session[USER_RESET_PASSWORD_STEP] = 1
-            # session[USER_RESET_PASSWORD_USERNAME] = info['email']
-            # return redirect(url_for('user.reset_password_next'))
+                    # elif info['action'] == 'reset_password':
+                    #     session[USER_RESET_PASSWORD_STEP] = 1
+                    # session[USER_RESET_PASSWORD_USERNAME] = info['email']
+                    # return redirect(url_for('user.reset_password_next'))
     return u'此链接已失效'
 
 
