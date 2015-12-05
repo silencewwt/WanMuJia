@@ -90,7 +90,7 @@ jQuery(document).ready(function($) {
 
                 init: function () {
                     this
-                        .on('sending', function (file, xhr) {
+                        .on('sending', function (file, xhr, formData) {
                             $.ajax({
                                 url: '/vendor/items/oss_signature',
                                 method: 'get',
@@ -100,11 +100,11 @@ jQuery(document).ready(function($) {
                                 },
                                 async: false,
                                 success: function (res) {
-                                    var headers = res.headers;
+                                    var params = res.params;
                                     if (res.success) {
-                                        xhr.open('put', res.url);
-                                        Object.keys(headers).forEach(function (header) {
-                                            xhr.setRequestHeader(header, headers[header]);
+                                        xhr.open('post', res.url);
+                                        Object.keys(params).forEach(function (param) {
+                                            formData.append(param, params[param]);
                                         });
                                     }
                                 }
