@@ -115,6 +115,7 @@ class SettingForm(Form):
     email = StringField()
 
     def __init__(self, type, *args, **kwargs):
+        super(SettingForm, self).__init__(*args, **kwargs)
         self.type = type
         if self.type == USER_USERNAME_SETTING:
             self.username.validators = [UserName(required=False, exist_owner=current_user)]
@@ -126,7 +127,6 @@ class SettingForm(Form):
         else:  # email
             self.email.validators = [Email()]
             self.captcha.validators = [Captcha(SMS_CAPTCHA, current_user.mobile, required=False)]
-        super(SettingForm, self).__init__(*args, **kwargs)
 
     def validate_nothing(self, field):
         if self.type == USER_PASSWORD_SETTING:
