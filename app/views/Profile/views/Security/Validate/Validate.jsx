@@ -93,6 +93,8 @@ let Validate = React.createClass({
 
 let ValidateInput = React.createClass({
   render: function() {
+    let inputEle = document.createElement('input');
+    let pld = "placeholder" in inputEle;
     let tipStyle =
       this.props.tip && (this.props.tip.status !== 'success' && this.props.tip.status !== 'tip') ?
       {
@@ -103,6 +105,7 @@ let ValidateInput = React.createClass({
         className={this.props.theme === 'verify' ? 'verify' : null}
         type={this.props.type}
         onBlur={this.props.onBlur}
+        defaultValue={!pld ? this.props.placeholder : null}
         placeholder={this.props.placeholder}
         style={tipStyle}
         value={this.props.value}
