@@ -54,26 +54,24 @@ var FooterLink = React.createClass({
   render: function() {
     return (
       <div className="footer-link">
-        <div className="container">
-          {this.props.links.map(function(link, i) {
-            return (
-              <ul className="link-group" key={i}>
-                {link.map(function(item, j) {
-                  return (
-                    <li key={i + '.' + j}>
-                      <a
-                        href={j === 0 ? null : item.link}
-                        className={j === 0 ? 'title' : null}
-                      >
-                        {item.title}
-                      </a>
-                    </li>
-                  )
-                })}
-              </ul>
+        {this.props.links.map(function(link, i) {
+          return (
+          <ul className="link-group" key={i}>
+            {link.map(function(item, j) {
+              return (
+              <li key={i + '.' + j}>
+                <a
+                  href={j === 0 ? null : item.link}
+                  className={j === 0 ? 'title' : null}
+                >
+                  {item.title}
+                </a>
+              </li>
+                )
+              })}
+          </ul>
             )
           })}
-        </div>
       </div>
     );
   }
