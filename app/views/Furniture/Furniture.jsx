@@ -64,11 +64,12 @@ let Furniture = React.createClass({
   },
   render: function() {
     const colors = [
-      '#6c0087',
       '#a24b00',
-      '#86ad00',
+      '#6c0087',
       '#549031',
-      '#459cc3'
+      '#459cc3',
+      '#8DB011',
+      '#4D53A1'
     ];
     const imgs = {
       '1': require('../../assets/images/style/style_01_gd.jpg'),
@@ -93,7 +94,7 @@ let Furniture = React.createClass({
             title: this.state.items[id].style,
             img: imgs[id],
             url: '/item/?style=' + id,
-            color: colors[i]
+            color: colors[id]
           };
           return (
             <ItemGroup
