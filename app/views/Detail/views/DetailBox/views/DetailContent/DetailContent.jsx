@@ -1,6 +1,6 @@
 'use strict';
 
-require('./DetailContent.scss')
+require('./DetailContent.scss');
 let React = require('react');
 let utils = require('../../../../../../lib/utils/utils.js');
 let isArray = utils.isArray;
@@ -97,7 +97,7 @@ var ContDetailArr = React.createClass({
           </div>
           <div className="i-box">
             <div className="title">商品尺寸：</div>
-            <div className="attr">{data.size + (data.size=="－－"?"":" cm*cm*cm")}</div>
+            <div className="attr">{data.size + (data.size=="——"?"":" cm*cm*cm")}</div>
           </div>
           <div className="i-box">
             <div className="title">适用面积：</div>
@@ -247,7 +247,7 @@ var ContSuite = React.createClass({
           </div>
           <div className="i-box">
             <div className="title">商品尺寸：</div>
-            <div className="attr">{data.size + (data.size=="－－"?"":" cm*cm*cm")}</div>
+            <div className="attr">{data.size + (data.size=="——"?"":" cm*cm*cm")}</div>
           </div>
           <div className="i-box">
             <div className="title">适用面积：</div>
