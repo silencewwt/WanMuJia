@@ -1,28 +1,33 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, session
-from flask.ext.login import login_user, current_user
-from flask.ext.principal import identity_changed, Identity
-from wtforms import StringField, PasswordField
+from flask.ext.cdn import url_for
+from flask.ext.login import login_user, current_user, logout_user
+from flask.ext.principal import identity_changed, Identity, AnonymousIdentity
+from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length, EqualTo
 
 from app import db
 from app.constants import *
 from app.models import User
+from app.utils import md5_with_time_salt
 from app.utils.forms import Form
-from app.utils.validator import Email, Mobile, Captcha, NickName, ValidationError
+from app.utils.redis import redis_set
+from app.utils.validator import Email, Mobile, Captcha, UserName, ValidationError
+from app.wmj_email import send_email, USER_EMAIL_CONFIRM, EMAIL_CONFIRM_SUBJECT
 
 
 class LoginForm(Form):
     username = StringField(validators=[DataRequired()])
     password = PasswordField(validators=[DataRequired()])
+    remember = BooleanField()
 
     def login(self):
         user = User.query.filter_by(mobile=self.username.data).first() or \
             User.query.filter_by(email=self.username.data).first()
         if user and user.verify_password(self.password.data):
-            login_user(user)
+            login_user(user, remember=self.remember.data)
             identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
-            return True
+            return user
         return False
 
 
@@ -51,35 +56,20 @@ class EmailRegistrationForm(RegistrationForm):
 class RegistrationDetailForm(Form):
     password = PasswordField(validators=[Length(6, 32, '请填写密码'), EqualTo('confirm_password', u'前后密码不一致哦!')])
     confirm_password = PasswordField(validators=[Length(6, 32, '请填写确认密码')])
-    nickname = StringField(validators=[NickName()])
     mobile = StringField()
-    email = StringField()
 
     def __init__(self, *args, **kwargs):
         super(RegistrationDetailForm, self).__init__(*args, **kwargs)
-        if USER_REGISTER_MOBILE in session:
-            self.mobile.data = session[USER_REGISTER_MOBILE]
-        else:
-            self.mobile.data = ''
-        if USER_REGISTER_EMAIL in session:
-            self.email.data = session[USER_REGISTER_EMAIL]
-        else:
-            self.email.data = ''
-
-    def validate_mobile(self, field):
-        if not field.data and not self.email.data:
-            session.pop(USER_REGISTER_STEP_DONE)
-            raise ValidationError('参数错误, 注册失败!')
+        if USER_REGISTER_MOBILE not in session:
+            raise ValidationError('参数错误, 注册失败')
+        self.mobile.data = session[USER_REGISTER_MOBILE]
 
     def register(self):
         user = User(
             password=self.password.data,
             mobile=self.mobile.data,
-            email=self.email.data,
-            nickname=self.nickname.data
+            email='',
         )
-        if self.email.data:
-            user.email_confirmed = True
         db.session.add(user)
         db.session.commit()
         login_user(user)
@@ -91,47 +81,76 @@ class ResetPasswordForm(Form):
     mobile = StringField(validators=[Mobile(available=False)])
     captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile')])
 
+    def validate_mobile(self, field):
+        if not User.query.filter_by(mobile=field.data).first():
+            raise ValidationError('该手机号码未注册用户!')
 
-class ResetPasswordNextForm(Form):
-    password = PasswordField(validators=[Length(32, 32)])
-    confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('password', '前后密码不一致')])
 
-    def reset_password(self):
-        user = User.query.filter_by(mobile=session[USER_RESET_PASSWORD_USERNAME]).first() or\
-            User.query.filter_by(email=session[USER_RESET_PASSWORD_USERNAME]).first()
-        if user is not None:
+class ResetPasswordDetailForm(Form):
+    password = PasswordField(validators=[Length(6, 32, '请填写密码'), EqualTo('confirm_password', u'前后密码不一致哦!')])
+    confirm_password = PasswordField(validators=[Length(6, 32, '请填写确认密码')])
+    mobile = StringField()
+
+    def __init__(self, *args, **kwargs):
+        super(ResetPasswordDetailForm, self).__init__(*args, **kwargs)
+        if USER_RESET_PASSWORD_MOBILE not in session:
+            raise ValidationError('参数错误, 注册失败')
+        self.mobile.data = session[USER_RESET_PASSWORD_MOBILE]
+
+    def update_password(self):
+        user = User.query.filter_by(mobile=self.mobile.data).first()
+        if user:
             user.password = self.password.data
             db.session.commit()
-            return True
-        return False
+        return user
 
 
 class SettingForm(Form):
-    nickname = StringField(validators=[NickName(required=False)])
-    mobile = StringField(validators=[Mobile(required=False, model=User, exist_owner=current_user)])
-    captcha = StringField(validators=[Captcha(SMS_CAPTCHA, 'mobile', required=False)])
+    nothing = StringField()
+    username = StringField()
+    captcha = StringField()
+    password = StringField()
+    old_password = StringField()
+    confirm_password = StringField()
+    email = StringField()
 
-    def update_mobile(self):
-        if current_user.mobile != self.mobile.data and getattr(self, 'captcha_verified', False) is True:
-            current_user.mobile = self.mobile.data
+    def __init__(self, type, *args, **kwargs):
+        super(SettingForm, self).__init__(*args, **kwargs)
+        self.type = type
+        if self.type == USER_USERNAME_SETTING:
+            self.username.validators = [UserName(required=False, exist_owner=current_user)]
+            self.captcha.validators = [Captcha(SMS_CAPTCHA, current_user.mobile, required=False)]
+        elif self.type == USER_PASSWORD_SETTING:
+            self.old_password.validators = [Length(32, 32)]
+            self.password.validators = [Length(32, 32)]
+            self.confirm_password.validators = [Length(32, 32), EqualTo('password', '两次密码不一致')]
+        else:  # email
+            self.email.validators = [Email(model=User)]
+            self.captcha.validators = [Captcha(SMS_CAPTCHA, current_user.mobile, required=False)]
+
+    def validate_nothing(self, field):
+        if self.type == USER_PASSWORD_SETTING:
+            if not current_user.verify_password(self.old_password.data):
+                raise ValidationError('原密码错误!')
 
     def update(self):
-        if self.nickname.data:
-            current_user.nickname = self.nickname.data
-        if self.mobile.data and not current_user.mobile:
-            self.update_mobile()
-        db.session.commit()
-
-
-class PasswordForm(Form):
-    old_password = PasswordField(validators=[Length(32, 32)])
-    new_password = PasswordField(validators=[Length(32, 32)])
-    confirm_password = PasswordField(validators=[Length(32, 32), EqualTo('new_password', '两次密码不一致')])
-
-    def validate_old_password(self, field):
-        if not current_user.verify_password(field.data):
-            raise ValidationError('原密码不正确!')
-
-    def update_password(self):
-        current_user.password = self.new_password.data
+        if self.type == USER_USERNAME_SETTING:
+            if self.username.data != current_user.username and current_user.username_revisable:
+                current_user.username = self.username.data
+                current_user.username_revisable = False
+        elif self.type == USER_PASSWORD_SETTING:
+            current_user.password = self.password.data
+            db.session.commit()
+            logout_user()
+            identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
+            return
+        else:  # email
+            current_user.email = self.email.data
+            current_user.email_confirmed = False
+            token = md5_with_time_salt(self.email.data)
+            redis_set(CONFIRM_EMAIL, token,
+                      {'email': self.email.data, 'role': 'user', 'action': 'confirm', 'id': current_user.id},
+                      serialize=True)
+            url = url_for('service.verify', token=token, _external=True)
+            send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, USER_EMAIL_CONFIRM, url=url)
         db.session.commit()

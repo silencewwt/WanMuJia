@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import hashlib
 import json
 import os
 import shutil
@@ -104,13 +105,15 @@ class User(BaseUser, db.Model):
     # 邮箱
     email = db.Column(db.String(64), nullable=False)
     # 用户名
-    nickname = db.Column(db.Unicode(30), nullable=False)
+    username = db.Column(db.Unicode(30), nullable=False)
+    # 用户名可修改
+    username_revisable = db.Column(db.Boolean, default=True, nullable=False)
 
     id_prefix = user_id_prefix
 
-    def __init__(self, password, mobile, email, nickname=u''):
+    def __init__(self, password, mobile, email):
         super(User, self).__init__(password, mobile, email)
-        self.nickname = nickname if nickname else self.generate_nickname()
+        self.username = self.generate_username()
 
     def item_collected(self, item_id):
         return Collection.query.filter_by(user_id=self.id, item_id=item_id).first() is not None
@@ -121,14 +124,22 @@ class User(BaseUser, db.Model):
         zh_fake = Factory.create('zh-CN')
         fake = Factory.create()
         for i in range(100):
-            user = User('14e1b600b1fd579f47433b88e8d85291', zh_fake.phone_number(), fake.email(), zh_fake.name())
+            user = User('14e1b600b1fd579f47433b88e8d85291', zh_fake.phone_number(), fake.email())
             db.session.add(user)
         db.session.commit()
 
     @staticmethod
-    def generate_nickname():
-        prefix = u'万木家用户'
-        return u'%s%s' % (prefix, random.randint(100000, 999999))
+    def generate_username():
+        prefix = u'wmj'
+        chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789'
+        for i in range(5):
+            l = []
+            md5 = hashlib.md5(str(time.time()).encode()).hexdigest()
+            l.extend([random.SystemRandom().choice(md5) for _ in range(6)])
+            l.extend([random.SystemRandom().choice(chars) for _ in range(4)])
+            username = prefix + ''.join(l)
+            if not User.query.filter_by(username=username).first():
+                return username
 
 
 class Collection(db.Model, Property):
@@ -345,9 +356,10 @@ class Distributor(BaseUser, db.Model, Property):
     contact_mobile = db.Column(db.CHAR(11), default='', nullable=False)
     # 联系人
     contact = db.Column(db.Unicode(10), nullable=False)
+    # 400分机号码
+    ext_number = db.Column(db.CHAR(10), default='', nullable=False)
     # 已解约
     is_revoked = db.Column(db.Boolean, default=False, nullable=False)
-
     # 手机号码
     mobile = None
     # 邮箱
@@ -412,6 +424,17 @@ class Distributor(BaseUser, db.Model, Property):
             if not Distributor.query.filter_by(username=username).limit(1).first():
                 return username
         return False
+
+    @staticmethod
+    def add_ext_number():
+        ext_numbers = (('君德益', 1245),  ('君德益四季青店', 1246),  ('劲飞红木第一楼西四环店', 1247),  ('劲飞红木西三环红木街精品店', 1248),  ('劲飞红木第一楼北四环店', 1249),  ('劲飞红木第一楼天通苑店', 1250),  ('劲飞红木第一楼东四环店', 1251),  ('东成红木广东惠州专卖店', 1252),  ('东成红木江苏南京专卖店', 1253),  ('东成红木江西赣州专卖店', 1254),  ('东成红木湖南株洲专卖店', 1255),  ('东成红木河北石家庄专卖店', 1256),  ('东成红木青海西宁专卖店', 1257),  ('东成红木北京专卖店', 1258),  ('东成红木吉林长春专卖店', 1259),  ('东成红木河北香河专卖店', 1260),  ('东成红木江苏宜兴专卖店', 1261),  ('东成红木云南玉溪专卖店', 1262),  ('东成红木广东廉江专卖店', 1263),  ('东成红木广州从化专卖店', 1264),  ('东成红木山东济南专卖店', 1265),  ('东成红木四川成都专卖店', 1266),  ('东成红木新疆乌鲁木齐专卖店', 1267),  ('东成红木广州天河专卖店', 1268),  ('东成红木广州番禺专卖店', 1269),  ('东成红木广州增城专卖店', 1270),  ('东成红木天津溏沽专卖店', 1271),  ('东成红木西安市阎良区专卖店', 1272),  ('东成红木西安临潼专卖店', 1273),  ('东成红木四川省乐山专卖店', 1274),  ('东成红木江苏江阴专卖店', 1275),  ('东成红木重庆梁平专卖店', 1276),  ('东成红木山东德州专卖店', 1277),  ('东成红木广东汕头专卖店', 1278),  ('东成红木广东珠海专卖店', 1279),  ('东成红木甘肃兰州专卖店', 1280),  ('东成红木常德专卖店', 1281),  ('东成红木唐山专卖店', 1282),  ('东成红木唐山曹妃甸店', 1283))
+        for name, ext_number in ext_numbers:
+            distributor = Distributor.query.filter_by(name=name).first()
+            if distributor:
+                distributor.ext_number = ext_number
+            else:
+                print(name, ext_number)
+        db.session.commit()
 
     @staticmethod
     def generate_fake():
@@ -494,7 +517,7 @@ class Item(db.Model, Property):
     # 装饰 id
     decoration_id = db.Column(db.Integer, nullable=False)
     # 二级场景 id
-    second_scene_id = db.Column(db.Integer, nullable=False)
+    scene_id = db.Column(db.Integer, nullable=False)
     # 风格 id
     style_id = db.Column(db.Integer, default=5, nullable=False)
     # 产品寓意
@@ -517,7 +540,7 @@ class Item(db.Model, Property):
         'images': lambda x: ItemImage.query.filter_by(item_id=x.id, is_deleted=False).order_by(ItemImage.sort,
                                                                                                ItemImage.created),
         'components': lambda x: Item.query.filter_by(suite_id=x.id, is_deleted=False, is_component=True),
-        'second_scene': lambda x: SecondScene.query.get(x.second_scene_id).second_scene,
+        'scene': lambda x: Scene.query.get(x.scene_id).scene,
         'second_material': lambda x: SecondMaterial.query.get(x.second_material_id).second_material,
         'outside_sand': lambda x: Sand.query.get(x.outside_sand_id).sand,
         'inside_sand': lambda x: Sand.query.get(x.inside_sand_id).sand if x.inside_sand_id else '——',
@@ -532,7 +555,7 @@ class Item(db.Model, Property):
     _category = None
     _images = None
     _components = None
-    _second_scene = None
+    _scene = None
     _second_material = None
     _outside_sand = None
     _inside_sand = None
@@ -543,7 +566,7 @@ class Item(db.Model, Property):
     _carve = None
     _tenon = None
 
-    def __init__(self, vendor_id, item, price, second_material_id, category_id, second_scene_id, length, width,
+    def __init__(self, vendor_id, item, price, second_material_id, category_id, scene_id, length, width,
                  height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, style_id, story,
                  suite_id, amount, is_suite, is_component):
         self.vendor_id = vendor_id
@@ -551,7 +574,7 @@ class Item(db.Model, Property):
         self.price = price
         self.second_material_id = second_material_id
         self.category_id = category_id
-        self.second_scene_id = second_scene_id
+        self.scene_id = scene_id
         self.length = length
         self.width = width
         self.height = height
@@ -584,6 +607,7 @@ class Item(db.Model, Property):
                                                             Distributor.is_revoked == False)
         return distributors
 
+    @property
     def size(self):
         if self.length and self.width and self.height:
             return '%s * %s * %s' % (self.length, self.width, self.height)
@@ -599,8 +623,8 @@ class Item(db.Model, Property):
         return self.get_or_flush('category')
 
     @property
-    def second_scene(self):
-        return self.get_or_flush('second_scene')
+    def scene(self):
+        return self.get_or_flush('scene')
 
     @property
     def second_material(self):
@@ -653,11 +677,35 @@ class Item(db.Model, Property):
             components = self.components
             self.amount = sum([component.amount for component in components])
 
+    def dumps(self):
+        data = {}
+        if not self.is_suite and not self.is_component:  # single
+            attrs = ('id', 'item', 'price', 'second_material', 'category', 'scene', 'style', 'outside_sand', 'inside_sand', 'size', 'area', 'stove', 'paint', 'decoration', 'carve', 'tenon', 'vendor_id', 'is_suite')
+            for attr in attrs:
+                data[attr] = getattr(self, attr)
+            data['brand'] = self.vendor.brand
+            data['images'] = [image.url for image in self.images]
+        elif self.is_suite:
+            attrs = ('id', 'item', 'price', 'second_material', 'scene', 'style', 'outside_sand', 'inside_sand', 'area', 'stove', 'amount', 'vendor_id', 'is_suite')
+            for attr in attrs:
+                data[attr] = getattr(self, attr)
+            component_dumps = []
+            for component in self.components:
+                component_dumps.append(component.dumps())
+            data['components'] = component_dumps
+            data['brand'] = self.vendor.brand
+            data['images'] = [image.url for image in self.images]
+        else:  # component
+            attrs = ('item', 'area', 'size', 'category', 'carve', 'tenon', 'paint', 'decoration', 'amount', 'is_component')
+            for attr in attrs:
+                data[attr] = getattr(self, attr)
+        return data
+
     @staticmethod
     def images_dump():
         for item in Item.query.filter_by(is_deleted=False):
             vendor_dir = os.path.join(current_app.config['IMAGE_DIR'], 'raw_images/%s_%d/' % (item.vendor.brand, item.vendor.id))
-            item_dir = os.path.join(vendor_dir, '%s_%d' % (item.item, item.id))
+            item_dir = os.path.join(vendor_dir, '%s_%d' % (item.item.replace('/', ''), item.id))
 
             if not os.path.exists(vendor_dir):
                 os.mkdir(vendor_dir)
@@ -670,7 +718,7 @@ class Item(db.Model, Property):
                 shutil.copyfile(src_path, dst_path)
             story_path = os.path.join(item_dir, '商品信息.txt')
             with open(story_path, 'w', encoding='utf8') as f:
-                f.write(item.story)
+                f.writelines(['寓意: %s\n' % item.story, '尺寸(cm): %s\n' % item.size, '适用面积(m^2): %s\n' % (item.area if item.area else '——')])
 
     @staticmethod
     def generate_fake(num=10):
@@ -679,7 +727,7 @@ class Item(db.Model, Property):
         fake = Factory.create()
         second_material_ids = [_.id for _ in SecondMaterial.query]
         category_ids = [_.id for _ in Category.query.filter_by(level=3)]
-        second_scene_ids = [_.id for _ in SecondScene.query]
+        scene_ids = [_.id for _ in Scene.query]
         stove_ids = [_.id for _ in Stove.query]
         sand_ids = [_.id for _ in Sand.query]
         paint_ids = [_.id for _ in Paint.query]
@@ -696,7 +744,7 @@ class Item(db.Model, Property):
                     price=random.randint(0, 10000000),
                     second_material_id=random.choice(second_material_ids),
                     category_id=random.choice(category_ids),
-                    second_scene_id=random.choice(second_scene_ids),
+                    scene_id=random.choice(scene_ids),
                     length=random.randint(0, 1000),
                     width=random.randint(0, 1000),
                     height=random.randint(0, 1000),
@@ -725,7 +773,7 @@ class Item(db.Model, Property):
                     price=random.randint(0, 10000000),
                     second_material_id=random.choice(second_material_ids),
                     category_id=0,
-                    second_scene_id=random.choice(second_scene_ids),
+                    scene_id=random.choice(scene_ids),
                     length=0,
                     width=0,
                     height=0,
@@ -754,7 +802,7 @@ class Item(db.Model, Property):
                     price=0,
                     second_material_id=0,
                     category_id=random.choice(category_ids),
-                    second_scene_id=0,
+                    scene_id=0,
                     length=random.randint(0, 100),
                     width=random.randint(0, 100),
                     height=random.randint(0, 100),
@@ -1088,6 +1136,20 @@ class Area(db.Model):
             return self
         return self.father()
 
+    def experience_dict(self, distributor_id):
+        if self.level == 3:
+            third_area = self
+            second_area = self.father()
+            first_area = second_area.father()
+        else:
+            third_area = second_area = self
+            first_area = second_area.father()
+        return {first_area.cn_id: {'area': first_area.area, 'children': {
+            second_area.cn_id: {'area': second_area.area, 'children': {
+                third_area.cn_id: {'area': third_area.area, 'distributors': [distributor_id]}
+            }}
+        }}}
+
 
 class Province(db.Model):
     __tablename__ = 'provinces'
@@ -1361,8 +1423,7 @@ def generate_fake_data(num=100):
     Paint.generate_fake()
     Decoration.generate_fake()
     Tenon.generate_fake()
-    FirstScene.generate_fake()
-    SecondScene.generate_fake()
+    Scene.generate_fake()
     Style.generate_fake()
     Area.generate_fake()
     # Vendor.generate_fake()

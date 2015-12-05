@@ -1,1 +1,0 @@
-$(function(){var e=$("header .nav ul li a");e.click(function(){e.removeClass("active"),$(this).addClass("active")})}),window.chrome&&$(".banner li").css("background-size","100% 100%"),$(".banner").unslider({arrows:!1,fluid:!0,dots:!0,loop:!0,speed:500,delay:2e3,items:">ul",item:">li"}),$(".banner ul li").click(function(){var e=$(this).attr("href");window.open(e)});

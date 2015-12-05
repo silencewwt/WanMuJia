@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 from math import ceil
-from flask import render_template, request, current_app, abort, jsonify
+from flask import render_template, request, current_app, abort, jsonify, g
 from flask.ext.login import current_user
 from flask.ext.cdn import url_for
 
 from app import statisitc
-from app.models import Item
-from app.user.forms import LoginForm
+from app.models import Item, Category
+from app.permission import user_permission
 from . import item as item_blueprint
 
 
 @item_blueprint.route("/")
 def item_list():
-    return render_template("user/display.html", user=current_user)
+    return render_template("user/search.html", user=current_user)
 
 
 @item_blueprint.route("/filter")
@@ -21,7 +21,7 @@ def item_filter():
     styles = request.args.getlist('style', type=int)
     scenes = request.args.getlist('scene', type=int)
     brands = request.args.getlist('brand', type=int)
-    categories = request.args.getlist('category', type=int)
+    category = request.args.get('category', None, type=int)
     price = request.args.get('price', type=int)
     price_order = request.args.get('order', type=str)
     search = request.args.get('search', type=str)
@@ -43,27 +43,39 @@ def item_filter():
             statisitc.materials['available_set'] - (statisitc.materials['available_set'] - set(materials))
         )
         query = query.filter(Item.second_material_id.in_(materials))
-    if categories:
-        category_statistic_set = set([id_ for id_ in statisitc.categories['available']])
-        categories = list(
-            category_statistic_set - (category_statistic_set - set(categories))
-        )
+    if category is not None:
+        category = Category.query.get(category)
         category_ids = []
-        for category_id in categories:
-            category_ids.extend(statisitc.categories['available_list'][category_id])
-        query = query.filter(Item.category_id.in_(category_ids))
+        if category is not None:
+            if category.level == 3:
+                category_ids = [category.id]
+            elif category.level == 2:
+                children = statisitc.categories['available'][category.father_id]['children'][category.id]['children']
+                if children:
+                    category_ids = children.keys()
+                else:
+                    category_ids = [category.id]
+            else:
+                children = statisitc.categories['available'][category.id]['children']
+                for child in children:
+                    if not children[child]['children']:
+                        category_ids.append(child)
+                    else:
+                        category_ids.extend(children[child]['children'].keys())
+        if category_ids:
+            query = query.filter(Item.category_id.in_(category_ids))
     if scenes:
         scenes = list(
             statisitc.scenes['available_set'] - (statisitc.scenes['available_set'] - set(scenes))
         )
-        query = query.filter(Item.second_scene_id.in_(scenes))
+        query = query.filter(Item.scene_id.in_(scenes))
     if styles:
         styles = list(
             statisitc.styles['available_set'] - (statisitc.styles['available_set'] - set(styles))
         )
         query = query.filter(Item.style_id.in_(styles))
     if price is not None and 0 <= price < len(price_list):
-        query.filter(Item.price >= price_list[price][0], Item.price <= price_list[price][1])
+        query = query.filter(Item.price >= price_list[price][0], Item.price <= price_list[price][1])
     else:
         price = None
     if search is not None and search != '':
@@ -91,10 +103,46 @@ def item_filter():
         data['filters']['available']['material'] = statisitc.materials['available']
     else:
         data['filters']['selected']['material'] = statisitc.selected(statisitc.materials['total'], materials)
-    if not categories:
-        data['filters']['available']['category'] = statisitc.categories['available']
+    if category is None:
+        first_categories = statisitc.categories['available']
+        data['filters']['available']['category'] = \
+            {key: {'category': first_categories[key]['category']} for key in first_categories}
+    elif category.level == 1:
+        data['filters']['selected']['category'] = {category.id: {'category': category.category}}
+        second_categories = statisitc.categories['available'][category.id]['children']
+        data['filters']['available']['category'] = \
+            {key: {'category': second_categories[key]['category']} for key in second_categories}
+    elif category.level == 2:
+        data['filters']['selected']['category'] = {
+            category.father_id: {
+                'category': category.father.category,
+                'children': {
+                    category.id: {
+                        'category': category.category
+                    }
+                }
+            }
+        }
+        third_categories = statisitc.categories['available'][category.father_id]['children'][category.id]['children']
+        if third_categories:
+            data['filters']['available']['category'] = \
+                {key: {'category': third_categories[key]['category']} for key in third_categories}
     else:
-        data['filters']['selected']['category'] = statisitc.selected(statisitc.categories['total'], categories)
+        data['filters']['selected']['category'] = {
+            category.father.father_id: {
+                'category': category.father.father.category,
+                'children': {
+                    category.father.id: {
+                        'category': category.father.category,
+                        'children': {
+                            category.id: {
+                                'category': category.category
+                            }
+                        }
+                    }
+                }
+            }
+        }
     if not scenes:
         data['filters']['available']['scene'] = statisitc.scenes['available']
     else:
@@ -114,7 +162,8 @@ def item_filter():
             'id': item.id,
             'item': item.item,
             'price': item.price,
-            'image_url': image_url
+            'image_url': image_url,
+            'is_suite': item.is_suite
         })
     return jsonify(data)
 
@@ -125,40 +174,45 @@ def detail(item_id):
     if item.is_deleted or item.is_component:
         abort(404)
     format = request.args.get('format', '', type=str)
+    action = request.args.get('action', 'compare', type=str)
     if format == 'json':
-        if item.is_suite or item.is_component:
-            return '套件商品无法对比'
-        image = item.images.first()
-        image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
-        item_dict = {
-            'item': item.item,
-            'price': item.price,
-            'second_material': item.second_material,
-            'category': item.category,
-            'second_scene': item.second_scene,
-            'outside_sand': item.outside_sand,
-            'inside_sand': item.inside_sand,
-            'size': item.size(),
-            'area': item.area if item.area else '——',
-            'stove': item.stove,
-            'paint': item.paint,
-            'decoration': item.decoration,
-            'story': item.story,
-            'image_url': image_url,
-            'carve': item.carve,
-            'tenon': item.tenon
-        }
+        if action == 'detail':
+            item_dict = {'item': item.dumps()}
+            if item.id in statisitc.items:
+                item_dict['distributors'] = statisitc.items[item.id]
+            else:
+                item_dict['distributors'] = {}
+            if g.identity.can(user_permission):
+                item_dict['item']['collected'] = current_user.item_collected(item.id)
+            else:
+                item_dict['item']['collected'] = False
+        else:
+            if item.is_suite:
+                return '套件商品无法对比'
+            image = item.images.first()
+            image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
+            item_dict = {
+                'id': item.id,
+                'item': item.item,
+                'price': item.price,
+                'second_material': item.second_material,
+                'category': item.category,
+                'scene': item.scene,
+                'outside_sand': item.outside_sand,
+                'inside_sand': item.inside_sand,
+                'size': item.size,
+                'area': item.area if item.area else '——',
+                'stove': item.stove,
+                'paint': item.paint,
+                'decoration': item.decoration,
+                'story': item.story,
+                'image_url': image_url,
+                'carve': item.carve,
+                'tenon': item.tenon,
+                'brand': item.vendor.brand
+            }
         return jsonify(item_dict)
-    return render_template("user/detail.html", item=item, user=current_user, form=LoginForm())
-
-
-@item_blueprint.route('/<int:item_id>/distributors')
-def distributors(item_id):
-    item = Item.query.get_or_404(item_id)
-    if item.is_deleted or item.is_component:
-        abort(404)
-    distributor_id = {'distributors': [distributor.id for distributor in item.in_stock_distributors()]}
-    return jsonify(distributor_id)
+    return render_template("user/detail.html")
 
 
 @item_blueprint.route("/compare")

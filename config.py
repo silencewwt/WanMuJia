@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import os
 import json
 
@@ -14,6 +15,7 @@ class Config(object):
     MD5_SALT = 'md5 salt'
     CONFIRM_EMAIL_DURATION = 86400  # seconds (24 hours)
     DISTRIBUTOR_REGISTER_DURATION = 86400
+    REMEMBER_COOKIE_DURATION = datetime.timedelta(days=30)
     SMS_CAPTCHA_DURATION = 600
     IMAGE_CAPTCHA_DURATION = 600
     ITEM_PER_PAGE = 40
@@ -40,6 +42,10 @@ class DevelopmentConfig(Config):
         with open(cls.CONFIG_PATH) as f:
             config_dict = json.load(f)['development']
         cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
+        cls.OSS_ACCESS_ID = config_dict['OSS_ACCESS_ID']
+        cls.OSS_ACCESS_SECRET = config_dict['OSS_ACCESS_SECRET']
+        cls.OSS_BUCKET_NAME = config_dict['OSS_BUCKET_NAME']
+        cls.OSS_HOST = config_dict['OSS_HOST']
 
 
 class TestingConfig(Config):
@@ -74,6 +80,11 @@ class ProductionConfig(Config):
         cls.MD5_SALT = config_dict['MD5_SALT']
         cls.SQLALCHEMY_DATABASE_URI = config_dict['DATABASE_URL']
         cls.ADMIN_EMAILS = config_dict['ADMIN_EMAILS']
+        cls.OSS_ACCESS_ID = config_dict['OSS_ACCESS_ID']
+        cls.OSS_ACCESS_SECRET = config_dict['OSS_ACCESS_SECRET']
+        cls.OSS_BUCKET_NAME = config_dict['OSS_BUCKET_NAME']
+        cls.OSS_HOST = config_dict['OSS_HOST']
+        cls.ITEMS = config_dict['ITEMS']
 
         import logging
         file_handler = logging.FileHandler('/var/log/wmj/wmj_error.log')

@@ -4,6 +4,7 @@ import random
 import time
 
 from flask import current_app, request
+from flask.ext.cdn import url_for
 
 from ._compat import PY3
 
@@ -71,3 +72,25 @@ def data_table_params():
     valid_length = [10, 25, 50, 100]
     length = length if length in valid_length else valid_length[0]
     return draw, start, length
+
+
+def items_json(items):
+    from app.models import Item
+    if not items:
+        return []
+    elif isinstance(items[0], Item):
+        item_query = items
+    else:
+        item_query = Item.query.filter(Item.id.in_(items))
+    item_list = []
+    for item in item_query:
+        image = item.images.first()
+        image_url = image.url if image else url_for('static', filename='img/user/item_default_img.jpg')
+        item_list.append({
+            'id': item.id,
+            'item': item.item,
+            'price': item.price,
+            'image_url': image_url,
+            'is_suite': item.is_suite
+        })
+    return item_list

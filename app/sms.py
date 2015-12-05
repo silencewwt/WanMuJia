@@ -8,6 +8,7 @@ from app.tasks import send_sms
 USER_REGISTER_TEMPLATE = '6253'
 RESET_PASSWORD_TEMPLATE = '6256'
 USER_GUIDE_TEMPLATE = '6259'
+USER_SMS_CAPTCHA_TEMPLATE = '17405'
 VENDOR_REGISTER_TEMPLATE = '10015'
 VENDOR_PENDING_TEMPLATE = '10016'
 VENDOR_ACCEPT_TEMPLATE = '10017'
@@ -34,14 +35,11 @@ def _api_param_generator():
     return timestamp, signature
 
 
-def sms_generator(template, mobile, contents=None, **kwargs):
+def sms_generator(template, mobile, *contents, **kwargs):
     if template == VENDOR_PENDING_TEMPLATE:
         contents = ['3']
     elif template == VENDOR_ACCEPT_TEMPLATE:  # 短信模板必须传参数
         contents = [u'信息']
-    else:
-        if not isinstance(contents, list):
-            contents = [contents]
     timestamp, signature = _api_param_generator()
     url = request_url.format(
         sid=account_id, app_id=app_id, timestamp=timestamp, signature=signature, to=mobile,

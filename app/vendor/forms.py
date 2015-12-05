@@ -10,9 +10,8 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo
 
 from app import db, statisitc
 from app.constants import SMS_CAPTCHA, VENDOR_REMINDS_PENDING, VENDOR_REMINDS_COMPLETE
-from app.models import Vendor, VendorAddress, Stove, Carve, Sand, Paint, Decoration, \
-    Tenon, Item, ItemTenon, ItemCarve, ItemImage, Distributor, DistributorRevocation, FirstScene, SecondScene, \
-    FirstMaterial, SecondMaterial, Category, Style
+from app.models import Vendor, VendorAddress, Stove, Carve, Sand, Paint, Decoration, Tenon, Item, ItemTenon, \
+    ItemCarve, ItemImage, Distributor, DistributorRevocation, FirstMaterial, SecondMaterial, Category, Style, Scene
 from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
 from app.utils import IO
 from app.utils.forms import Form
@@ -152,7 +151,7 @@ class ItemForm(Form):
     price = IntegerField(validators=[Digit(required=True, min=1, message='商品价格不正确, 单位: 元')])
     second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, message=u'商品材料不正确')])
     category_id = StringField(validators=[QueryID(Category, message='商品种类不正确')])
-    second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, message=u'商品场景不正确')])
+    scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(Scene, message=u'商品场景不正确')])
     stove_id = SelectField(coerce=int, validators=[QueryID(Stove, message=u'烘干工艺不正确')])
     carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, message=u'雕刻工艺不正确')])
     outside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, message=u'内打磨砂纸不正确')])
@@ -164,19 +163,18 @@ class ItemForm(Form):
     story = TextAreaField(validators=[Length(0, 5000)])
 
     attributes = ('item', 'length', 'width', 'height', 'price', 'area', 'second_material_id', 'category_id',
-                  'second_scene_id', 'stove_id', 'outside_sand_id', 'decoration_id', 'paint_id', 'style_id', 'story')
+                  'scene_id', 'stove_id', 'outside_sand_id', 'decoration_id', 'paint_id', 'style_id', 'story')
 
     def validate_area(self, field):
         if not (field.data or (self.length.data and self.width.data and self.height.data)):
             raise ValidationError(u'适用面积与长宽高至少需填一项')
 
     def generate_choices(self):
-        self.second_scene_id.choices = []
-        first_scenes = FirstScene.query.order_by(FirstScene.id)
-        for first_scene in first_scenes:
-            l = [(choice.id, choice.second_scene) for choice in
-                 SecondScene.query.filter_by(first_scene_id=first_scene.id)]
-            self.second_scene_id.choices.append((first_scene.first_scene, l))
+        self.scene_id.choices = []
+        for first_scene in Scene.query.filter_by(level=1):
+            l = [(choice.id, choice.scene) for choice in
+                 Scene.query.filter_by(father_id=first_scene.id)]
+            self.scene_id.choices.append((first_scene.scene, l))
 
         self.second_material_id.choices = []
         first_materials = FirstMaterial.query.order_by(FirstMaterial.id)
@@ -201,7 +199,7 @@ class ItemForm(Form):
             price=self.price.data,
             second_material_id=self.second_material_id.data,
             category_id=self.category_id.data,
-            second_scene_id=self.second_scene_id.data,
+            scene_id=self.scene_id.data,
             length=self.length.data,
             width=self.width.data,
             height=self.height.data,
@@ -257,6 +255,7 @@ class ItemForm(Form):
         for attr in self.attributes:
             if not getattr(self, attr).data == getattr(item, attr):
                 setattr(item, attr, getattr(self, attr).data)
+        item.inside_sand_id = self.inside_sand_id.data
 
         item_tenons = item.get_tenon_id()
         add_tenons = set(self.tenon_id.data) - set(item_tenons)
@@ -325,7 +324,7 @@ class ComponentForm(Form):
             price=0,
             second_material_id=0,
             category_id=self.category_id.data,
-            second_scene_id=0,
+            scene_id=0,
             length=self.length.data,
             width=self.width.data,
             height=self.height.data,
@@ -411,23 +410,22 @@ class SuiteForm(Form):
     area = StringField(validators=[Digit(required=True, min=0, type=float, message='商品适用面积不正确')])
     price = IntegerField(validators=[Digit(required=True, min=1, message='商品价格不正确, 单位: 元')])
     second_material_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondMaterial, message=u'商品材料不正确')])
-    second_scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(SecondScene, message=u'商品场景不正确')])
+    scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(Scene, message=u'商品场景不正确')])
     stove_id = SelectField(coerce=int, validators=[QueryID(Stove, message=u'烘干工艺不正确')])
     outside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=True, message=u'外打磨砂纸不正确')])
     inside_sand_id = SelectNotRequiredField(coerce=int, validators=[QueryID(model=Sand, required=False, message=u'内打磨砂纸不正确')])
     style_id = SelectField(coerce=int, validators=[QueryID(Style, '风格分类不正确')])
     story = TextAreaField(validators=[Length(0, 5000)])
 
-    attributes = ('item', 'area', 'price', 'second_material_id', 'second_scene_id', 'stove_id', 'outside_sand_id',
+    attributes = ('item', 'area', 'price', 'second_material_id', 'scene_id', 'stove_id', 'outside_sand_id',
                   'style_id', 'story')
 
     def generate_choices(self):
-        self.second_scene_id.choices = []
-        first_scenes = FirstScene.query.order_by(FirstScene.id)
-        for first_scene in first_scenes:
-            l = [(choice.id, choice.second_scene) for choice in
-                 SecondScene.query.filter_by(first_scene_id=first_scene.id)]
-            self.second_scene_id.choices.append((first_scene.first_scene, l))
+        self.scene_id.choices = []
+        for first_scene in Scene.query.filter_by(level=1):
+            l = [(choice.id, choice.scene) for choice in
+                 Scene.query.filter_by(father_id=first_scene.id)]
+            self.scene_id.choices.append((first_scene.scene, l))
 
         self.second_material_id.choices = []
         first_materials = FirstMaterial.query.order_by(FirstMaterial.id)
@@ -448,7 +446,7 @@ class SuiteForm(Form):
             price=self.price.data,
             second_material_id=self.second_material_id.data,
             category_id=0,
-            second_scene_id=self.second_scene_id.data,
+            scene_id=self.scene_id.data,
             length='',
             width='',
             height='',

@@ -6,62 +6,44 @@
 + **method**
   + GET
   + POST
-+ **postData**(手机注册)
-  + **csrf_token**
-  + **mobile**
-    + 手机号码
-    + type = text
-    + length = 11
-    + require
-  + **captcha**
-    + 短信验证码
-    + type = text
-    + length = 6
-    + require
-+ **postData**(邮箱注册)
-  + 邮箱注册的API见 send email, 注意接口地址不是/register
-  + **csrf_token**
-  + **email**
-    + 邮箱
-    + type = text
-    + length = [3, 64]
-    + require
-+ **return**
-  + 成功
-    + `{"success": true}`
-  + 失败
-    + `{"success": false, "message": ""}`
-
-### user register next
-+ **URL**
-  + /register_next
-+ **method**
-  + GET
-  + POST
-+ **postData**
-  + **csrf_token**
-  + **password**
-    + 密码
-    + type = password
-    + length = [6, 32]
-    + require
-    + 需将用户的密码md5两次
-  + **confirm_password**
-    + 确认密码
-    + type = password
-    + length = [6, 32]
-    + require
-    + 需将用户的密码md5两次, 且与password相等
-  + **nickname**
-    + 昵称
-    + type = text
-    + length = [4, 30]
-    + require
-+ **return**
-  + 成功
-    + `{"status": true}`
-  + 失败
-    + `{"status": false, "message": ""}`
++ step == 1
+  + **postData**
+    + **csrf_token**
+    + **mobile**
+      + 手机号码
+      + type = text
+      + length = 11
+      + require
+    + **captcha**
+      + 短信验证码
+      + type = text
+      + length = 6
+      + require
+  + **return**
+    + 成功
+      + `{"success": true}`
+    + 失败
+      + `{"success": false, "message": ""}`
++ step == 2
+  + **postData**
+    + **csrf_token**
+    + **password**
+      + 密码
+      + type = password
+      + length = [6, 32]
+      + require
+      + 需将用户的密码md5两次
+    + **confirm_password**
+      + 确认密码
+      + type = password
+      + length = [6, 32]
+      + require
+      + 需将用户的密码md5两次, 且与password相等
+  + **return**
+    + 成功
+      + `{"status": true, "user": {"username": "", "mobile": ""}}`
+    + 失败
+      + `{"status": false, "message": ""}`
 
 ### user login
 + **URL**
@@ -80,9 +62,12 @@
     + type = password
     + require
     + 需将用户密码md5两次
+  + **remember**
+    + 记住密码
+    + type = bool
 + **return**
   + 成功
-    + `{"status": true}`
+    + `{"status": true, "user": {"username": "", "mobile": "", "email": ""}}`
   + 失败
     + `{"status": false, "message": ""}`
     
@@ -92,46 +77,50 @@
 + **method**
   + GET
 
-### reset password
+### user reset password
 + **URL**
   + /reset_password
 + **method**
   + GET
   + POST
-+ **postData**
-  + **csrf_token**
-  + **mobile**
-    + required
-  + **captcha**
-    + required
-+ **return**
-  + 成功
-    + `{"success": true}`
-  + 失败
-    + `{"success": false, "message": ""}`
-+ **API**
-  + mobile
-    + mobile sms
-  + email
-    + send email
-
-### reset password next
-+ **URL**
-  + /reset_password_next
-+ **method**
-  + GET
-  + POST
-+ **postData**
-  + **csrf_token**
-  + **password**
-    + required
-  + **confirm_password**
-    + required
-+ **return**
-  + 成功
-    + `{"success": true}`
-  + 失败
-    + `{"success": false, "message": ""}`
++ step == 1
+  + **postData**
+    + **csrf_token**
+    + **mobile**
+      + 手机号码
+      + type = text
+      + length = 11
+      + require
+    + **captcha**
+      + 短信验证码
+      + type = text
+      + length = 6
+      + require
+  + **return**
+    + 成功
+      + `{"success": true}`
+    + 失败
+      + `{"success": false, "message": ""}`
++ step == 2
+  + **postData**
+    + **csrf_token**
+    + **password**
+      + 密码
+      + type = password
+      + length = [6, 32]
+      + require
+      + 需将用户的密码md5两次
+    + **confirm_password**
+      + 确认密码
+      + type = password
+      + length = [6, 32]
+      + require
+      + 需将用户的密码md5两次, 且与password相等
+  + **return**
+    + 成功
+      + `{"status": true, "user": {"username": "", "mobile": ""}}`
+    + 失败
+      + `{"status": false, "message": ""}`
 
 ### user home page
 + **URL**
@@ -152,7 +141,7 @@
   + item: item id, 仅POST, DELETE方式需要
 + **return**
   + GET
-    + `{"collections": [{"item": "", "price": "", "item_id": "", "deleted": "", "image_url": ""}], "amount": "", "page": "", "pages": ""}`
+    + `{"collections": [{"item": "", "price": "", "item_id": "", "deleted": "", "image_url": "", "is_suite": ""}], "amount": "", "page": "", "pages": ""}`
     + **amount**
       + 收藏总数
     + **page**
@@ -165,33 +154,54 @@
   + DELETE
     + `{"success": true}`
 
-### user setting
+### user change username
 + **URL**
   + /settings
 + **method**
   + POST
++ **parameters**
+  + type = USER_USERNAME_SETTING
 + **postData**
-  + **csrf_token**
-  + **nickname**
-    + not required
-  + **mobile**
-    + required
-  + **captcha**
-    + 若需要修改手机号, 则必须填写验证码
-    
-### user change password
+  + captcha
+  + username
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
+
+### user change email
 + **URL**
-  + /change_password
+  + /settings
 + **method**
   + POST
++ **parameters**
+  + type = USER_EMAIL_SETTING
 + **postData**
-  + **csrf_token**
-  + **old_password**
-    + required
-  + **new_password**
-    + required
-  + **confirm_password**
-    + required
+  + captcha
+  + email
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
+
+### user change password
++ **URL**
+  + /settings
++ **method**
+  + POST
++ **parameters**
+  + type = USER_PASSWORD_SETTING
++ **postData**
+  + old_password
+  + password
+  + confirm_password
++ **return**
+  + 成功
+    + `{"success": true}`
+  + 失败
+    + `{"success": false, "message": ""}`
 
 ### user logined
 + **URL**
@@ -200,9 +210,136 @@
   + GET
 + **return**
   + 已登录
-    + `{"logined": true, "username": "", "mobile": "", "email": ""}`
+    + `{"logined": true, "username": "", "mobile": "", "email": "", "username_revisable": "", "email_confirmed": ""}`
   + 未登录
     + `{"logined": false}`
+
+## Main
+### index
++ **URL**
+  + /
++ **method**
+  + GET
+
+### index navbar
++ **URL**
+  + /navbar
++ **method**
+  + GET
++ **return**
+  + items列表长度正常情况下为8 (但是有可能商品数量确实不够的情况...)
+```json
+{
+    "id1": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id3": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    }
+}
+```
+
+### brand list
++ **URL**
+  + /brands
++ **method**
+  + GET
++ **parameters**
+  + format
+    + 若format != json, 返回html(brands.html)
+    + 若format == json, 返回json
++ **return**
+```json
+{
+    "id1": {
+        "brand": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "brand": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+}
+```
+
+### brand dettail
++ **URL**
+  + /brands/\<int:brand_id\>
++ **method**
+  + GET
++ **parameters**
+  + format
+    + 若format != json, 返回html(brand_detail.html)
+    + 若format == json, 返回json
++ **return**
+```json
+{
+    "id1": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "scene": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+}
+```
+
+### furniture
++ **URL**
+  + /furniture
++ **method**
+  + GET
++ **parameters**
+  + format
+    + 若format != json, 返回html(furniture.html)
+    + 若format == json, 返回json
++ **return**
+```json
+{
+    "id1": {
+        "style": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+    "id2": {
+        "style": "",
+        "items": [
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+            {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
+        ]
+    },
+}
+```
 
 ## Item
 ### item list
@@ -256,7 +393,8 @@
         + price
     + selected
       + 已选条件
-      + 结构与available相同, 单个筛选条件只会在available或selected其中之一出现
+      + 结构与available相同, 单个筛选条件(除category)只会在available或selected其中之一出现
+      + category为分级筛选, 选择第一级条件后, 会返回第二级条件
   + items
     + amount
       + 符合条件的所有商品数量
@@ -274,6 +412,7 @@
       + item
       + price
       + image_url
+      + is_suite
 
 ```json
 {
@@ -305,6 +444,16 @@
 			}
 		},
 		"selected": {
+		    "category": {
+		        "id": {
+		            "category": "",
+		            "children": {
+		                "id": {
+		                    "category": ""
+		                }
+		            }
+		        }
+		    }
 		}
 	},
 	"items": {
@@ -314,8 +463,8 @@
 		"search": "",
 		"order": "",
 		"query": [
-			{"id": "", "item": "", "price": "", "image_url": ""},
-			{"id": "", "item": "", "price": "", "image_url": ""},
+			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": false},
+			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
 		]
 	}
 }
@@ -334,10 +483,14 @@
   + GET
 + **parameters**
   + format
-    + 如果format == json, 返回json, 否则为html
+    + 若format != json, 返回html
+    + 若format == json && action == detail, 返回商品详情
+    + 若format == json && action != detail, 返回商品对比详情
 + **return**
-  + format == json
-    + `{"item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": ""}`
+  + format == json && action != detail
+    + `{"id": "", "item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": "", "brand": ""}`
+    + **id**
+      + 商品id
     + **item**
       + 商品名称
     + **price**
@@ -346,7 +499,7 @@
       + 二级材料
     + **category**
       + 商品分类
-    + **second_scene**
+    + **scene**
       + 二级场景分类
     + **outside_sand**
       + 外表面打磨砂纸
@@ -370,130 +523,188 @@
       + 商品寓意
     + **image_url**
       + 图片url
-+ item object(**单件**)
-  + id
-  + vendor
-    + id
-      + vendor id
-  	+ brand
-  	  + 品牌名
-  + item
-    + 商品名
-  + price
-    + 指导价格
-  + length
-    + 长
-  + width
-    + 宽
-  + height
-    + 高
-  + size()
-    + 长 * 宽 * 高
-  + area
-    + 适用面积
-  + second_material
-    + 材料
-  + category
-    + 分类
-  + second_scene
-    + 场景
-  + stove
-    + 烘干工艺
-  + outside_sand
-    + 外表面打磨砂纸
-  + inside_sand
-    + 内表面打磨砂纸
-  + paint
-    + 涂饰工艺
-  + decoration
-    + 装饰工艺
-  + style
-    + 风格
-  + story
-    + 商品寓意
-  + images
-    + 商品图片(使用for遍历)
-  + is_suite
-    + value = False
-  + is_component
-    + value = False
- + item object(**套件**)
-   + id
-   + vendor
-     + id
-     + brand
-   + item
-     + 商品名称
-   + area
-     + 适用面积
-   + price
-     + 指导价格
-   + second_material
-     + 材料
-   + second_scene
-     + 场景
-   + style
-     + 风格
-   + outside_sand
-     + 外表面砂纸
-   + inside_sand
-     + 内表面砂纸
-   + stove
-     + 烘干工艺
-   + story
-     + 寓意
-   + amount
-     + 该套件中所有组件数量和
-   + images
-     + 套件图片(使用for遍历)
-   + components
-     + 套件中的组件(使用for遍历)
-   + is_suite
-     + value = True
-   + is_component
-     + value = False
- + item object(**组件**)
-   + id
-   + vendor
-     + id
-     + brand
-   + item
-     + 组件名称
-   + length
-     + 长
-   + width
-     + 宽
-   + height
-     + 高
-   + size()
-     + 长 * 宽 * 高
-   + area
-     + 适用面积
-   + category
-     + 组件分类
-   + carve
-     + 雕刻工艺
-   + tenon
-     + 榫卯结构
-   + paint
-     + 涂饰工艺
-   + decoration
-     + 装饰工艺
-   + amount
-     + 该组件的数量
-   + is_suite
-     + value = False
-   + is_component
-     + value = True
+    + **brand**
+      + 品牌
+    + **is_suite**
+      + value = False
+  + format == json && action == detail
+    + item object(**单件**)
+      + id
+      + vendor_id
+        厂家 id
+      + brand
+        + 品牌名
+      + item
+        + 商品名
+      + price
+        + 指导价格
+      + size
+        + 长 * 宽 * 高
+      + area
+        + 适用面积
+      + second_material
+        + 材料
+      + category
+        + 分类
+      + scene
+        + 场景
+      + stove
+        + 烘干工艺
+      + outside_sand
+        + 外表面打磨砂纸
+      + inside_sand
+        + 内表面打磨砂纸
+      + paint
+        + 涂饰工艺
+      + decoration
+        + 装饰工艺
+      + style
+        + 风格
+      + images
+        + 商品图片
+      + is_suite
+        + value = False
+      + is_component
+        + value = False
+    + item object(**套件**)
+      + id
+      + vendor_id
+        + 厂家id
+      + brand
+        + 商品品牌
+      + item
+        + 商品名称
+      + area
+        + 适用面积
+      + price
+        + 指导价格
+      + second_material
+        + 材料
+      + scene
+        + 场景
+      + style
+        + 风格
+      + outside_sand
+        + 外表面砂纸
+      + inside_sand
+        + 内表面砂纸
+      + stove
+        + 烘干工艺
+      + amount
+        + 该套件中所有组件数量和
+      + images
+        + 套件图片
+      + components
+        + 套件中的组件
+      + is_suite
+        + value = True
+    + item object(**组件**)
+      + item
+        + 组件名称
+      + size
+        + 长 * 宽 * 高
+      + area
+        + 适用面积
+      + category
+        + 组件分类
+      + carve
+        + 雕刻工艺
+      + tenon
+        + 榫卯结构
+      + paint
+        + 涂饰工艺
+      + decoration
+        + 装饰工艺
+      + amount
+        + 该组件的数量
+      + is_component
+        + value = True
 
-### item distributors
-+ **URL**
-  + /item/\<int:item_id\>/distributors
-+ **method**
-  + GET
-+ **return**
-  + json
-  + `{"distributors": [""]}`
+```js
+{
+    "item": {
+        "collected": "",  // true or false
+        
+        // 单件
+        "id": "",
+        "item": "",
+        "vendor_id": "",
+        "brand": "",
+        "price": "",
+        "second_material": "",
+        "category": "",
+        "scene": "",
+        "style": "",
+        "outside_sand": "",
+        "inside_sand": "",
+        "size": "",
+        "area": "",
+        "stove": "",
+        "paint": "",
+        "decoration": "",
+        "carve": ["", ""],
+        "tenon": ["", ""],  // 榫卯结构为选填, 可能为[]
+        "images": ["", ""],
+        "is_suite": false,
+        
+        // 套件
+        "id": "",
+        "item": "",
+        "vendor_id": "",
+        "brand": "",
+        "price": "",
+        "second_material": "",
+        "scene": "",
+        "style": "",
+        "outside_sand": "",
+        "inside_sand": "",
+        "area": "",
+        "stove": "",
+        "amount": "",
+        "images": ["", ""],
+        "is_suite": true,
+        "components": [
+            {
+                "item": "",
+                "category": "",
+                "area": "",
+                "size": "",
+                "paint": "",
+                "decoration": "",
+                "carve": ["", ""],
+                "tenon": ["", ""],  // 榫卯结构为选填, 可能为[]
+                "amount": "",
+                "is_component": true
+            },
+        ]
+    },
+    "distributors": {
+        "id1": {
+            "area": "",
+            "children": {
+                "id2": {
+                    "area": "",
+                    "children": {
+                        "id3": {
+                            "area": "",
+                            "distributors": {
+                                "id5": {
+                                    "name": "xxx体验馆",
+                                    "ext_number": ""
+                                },
+                                "id6": {
+                                    "name": "xxx体验馆",
+                                    "ext_number": ""
+                                },
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
 
 ## Distributor
 ### distributor register
@@ -742,7 +953,7 @@
     + 商品分类id
     + type = text
     + required
-  + **second_scene_id**
+  + **scene_id**
     + 二级场景id
     + type = text
     + required
@@ -875,7 +1086,46 @@
 	+ story
 	  + 商品寓意
 	  + length: [0, 5000]
-    
+
+### vendor oss signature
++ **URL**
+  + /vendor/items/oss_signature
++ **method**
+  + GET
++ **parameters**
+  + item_id
+  + filename
++ **return**
+  + 成功
+    + `{"success": true, "url": "", "params": {"key": "", "OSSAccessKeyId": "", "Signature": "", "callback": "", "policy": ""}`
+    + url
+      + ajax请求的url. 请求此url成功上传后, OSS会回调万木家的接口, 并将万木家返回的信息返回给前端
+    + params
+      + 需要设置的表单域name与value
+  + 失败
+    + `{"success": false}`
+
+### vendor item image
++ **URL**
+  + `vendor oss signature`返回的url
+  + /vendor/items/image
++ **method**
+  + PUT
+  + DELETE
++ PUT image
+  + **postData**
+    + 图片
+  + **return**
+    + `{"success": true, "image": {"url": "", "hash": "", "created": ""}}`
++ DELETE image
+  + **postData**
+    + image_hash
+  + **return**
+    + 成功
+      + {"success": true}
+    + 失败
+      + {"success": false}
+
 ### vendor distributors
 + **URL**
   + /vendor/distributors
@@ -979,13 +1229,38 @@
 + **method**
   + POST
 + **parametes**
-  + **type**
+  + type
     + USER_RESET_PASSWORD
+    + USER_GUIDE
 + **postData**
-  + **csrf_token**
-  + **mobile**
-    + required
-    
+  + type == USER_RESET_PASSWORD
+    + **csrf_token**
+    + **mobile**
+      + required
+  + type == USER_GUIDE
+    + **csrf_token**
+    + **distributor_id**
+      + required
+    + **mobile**
+      + required
+    + **captcha**
+      + required
+
+### mobile sms login required
++ **URL**
+  + /service/mobile_sms_login_required
++ **method**
+  + POST
++ **parameters**
+  + type
+    + USER_SMS_CAPTCHA(适用于用户修改用户名/密码/email)
++ **postData**
+  + type == USER_SMS_CAPTCHA
+    + **csrf_token**
+      + required
+    + **mobile**
+      + required
+
 ### send email
 + **URL**
   + /service/send_email
@@ -1044,3 +1319,11 @@
 + **return**
   + json
   + `{"A": {"ankang": {"city": "安康", "dist_count": "5"}}}`
+
+### client ip
++ **URL**
+  + /service/client_ip
++ **method**
+  + GET
++ **return**
+  + `{"ip": ""}`

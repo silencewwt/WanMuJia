@@ -5,8 +5,8 @@ from flask import session
 from wtforms.validators import Regexp, Email as BaseEmail, ValidationError
 from PIL import Image as BaseImage
 
-from app.models import User, Vendor, Distributor, Privilege, Area
-from app.constants import IMAGE_CAPTCHA_CODE
+from app.models import User, Vendor, Area
+from app.constants import IMAGE_CAPTCHA
 from app.utils import IO
 from app.utils.redis import redis_verify
 
@@ -51,13 +51,18 @@ class Captcha(object):
 
     def __call__(self, form, field):
         if self.required or field.data:
-            if self.captcha_type == IMAGE_CAPTCHA_CODE:
+            if self.captcha_type == IMAGE_CAPTCHA:
                 if 'captcha_token' not in session:
                     raise ValidationError(self.message)
-                if not redis_verify(self.captcha_type, session['captcha_token'], field.data.upper()):
+                if not redis_verify(self.captcha_type, session['captcha_token'], field.data.upper(), delete=True):
+                    session.pop('captcha_token')
                     raise ValidationError(self.message)
             else:
-                if not redis_verify(self.captcha_type, form[self.key_field].data, field.data):
+                if self.key_field == 'mobile':
+                    mobile = form[self.key_field].data
+                else:
+                    mobile = self.key_field
+                if not redis_verify(self.captcha_type, mobile, field.data, delete=True):
                     raise ValidationError(self.message)
             form.captcha_verified = True
 
@@ -91,14 +96,21 @@ class QueryID(object):
                         raise ValidationError(self.message)
 
 
-class NickName(object):
-    def __init__(self, required=True):
+class UserName(object):
+    def __init__(self, required=True, exist_owner=None):
         self.required = required
+        self.exist_owner = exist_owner
 
     def __call__(self, form, field):
         if self.required or field.data:
             if not re.match(r'^\w{4,30}$', field.data, re.UNICODE) or re.match(r'^\d*$', field.data, re.UNICODE):
                 raise ValidationError(u'用户名不正确')
+            user = User.query.filter_by(username=field.data).first()
+            if user is not None:
+                if self.exist_owner is None:
+                    raise ValidationError('用户名已存在')
+                if self.exist_owner.id != user.id:
+                    raise ValidationError('用户名已存在')
 
 
 class Image(object):
@@ -167,7 +179,9 @@ def available_mobile(mobile, model, exist_owner):
             return False
     else:
         role = model.query.filter_by(mobile=mobile)
-        if role.count() > 1 or (role.first() and role.first().id != exist_owner.id):
+        if exist_owner is None and role.first() is not None:
+            return False
+        elif role.count() > 1 or (role.first() and role.first().id != exist_owner.id):
             return False
     return True
 
@@ -178,7 +192,9 @@ def available_email(email, model, exist_owner):
             return False
     else:
         role = model.query.filter_by(email=email)
-        if role.count() > 1 or (role.first() and role.first().id != exist_owner.id):
+        if exist_owner is None and role.first() is not None:
+            return False
+        elif role.count() > 1 or (role.first() and role.first().id != exist_owner.id):
             return False
     return True
 

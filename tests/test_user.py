@@ -9,7 +9,7 @@ from app.models import User, Item, Vendor
 class UserTestCase(WMJTestCase):
     def add_user(self):
         password_hash = self.twice_md5(b'123456')
-        user = User(password_hash, '18345678901', '', 'nickname')
+        user = User(password_hash, '18345678901', '')
         db.session.add(user)
         db.session.commit()
 

@@ -1,57 +1,117 @@
 # -*- coding: utf-8 -*-
+import random
 import json
 
-from flask import render_template, abort
-from sqlalchemy import func
-from flask.ext.login import current_user
+from flask import render_template, current_app, Response, request, abort
 
 from app import statisitc
-from app.models import Item, FirstScene, SecondScene
+from app.models import Item, Scene
+from app.utils import items_json
 from app.utils.redis import redis_set, redis_get
 from .import main
 
 
 @main.route('/')
 def index():
-    item_ids = redis_get('INDEX_ITEMS', 'ITEMS')
-    if item_ids:
-        item_ids = json.loads(item_ids)
-    else:
-        items = statisitc.item_query.order_by(func.rand()).limit(18).all()
-        item_ids = [item.id for item in items]
-        redis_set('INDEX_ITEMS', 'ITEMS', json.dumps(item_ids), expire=86400)
-    items = Item.query.filter(Item.id.in_(item_ids)).order_by(Item.id).all()
-    while len(items) < 18:
-        items.append(items[0])
-    scenes = []
-    for first_scene in FirstScene.query.order_by(FirstScene.id):
-        l = [(first_scene.id, first_scene.first_scene), []]
-        for second_scene in SecondScene.query.filter_by(first_scene_id=first_scene.id).order_by(SecondScene.id):
-            l[1].append((second_scene.id, second_scene.second_scene))
-        scenes.append(l)
-    return render_template('user/index.html', user=current_user, scenes=scenes,
-                           group1=items[:6], group2=items[6:12], group3=items[12:18])
+    return render_template('user/index.html')
 
 
-@main.route('/legal/<string:role>')
-def legal(role):
-    if role == 'user':
-        return render_template('site/user_legal.html', user=current_user)
-    elif role == 'vendor':
-        return render_template('site/vendor_legal.html', user=current_user)
-    abort(404)
+@main.route('/navbar')
+def navbar():
+    data = redis_get('INDEX_NAVBAR', 'ITEMS')
+    if data is None:
+        data = {}
+        for scene_id in [2, 3, 4, 6]:   # 客厅 书房 卧室 餐厅
+            scene = Scene.query.get(scene_id)
+            if current_app.debug:
+                item_list = statisitc.item_query.filter(Item.scene_id == scene_id).all()
+                if not item_list:
+                    items = []
+                else:
+                    items = [random.SystemRandom().choice(item_list) for _ in range(8)]
+            else:
+                items = current_app.config['ITEMS']['navbars'][str(scene_id)]
+            data[scene.id] = {'scene': scene.scene, 'items': items_json(items)}
+        data = json.dumps(data)
+        redis_set('INDEX_NAVBAR', 'ITEMS', data, expire=86400)
+    return Response(data, mimetype='application/json')
+
+
+@main.route('/brands')
+def brand_list():
+    format = request.args.get('format', '', type=str)
+    if format == 'json':
+        data = redis_get('BRAND', 'ITEMS')
+        if data is None:
+            brands = statisitc.brands['total']
+            data = {vendor_id: {'brand': brands[vendor_id]['brand']} for vendor_id in brands}
+            for vendor_id in data:
+                if current_app.debug:
+                    item_list = Item.query.filter(Item.vendor_id == vendor_id, Item.is_deleted == False,
+                                                  Item.is_component == False).all()
+                    items = [random.SystemRandom().choice(item_list) for _ in range(5)]
+                else:
+                    items = current_app.config['ITEMS']['brands'][str(vendor_id)]
+                data[vendor_id]['items'] = items_json(items)
+            data = json.dumps(data)
+            redis_set('BRAND', 'ITEMS', data, expire=86400)
+        return Response(data, mimetype='application/json')
+    return render_template('user/brands.html')
+
+
+@main.route('/brands/<int:vendor_id>')
+def vendor_detail(vendor_id):
+    if not current_app.debug and vendor_id not in [12801, 12803, 12806, 12836]:
+        abort(404)
+    format = request.args.get('format', '', type=str)
+    if format == 'json':
+        data = redis_get('BRAND_ITEMS', vendor_id)
+        if data is None:
+            data = {}
+            if current_app.debug:
+                for scene_id in [2, 3, 4, 6]:
+                    scene = Scene.query.get(scene_id)
+                    item_list = statisitc.item_query.filter(Item.vendor_id == vendor_id, Item.scene_id == scene_id).all()
+                    if not item_list:
+                        continue
+                    items = [random.SystemRandom().choice(item_list) for _ in range(10)]
+                    data[scene_id] = {'scene': scene.scene, 'items': items_json(items)}
+            else:
+                for scene_id in current_app.config['ITEMS']['vendor_detail'][str(vendor_id)].keys():
+                    scene = Scene.query.get(scene_id)
+                    items = []
+                    for item_id in current_app.config['ITEMS']['vendor_detail'][str(vendor_id)][scene_id]:
+                        items.append(Item.query.get(item_id))
+                    data[scene_id] = {'scene': scene.scene, 'items': items_json(items)}
+            data = json.dumps(data)
+            redis_set('BRAND_ITEMS', vendor_id, data, expire=86400)
+        return Response(data, mimetype='application/json')
+    return render_template('user/brand_detail.html')
+
+
+@main.route('/furniture')
+def furniture():
+    format = request.args.get('format', '', type=str)
+    if format == 'json':
+        data = redis_get('STYLE', 'ITEMS')
+        if data is None:
+            styles = statisitc.styles['available']
+            data = {style_id: {'style': styles[style_id]['style']} for style_id in styles}
+            for style_id in data:
+                if current_app.debug:
+                    item_list = Item.query.filter(Item.style_id == style_id).all()
+                    items = [random.SystemRandom().choice(item_list) for _ in range(8)]
+                else:
+                    items = []
+                    for item_id in current_app.config['ITEMS']['furniture'][str(style_id)]:
+                        items.append(Item.query.get(item_id))
+                data[style_id]['items'] = items_json(items)
+            data = json.dumps(data)
+            redis_set('STYLE', 'ITEMS', data, expire=86400)
+        return Response(data, mimetype='application/json')
+    return render_template('user/furniture.html')
 
 
 @main.route('/about')
 def about():
-    return render_template('site/about.html', user=current_user)
-
-
-@main.route('/join')
-def join():
-    return render_template('site/join.html', user=current_user)
-
-
-@main.route('/center')
-def center():
-    return render_template('site/center.html', user=current_user)
+    return render_template('user/about.html')
