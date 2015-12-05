@@ -21,9 +21,7 @@ var FooterIcon = React.createClass({
   render: function() {
     return (
       <div className="footer-icon">
-        <div className="container">
-          <img src={footerIconImg} title="郑重承诺" />
-        </div>
+        <img src={footerIconImg} title="郑重承诺" />
       </div>
     );
   }
