@@ -71,13 +71,10 @@ def vendor_detail(vendor_id):
             if current_app.debug:
                 for scene_id in [2, 3, 4, 6]:
                     scene = Scene.query.get(scene_id)
-                    if current_app.debug:
-                        item_list = statisitc.item_query.filter(Item.vendor_id == vendor_id, Item.scene_id == scene_id).all()
-                        if not item_list:
-                            continue
-                        items = [random.SystemRandom().choice(item_list) for _ in range(10)]
-                    else:
-                        items = current_app.config['ITEMS']['vendor_detail'][str(vendor_id)][str(scene_id)]
+                    item_list = statisitc.item_query.filter(Item.vendor_id == vendor_id, Item.scene_id == scene_id).all()
+                    if not item_list:
+                        continue
+                    items = [random.SystemRandom().choice(item_list) for _ in range(10)]
                     data[scene_id] = {'scene': scene.scene, 'items': items_json(items)}
             else:
                 for scene_id in current_app.config['ITEMS']['vendor_detail'][str(vendor_id)].keys():
