@@ -123,7 +123,7 @@ class SettingForm(Form):
         elif self.type == USER_PASSWORD_SETTING:
             self.old_password.validators = [Length(32, 32)]
             self.password.validators = [Length(32, 32)]
-            self.confirm_password.validators = [Length(32, 32), EqualTo('new_password', '两次密码不一致')]
+            self.confirm_password.validators = [Length(32, 32), EqualTo('password', '两次密码不一致')]
         else:  # email
             self.email.validators = [Email(model=User)]
             self.captcha.validators = [Captcha(SMS_CAPTCHA, current_user.mobile, required=False)]
@@ -148,7 +148,9 @@ class SettingForm(Form):
             current_user.email = self.email.data
             current_user.email_confirmed = False
             token = md5_with_time_salt(self.email.data)
-            redis_set(CONFIRM_EMAIL, token, {'email': self.email.data, 'action': 'confirm'}, serialize=True)
+            redis_set(CONFIRM_EMAIL, token,
+                      {'email': self.email.data, 'role': 'user', 'action': 'confirm', 'id': current_user.id},
+                      serialize=True)
             url = url_for('service.verify', token=token, _external=True)
             send_email(self.email.data, EMAIL_CONFIRM_SUBJECT, USER_EMAIL_CONFIRM, url=url)
         db.session.commit()
