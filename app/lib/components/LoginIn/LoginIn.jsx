@@ -130,6 +130,10 @@ var UserInputGroup = React.createClass({
   },
   render: function() {
     let errTip = this.props.errTip;
+
+    let inputEle = document.createElement('input');
+    let pld = 'placeholder' in inputEle;
+
     return (
       <div className={(errTip.length?"err ":"") + "input-group"}>
 
@@ -140,6 +144,7 @@ var UserInputGroup = React.createClass({
           autoFocus={true}
           type="text"
           className="ipt"
+          defaultValue={!pld?"邮箱/手机号/用户名":null}
           placeholder="邮箱/手机号/用户名" />
 
         <span onClick={this.props.clear.bind(null,"user",0)} className="del-icon">+</span>
@@ -156,6 +161,10 @@ var PseInputGroup = React.createClass({
   },
   render: function() {
     let errTip = this.props.errTip;
+
+    let inputEle = document.createElement('input');
+    let pld = 'placeholder' in inputEle;
+
     return (
       <div className={(errTip.length?"err ":"") + "input-group"}>
 
@@ -165,6 +174,7 @@ var PseInputGroup = React.createClass({
           value={this.props.value}
           type="password"
           className="ipt"
+          defaultValue={!pld?"密码":null}
           placeholder="密码" />
 
         <span onClick={this.props.clear.bind(null,"psw",0)} className="del-icon">+</span>

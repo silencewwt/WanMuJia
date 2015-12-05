@@ -280,6 +280,10 @@ var MpInputGroup = React.createClass({
     this.props.setValue(value);
   },
   render: function() {
+
+    let inputEle = document.createElement('input');
+    let pld = 'placeholder' in inputEle;
+
     var errTip = this.props.errTip;
     return (
       <div className={(errTip.length?"err ":"") + "input-group"}>
@@ -292,6 +296,7 @@ var MpInputGroup = React.createClass({
           type="text"
           className="mp ipt"
           placeholder="请输入你的手机号"
+          defaultValue={!pld?"请输入你的手机号":null}
           autoFocus={true}/>
 
         <span onClick={this.props.clear.bind(null, "mp", 0)} className="del-icon">+</span>
@@ -310,6 +315,10 @@ var CaptchaInputGroup = React.createClass({
   },
   render: function() {
     var errTip = this.props.errTip;
+
+    let inputEle = document.createElement('input');
+    let pld = 'placeholder' in inputEle;
+
     return (
       <div className={(errTip.length?"err ":"") + "input-group"}>
 
@@ -320,6 +329,7 @@ var CaptchaInputGroup = React.createClass({
           onBlur={this.props.check}
           type="text"
           className="captcha ipt"
+          defaultValue={!pld?"请输入短信验证码":null}
           placeholder="请输入短信验证码" />
 
         <input
@@ -504,6 +514,10 @@ var PswInputGroup = React.createClass({
   },
   render: function() {
     var errTip = this.props.errTip;
+
+    let inputEle = document.createElement('input');
+    let pld = 'placeholder' in inputEle;
+
     return (
       <div className={(errTip.length?"err ":"") + "input-group"}>
 
@@ -515,6 +529,7 @@ var PswInputGroup = React.createClass({
           type="password"
           className="ipt"
           autoFocus={true}
+          defaultValue={!pld?"请设置账号密码":null}
           placeholder="请设置账号密码" />
 
         <div className="ipt-tip">
@@ -536,6 +551,10 @@ var PswCheckInputGroup = React.createClass({
   },
   render: function() {
     var errTip = this.props.errTip;
+
+    let inputEle = document.createElement('input');
+    let pld = 'placeholder' in inputEle;
+
     return (
       <div className={(errTip.length?"err ":"") + "input-group"}>
 
@@ -546,6 +565,7 @@ var PswCheckInputGroup = React.createClass({
           onBlur={this.props.check}
           type="password"
           className="ipt"
+          defaultValue={!pld?"请再次输入密码":null}
           placeholder="请再次输入密码" />
 
         <span onClick={this.props.clear.bind(null, "pswagain", 0)} className="del-icon">+</span>
