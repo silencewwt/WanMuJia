@@ -123,7 +123,7 @@ class SettingForm(Form):
         elif self.type == USER_PASSWORD_SETTING:
             self.old_password.validators = [Length(32, 32)]
             self.password.validators = [Length(32, 32)]
-            self.confirm_password.validators = [Length(32, 32), EqualTo('new_password', '两次密码不一致')]
+            self.confirm_password.validators = [Length(32, 32), EqualTo('password', '两次密码不一致')]
         else:  # email
             self.email.validators = [Email(model=User)]
             self.captcha.validators = [Captcha(SMS_CAPTCHA, current_user.mobile, required=False)]
