@@ -164,17 +164,13 @@ var ItemTip = React.createClass({
           <a
             href='#'
             onClick={this.handleFavClick.bind(null, this.props.item)}
-          >
-            去体验馆
-          </a>
+          ></a>
         </span>
         <span className="go-comp">
           <a
             href="#"
             onClick={this.handleCompClick.bind(null, this.props.item)}
-          >
-            对比
-          </a>
+          ></a>
         </span>
       </div>
     );

@@ -303,12 +303,12 @@ let Category = React.createClass({
     return (
       <li className="category">
         <a
-          className="am-icon-angle-right"
           style={{
             cursor: 'pointer'
           }}
         >
           {this.props.category.title}
+          <i className="am-icon-angle-right"></i>
         </a>
         <CategoryItems items={this.props.category} />
       </li>
@@ -319,21 +319,21 @@ let Category = React.createClass({
 let NavTitle = React.createClass({
   render: function() {
     let titleStyle = {
-      paddingRight: 10,
       backgroundColor: this.props.color,
       cursor: this.props.shrink ? 'pointer' : 'default'
     };
-    let titleClass = 'nav-title';
-    if(this.props.shrink) {
-      titleClass += ' am-icon-chevron-down';
-    }
 
     return (
       <div
-        className={titleClass}
+        className="nav-title"
         style={titleStyle}
       >
         {this.props.title}
+        {
+          this.props.shrink ?
+          <i className="am-icon-chevron-down"></i> :
+          null
+        }
       </div>
     );
   }

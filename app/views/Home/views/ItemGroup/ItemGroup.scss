@@ -45,17 +45,14 @@
       bottom: 10px;
       font-size: 16px;
 
-      &:hover {
-        &:before {
-          right: -10px;
-        }
+      & > i {
+        position: absolute;
+        margin-left: 1px;
+        transition: margin-left 0.3s ease;
       }
 
-      &:before {
-        position: absolute;
-        bottom: 8px;
-        right: -8px;
-        transition: right 0.3s ease;
+      &:hover > i {
+        margin-left: 4px;
       }
     }
   }

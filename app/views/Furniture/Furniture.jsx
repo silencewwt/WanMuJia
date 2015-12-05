@@ -94,7 +94,7 @@ let Furniture = React.createClass({
             title: this.state.items[id].style,
             img: imgs[id],
             url: '/item/?style=' + id,
-            color: colors[id]
+            color: colors[i]
           };
           return (
             <ItemGroup
