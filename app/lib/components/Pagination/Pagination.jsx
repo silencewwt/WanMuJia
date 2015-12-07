@@ -102,8 +102,10 @@ var PagiMain = React.createClass({
     var p = nextProps ? nextProps.pages : this.props.pages;
     if(n <= parseInt(m / 2) + 1) { // 1
       list = this._getSeriesNumber(1, p <= b + m ? p : m);
+      (p > b + m) && list.push(0);
     } else if((n <= parseInt(m / 2) + 1 + b) || p <= b + m)  { // 1'
       list = this._getSeriesNumber(1, p <= b + m ? p : n + 2);
+      (p > b + m) && list.push(0);
     } else if((n < p - parseInt(m / 2) - 1)) {  // 2
       list = this._getSeriesNumber(1, nextProps ? nextProps.basePages : this.props.basePages);
       list.push(0);

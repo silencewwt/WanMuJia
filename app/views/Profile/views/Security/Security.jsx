@@ -414,7 +414,7 @@ let EmailBd = React.createClass({
       },
       success: function (res) {
         if(res.success) {
-          _this.refs.refEmail.setTip(':) 修改成功', 'success');
+          _this.refs.refEmail.setTip(':) 修改成功，请到邮箱中确认绑定', 'success');
         } else {
           _this.refs.refEmail.setTip(':( ' + res.message, 'tip');
         }
