@@ -49,7 +49,7 @@ const MOCK_NAV_ITEMS = [
         title: '官帽椅',
         img: require('../../../../assets/images/main_nav/nav_01_07.jpg')
       }, {
-        id: 71,
+        id: 75,
         title: '抽屉桌',
         img: require('../../../../assets/images/main_nav/nav_01_08.jpg')
       }, {
@@ -75,7 +75,7 @@ const MOCK_NAV_ITEMS = [
         title: '罗汉床',
         img: require('../../../../assets/images/main_nav/nav_03_03.jpg')
       }, {
-        id: 255,
+        id: 225,
         title: '写字台',
         img: require('../../../../assets/images/main_nav/nav_03_04.jpg')
       }, {
