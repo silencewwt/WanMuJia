@@ -80,7 +80,7 @@ let SearchPage = React.createClass({
   handleFilterStateChange: function (state) {
     this.getSearchData('filter', this.genUrlQuery({
       filterSelected: state,
-      otherParams: this.state.queryParams,
+      otherParams: Utils.oExtends({}, this.state.queryParams, {page: 1}),
       isFromFilter: true
     }));
   },
