@@ -1,0 +1,33 @@
+/**
+  * Navbar Theme: default
+  * Author: hzp (hzp$yunshipei.com)
+  */
+
+.am-navbar-default {
+  $navbar-bg:  $global-primary !default;
+  $navbar-link-color:  $white !default;
+
+  $navbar-actions-bg:  darken($navbar-bg, 3%) !default;
+  $navbar-actions-border-bottom:  darken($navbar-bg, 10%) !default;
+
+  a {
+    color: $navbar-link-color;
+  }
+
+  .am-navbar-nav {
+    background-color: $navbar-bg;
+  }
+
+  // more actions
+  .am-navbar-actions {
+    background-color: $navbar-actions-bg;
+
+    a {
+      border-bottom: 1px solid $navbar-actions-border-bottom;
+    }
+  }
+
+  // @include hook-am-navbar-default();
+}
+
+// @mixin hook-am-navbar-default(){}

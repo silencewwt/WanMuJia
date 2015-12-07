@@ -1,0 +1,26 @@
+
+$rightsColor: #888;
+
+@mixin link($color: #333) {
+  color: $color;
+  text-decoration: none;
+}
+
+@mixin linkHover($color: #333) {
+  color: darken($color, 12);
+}
+
+.footer-rights {
+  margin: 10px auto;
+  font-size: 12px;
+  color: $rightsColor;
+  text-align: center;
+
+  a {
+    @include link($rightsColor);
+
+    &:hover {
+      @include linkHover($rightsColor);
+    }
+  }
+}

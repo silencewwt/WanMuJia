@@ -1,0 +1,28 @@
+
+$nav-item-width: 150px;
+$nav-item-color: $main-color;
+
+.header-nav {
+  display: inline-block;
+  padding-left: 30px;
+
+  .nav-item {
+    display: inline-block;
+    width: $nav-item-width;
+    text-align: center;
+
+    &.active {
+      & > a {
+        @include link($nav-item-color);
+      }
+    }
+
+    & > a {
+      @include link();
+
+      &:hover {
+        color: $nav-item-color;
+      }
+    }
+  }
+}

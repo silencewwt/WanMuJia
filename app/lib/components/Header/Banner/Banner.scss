@@ -1,0 +1,86 @@
+
+$banner-height: 74px;
+
+$input-border-color: #833e00;
+
+$btn-bgc: $input-border-color; // #833e00
+
+.banner {
+  & > .container {
+    height: $banner-height;
+
+    & > div {
+      float: left;
+    }
+
+    .logo {
+      margin: ($banner-height - 45) / 2 0;
+
+      & > a > img {
+        margin-top: -8px;
+        width: 130px;
+      }
+    }
+
+    .city-picker-wt {
+      margin: ($banner-height - 32) / 2 0;
+      margin-left: 24px;
+      width: 120px;
+    }
+
+    .search {
+      margin: ($banner-height - 40) / 2 0;
+      margin-left: 50px;
+      width: 600px;
+
+      input {
+        padding-left: 15px;
+        height: 40px;
+        border: 2px solid $input-border-color;
+        font-size: 14px;
+
+        &:focus {
+          outline: none;
+          box-shadow: none;
+        }
+      }
+
+      button {
+        padding: 0 32px;
+        height: 40px;
+        border: none;
+        background-color: $btn-bgc;
+        color: #fff;
+
+        &:hover {
+          background-color: darken($btn-bgc, 2);
+        }
+
+        &:active {
+          background-color: darken($btn-bgc, 8);
+        }
+
+        &:focus {
+          outline: none;
+          box-shadow: none;
+        }
+      }
+     }
+
+    .qrcode {
+      float: right;
+      margin-right: 35px;
+      text-align: center;
+
+      & > img {
+        width: 74px;
+        height: 74px;
+      }
+
+      & > div {
+        color: $btn-bgc;
+        font-size: 12px;
+      }
+    }
+  }
+}

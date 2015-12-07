@@ -1,0 +1,310 @@
+
+$page-width: 1200px;
+
+$item-width-tg: 241px;
+$item-height-tg: 280px;
+
+$item-width: 220px;
+$item-height: 270px;
+
+$item-padding-left: 38px;
+$item-padding-top: 24px;
+
+$item-margin: 25px;
+
+$img-width-tg: $item-width-tg - $item-padding-left * 2;
+$img-height-tg: 196 - $item-padding-top * 2;
+
+$img-width: $item-width - $item-padding-left * 2;
+$img-height: 196 - $item-padding-top * 2;
+
+$title-color: #777;
+$title-font-size: 14px;
+
+$price-color: #cf0a0a;
+$price-font-size: 18px;
+
+$divide-color: #ccc;
+$divide-width: 1px;
+$divide-border: $divide-width solid $divide-color;
+
+$items-width-tg: $item-width-tg * 4 - $divide-width * 4;
+
+$items-width: $page-width;
+
+$guide-width: $page-width - $items-width-tg;
+$guide-title-height: 50px;
+
+$item-tip-height: 44px;
+$item-tip-back-color: #f5f5f5;
+$item-tip-back-color-active: #88582d;
+
+$active-color: #6e3800;
+
+@mixin link($color: #333) {
+  color: $color;
+  text-decoration: none;
+}
+
+@mixin linkHover($color: #333, $amount: 12) {
+  color: darken($color, $amount);
+}
+
+.overflow {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.paragraph {
+  padding: 0;
+  margin: 0;
+}
+
+
+.items {
+  position: relative;
+  width: $items-width;
+  background-color: #fff;
+  // overflow: hidden;
+
+  &:after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+
+  &.normal {
+    .item {
+      &:hover {
+        & > .item-tip {
+          transform: translateY(0);
+        }
+        & > .item-img {
+          transform: translateY(-10px);
+        }
+        & > .item-info > h5 {
+          transform: translateY(-6px);
+        }
+      }
+
+      &:nth-child(5n+1) {
+        margin-left: 0;
+      }
+    }
+  }
+
+  &.tight {
+    float: left;
+    margin-left: 0;
+
+    &:not(.lg) {
+      width: $items-width-tg;
+
+      .items-flag {
+        position: absolute;
+        left: -$divide-width;
+        width: 100%;
+        height: 2px;
+        background-color: $active-color;
+        z-index: 100;
+      }
+    }
+
+    .item {
+      margin-top: -$divide-width;
+      margin-left: -$divide-width;
+      width: $item-width-tg - $item-padding-left * 2 - $divide-width * 2;
+      height: $item-height-tg - $item-padding-top * 2 - $divide-width * 1.5;
+      box-sizing: content-box;
+      // transition: border-color 0.4s ease;
+
+      // &:after {
+      //   content: "";
+      //   position: absolute;
+      //   left: 0;
+      //   bottom: 0;
+      //   display: block;
+      //   width: 100%;
+      //   height: 0;
+      //   background-color: #9e0808;
+      //   transition: height .2s ease;
+      // }
+      //
+      &:hover {
+        z-index: 200;
+        border-color: #9e0808;
+        // &:after {
+        //   height: 2px;
+        // }
+      }
+
+      .item-img {
+        width: $img-width-tg;
+        height: $img-height-tg;
+        line-height: $img-height-tg;
+      }
+
+      .item-info {
+        & > h5 {
+          line-height: 1.4;
+        }
+
+        .price {
+          width: $item-width-tg - $item-padding-left * 2;
+        }
+      }
+    }
+
+    &.lg {
+      border-left: $divide-border;
+
+      & > .item:nth-child(5n+3) {
+        border-right: none;
+
+        &:hover + .item {
+          border-left-color: #9e0808;
+        }
+      }
+    }
+  }
+
+  .item {
+    position: relative;
+    float: left;
+    display: block;
+    margin-top: $item-margin;
+    margin-left: $item-margin;
+    width: $item-width;
+    height: $item-height;
+    padding: $item-padding-top $item-padding-left;
+    border: $divide-border;
+    box-sizing: border-box;
+    text-align: center;
+    overflow: hidden;
+
+    &:hover {
+      & > .item-img {
+        // transform: translateY(-4px);
+        transform: scale(1.1, 1.1);
+      }
+      // & > .item-info {
+      //   transform: translateY(-2px);
+      // }
+    }
+
+    .item-badge {
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      padding: 0 8px;
+      height: 22px;
+      color: #fff;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .item-img {
+      display: block;
+      width: $img-width;
+      height: $img-height;
+      line-height: $img-height;
+      font-size: 0;
+      transform: translateY(0);
+      transition: transform 0.3s linear;
+
+      & > img {
+        max-width: 100%;
+        max-height: 100%;
+        vertical-align:middle;
+      }
+    }
+
+    .item-info {
+      position: relative;
+      transform: translateY(0);
+      transition: transform 0.2s ease;
+
+      & > h5 {
+        @extend .paragraph;
+        margin-top: 20px;
+        height: 40px;
+        font-size: $title-font-size;
+        line-height: 1.2;
+        overflow: hidden;
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+
+        & > a {
+          @include link($title-color);
+        }
+      }
+
+      .price {
+        position: absolute;
+        @extend .paragraph;
+        width: $item-width - $item-padding-left * 2;
+        bottom: -24px;
+        color: $price-color;
+        font-size: $price-font-size;
+      }
+    }
+
+    .item-tip {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 44px;
+      transform: translateY($item-tip-height);
+      transition: transform 0.3s ease;
+
+      .go-fav {
+        border-top: 1px solid $divide-color;
+        border-right: 1px solid $divide-color;
+        & > a {
+          background-position: 0 0;
+
+          &:hover {
+            background-position: 0 -44px;
+          }
+        }
+
+        &.faved {
+          & > a {
+            background-position: 0 -88px;
+          }
+        }
+      }
+
+      .go-comp {
+        border-top: 1px solid $divide-color;
+        & > a {
+          background-position: -110px 0;
+
+          &:hover {
+            background-position: -110px -44px;
+          }
+        }
+      }
+
+      & > span {
+        display: inline-block;
+        width: 50%;
+        height: $item-tip-height;
+        border-top: $divide-width solid #eee;
+        box-sizing: border-box;
+
+        & > a {
+          display: inline-block;
+          width: 100%;
+          height: 100%;
+          line-height: $item-tip-height;
+          background: $item-tip-back-color url('/app/assets/images/item-tip.png') no-repeat;
+          transition: background-position 0.3s ease;
+        }
+      }
+    }
+  }
+}

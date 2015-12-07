@@ -1,0 +1,17 @@
+.about-box {
+  width: 1200px;
+  margin: 0 auto;
+  height: auto;
+  margin-top: 25px;
+  border: 1px solid #ccc;
+}
+.clearfix:after {
+  content: " ";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.clearfix {
+  display: block;
+}

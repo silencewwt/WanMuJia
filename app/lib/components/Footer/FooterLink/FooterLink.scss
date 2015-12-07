@@ -1,0 +1,45 @@
+
+$linkColor: #666;
+
+@mixin link($color: #333) {
+  color: $color;
+  text-decoration: none;
+}
+
+@mixin linkHover($color: #333) {
+  color: darken($color, 12);
+}
+
+.footer-link {
+  margin: 10px auto;
+  width: 900px;
+  overflow: hidden;
+
+  .link-group {
+    float: left;
+    padding: 0;
+    margin: 10px auto;
+    width: 300px;
+    text-align: center;
+    list-style: none;
+
+    & > li {
+      margin: 20px 0;
+
+      & > a {
+        &.title {
+          font-size: 18px;
+          color: #333;
+        }
+
+        &:not(.title) {
+          @include link($linkColor);
+
+          &:hover {
+            @include linkHover($linkColor);
+          }
+        }
+      }
+    }
+  }
+}

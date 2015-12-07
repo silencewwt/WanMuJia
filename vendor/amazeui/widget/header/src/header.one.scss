@@ -1,0 +1,38 @@
+/**
+  * Header Theme: one
+  */
+
+.am-header-one {
+  $header-bg:  $white !default;
+  $header-nav-color:  $one-primary !default;
+  $header-title-color:  $gray-dark !default;
+
+  background: $header-bg;
+
+  .am-header-title {
+    margin: 0 15%;
+    color: $header-title-color;
+    @include text-overflow();
+
+    a {
+      color: $header-title-color;
+    }
+
+    img{
+      height: 34px;
+      width: auto;
+      margin-top: 8px;
+      vertical-align: top;
+    }
+  }
+
+  .am-header-nav {
+    > a {
+      color: $header-nav-color;
+    }
+  }
+
+  // @include hook-am-header-one();
+}
+
+// @mixin hook-am-header-one(){}

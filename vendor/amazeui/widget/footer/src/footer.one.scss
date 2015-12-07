@@ -1,0 +1,79 @@
+/**
+  * Footer Theme: one
+  */
+
+.am-footer-one {
+  $footer-link-color:  $one-primary !default;
+  $footer-ysp-color:  $one-primary !default;
+  $footer-divider-color:  $gray-light !default;
+  $footer-desktop-color:  $gray !default;
+  $footer-miscs-color: lighten($gray, 15%); //#777777
+  $footer-miscs-link-color:  $gray !default;
+
+  a {
+    color: $footer-link-color;
+    font-weight: bold;
+  }
+
+  .am-footer-switch {
+    margin-bottom: 10px;
+  }
+
+  .am-footer-ysp {
+    color: $footer-ysp-color;
+    cursor: pointer;
+  }
+
+  .am-footer-divider {
+    color: $footer-divider-color;
+  }
+
+  .am-footer-desktop {
+    font-weight: normal;
+    color: $footer-desktop-color;
+  }
+
+  .am-footer-miscs {
+    color: $footer-miscs-color;
+    overflow: hidden;
+    padding: 0 10px;
+    font-size: 14px;
+
+    ul,
+    li {
+      padding-left: 0;
+      list-style: none;
+    }
+
+    p {
+      margin: 4px 0;
+    }
+
+    a {
+      font-weight: normal;
+      color: $footer-miscs-link-color;
+      margin: 0 1px;
+    }
+
+    img{
+      display: block;
+      max-width: 100%;
+      margin: 0 auto 2px auto;
+    }
+  }
+
+  // @include hook-am-footer-one();
+
+  @media #{$medium-up} {
+    & {
+      .am-footer-miscs {
+        p {
+          display: inline-block;
+          margin: 5px;
+        }
+      }
+    }
+  }
+}
+
+// @mixin hook-am-footer-one(){}

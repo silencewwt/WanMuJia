@@ -1,0 +1,25 @@
+/**
+  * Pagination Theme: default
+  */
+
+.am-pagination-default {
+  $pagination-font-size:  1.6rem !default;
+  $pagination-link-bg:  #fff !default;
+  $pagination-link-color:  $global-primary !default;
+  $pagination-active-color:  #fff !default;
+  $pagination-active-bg:  $global-primary !default;
+
+  margin-left: 10px;
+  margin-right: 10px;
+
+  font-size: $pagination-font-size;
+
+  .am-pagination-prev,
+  .am-pagination-next {
+    float: none;
+  }
+
+  // @include hook-am-pagination-default();
+}
+
+// @mixin hook-am-pagination-default(){}

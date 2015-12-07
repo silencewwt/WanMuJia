@@ -1,0 +1,16 @@
+{
+  "globalstrict": true,
+  "expr": true,
+  "esnext": true,
+  "ignore": "require",
+  "globals": {
+    "define": true,
+    "module": true,
+    "React": true,
+    "ReactDOM": true,
+    "getElementById": true,
+    "require": true,
+    "setTimeout": true,
+    "document": true
+  }
+}

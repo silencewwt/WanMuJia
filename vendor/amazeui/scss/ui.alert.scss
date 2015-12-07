@@ -1,0 +1,162 @@
+// Name:            Alert
+//
+// Description:     Define style for alert messages
+//
+// Component:       `.am-alert`
+//
+// Sub-objects:     `.am-alert-close`
+//
+// Modifiers:       `.am-alert-success`
+//                  `.am-alert-warning`
+//                  `.am-alert-danger`
+//                  `.am-alert-secondary`
+//
+// Uses:            Close: `.am-close`
+//
+// =============================================================================
+
+
+// Variables
+// =============================================================================
+
+$alert-margin-vertical:  1em !default;
+$alert-padding:  0.625em !default;
+$alert-background:  $global-primary !default;
+$alert-color:  #fff !default;
+
+$alert-success-background:  $global-success !default;
+$alert-success-color:  #fff !default;
+
+$alert-warning-background:  $global-warning !default;
+$alert-warning-color:  #fff !default;
+
+$alert-danger-background:  $global-danger !default;
+$alert-danger-color:  #fff !default;
+
+$alert-secondary-background:  $gray-lighter !default;
+$alert-secondary-color:  $gray !default;
+
+
+// Alert mixin
+// -----------------------------------------------------------------------------
+
+@mixin alert-variant($background, $border, $text-color) {
+  background-color: $background;
+  border-color: $border;
+  color: $text-color;
+}
+
+
+/* ==========================================================================
+   Component: Alert Plugin
+ ============================================================================ */
+
+.#{$ns}alert {
+  margin-bottom: $alert-margin-vertical;
+  padding: $alert-padding;
+  background: $alert-background;
+  color: $alert-color;
+  border: 1px solid darken($global-primary, 6%);
+  border-radius: $global-radius;
+
+  a {
+    color: $white;
+  }
+
+  // @include hook-alert();
+
+  // Keep color for headings if the default heading color is changed
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: inherit;
+  }
+
+  .#{$ns}close {
+    opacity: .4;
+
+    &:hover {
+      opacity: .6;
+    }
+  }
+}
+
+
+/* Add margin if adjacent element */
+
+* + .#{$ns}alert {
+  margin-top: $alert-margin-vertical;
+}
+
+
+/* Remove margin from the last-child */
+
+.#{$ns}alert > :last-child {
+  margin-bottom: 0;
+}
+
+
+/* within am-form-group */
+
+.#{$ns}form-group .#{$ns}alert {
+  margin: 5px 0 0;
+  padding: 0.25em 0.625em;
+  font-size: 1.3rem;
+}
+
+/* Close in alert */
+
+.#{$ns}alert > .#{$ns}close:first-child {
+  float: right;
+  height: auto;
+  margin: -3px -5px auto auto;
+}
+
+
+/* Remove margin from adjacent element */
+
+.#{$ns}alert > .#{$ns}close:first-child + * {
+  margin-top: 0;
+}
+
+
+// Modifiers
+// =============================================================================
+
+.#{$ns}alert-secondary {
+  @include alert-variant($alert-secondary-background, darken($alert-secondary-background, 6%), $alert-secondary-color);
+  // @include hook-alert-secondary();
+}
+
+.#{$ns}alert-success {
+  @include alert-variant($alert-success-background, darken($alert-success-background, 6%), $alert-success-color);
+  // @include hook-alert-success();
+}
+
+.#{$ns}alert-warning {
+  @include alert-variant($alert-warning-background, darken($alert-warning-background, 6%), $alert-warning-color);
+  // @include hook-alert-warning();
+}
+
+.#{$ns}alert-danger {
+  @include alert-variant($alert-danger-background, darken($alert-danger-background, 6%), $alert-danger-color);
+  // @include hook-alert-danger();
+}
+
+
+// Misc
+// =============================================================================
+// @include hook-alert-misc();
+
+
+// Hooks
+// =============================================================================
+// @mixin hook-alert(){}
+// @mixin hook-alert-secondary(){}
+// @mixin hook-alert-success(){}
+// @mixin hook-alert-warning(){}
+// @mixin hook-alert-danger(){}
+// @mixin hook-alert-misc(){}

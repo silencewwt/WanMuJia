@@ -1,0 +1,70 @@
+
+$page-width: 1200px;
+
+$main-color: #833e00;
+$main-nav-width: 239px;
+$slider-height: 300px;
+
+@mixin link($color: #333) {
+  color: $color;
+  text-decoration: none;
+}
+
+@mixin linkHover($color: #333, $amount: 12) {
+  color: darken($color, $amount);
+}
+
+.overflow {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.paragraph {
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  width: $page-width;
+}
+
+@import "./Banner/Banner.scss";
+@import "./HeaderNav/HeaderNav.scss";
+@import "./MainNav/MainNav.scss";
+
+// Header
+.header {
+
+  & > .container {
+    &:after {
+      content: "";
+      position: absolute;
+      display: block;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background-color: $main-color;
+      z-index: -1;
+    }
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  // TopBar
+  .top-bar {
+
+  }
+
+  // banner
+  .banner {
+    margin: 25px auto;
+  }
+}

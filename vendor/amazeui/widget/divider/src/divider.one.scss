@@ -1,0 +1,17 @@
+/**
+  * Divider Theme: one
+  */
+
+.am-divider-one {
+  $global-light-gray:  #dfdfdf !default;
+  $divider-bg-color:  $global-light-gray !default;
+
+  height: 10px;
+  border: none;
+  overflow: hidden;
+  clear: both;
+  margin: 0;
+  // @include hook-am-divider-one();
+}
+
+// @mixin hook-am-divider-one(){}

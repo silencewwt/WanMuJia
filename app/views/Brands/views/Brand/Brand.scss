@@ -1,0 +1,39 @@
+
+$banner-img-height: 280px;
+$banner-title-height: 80px;
+
+.brand {
+  overflow: hidden;
+
+  .banner {
+    img {
+      width: 100%;
+      height: $banner-img-height;
+    }
+
+    .title {
+      position: relative;
+      height: $banner-title-height;
+      border-left: 1px solid $divide-color;
+      border-right: 1px solid $divide-color;
+      line-height: $banner-title-height;
+      text-align: center;
+
+      .text {
+        font-size: 24px;
+        color: #833E00;
+      }
+
+      .more {
+        position: absolute;
+        right: 20px;
+        color: #999;
+
+        &:after {
+          content: "\F105";
+          margin-left: 3px;
+        }
+      }
+    }
+  }
+}

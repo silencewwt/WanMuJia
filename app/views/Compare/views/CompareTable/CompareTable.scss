@@ -1,0 +1,124 @@
+$border-color: #e6e6e6;
+
+.compare-table {
+  width: 1200px;
+  height: auto;
+  overflow: hidden;
+  margin: 12px auto;
+  border: 1px solid $border-color;
+
+  .title {
+    width: 100%;
+    height: 52px;
+    line-height: 52px;
+    background-color: $border-color;
+    position: relative;
+
+    h1 {
+      font-weight: normal;
+      font-size: 16px;
+      color: #333;
+      line-height: 52px;
+      padding: 0 0 0 67px;
+      margin: 0;
+    }
+
+    .tip {
+      position: absolute;
+      top: 0;
+      left: 300px;
+      color: #833e00;
+      font-size: 14px;
+    }
+  }
+
+  .tbody::after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+  }
+  .tbody {
+    width: 100%;
+
+    .th-group {
+      width: 220px;
+    }
+    .td-group {
+      width: 326px;
+      border-left: 1px solid $border-color;
+    }
+    .th-group,
+    .td-group {
+      padding: 0;
+      list-style: none;
+      float: left;
+      margin: 0;
+
+      li {
+        height: 74px;
+        line-height: 1.25em;
+        padding: 20px 10px 0 10px;
+        border-top: 1px solid $border-color;
+        text-align: center;
+        width: 100%;
+        font-size: 14px;
+        color: #999;
+      }
+      li.td1,
+      li.th1 {
+        height: 188px;
+        line-height: 188px;
+      }
+      li.td.price {
+        color: #b90000;
+        font-size: 16px;
+      }
+    }
+    .td-group {
+      .til {
+        position: relative;
+        img {
+          height: 106px;
+          line-height: 2em;
+          margin: 0 auto;
+          vertical-align: top;
+          border: none;
+        }
+        .name {
+          position: absolute;
+          top: 130px;
+          width: 200px;
+          margin-left: -100px;
+          left: 50%;
+          line-height: 1.2em;
+        }
+        .collect-btn:hover,
+        .delete-btn:hover {
+          color: #666;
+        }
+        .collect-btn,
+        .delete-btn {
+          position: absolute;
+          line-height: 1.2em;
+          font-size: 15px;
+          top: 5px;
+          cursor: pointer;
+        }
+        .collect-btn {
+          left: 20px;
+        }
+        .delete-btn {
+          display: none;
+          right: 20px;
+          width: 3em;
+        }
+      }
+    }
+    .td-group:hover {
+      .delete-btn {
+        display: block;
+      }
+    }
+  }
+}

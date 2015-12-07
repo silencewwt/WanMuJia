@@ -1,0 +1,34 @@
+/**
+  * Paragraph Theme: default
+  */
+
+.am-paragraph-default {
+  $paragraph-bg:  transparent !default;
+  $paragraph-color:  $gray-dark !default;
+  $paragraph-link-color:  $global-primary !default;
+  $paragraph-img-border-color:  $gray-lighter !default;
+
+  margin: 0 10px;
+  color: $paragraph-color;
+  background-color: $paragraph-bg;
+
+  p {
+    font-size: 1.4rem;
+  }
+
+  img {
+    max-width: 98%;
+    display: block;
+    margin: 5px auto;
+    border: 1px solid $paragraph-img-border-color;
+    padding: 2px;
+  }
+
+  a {
+    color: $paragraph-link-color;
+  }
+
+  // @include hook-am-paragraph-default();
+}
+
+// @mixin hook-am-paragraph-default(){}

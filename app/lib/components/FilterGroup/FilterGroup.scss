@@ -1,0 +1,288 @@
+// base
+$fg-font-size: 14px;
+$fg-bgc: #f0f0f0;
+$fg-border-color: #ccc;
+$fg-hover-color: #833e00;
+
+// filter-state
+$filter-state-vertical-spacing: 10px;
+
+// custom content
+$filter-custom-content-spacing: 18px;
+$filter-custom-content-height: 24px;
+$filter-custom-content-color: #999;
+
+// filter tag
+$filter-tag-bgc: $fg-bgc;
+$filter-tag-border-width: 1px;
+$filter-tag-border: $filter-tag-border-width solid $fg-border-color;
+$filter-tag-height: $filter-custom-content-height - 2 * $filter-tag-border-width;
+$filter-tag-spacing: 10px;
+$filter-tag-horizontal-padding: 12px;
+$filter-tag-value-color: #88582D;
+
+// filter group
+$filter-group-border-width: 1px;
+$filter-group-border: $filter-group-border-width solid $fg-border-color;
+$filter-group-vertical-padding: 0;
+$filter-group-horizontal-padding: 0;
+
+// filter
+$filter-bgc: $fg-bgc;
+$filter-divede-width: 1px;
+$filter-divide-border: $filter-divede-width solid $fg-border-color;
+$filter-expanded-divide-border: $filter-divede-width solid #e4e4e4;
+$filter-horizontal-padding: 0;
+$filter-expanded-box-shadow: 0 6px 5px -2px rgba(0, 0, 0, 0.2);
+
+// filter name
+$filter-name-min-width: 110px;
+$filter-name-height: 55px;
+$filter-name-spacing-left: 20px;
+$filter-name-font-size: inherit;
+$filter-name-color: #666;
+$filter-name-line-height: inherit;
+
+// filter head and foot
+$filter-head-bgc: transparent;
+$filter-head-left: $filter-horizontal-padding;
+$filter-foot-right: $filter-horizontal-padding;
+// filter body
+$filter-body-left-padding: $filter-head-left + $filter-name-min-width;
+$filter-body-right-padding: 120px;
+$filter-body-bgc: #fff;
+
+// filter items
+$filter-items-height: $filter-name-height;
+
+// filter item
+$filter-item-height: $filter-items-height;
+$filter-item-horizontal-spacing: 26px;
+$filter-item-link-font-size: $filter-name-line-height;
+$filter-item-link-color: inherit;
+
+// filter action
+$filter-action-spacing-right: $filter-name-spacing-left;
+$filter-action-height: $filter-name-height;
+$filter-action-font-color: inherit;
+
+// multi-confirm
+$multi-confirm-width: 130px;
+$confirm-button-color: #221715;
+
+.clearfix {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+.unstyled-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.inline-list {
+  @extend .clearfix;
+  li {
+    float: left;
+  }
+}
+.absolute-middle {
+  position: absolute;
+  top: 50%;
+  transform: translatey(-50%);
+}
+
+.cu-filter-group {
+  font-size: $fg-font-size;
+  a:hover {
+    color: $fg-hover-color !important;
+  }
+
+  .filter-state {
+    @extend .clearfix;
+    margin-top: $filter-state-vertical-spacing;
+
+    .custom-content {
+      float: left;
+      margin-right: $filter-custom-content-spacing;
+      margin-bottom: $filter-state-vertical-spacing;
+      height: $filter-custom-content-height;
+      line-height: $filter-custom-content-height;
+      color: $filter-custom-content-color;
+    }
+
+    .filter-tags {
+      overflow: hidden;
+    }
+  }
+
+  .filter-tags .filter-tag {
+    box-sizing: content-box;
+    display: inline-block;
+    cursor: pointer !important;
+    margin-right: $filter-tag-spacing;
+    margin-bottom: $filter-state-vertical-spacing;
+    padding: 0 $filter-tag-horizontal-padding;
+    height: $filter-tag-height;
+    line-height: $filter-tag-height;
+    border: $filter-tag-border;
+    background-color: $filter-tag-bgc;
+
+    .tag-name, .tag-value, .tag-remove {
+      display: inline-block;
+      a {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        text-decoration: none;
+      }
+    }
+    .tag-value, .tag-remove a {
+      color: $filter-tag-value-color;
+    }
+
+    &:hover {
+      border-color: $fg-hover-color;
+    }
+  }
+
+  .filter-group {
+    @extend .unstyled-list;
+    position: relative;
+    padding: $filter-group-vertical-padding $filter-group-horizontal-padding;
+    border: $filter-group-border;
+  }
+
+  // for expand
+  .filter.expanded {
+    .filter-items {
+      height: auto !important;
+      overflow: auto;
+    }
+    .foot .filter-action .expand-toggle {
+      background: url('/app/assets/images/arrow_up.png') no-repeat right !important;
+    }
+  }
+
+  .filter-group li:last-child .filter {
+    border-bottom: none;
+  }
+  .filter-group .filter {
+    position: relative;
+    border-bottom: $filter-divide-border;
+    background-color: $filter-bgc;
+
+    .head {
+      position: absolute;
+      top: 0;
+      left: $filter-head-left;
+      background-color: $filter-head-bgc;
+
+      .filter-name {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        margin: 0;
+        padding-left: $filter-name-spacing-left;
+        min-width: $filter-name-min-width;
+        height: $filter-name-height;
+        font-size: $filter-name-font-size;
+        font-weight: normal;
+        line-height: $filter-name-height;
+        color: $filter-name-color;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .body {
+      @extend .clearfix;
+
+      margin: 0 0 0 $filter-body-left-padding;
+      padding:  0 $filter-body-right-padding 0 0;
+      background-color: $filter-body-bgc;
+
+      .filter-items {
+        @extend .unstyled-list;
+        @extend .inline-list;
+        height: $filter-items-height;
+        padding-left: 20px;
+        overflow: hidden;
+
+        .filter-item {
+          margin-right: $filter-item-horizontal-spacing;
+          height: $filter-item-height;
+          line-height: $filter-item-height;
+          a, label {
+            font-size: $filter-item-link-font-size;
+            color: $filter-item-link-color;
+            text-decoration: none;
+            cursor: pointer;
+          }
+          input {
+            margin-right: 4px;
+          }
+        }
+      }
+
+      .multi-confirm {
+        @extend .clearfix;
+        margin: 0 auto 15px;
+        width: $multi-confirm-width;
+        .btn-confirm, .btn-cancel {
+          padding: 2px 10px;
+          border: $filter-group-border;
+          border-radius: 2px;
+          background-color: transparent;
+          cursor: pointer;
+        }
+        .btn-confirm {
+          float: left;
+          border-color: $confirm-button-color;
+          background-color: $confirm-button-color;
+          color: #fff;
+          &:hover {
+            border-color: lighten($confirm-button-color, 10);
+            background-color: lighten($confirm-button-color, 10);
+          }
+        }
+        .btn-cancel {
+          float: right;
+          &:hover {
+            border-color: $confirm-button-color;
+          }
+        }
+      }
+    }
+
+    .foot {
+      position: absolute;
+      top: 0;
+      right: $filter-foot-right;
+      .filter-action {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        padding-right: $filter-action-spacing-right;
+        height: $filter-action-height;
+        line-height: $filter-action-height;
+        a {
+          text-decoration: none;
+          color: $filter-action-font-color;
+        }
+        .multi-toggle {
+          margin-right: 20px;
+          padding: 2px 4px;
+          border: $filter-group-border;
+          font-size: 0.9em;
+        }
+        .expand-toggle {
+          padding-right: 20px;
+          background: url('/app/assets/images/arrow_down.png') no-repeat right;
+        }
+      }
+    }
+  }
+
+}

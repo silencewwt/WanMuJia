@@ -1,0 +1,12 @@
+/**
+  * Divider Theme: default
+  */
+
+.am-divider-default {
+  $divider-bg-color:  #ddd !default;
+  border-top: 1px solid $divider-bg-color;
+
+  // @include hook-am-divider-default();
+}
+
+// @mixin hook-am-divider-default(){}

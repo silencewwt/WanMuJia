@@ -1,0 +1,34 @@
+@import "../../assets/styles/main";
+
+@mixin link($color: #333) {
+  color: $color;
+  text-decoration: none;
+}
+
+@mixin linkHover($color: #333, $amount: 12) {
+  color: darken($color, $amount);
+}
+
+.overflow {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.button {
+  border: none;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.input {
+  &:focus {
+    outline: none;
+  }
+}
+
+@import "./views/Banner/Banner.scss";
+@import "./views/Favorite/Favorite.scss";
+@import "./views/Security/Security.scss";

@@ -1,0 +1,141 @@
+$btnHeight: 32px;
+$btnColor: #666;
+$grayColor: #ccc;
+$mainColor: #6E3800;
+
+
+.city-picker-wt {
+    position: relative;
+    display: inline-block;
+    text-align: left;
+
+    .after-i:after {
+        content: "";
+        position: absolute;
+        border-left: 4.5px solid transparent;
+        border-right: 4.5px solid transparent;
+        border-top: 6px solid $grayColor;
+        top: 12px;
+        right: 6px;
+        transition: All .2s ease;
+    }
+    .after-i.active:after {
+        border-top: 0;
+        border-bottom: 6px solid $mainColor;
+    }
+
+    .city-picker-btn {
+        position: relative;
+        display: inline-block;
+        height: $btnHeight;
+        padding: 0 20px 0 8px;
+        text-align: center;
+        line-height: $btnHeight - 1;
+        font-size: 14px;
+        color: $btnColor;
+        border: 1px solid $grayColor;
+        cursor: pointer;
+        z-index: 998;
+        background: #fff;
+    }
+
+    .city-picker-btn.active {
+        border-bottom: 0;
+        box-shadow: 0 -1px 2px $grayColor;
+    }
+
+    .city-picker-group {
+        position: absolute;
+        z-index: 997;
+        width: 564px;
+        top: 31px;
+        left: 0;
+        padding: 18px 17px;
+        border: 1px solid $grayColor;
+        box-shadow: 0 0px 1px $grayColor;
+        padding-bottom: 0;
+        background: #fff;
+
+        .city-picker-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 36px;
+            line-height: 14px;
+            color: #999;
+            cursor: pointer;
+            transform: rotate(45deg);
+            transition: All .1s ease;
+        }
+        .city-picker-close:hover {
+            transform: rotate(135deg);
+        }
+
+        .city-picker-cont {
+            .city-picker-tab {
+                .tab-btn {
+                    display: inline-block;
+                    position: relative;
+                    vertical-align: text-top;
+                    margin: 0 7px;
+                    font-size: 14px;
+                    color: #000;
+                    height: 30px;
+                    line-height: 30px;
+                    border: 1px solid $grayColor;
+                    padding: 0 20px 0 12px;
+                    border-bottom: none;
+                    cursor: pointer;
+                }
+
+                .tab-btn.active {
+                    height: 30px;
+                    line-height: 30px;
+                    border: 2px solid $mainColor;
+                    position: relative;
+                    background: #fff;
+                    z-index: 990;
+                    border-bottom: none;
+                }
+            }
+
+            .city-picker-list {
+                margin: 0;
+                padding: 0;
+                border-top: 2px solid $mainColor;
+                position: relative;
+                top: -2px;
+                padding: 10px 7px 10px 17px;
+
+                li {
+                    list-style: none;
+                    width: 20%;
+                    margin: 6px 0;
+                    float: left;
+
+                    .item {
+                        display: inline-block;
+                        padding: 0px 5px;
+                        cursor: pointer;
+                        font-size: 14px;
+                    }
+                    .item.active {
+                        background: $mainColor;
+                        color: #fff;
+                    }
+                    .item:hover {
+                        background: $mainColor;
+                        color: #fff;
+                    }
+                }
+            }
+            .city-picker-list:after {
+                content:".";
+                display:block;
+                height:0;
+                clear:both;
+                visibility:hidden;
+            }
+        }
+    }
+}

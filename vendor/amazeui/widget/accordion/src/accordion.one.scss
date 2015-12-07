@@ -1,0 +1,62 @@
+/**
+  * Accordion Theme: one
+  * Author: hzp (hzp$yunshipei.com)
+  */
+
+.am-accordion-one {
+  $accordion-bg:  $white !default;
+  $accordion-item-border-color:  #dfdfdf !default;
+  $accordion-title-color:  $gray !default;
+  $accordion-title-active-color:  $one-primary !default;
+  $accordion-title-active-bg:  #f8f8f8 !default;
+  $accordion-content-color:  #666 !default;
+
+  margin: 0 10px 0 10px;
+
+  .am-accordion-item {
+    border: 1px solid $accordion-item-border-color;
+    margin: .5rem 0;
+    background: $accordion-bg;
+  }
+
+  .am-accordion-title {
+    color: $accordion-title-color;
+    transition: background-color 0.2s ease-out;
+    padding: 0.8rem 2rem 0.8rem 1rem;
+    position: relative;
+
+    &:after {
+      @include am-icon-font;
+      content: $fa-var-angle-right;
+      transition: transform .2s linear;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      margin-top: -0.8rem;
+    }
+
+    &:hover {
+      color: $accordion-title-active-color;
+    }
+  }
+
+  .am-accordion-content {
+    color: $accordion-content-color;
+  }
+
+  // active
+  .am-active {
+    .am-accordion-title {
+      background-color: $accordion-title-active-bg;
+      color: $accordion-title-active-color;
+
+      &:after {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  // @include hook-am-accordion-one();
+}
+
+// @mixin hook-am-accordion-one(){}

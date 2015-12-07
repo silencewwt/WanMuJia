@@ -1,0 +1,65 @@
+
+@import "../../../../lib/components/Items/Items.scss";
+
+.container {
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  width: $page-width;
+}
+
+.item-group {
+  // height: $item-height-tg * 2;
+  // border: $divide-border;
+  // border-right: none;
+  // box-sizing: border-box;
+
+  .container {
+    overflow: hidden;
+  }
+}
+
+.group-guide {
+  float: left;
+  width: $guide-width;
+  height: $item-height-tg* 2;
+  box-sizing: border-box;
+
+  .guide-title {
+    position: relative;
+    padding-left: 20px;
+    margin-top: -$divide-width;
+    height: $guide-title-height;
+    background-color: $active-color;
+    line-height: $guide-title-height - 2;
+    font-size: 20px;
+
+    & > a {
+      @include link(#fff);
+    }
+
+    .more {
+      position: absolute;
+      line-height: 30px;
+      right: 20px;
+      bottom: 10px;
+      font-size: 16px;
+
+      & > i {
+        position: absolute;
+        margin-left: 1px;
+        transition: margin-left 0.3s ease;
+      }
+
+      &:hover > i {
+        margin-left: 4px;
+      }
+    }
+  }
+
+  .guide-img {
+    width: 100%;
+    height: $item-height-tg * 2 - $guide-title-height;
+    background-color: #aaa;
+  }
+}

@@ -1,0 +1,174 @@
+// Name:            Share
+//
+// Description:     Define style for Share Plugin
+//
+// Component:       `.am-share`
+//
+// Sub-objects:     `.am-share-title`
+//                  `.am-share-sns`
+//                  `.am-share-footer`
+//
+// Uses:            Block Grid
+//                  Icon
+//                  Modal
+//                  Button
+//
+// =============================================================================
+
+
+/* ==========================================================================
+   Component: Share Plugin
+ ============================================================================ */
+
+$share-bg:  #f8f8f8 !default;
+
+.#{$ns}share {
+  font-size: 14px;
+  // @include hook-share();
+}
+
+.#{$ns}share-title {
+  padding: 10px 0 0;
+  margin: 0 10px;
+  font-weight: normal;
+  text-align: center;
+  color: $gray;
+  background-color: $share-bg;
+  border-bottom: 1px solid #fff;
+  @include border-top-radius(2px);
+
+  // @include hook-share-title();
+
+  &:after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 0;
+    margin-top: 10px;
+    border-bottom: 1px solid #dfdfdf;
+  }
+}
+
+.#{$ns}share-sns {
+  margin: 0 10px;
+  padding-top: 15px;
+  background-color: $share-bg;
+  @include border-bottom-radius(2px);
+  // @include hook-share-sns();
+
+  li {
+    margin-bottom: 15px;
+  }
+
+  a {
+    display: block;
+    color: $gray;
+  }
+
+  // SNS name
+  span {
+    display: block;
+  }
+
+  [class*='#{$ns}icon'] {
+    background-color: $global-secondary;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    color: #fff;
+    margin-bottom: 5px;
+    font-size: 18px;
+  }
+
+  .#{$ns}icon-weibo {
+    background-color: #ea1328;
+    // @include hook-share-sns-weibo();
+  }
+
+  .#{$ns}icon-qq {
+    background-color: #009cda;
+    // @include hook-share-sns-qq();
+  }
+
+  .#{$ns}icon-star {
+    background-color: #ffc028;
+    // @include hook-share-sns-star();
+  }
+
+  .#{$ns}icon-tencent-weibo {
+    background-color: #23ccfe;
+    // @include hook-share-sns-tencent-weibo();
+  }
+
+  .#{$ns}icon-wechat,
+  .#{$ns}icon-weixin {
+    background-color: #44b549;
+    // @include hook-share-sns-wechat();
+  }
+
+  .#{$ns}icon-renren {
+    background-color: #105ba3;
+    // @include hook-share-sns-renren();
+  }
+
+  .#{$ns}icon-comment {
+    background-color: $global-success;
+  }
+}
+
+.#{$ns}share-footer {
+  margin: 10px;
+
+  .#{$ns}btn {
+    color: $gray;
+  }
+  // @include hook-share-footer();
+}
+
+// wechat QRCode
+.#{$ns}share-wechat-qr {
+  font-size: 14px;
+  color: #777;
+
+  .#{$ns}modal-dialog {
+    background-color: #fff;
+    border: 1px solid #dedede;
+  }
+
+  .#{$ns}modal-hd {
+    padding-top: 10px;
+    text-align: left;
+    margin-bottom: 10px;
+  }
+
+  .#{$ns}share-wx-qr {
+    margin-bottom: 10px;
+  }
+
+  .#{$ns}share-wechat-tip {
+    text-align: left;
+    em {
+      color: $global-danger;
+      font-weight: bold;
+      font-style: normal;
+      margin-left: 3px;
+      margin-right: 3px;
+    }
+  }
+}
+
+
+// Hooks
+// =============================================================================
+
+// @mixin hook-share(){}
+// @mixin hook-share-title(){}
+// @mixin hook-share-footer(){}
+// @mixin hook-share-sns(){}
+// @mixin hook-share-sns-weibo(){}
+// @mixin hook-share-sns-qq(){}
+// @mixin hook-share-sns-star(){}
+// @mixin hook-share-sns-tencent-weibo(){}
+// @mixin hook-share-sns-wechat(){}
+// @mixin hook-share-sns-renren(){}

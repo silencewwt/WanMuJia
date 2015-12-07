@@ -1,0 +1,15 @@
+@import "../../assets/styles/main";
+@import "./views/ItemGroup/ItemGroup.scss";
+@import "./views/Elevator/Elevator.scss";
+
+.header {
+  margin-bottom: 20px;
+}
+
+.item-group {
+  margin: 20px auto;
+}
+
+.elevator {
+  position: fixed;
+}
