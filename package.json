@@ -4,7 +4,9 @@
   "description": "A shoppers platform of red wood.",
   "main": "app.js",
   "scripts": {
-    "build": "webpack --config ./webpack.config.js --watch"
+    "build": "webpack --config ./webpack.config.js --watch",
+    "prev-release": "WEBPACK_ENV=prev webpack --config ./webpack.config.js",
+    "release": "WEBPACK_ENV=prod webpack --config ./webpack.config.js"
   },
   "keywords": [
     "red wood",
