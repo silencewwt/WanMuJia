@@ -91,6 +91,7 @@ let SearchPage = React.createClass({
   // Pagination
   handlePageChange: function (page) {
     this.getSearchData('pagination', Utils.oExtends({}, this.state.queryParams, {page: page}));
+    document.documentElement.scrollTop = document.body.scrollTop = 0;
   },
   // Items
   handleCollectClick: function (itemReact, item) {
