@@ -14,7 +14,7 @@ $errorColor: #926a40;
     .su-step {
         border-bottom: 1px solid $borderColor;
         height: 100px;
-        padding: 40px 178px 0 178px;
+        padding: 40px 138px 0 180px;
         li {
             position: relative;
             float: left;
@@ -68,7 +68,7 @@ $errorColor: #926a40;
             .ipt {
                 width: 350px;
                 height: 38px;
-                line-height: 36px;
+            //    line-height: 36px;
                 padding-left: 8px;
                 border: 1px solid $grayColor;
             }
@@ -148,8 +148,9 @@ $errorColor: #926a40;
             }
             .check.checked:after {
                 display: block;
-                content: '\2714';
-                font-size: 12px;
+                content: '\f00c';
+                font-size: 11px;
+                font-weight: normal;
                 line-height: 12px;
                 text-align: center;
                 background: $mainColor;
