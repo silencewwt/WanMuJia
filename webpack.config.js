@@ -37,7 +37,7 @@ if (env === 'prev' || env === 'prod') {
   }));
   outputDir = '../WanMuJia-fe-release/app';
   if (env === 'prev') {
-    publicPath = 'http://static2.wanmujia.com/';
+    publicPath = 'http://static4.wanmujia.com/';
   }
   else {
     publicPath = 'http://static3.wanmujia.com/';
