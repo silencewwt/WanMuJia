@@ -1,5 +1,5 @@
 //  ==================================================
-//  Component: ProgressBar
+//  Component: Pagination
 //
 //  Include: PaginationBtn
 //
@@ -25,7 +25,7 @@ $darkActiveBorder: rgba(#FFF, .2);
 $qickGoColor: #A0A0A0;
 
 /*==================================================
-  Component: ProgressBar
+  Component: Pagination
 ==================================================*/
 
 .pagination {
@@ -39,6 +39,13 @@ $qickGoColor: #A0A0A0;
     padding: 0;
     margin: 0;
   }
+
+  .pagi-main,
+  .overview,
+  .quick-go {
+    vertical-align: middle;
+  }
+
   .item {
     width: $itemSize;
     height: $itemSize;
@@ -111,7 +118,6 @@ $qickGoColor: #A0A0A0;
       margin: 0 5px;
       width: 30px;
       border: 1px solid $itemBorder;
-      border-radius: 2px;
       background-color: $itemBackground;
       color: $qickGoColor;
       text-align: center;
@@ -121,7 +127,6 @@ $qickGoColor: #A0A0A0;
       font-size: 14px;
       margin-left: 8px;
       border: 1px solid $itemBorder;
-      border-radius: 2px;
       background-color: $itemBackground;
       color: #444;
       vertical-align: middle;

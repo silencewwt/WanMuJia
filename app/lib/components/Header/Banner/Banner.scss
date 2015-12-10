@@ -1,5 +1,5 @@
 
-$banner-height: 74px;
+$banner-height: 84px;
 
 $input-border-color: #833e00;
 
@@ -14,23 +14,27 @@ $btn-bgc: $input-border-color; // #833e00
     }
 
     .logo {
-      margin: ($banner-height - 45) / 2 0;
+      // margin: ($banner-height - 45) / 2 0;
+      margin-top: 13px;
 
-      & > a > img {
-        margin-top: -8px;
-        width: 130px;
+      & > a {
+        display: block;
+
+        & > img {
+          width: 130px;
+        }
       }
     }
 
     .city-picker-wt {
       margin: ($banner-height - 32) / 2 0;
-      margin-left: 24px;
+      margin-left: 37px;
       width: 120px;
     }
 
     .search {
       margin: ($banner-height - 40) / 2 0;
-      margin-left: 50px;
+      margin-left: 30px;
       width: 600px;
 
       input {
@@ -73,8 +77,8 @@ $btn-bgc: $input-border-color; // #833e00
       text-align: center;
 
       & > img {
-        width: 74px;
-        height: 74px;
+        width: 84px;
+        height: 84px;
       }
 
       & > div {
