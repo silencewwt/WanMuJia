@@ -47,9 +47,39 @@ var CityPickerWithTab = React.createClass({
       }, function() {
         this.props.callback(this.state.nowAddress);
       });
+      return ;
     }
     // TODO:没有cookie 定位获取 设置地址状态，回调
-
+    var geo = new BMap.Geolocation();
+    geo.getCurrentPosition(function(data) {
+      if(geo.getStatus() == 0) {
+        let province = data.address.province.substring(0, data.address.province.length - 1);
+        let city = data.address.city;
+        for(let _provinceId in addressData) {
+          if(addressData[_provinceId].name == province) {
+            let provinceId = _provinceId;
+            for(let _cityId in addressData[_provinceId].cell) {
+              if(addressData[_provinceId].cell[_cityId].name == city) {
+                let cityId = _cityId;
+                this.setState({
+                  nowAddress: {
+                    province: province,
+                    provinceId: provinceId,
+                    city: city,
+                    cityId: cityId
+                  }
+                }, function() {
+                  this.props.callback(this.state.nowAddress);
+                });
+                cookieOperation.setCookie("cityId", cityId, 3000, "/");
+                break ;
+              }
+              break ;
+            }
+          }
+        }
+      }
+    }.bind(this));
   },
   componentWillUnmount: function () {
     document.removeEventListener('mousedown', this.handleClick, false);
