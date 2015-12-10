@@ -59,7 +59,7 @@ let SearchPage = React.createClass({
       },
       itemsState: {
         items: [],
-        amount: 0
+        amount: null
       },
       paginationState: {
         pages: 0,
