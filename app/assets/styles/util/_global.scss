@@ -1,5 +1,11 @@
 // Global
 
+.clearfix:after {
+  display: table;
+  content: '';
+  clear: both;
+}
+
 a {
   color: $link-color;
 

@@ -17,8 +17,27 @@
   margin-bottom: 24px;
 }
 
+$if-no-items-height: 130px;
+.items-wrapper {
+  @extend .clearfix;
+  text-align: center;
+  .if-no-items {
+    display: inline-block;
+    margin: 90px auto 40px;
+    padding-left: 160px;
+    height: $if-no-items-height;
+    background: url('/app/assets/images/search_page_no_items.png') no-repeat left;
+    p {
+      margin: 0;
+      line-height: $if-no-items-height;
+      font-size: 24px;
+      color: #999;
+    }
+  }
+}
+
 .sort-wrapper {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .pagination-wrapper {
