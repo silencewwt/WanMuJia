@@ -58,7 +58,7 @@ $border-color: #e6e6e6;
       li {
         height: 74px;
         line-height: 1.25em;
-        padding: 20px 10px 0 10px;
+        padding: 28px 10px 0 10px;
         border-top: 1px solid $border-color;
         text-align: center;
         width: 100%;
@@ -68,7 +68,7 @@ $border-color: #e6e6e6;
       li.td1,
       li.th1 {
         height: 188px;
-        line-height: 188px;
+        line-height: 140px;
       }
       li.td.price {
         color: #b90000;
@@ -87,11 +87,15 @@ $border-color: #e6e6e6;
         }
         .name {
           position: absolute;
-          top: 130px;
+          top: 145px;
           width: 200px;
           margin-left: -100px;
           left: 50%;
           line-height: 1.2em;
+          color: #666;
+        }
+        .name:hover {
+          color: #833e00;
         }
         .collect-btn:hover,
         .delete-btn:hover {

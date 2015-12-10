@@ -266,7 +266,7 @@ var SuStep1 = React.createClass({
         <NextButton
           next={this.doNext}
           isNextClick={this.state.isNextClick}>
-          同意协议且注册
+          同意协议并注册
         </NextButton>
 
       </form>

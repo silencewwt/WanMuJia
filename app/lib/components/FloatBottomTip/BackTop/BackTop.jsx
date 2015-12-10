@@ -8,7 +8,7 @@ var BackTop = React.createClass({
   handleClick: function() {
     this.timer = setInterval(function() {
       var currentScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-      currentScrollTop -= 40;
+      currentScrollTop -= 70;
       if(currentScrollTop > 0) {
         window.scrollTo(0 , currentScrollTop);
       } else {
