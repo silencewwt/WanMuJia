@@ -40,7 +40,7 @@ if (env === 'prev' || env === 'prod') {
     publicPath = 'http://static2.wanmujia.com/';
   }
   else {
-    publicPath = 'http://static.wanmujia.com/';
+    publicPath = 'http://static3.wanmujia.com/';
   }
 } else {
   outputDir = '../WanMuJia/app';
