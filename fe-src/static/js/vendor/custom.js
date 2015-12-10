@@ -96,7 +96,7 @@ jQuery(document).ready(function($) {
                                 method: 'get',
                                 data: {
                                     item_id: opt.itemId,
-                                    filename: file.fileName
+                                    filename: file.name
                                 },
                                 async: false,
                                 success: function (res) {
