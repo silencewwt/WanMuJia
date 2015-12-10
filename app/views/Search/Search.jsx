@@ -260,8 +260,14 @@ let SearchPage = React.createClass({
   },
 
   render: function () {
-    let {progressBarConfig, headerConfig, filterGroupConfig, sortBarConfig, itemsConfig, paginationConfig} = this.props;
+    let {progressBarConfig, headerConfig, filterGroupConfig, sortBarConfig, paginationConfig} = this.props;
     let {userInfoState, filterGroupState, itemsState, paginationState} = this.state;
+    let renderWithAmount = (elem, renderIfAmount=true) => {
+      if (renderIfAmount) {
+        return itemsState.amount == 0 ? null : elem;
+      }
+      return itemsState.amount == 0 ? elem : null;
+    };
     return (
       <div>
         <ProgressBar {...progressBarConfig} ref="progressBar" />
@@ -295,15 +301,23 @@ let SearchPage = React.createClass({
             itemTipClick={[this.handleCollectClick, this.handleCompareClick]}
             items={itemsState.items}
           />
+          {renderWithAmount(
+            (<div className="if-no-items">
+              <p>对不起，没有找到符合条件的商品</p>
+            </div>),
+            false
+          )}
         </div>
 
         <div className="pagination-wrapper">
-          <Pagination
-            {...paginationConfig}
-            pages={paginationState.pages}
-            activePage={paginationState.activePage}
-            selected={this.handlePageChange}
-          />
+          {renderWithAmount(
+            <Pagination
+              {...paginationConfig}
+              pages={paginationState.pages}
+              activePage={paginationState.activePage}
+              selected={this.handlePageChange}
+            />
+          )}
         </div>
 
         <Footer />
