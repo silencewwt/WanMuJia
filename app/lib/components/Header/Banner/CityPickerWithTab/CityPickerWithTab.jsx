@@ -56,10 +56,10 @@ var CityPickerWithTab = React.createClass({
         let province = data.address.province.substring(0, data.address.province.length - 1);
         let city = data.address.city;
         for(let _provinceId in addressData) {
-          if(addressData[_provinceId].name == province) {
+          if(addressData[_provinceId].name.substr(0,2) == province.substr(0,2)) {
             let provinceId = _provinceId;
             for(let _cityId in addressData[_provinceId].cell) {
-              if(addressData[_provinceId].cell[_cityId].name == city) {
+              if(addressData[_provinceId].cell[_cityId].name.substr(0,2) == city.substr(0,2)) {
                 let cityId = _cityId;
                 this.setState({
                   nowAddress: {
