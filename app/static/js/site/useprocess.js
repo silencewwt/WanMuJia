@@ -1,1 +1,0 @@
-function showContItem(t){$(".content .cont-item").fadeOut(),$(".content .cont-item-"+t).fadeIn()}$(function(){var t=$(".use-process .item");t.click(function(){var t=$(this).attr("data-item");showContItem(t)});var n=location.search.substr(5);showContItem(n)});
