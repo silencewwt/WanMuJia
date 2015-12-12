@@ -4,6 +4,14 @@
 
 .header {
   margin-bottom: 20px;
+
+  .slider-wrap {
+    padding: 0;
+
+    .slider-arrows:first-of-type {
+      left: 239px !important;
+    }
+  }
 }
 
 .item-group {
