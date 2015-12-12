@@ -147,7 +147,13 @@ const MOCK_NAV_ITEMS = [
   }, {
     id: 5,
     title: '厨卫',
-    subpart: []
+    subpart: [
+      {
+        id: 158,
+        title: '方角柜',
+        img: require('../../../../assets/images/main_nav/nav_05_01.jpg')
+      }
+    ]
   }
 ];
 
