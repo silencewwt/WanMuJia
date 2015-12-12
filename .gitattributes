@@ -1,5 +1,2 @@
-app/static/* linguist-vendored
-app/templates/* linguist-vendored
-fe-src/server/* linguist-vendored
-fe-src/static/lib/* linguist-vendored
+app/static/lib linguist-vendored
 migrations/* linguist-vendored
