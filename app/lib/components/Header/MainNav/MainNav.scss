@@ -4,7 +4,8 @@ $nav-cate-height: $slider-height / 5;
 
 $nav-height: $nav-title-height + $nav-cate-height * 5;
 
-$nav-cate-bgc: #6e3800;
+// $nav-cate-bgc: #6e3800;
+$nav-cate-bgc: rgba(80, 37, 0, 0.9);
 
 $nav-item-group-width: 270px;
 
@@ -45,12 +46,12 @@ $nav-item-img-size: $nav-cate-height * 5 / 3 - 20;
   .category-list {
     position: absolute;
     width: $main-nav-width;
+    background-color: $nav-cate-bgc;
     z-index: 200;
   }
 
   .category {
     height: $nav-cate-height;
-    background-color: $nav-cate-bgc;
     line-height: $nav-cate-height;
     color: #fff;
     // transition: background-color .4s ease, color .4s ease;
