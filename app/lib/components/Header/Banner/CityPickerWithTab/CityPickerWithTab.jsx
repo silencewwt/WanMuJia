@@ -74,7 +74,6 @@ var CityPickerWithTab = React.createClass({
                 cookieOperation.setCookie("cityId", cityId, 3000, "/");
                 break ;
               }
-              break ;
             }
           }
         }
