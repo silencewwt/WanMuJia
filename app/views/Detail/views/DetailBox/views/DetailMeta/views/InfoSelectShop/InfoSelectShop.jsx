@@ -84,6 +84,16 @@ var SelectBox = React.createClass({
       shopId: null,
     };
   },
+  componentWillMount: function() {
+    let cityId = getCookie('cityId');
+    if(!cityId) return ;
+    let provinceId = cityId.substr(0, 3) + "000";
+    let data = this.props.data;
+    if(!data[provinceId]) return ;
+    this.setState({provinceId: provinceId});
+    if(!data[provinceId].children[cityId]) return ;
+    this.setState({cityId: cityId});
+  },
   selectProvince: function(id) {
     if(id == this.state.provinceId) return ;
     this.setState({provinceId: id, cityId: null, shopId: null});
@@ -119,10 +129,12 @@ var SelectBox = React.createClass({
         <div className="address-box">
           <div className="label">所在地：</div>
           <Dropdown
+            id={this.state.provinceId}
             data={this.props.data}
             liClick={this.selectProvince}
           />
           <Dropdown
+            id={this.state.cityId}
             data={this.state.provinceId?this.props.data[this.state.provinceId].children:null}
             liClick={this.selectCity}
           />
@@ -130,6 +142,7 @@ var SelectBox = React.createClass({
         <div className="shop-box">
           <div className="label">体验馆：</div>
           <Dropdown
+            id={this.state.shopId}
             data={shopData}
             liClick={this.selectShop}
           />
@@ -181,6 +194,12 @@ var Dropdown = React.createClass({
   },
   componentDidMount: function() {
     document.addEventListener('mousedown', this.allClick, false);
+
+    if(this.props.id) {
+      let area = this.props.data[this.props.id].area;
+      this.setState({area: area});
+    }
+
   },
   componentWillUnmount: function () {
     document.removeEventListener('mousedown', this.allClick, false);
