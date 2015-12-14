@@ -1,7 +1,26 @@
+
+.compare-bar-wrap.has-item {
+    border: 1px solid #833e00;
+}
 .compare-bar-wrap {
   position: relative;
 
+  .compare-item-num {
+    position: absolute;
+    top: -2px;
+    right: -3px;
+    height: 14px;
+    width: 14px;
+    line-height: 14px;
+    border-radius: 14px;
+    font-size: 12px;
+    text-align: center;
+    background: #833e00;
+    color: #fff;
+  }
+
   .compare-bar-btn {
+    position: relative;
     display: inline-block;
     width: 36px;
     height: 36px;

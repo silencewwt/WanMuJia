@@ -115,8 +115,23 @@ var CompareBar = React.createClass({
   },
   render: function() {
     return (
-      <div className="compare-bar-wrap">
-        <span className="compare-bar-btn" onClick={this.toggle}>对比</span>
+      <div
+        className={(!this.state.data.length?"":"has-item ") +"compare-bar-wrap"}>
+
+        {
+          this.state.data.length?
+          <span className="compare-item-num">
+            {this.state.data.length}
+          </span>:
+          null
+        }
+
+        <span
+          className={"compare-bar-btn"}
+          onClick={this.toggle}>
+          对比
+        </span>
+
         <div className={(this.state.show?"show ":"" )+ "compare-bar"}>
           <CompareBarHeader
             errTip={this.state.errTip}
