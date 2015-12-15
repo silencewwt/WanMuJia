@@ -35,19 +35,19 @@ let Footer = require('../../lib/components/Footer/Footer.jsx');
 const SLIDER_IMG = [
   {
     title: '劲飞红木',
-    img: require('../../assets/images/slider/slider_01_brand_jf.png'),
+    img: require('../../assets/images/slider/slider_01_brand_jf.jpg'),
     url: '/brands/12806'
   }, {
     title: '东城红木',
-    img: require('../../assets/images/slider/slider_02_brand_dc.png'),
+    img: require('../../assets/images/slider/slider_02_brand_dc.jpg'),
     url: '/brands/12836'
   }, {
     title: '君得益红木',
-    img: require('../../assets/images/slider/slider_03_brand_jdy.png'),
+    img: require('../../assets/images/slider/slider_03_brand_jdy.jpg'),
     url: '/brands/12803'
   }, {
     title: '九龙堂红木',
-    img: require('../../assets/images/slider/slider_04_brand_jlt.png'),
+    img: require('../../assets/images/slider/slider_04_brand_jlt.jpg'),
     url: '/brands/12801'
   }
 ];
