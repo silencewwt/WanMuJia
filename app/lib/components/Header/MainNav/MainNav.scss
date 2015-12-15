@@ -70,6 +70,8 @@ $nav-item-img-size: $nav-cate-height * 5 / 3 - 20;
 
     &:hover > .category-subpart {
       display: block;
+      border-right: 1px solid #6a3a0b;
+      border-bottom: 1px solid #6a3a0b;
     }
 
     & > a {
