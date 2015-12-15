@@ -52,11 +52,14 @@ $nav-item-img-size: $nav-cate-height * 5 / 3 - 20;
 
   .category {
     height: $nav-cate-height;
+    border-left: 1px solid transparent;
+    border-bottom: 1px solid transparent;
     line-height: $nav-cate-height;
     color: #fff;
     // transition: background-color .4s ease, color .4s ease;
 
     &:hover {
+      border-color: #6a3a0b;
       background-color: #fff;
       color: $nav-cate-bgc;
     }
