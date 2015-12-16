@@ -272,12 +272,12 @@ $confirm-button-color: #221715;
           color: $filter-action-font-color;
         }
         .multi-toggle {
-          margin-right: 20px;
           padding: 2px 4px;
           border: $filter-group-border;
           font-size: 0.9em;
         }
         .expand-toggle {
+          margin-left: 20px;
           padding-right: 20px;
           background: url('/app/assets/images/arrow_down.png') no-repeat right;
         }
