@@ -420,10 +420,23 @@ let FilterGroup = React.createClass({
   },
 
   render: function () {
-    let filterNodes = this.props.filterDefs.map(function (def, index) {
-      let options = this.state.filterValues[def.field] || [];
-      return (
-        <li key={index} style={{display: options.length > 0 ? 'block' : 'none'}}>
+    let filterDefs = this.props.filterDefs;
+    let filterValues = this.state.filterValues;
+    let filterNodes = [];
+    let haveFindlastField = false;
+
+    for (let i = filterDefs.length - 1; i >= 0; i--) {
+      let def = filterDefs[i];
+      let options = filterValues[def.field] || [];
+      // 为了消除最后一个过滤器多余的下边框
+      let isLastField = !haveFindlastField && options.length > 0;
+
+      filterNodes.unshift(
+        <li
+          key={i}
+          style={{display: options.length > 0 ? 'block' : 'none'}}
+          className={isLastField ? 'last' : null}
+        >
           <Filter
             name={def.name}
             field={def.field}
@@ -434,7 +447,9 @@ let FilterGroup = React.createClass({
           />
         </li>
       );
-    }.bind(this));
+
+      isLastField && (haveFindlastField = true);
+    }
 
     return (
       <div className="cu-filter-group">
