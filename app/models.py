@@ -1401,6 +1401,14 @@ class ItemTenon(db.Model):
     tenon_id = db.Column(db.Integer, nullable=False)
 
 
+class Feedback(db.Model):
+    __tablename__ = 'feedbacks'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, default=0, nullable=False)
+    feedback = db.Column(db.Unicode(200), nullable=False)
+    contact = db.Column(db.Unicode(30), default='', nullable=False)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     id_ = int(user_id[1:])
