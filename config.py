@@ -46,6 +46,7 @@ class DevelopmentConfig(Config):
         cls.OSS_ACCESS_SECRET = config_dict['OSS_ACCESS_SECRET']
         cls.OSS_BUCKET_NAME = config_dict['OSS_BUCKET_NAME']
         cls.OSS_HOST = config_dict['OSS_HOST']
+        cls.FEEDBACK_EMAILS = config_dict['FEEDBACK_EMAILS']
 
 
 class TestingConfig(Config):
@@ -85,6 +86,7 @@ class ProductionConfig(Config):
         cls.OSS_BUCKET_NAME = config_dict['OSS_BUCKET_NAME']
         cls.OSS_HOST = config_dict['OSS_HOST']
         cls.ITEMS = config_dict['ITEMS']
+        cls.FEEDBACK_EMAILS = config_dict['FEEDBACK_EMAILS']
 
         import logging
         file_handler = logging.FileHandler('/var/log/wmj/wmj_error.log')

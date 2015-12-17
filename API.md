@@ -279,7 +279,7 @@
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
         ]
-    },
+    }
 }
 ```
 
@@ -308,7 +308,7 @@
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
         ]
-    },
+    }
 }
 ```
 
@@ -337,9 +337,22 @@
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
         ]
-    },
+    }
 }
 ```
+
+### feedback
++ **URL**
+  + /feedback
++ **method**
+  + POST
++ **postData**
+  + csrf_token
+  + feedback
+  + contact
++ **return**
+  + `{"success": true}`
+  + `{"success": false, "message": ""}`
 
 ## Item
 ### item list
@@ -424,11 +437,11 @@
 			},
 			"category": {
 				"id1": {"category": ""},
-				"id2": {"category": ""},
+				"id2": {"category": ""}
 			},
 			"material": {
 				"id1": {"material": ""},
-				"id2": {"material": ""},
+				"id2": {"material": ""}
 			},
 			"scene": {
 				"id1": {"scene": ""},
@@ -439,8 +452,8 @@
 				"id2": {"sty;e": ""}
 			},
 			"price": {
-				"price": {"price": ""},
-				"price": {"price": ""}
+				"price1": {"price": ""},
+				"price2": {"price": ""}
 			}
 		},
 		"selected": {
@@ -464,7 +477,7 @@
 		"order": "",
 		"query": [
 			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": false},
-			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": true}
 		]
 	}
 }
@@ -624,7 +637,7 @@
 {
     "item": {
         "collected": "",  // true or false
-        
+
         // 单件
         "id": "",
         "item": "",
