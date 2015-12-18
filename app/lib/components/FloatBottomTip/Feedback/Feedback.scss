@@ -1,0 +1,26 @@
+.feedback-wrap {
+  position: relative;
+
+  .feedback-btn {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    border-radius: 36px;
+    text-align: center;
+
+    background-image: url('/app/assets/images/back_top_icon.png');
+    background-repeat: no-repeat;
+    background-size: 50% auto;
+    background-position: center;
+
+    .tip {
+      position: absolute;
+      width: 2.5em;
+      line-height: 1em;
+      left: 40px;
+      top: 3px;
+    }
+  }
+}
