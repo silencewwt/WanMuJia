@@ -26,8 +26,8 @@ var FloatBottomTip = React.createClass({
     return (
       <div className="float-bottom-tip">
         <CompareBar ref="compareBar" />
-        <Feedback />
         <BackTop />
+        <Feedback />
       </div>
     );
   },
