@@ -45,6 +45,7 @@ var InfoSelectShop = React.createClass({
         />
 
       <SendBox
+        itemId={this.props.itemId}
         ref="sendBox"
         mobile={this.props.mobile}
         shopId={this.state.shopId}
@@ -345,7 +346,8 @@ var SendBox = React.createClass({
         mobile: this.state.mobile,
         captcha: this.state.captcha,
         distributor_id: this.props.shopId,
-        csrf_token: csrfToken
+        csrf_token: csrfToken,
+        item_id: this.props.itemId
       },
       success: function(resp) {
         if(resp.success) {
