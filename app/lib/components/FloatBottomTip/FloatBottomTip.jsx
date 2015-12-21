@@ -12,6 +12,7 @@ require('./FloatBottomTip.scss');
 
 let React = require('react');
 let BackTop = require('./BackTop/BackTop.jsx');
+let Feedback = require('./Feedback/Feedback.jsx');
 let CompareBar = require('../CompareBar/CompareBar.jsx');
 
 var FloatBottomTip = React.createClass({
@@ -26,6 +27,7 @@ var FloatBottomTip = React.createClass({
       <div className="float-bottom-tip">
         <CompareBar ref="compareBar" />
         <BackTop />
+        <Feedback />
       </div>
     );
   },

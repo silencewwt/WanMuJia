@@ -1,0 +1,124 @@
+.feedback-wrap {
+  position: relative;
+
+  .feedback-btn {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    border-radius: 36px;
+    text-align: center;
+
+    background-image: url('/app/assets/images/feedback_icon.png');
+    background-repeat: no-repeat;
+    background-size: 50% auto;
+    background-position: center;
+
+    .tip {
+      position: absolute;
+      width: 2.5em;
+      line-height: 1em;
+      left: 40px;
+      top: 3px;
+    }
+  }
+
+  .feedback-form.show {
+    display: block;
+  }
+  .feedback-form {
+    display: none;
+    position: absolute;
+    width: 300px;
+    height: 220px;
+    left: -305px;
+    bottom: 0;
+    background: #fff;
+    border-radius: 4px;
+    border: 1px solid #999;
+    padding: 20px 12px 0 12px;
+    transition: all .6s;
+
+    .close {
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      text-align: center;
+      font-size: 18px;
+      color: #999;
+      transform: rotate(45deg);
+      cursor: pointer;
+    }
+    .close:hover {
+      color: #666;
+    }
+
+    .cont {
+      height: 140px;
+      width: 100%;
+      outline: none;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      padding: 8px;
+      line-height: 1.5em;
+      font-size: 14px;
+      overflow: auto;
+    }
+    .cont:focus {
+      border-color: #833e00;
+    }
+    .form-tip {
+      line-height: 1.25em;
+      font-size: 12px;
+      text-align: right;
+      padding-right: 4px;
+      height: 15px;
+      color: #833e00;
+    }
+    .input-group {
+      text-align: left;
+      width: 100%;
+      .ipt-num {
+        width: 210px;
+        outline: none;
+        height: 28px;
+        font-size: 14px;
+        padding: 7px 10px;
+        line-height: 16px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        margin-right: 10px;
+      }
+      .ipt-num:focus {
+        border-color: #833e00;
+      }
+      .submit {
+        color: #fff;
+        font-size: 15px;
+        line-height: 28px;
+        height: 28px;
+        border: none;
+        border-radius: 4px;
+        background: #833e00;
+        text-align: center;
+        padding: 0;
+        outline: none;
+        width: 50px;
+      }
+      .submit:hover {
+        background: darken(#833e00, 10%);
+      }
+    }
+
+    .result {
+      color: #833e00;
+      font-size: 16px;
+      line-height: 36px;
+      padding-top: 30px;
+    }
+  }
+}
