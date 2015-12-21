@@ -167,6 +167,43 @@ class Collection(db.Model, Property):
         return self.get_or_flush('item')
 
 
+class GuideSMS(db.Model, Property):
+    __tablename__ = 'guide_sms'
+    # id
+    id = db.Column(db.Integer, primary_key=True)
+    # 用户 id
+    user_id = db.Column(db.Integer, nullable=False)
+    # 经销商 id
+    distributor_id = db.Column(db.Integer, nullable=False)
+    # 商品 id
+    item_id = db.Column(db.Integer, nullable=False)
+    # 手机号码
+    mobile = db.Column(db.CHAR(11), nullable=False)
+    # 创建时间
+    created = db.Column(db.Integer, default=time.time, nullable=False)
+
+    _flush = {
+        'item': lambda x: Item.query.get(x.item_id),
+        'distributor': lambda x: Distributor.query.get(x.distributor_id)
+    }
+    _item = None
+    _distributor = None
+
+    def __init__(self, mobile, item_id, distributor_id, user_id=0):
+        self.mobile = mobile
+        self.item_id = item_id
+        self.distributor_id = distributor_id
+        self.user_id = user_id
+
+    @property
+    def item(self):
+        return self.get_or_flush('item')
+
+    @property
+    def distributor(self):
+        return self.get_or_flush('distributor')
+
+
 class Order(db.Model):
     __tablename__ = 'orders'
     # id
