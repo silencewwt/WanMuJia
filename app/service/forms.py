@@ -5,14 +5,14 @@ from wtforms import StringField, IntegerField
 
 from app.constants import CONFIRM_EMAIL, IMAGE_CAPTCHA, USER_GUIDE, VENDOR_REGISTER, USER_REGISTER, \
     USER_RESET_PASSWORD, VENDOR_EMAIL_CONFIRM, USER_EMAIL_CONFIRM, USER_SMS_CAPTCHA
-from app.models import User, Vendor, Distributor
+from app.models import User, Vendor, Distributor, Item
 from app.forms import Form
 from app.sms import sms_generator
 from app.wmj_email import send_email, EMAIL_CONFIRM_SUBJECT, USER_EMAIL_CONFIRM
 from app.utils import md5_with_time_salt
 from app.utils.redis import redis_set
 from app.utils.validator import Mobile, Captcha, ValidationError, Email, QueryID
-from app.utils.myj_captcha import send_sms_captcha
+from app.utils.wmj_captcha import send_sms_captcha
 
 
 class MobileSMSForm(Form):
@@ -20,6 +20,7 @@ class MobileSMSForm(Form):
     mobile = StringField()
     captcha = StringField()
     distributor_id = IntegerField()
+    item_id = IntegerField()
 
     def __init__(self, sms_type, template, *args, **kwargs):
         super(Form, self).__init__(*args, **kwargs)
@@ -30,6 +31,7 @@ class MobileSMSForm(Form):
         elif self.sms_type == USER_GUIDE:
             self.mobile.validators = [Mobile(available=False)]
             self.distributor_id.validators = [QueryID(Distributor)]
+            self.item_id.validators = [QueryID(Item)]
             self.captcha.validators = [Captcha(IMAGE_CAPTCHA, '')]
         elif self.sms_type == USER_REGISTER:
             self.mobile.validators = [Mobile(model=User)]
@@ -47,8 +49,8 @@ class MobileSMSForm(Form):
             send_sms_captcha(self.template, self.mobile.data)
         elif self.sms_type == USER_GUIDE:
             distributor = Distributor.query.get(self.distributor_id.data)
-            sms_generator(self.template, self.mobile.data,
-                          distributor.address.precise_address(), distributor.ext_number)
+            sms_generator(self.template, self.mobile.data, item_id=self.item_id.data, distributor_id=distributor.id,
+                          address=distributor.address.precise_address(), ext_number=distributor.ext_number)
 
 
 class EmailForm(Form):
