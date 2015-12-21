@@ -1,6 +1,6 @@
 'use strict';
 
-require('./DetailMeta.scss')
+require('./DetailMeta.scss');
 let React = require('react');
 let reqwest = require('reqwest');
 
@@ -82,6 +82,7 @@ var InfoBox = React.createClass({
         />
 
         <InfoSelectShop
+          itemId={this.props.data.item.id}
           mobile={this.props.mobile}
           data={this.props.data.distributors}
         />
