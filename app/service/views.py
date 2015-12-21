@@ -9,7 +9,7 @@ from app.sms import USER_REGISTER_TEMPLATE, VENDOR_REGISTER_TEMPLATE, RESET_PASS
     USER_SMS_CAPTCHA_TEMPLATE
 from app.permission import user_permission
 from app.utils.redis import redis_get
-from app.utils.myj_captcha import get_image_captcha
+from app.utils.wmj_captcha import get_image_captcha
 from . import service as service_blueprint
 from .forms import MobileSMSForm, EmailForm, EmailRegisterForm, EmailResetPasswordForm
 
