@@ -1222,6 +1222,42 @@
   + distributor_revocation_id
   + revocation_confirm
 
+## Operation
+### login
++ **URL**
+  + /operation/login
++ **method**
+  + GET
+  + POST
++ **postData**
+  + csrf_token
+  + username
+  + password
+
+### index
++ **URL**
+  + /operation/
++ **method**
+  + GET
++ **template data**
+  + records
+  + pages
+```js
+records = [
+    {
+        "item": "",
+        "brand": "",
+        "distributor": "",
+        "distributor_address": "",
+        "distributor_telephone": "",
+        "distributor_mobile": "",
+        "mobile": "",
+        "created": "",
+        "item_url": ""
+    }
+]
+```
+
 ## Service
 ### mobile register sms
 + **URL**
