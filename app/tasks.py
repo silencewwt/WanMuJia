@@ -24,8 +24,7 @@ def send_email(msg):
 @celery.task(name='send_sms')
 def send_sms(url):
     response = requests.get(url)
-    response = json.loads(response.content.decode('utf8'))
-    print(response)
+    print(response.content)
 
 
 @celery.task(name='distributor_geo_coding')

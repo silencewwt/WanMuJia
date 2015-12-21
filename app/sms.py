@@ -46,4 +46,4 @@ def sms_generator(template, mobile, **kwargs):
         return
     query = urlencode({'mobile': mobile, 'account': current_app.config['SMS_ACCOUNT'],
                        'pswd': current_app.config['SMS_PASSWORD'], 'msg': message})
-    send_sms.delay('%s?%s' % (current_app.config['SMS_HOST'], query))
+    send_sms.delay('%s?%s' % (current_app.config['SMS_URL'], query))

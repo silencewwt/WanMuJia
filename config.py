@@ -47,6 +47,9 @@ class DevelopmentConfig(Config):
         cls.OSS_BUCKET_NAME = config_dict['OSS_BUCKET_NAME']
         cls.OSS_HOST = config_dict['OSS_HOST']
         cls.FEEDBACK_EMAILS = config_dict['FEEDBACK_EMAILS']
+        cls.SMS_ACCOUNT = config_dict['SMS_ACCOUNT']
+        cls.SMS_PASSWORD = config_dict['SMS_PASSWORD']
+        cls.SMS_URL = config_dict['SMS_URL']
 
 
 class TestingConfig(Config):
@@ -87,6 +90,9 @@ class ProductionConfig(Config):
         cls.OSS_HOST = config_dict['OSS_HOST']
         cls.ITEMS = config_dict['ITEMS']
         cls.FEEDBACK_EMAILS = config_dict['FEEDBACK_EMAILS']
+        cls.SMS_ACCOUNT = config_dict['SMS_ACCOUNT']
+        cls.SMS_PASSWORD = config_dict['SMS_PASSWORD']
+        cls.SMS_URL = config_dict['SMS_URL']
 
         import logging
         file_handler = logging.FileHandler('/var/log/wmj/wmj_error.log')
