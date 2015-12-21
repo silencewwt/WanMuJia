@@ -1288,6 +1288,8 @@ records = [
       + required
   + type == USER_GUIDE
     + **csrf_token**
+    + **item_id**
+      + required
     + **distributor_id**
       + required
     + **mobile**
