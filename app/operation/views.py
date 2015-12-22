@@ -15,7 +15,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit() and form.login():
         return redirect(url_for('operation.index'))
-    return render_template('operation/login.html')
+    return render_template('operation/login.html', form=form)
 
 
 @operation.route('/')
