@@ -147,9 +147,9 @@ class Collection(db.Model, Property):
     # id
     id = db.Column(db.Integer, primary_key=True)
     # 用户id
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False, index=True)
     # 商品id
-    item_id = db.Column(db.Integer, nullable=False)
+    item_id = db.Column(db.Integer, nullable=False, index=True)
     # 创建时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
 
@@ -384,7 +384,7 @@ class Distributor(BaseUser, db.Model, Property):
     # 登录名
     username = db.Column(db.Unicode(20), nullable=False)
     # 生产商 id
-    vendor_id = db.Column(db.Integer, nullable=False)
+    vendor_id = db.Column(db.Integer, nullable=False, index=True)
     # 商家名称
     name = db.Column(db.Unicode(30), nullable=False)
     # 联系电话
@@ -527,15 +527,15 @@ class Item(db.Model, Property):
     # 创建时间
     created = db.Column(db.Integer, default=time.time, nullable=False)
     # 厂家id
-    vendor_id = db.Column(db.Integer, nullable=False)
+    vendor_id = db.Column(db.Integer, nullable=False, index=True)
     # 商品名称
     item = db.Column(db.Unicode(20), nullable=False)
     # 指导价格
     price = db.Column(db.Integer, nullable=False)
     # 二级材料 id
-    second_material_id = db.Column(db.Integer, nullable=False)
+    second_material_id = db.Column(db.Integer, nullable=False, index=True)
     # 商品分类id
-    category_id = db.Column(db.Integer, nullable=False)
+    category_id = db.Column(db.Integer, nullable=False, index=True)
     # 长度 cm
     length = db.Column(db.String(10), nullable=False)
     # 宽度 cm
@@ -554,13 +554,13 @@ class Item(db.Model, Property):
     # 装饰 id
     decoration_id = db.Column(db.Integer, nullable=False)
     # 二级场景 id
-    scene_id = db.Column(db.Integer, nullable=False)
+    scene_id = db.Column(db.Integer, nullable=False, index=True)
     # 风格 id
-    style_id = db.Column(db.Integer, default=5, nullable=False)
+    style_id = db.Column(db.Integer, default=5, nullable=False, index=True)
     # 产品寓意
     story = db.Column(db.Unicode(5000), default=u'', nullable=False)
     # 已删除
-    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False, index=True)
     # 套件id
     suite_id = db.Column(db.Integer, nullable=False)
     # 数量
@@ -568,7 +568,7 @@ class Item(db.Model, Property):
     # 套件
     is_suite = db.Column(db.Boolean, default=False, nullable=False)
     # 组件
-    is_component = db.Column(db.Boolean, default=False, nullable=False)
+    is_component = db.Column(db.Boolean, default=False, nullable=False, index=True)
 
     _flush = {
         'vendor': lambda x: Vendor.query.get(x.vendor_id),
@@ -914,8 +914,8 @@ class ItemImage(db.Model, Property):
 class Stock(db.Model):
     __tablename__ = 'stocks'
     id = db.Column(db.Integer, primary_key=True)
-    item_id = db.Column(db.Integer, nullable=False)
-    distributor_id = db.Column(db.Integer, nullable=False)
+    item_id = db.Column(db.Integer, nullable=False, index=True)
+    distributor_id = db.Column(db.Integer, nullable=False, index=True)
     stock = db.Column(db.Integer, default=0, nullable=False)
 
     def __init__(self, item_id, distributor_id, stock):
@@ -941,7 +941,7 @@ class Category(db.Model, Property):
     __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.Unicode(20), nullable=False)
-    father_id = db.Column(db.Integer, nullable=False)
+    father_id = db.Column(db.Integer, nullable=False, index=True)
     level = db.Column(db.Integer, nullable=False)
 
     _flush = {
@@ -1180,7 +1180,7 @@ class VendorAddress(Address, db.Model):
 
 class DistributorAddress(Address, db.Model):
     __tablename__ = 'distributor_addresses'
-    distributor_id = db.Column(db.Integer, nullable=False)
+    distributor_id = db.Column(db.Integer, nullable=False, index=True)
 
     def __init__(self, distributor_id, cn_id, address):
         self.distributor_id = distributor_id
