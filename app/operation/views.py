@@ -37,4 +37,4 @@ def index():
             'created': datetime.datetime.fromtimestamp(sms_record.created).strftime('%F %T'),
             'item_url': url_for('item.detail', item_id=sms_record.item.id)
         })
-    return render_template('operation/index.html', records=records, pages=pages)
+    return render_template('operation/index.html', records=records, pages=pages, page=page)
