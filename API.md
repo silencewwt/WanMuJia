@@ -283,7 +283,7 @@
 }
 ```
 
-### brand dettail
+### brand detail
 + **URL**
   + /brands/\<int:brand_id\>
 + **method**
@@ -501,7 +501,7 @@
     + 若format == json && action != detail, 返回商品对比详情
 + **return**
   + format == json && action != detail
-    + `{"id": "", "item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": "", "brand": ""}`
+    + `{"id": "", "item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve_type": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": "", "brand": ""}`
     + **id**
       + 商品id
     + **item**
@@ -530,6 +530,8 @@
       + 装饰工艺
     + **carve**
       + 雕刻工艺
+    + **carve_type**
+      + 雕刻方式
     + **tenon**
       + 榫卯结构
     + **story**
@@ -656,6 +658,7 @@
         "paint": "",
         "decoration": "",
         "carve": ["", ""],
+        "carve_type": "",
         "tenon": ["", ""],  // 榫卯结构为选填, 可能为[]
         "images": ["", ""],
         "is_suite": false,
@@ -673,6 +676,7 @@
         "inside_sand": "",
         "area": "",
         "stove": "",
+        "carve_type": "",
         "amount": "",
         "images": ["", ""],
         "is_suite": true,
@@ -918,6 +922,10 @@
     + 雕刻工艺id
     + type = text
     + required
+  + **carve_type_id**
+    + 雕刻方式id
+    + type = text
+    + requid
   + **outside_sand_id**
     + 外表面打磨砂纸id
     + type = text
@@ -976,6 +984,10 @@
     + required
   + **carve_id**
     + 雕刻工艺id
+    + type = text
+    + required
+  + **carve_type_id**
+    + 雕刻方式id
     + type = text
     + required
   + **outside_sand_id**

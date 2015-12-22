@@ -10,7 +10,7 @@ from wtforms.validators import ValidationError, DataRequired, Length, EqualTo
 
 from app import db, statisitc
 from app.constants import SMS_CAPTCHA, VENDOR_REMINDS_PENDING, VENDOR_REMINDS_COMPLETE
-from app.models import Vendor, VendorAddress, Stove, Carve, Sand, Paint, Decoration, Tenon, Item, ItemTenon, \
+from app.models import Vendor, VendorAddress, Stove, Carve, CarveType, Sand, Paint, Decoration, Tenon, Item, ItemTenon,\
     ItemCarve, ItemImage, Distributor, DistributorRevocation, FirstMaterial, SecondMaterial, Category, Style, Scene
 from app.sms import sms_generator, VENDOR_PENDING_TEMPLATE
 from app.utils import IO
@@ -154,6 +154,7 @@ class ItemForm(Form):
     scene_id = OptionGroupSelectField(coerce=int, validators=[QueryID(Scene, message=u'商品场景不正确')])
     stove_id = SelectField(coerce=int, validators=[QueryID(Stove, message=u'烘干工艺不正确')])
     carve_id = SelectMultipleField(coerce=int, validators=[QueryID(Carve, message=u'雕刻工艺不正确')])
+    carve_type_id = SelectField(coerce=int, validators=[QueryID(CarveType, message='雕刻方式不正确')])
     outside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, message=u'内打磨砂纸不正确')])
     inside_sand_id = SelectNotRequiredField(coerce=int, validators=[QueryID(model=Sand, required=False, message=u'外打磨砂纸不正确')])
     paint_id = SelectField(coerce=int, validators=[QueryID(Paint, message=u'涂饰工艺不正确')])
@@ -163,7 +164,8 @@ class ItemForm(Form):
     story = TextAreaField(validators=[Length(0, 5000)])
 
     attributes = ('item', 'length', 'width', 'height', 'price', 'area', 'second_material_id', 'category_id',
-                  'scene_id', 'stove_id', 'outside_sand_id', 'decoration_id', 'paint_id', 'style_id', 'story')
+                  'carve_type_id', 'scene_id', 'stove_id', 'outside_sand_id', 'decoration_id', 'paint_id', 'style_id',
+                  'story')
 
     def validate_area(self, field):
         if not (field.data or (self.length.data and self.width.data and self.height.data)):
@@ -185,6 +187,7 @@ class ItemForm(Form):
 
         self.stove_id.choices = [(choice.id, choice.stove) for choice in Stove.query.all()]
         self.carve_id.choices = [(choice.id, choice.carve) for choice in Carve.query.all()]
+        self.carve_type_id.choices = [(choice.id, choice.carve_type) for choice in CarveType.query.all()]
         self.outside_sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
         self.inside_sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
         self.paint_id.choices = [(choice.id, choice.paint) for choice in Paint.query.all()]
@@ -210,6 +213,7 @@ class ItemForm(Form):
             paint_id=self.paint_id.data,
             decoration_id=self.decoration_id.data,
             style_id=self.style_id.data,
+            carve_type_id=self.carve_type_id.data,
             story=self.story.data,
             suite_id=0,
             amount=1,
@@ -335,6 +339,7 @@ class ComponentForm(Form):
             paint_id=self.paint_id.data,
             decoration_id=self.decoration_id.data,
             style_id=0,
+            carve_type_id=0,
             story='',
             suite_id=suite_id,
             amount=self.amount.data,
@@ -415,10 +420,11 @@ class SuiteForm(Form):
     outside_sand_id = SelectField(coerce=int, validators=[QueryID(model=Sand, required=True, message=u'外打磨砂纸不正确')])
     inside_sand_id = SelectNotRequiredField(coerce=int, validators=[QueryID(model=Sand, required=False, message=u'内打磨砂纸不正确')])
     style_id = SelectField(coerce=int, validators=[QueryID(Style, '风格分类不正确')])
+    carve_type_id = SelectField(coerce=int, validators=[QueryID(CarveType, '雕刻方式不正确')])
     story = TextAreaField(validators=[Length(0, 5000)])
 
     attributes = ('item', 'area', 'price', 'second_material_id', 'scene_id', 'stove_id', 'outside_sand_id',
-                  'style_id', 'story')
+                  'style_id', 'carve_type_id', 'story')
 
     def generate_choices(self):
         self.scene_id.choices = []
@@ -438,6 +444,7 @@ class SuiteForm(Form):
         self.outside_sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
         self.inside_sand_id.choices = [(choice.id, choice.sand) for choice in Sand.query.all()]
         self.style_id.choices = [(style.id, style.style) for style in Style.query.all()]
+        self.carve_type_id.choices = [(choice.id, choice.carve_type) for choice in CarveType.query.all()]
 
     def add_suite(self, vendor_id):
         suite = Item(
@@ -457,6 +464,7 @@ class SuiteForm(Form):
             paint_id=0,
             decoration_id=0,
             style_id=self.style_id.data,
+            carve_type_id=self.carve_type_id.data,
             story=self.story.data,
             suite_id=0,
             amount=1,

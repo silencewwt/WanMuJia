@@ -208,6 +208,7 @@ def detail(item_id):
                 'story': item.story,
                 'image_url': image_url,
                 'carve': item.carve,
+                'carve_type': item.carve_type,
                 'tenon': item.tenon,
                 'brand': item.vendor.brand
             }
