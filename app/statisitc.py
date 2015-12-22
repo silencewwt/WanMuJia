@@ -190,12 +190,13 @@ def distributors_statistic(item_id=None):
         except KeyError:
             stocks[stock.item_id] = {stock.distributor_id}
     for item in query:
-        root = DistributorAreaTree()
-        for distributor_id in stocks[item.id]:
-            distributor = distributors[distributor_id]
-            area = distributor.address.area
-            root.add_node(root, DistributorAreaNode.build_from_dict(area.experience_dict(distributor.id)))
-        items[item.id] = root.dumps()
+        if item.id in stocks:
+            root = DistributorAreaTree()
+            for distributor_id in stocks[item.id]:
+                distributor = distributors[distributor_id]
+                area = distributor.address.area
+                root.add_node(root, DistributorAreaNode.build_from_dict(area.experience_dict(distributor.id)))
+            items[item.id] = root.dumps()
     distributors = None
 
 
