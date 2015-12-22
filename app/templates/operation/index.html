@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>管理-万木家-运营后台</title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+
+      h2 {
+        text-align: center;
+      }
+
+      #main {
+        margin: 30px auto;
+        width: 980px;
+        text-align: center;
+      }
+
+      #main table th {
+        text-align: center;
+      }
+
+    </style>
+  </head>
+  <body>
+    <h2>万木家运营临时后台</h2>
+    <section id="main">
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>商品名称</th>
+            <th>商品品牌</th>
+            <th>经销商名</th>
+            <th>经销商地址</th>
+            <th>经销商固话</th>
+            <th>经销商电话</th>
+            <th>用户电话</th>
+            <th>操作时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+            <tr>
+              <td>{{ record.item }}</td>
+              <td>{{ record.brand }}</td>
+              <td>{{ record.distributor }}</td>
+              <td>{{ record.distributor_address }}</td>
+              <td>{{ record.distributor_telephone }}</td>
+              <td>{{ record.distributor_mobile }}</td>
+              <td>{{ record.mobile }}</td>
+              <td>{{ record.created }}</td>
+              <td>
+                <a href="{{ item_url }}">查看</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <nav>
+        {% if pages %}
+          <ul class="pagination">
+            <li>
+              <a href="/operation/?page=1" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% for i in range(pages) %}
+              {% if loop.index == page %}
+                <li class="active">
+              {% else %}
+                <li>
+              {% endif %}
+                <a href="/operation/?page={{ loop.index }}" aria-label="Previous">
+                  {{ loop.index }}
+                </a>
+              </li>
+            {% endfor %}
+            <li>
+              <a href="/operation/?page={{ pages }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        {% endif %}
+      </nav>
+    </section>
+
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  </body>
+</html>
