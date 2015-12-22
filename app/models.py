@@ -1068,7 +1068,7 @@ class Privilege(BaseUser, db.Model):
         db.session.commit()
 
 
-class Area(db.Model):
+class Area(db.Model, Property):
     __tablename__ = 'areas'
     id = db.Column(db.Integer, primary_key=True)
     cn_id = db.Column(db.Integer, nullable=False, index=True)
@@ -1079,6 +1079,11 @@ class Area(db.Model):
     pinyin = db.Column(db.String(30), nullable=False)
     pinyin_index = db.Column(db.CHAR(1), nullable=False)
     distributor_amount = db.Column(db.Integer, nullable=False)
+
+    _flush = {
+        'father': lambda x: Area.query.get(x.id) if x.level > 1 else None
+    }
+    _father = None
 
     @staticmethod
     def generate_fake():
@@ -1106,10 +1111,9 @@ class Area(db.Model):
         grades.reverse()
         return grades
 
+    @property
     def father(self):
-        if self.level > 1:
-            return Area.query.get(self.father_id)
-        return None
+        return self.get_or_flush('father')
 
     def children(self):
         if self.level < 3:
@@ -1119,16 +1123,16 @@ class Area(db.Model):
     def city(self):
         if self.level == 2:
             return self
-        return self.father()
+        return self.father
 
     def experience_dict(self, distributor_id):
         if self.level == 3:
             third_area = self
-            second_area = self.father()
-            first_area = second_area.father()
+            second_area = self.father
+            first_area = second_area.father
         else:
             third_area = second_area = self
-            first_area = second_area.father()
+            first_area = second_area.father
         return {first_area.cn_id: {'area': first_area.area, 'children': {
             second_area.cn_id: {'area': second_area.area, 'children': {
                 third_area.cn_id: {'area': third_area.area, 'distributors': [distributor_id]}
