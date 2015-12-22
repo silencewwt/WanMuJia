@@ -557,6 +557,8 @@ class Item(db.Model, Property):
     scene_id = db.Column(db.Integer, nullable=False, index=True)
     # 风格 id
     style_id = db.Column(db.Integer, default=5, nullable=False, index=True)
+    # 雕刻方式
+    carve_type_id = db.Column(db.Integer, default=1, nullable=False)
     # 产品寓意
     story = db.Column(db.Unicode(5000), default=u'', nullable=False)
     # 已删除
@@ -585,6 +587,7 @@ class Item(db.Model, Property):
         'paint': lambda x: Paint.query.get(x.paint_id).paint,
         'decoration': lambda x: Decoration.query.get(x.decoration_id).decoration,
         'style': lambda x: Style.query.get(x.style_id).style,
+        'carve_type': lambda x: CarveType.query.get(x.carve_type_id).carve_type,
         'carve': lambda x: [carve.carve for carve in Carve.query.filter(Carve.id.in_(x.get_carve_id()))],
         'tenon': lambda x: [tenon.tenon for tenon in Tenon.query.filter(Tenon.id.in_(x.get_tenon_id()))]
     }
@@ -600,11 +603,12 @@ class Item(db.Model, Property):
     _paint = None
     _decoration = None
     _style = None
+    _carve_type = None
     _carve = None
     _tenon = None
 
-    def __init__(self, vendor_id, item, price, second_material_id, category_id, scene_id, length, width,
-                 height, area, stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, style_id, story,
+    def __init__(self, vendor_id, item, price, second_material_id, category_id, scene_id, length, width, height, area,
+                 stove_id, outside_sand_id, inside_sand_id, paint_id, decoration_id, style_id, carve_type_id, story,
                  suite_id, amount, is_suite, is_component):
         self.vendor_id = vendor_id
         self.item = item
@@ -622,6 +626,7 @@ class Item(db.Model, Property):
         self.paint_id = paint_id
         self.decoration_id = decoration_id
         self.style_id = style_id
+        self.carve_type_id = carve_type_id
         self.story = story
         self.suite_id = suite_id
         self.amount = amount
@@ -696,6 +701,10 @@ class Item(db.Model, Property):
         return self.get_or_flush('carve')
 
     @property
+    def carve_type(self):
+        return self.get_or_flush('carve_type')
+
+    @property
     def tenon(self):
         return self.get_or_flush('tenon')
 
@@ -717,13 +726,16 @@ class Item(db.Model, Property):
     def dumps(self):
         data = {}
         if not self.is_suite and not self.is_component:  # single
-            attrs = ('id', 'item', 'price', 'second_material', 'category', 'scene', 'style', 'outside_sand', 'inside_sand', 'size', 'area', 'stove', 'paint', 'decoration', 'carve', 'tenon', 'vendor_id', 'is_suite')
+            attrs = ('id', 'item', 'price', 'second_material', 'category', 'scene', 'style', 'outside_sand',
+                     'inside_sand', 'size', 'area', 'stove', 'paint', 'decoration', 'carve', 'carve_type',
+                     'tenon', 'vendor_id', 'is_suite')
             for attr in attrs:
                 data[attr] = getattr(self, attr)
             data['brand'] = self.vendor.brand
             data['images'] = [image.url for image in self.images]
         elif self.is_suite:
-            attrs = ('id', 'item', 'price', 'second_material', 'scene', 'style', 'outside_sand', 'inside_sand', 'area', 'stove', 'amount', 'vendor_id', 'is_suite')
+            attrs = ('id', 'item', 'price', 'second_material', 'scene', 'style', 'outside_sand', 'inside_sand', 'area',
+                     'stove', 'carve_type', 'amount', 'vendor_id', 'is_suite')
             for attr in attrs:
                 data[attr] = getattr(self, attr)
             component_dumps = []
@@ -1227,6 +1239,18 @@ class Carve(db.Model):
     def generate_fake():
         for carve in (u'通雕', u'透雕', u'浮雕', u'浅浮雕', u'镂空雕', u'圆雕(立体雕)', u'微雕', u'阴阳额雕', u'阴雕(阴刻)', u'无'):
             db.session.add(Carve(carve=carve))
+        db.session.commit()
+
+
+class CarveType(db.Model):
+    __tablename__ = 'carve_types'
+    id = db.Column(db.Integer, primary_key=True)
+    carve_type = db.Column(db.Unicode(10), nullable=False)
+
+    @staticmethod
+    def generate_fake():
+        for carve_type in ('手工雕', '机雕+手工雕', '机器雕刻', '其他', '无'):
+            db.session.add(CarveType(carve_type=carve_type))
         db.session.commit()
 
 
