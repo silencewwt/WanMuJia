@@ -55,7 +55,7 @@ let SearchPage = React.createClass({
       userInfoState: null,
       queryParams: queryParamsFromUrl,    // 全部的搜索参数
       filterGroupState: {
-        filterValues: []
+        filterValues: {}
       },
       itemsState: {
         items: [],

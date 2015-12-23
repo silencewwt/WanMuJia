@@ -152,15 +152,42 @@ let Filter = React.createClass({
     return {
       isMultiSelect: false,
       isExpanded: false,
-      multiSelected: {}    // 暂时被多选中的选项
+      multiSelected: {},    // 暂时被多选中的选项
+      overflowDetermined: false
     };
   },
   getDefaultProps: function () {
     return {
       canMultiSelect: false,
       treeView: false,
-      options: [],
+      options: []
     };
+  },
+  componentDidUpdate: function () {
+    if (this.state.overflowDetermined) {
+      return;
+    }
+    let filterNode = ReactDOM.findDOMNode(this);
+    let filterItemsListNode = filterNode.getElementsByClassName('filter-items')[0];
+    let itemsNodes = filterItemsListNode.children;
+    let itemsStyles = getComputedStyle(filterItemsListNode);
+    let itemsMaxWidth = filterItemsListNode.offsetWidth - parseInt(itemsStyles.paddingLeft) - 5;    // 5 为修正值
+    let itemsWidthSum = 0;
+    for (let i = 0; i < itemsNodes.length; i++) {
+      let itemNode = itemsNodes[i];
+      let itemStyles = getComputedStyle(itemNode);
+      itemsWidthSum += itemNode.offsetWidth + parseInt(itemStyles.marginRight);
+    }
+    if (itemsWidthSum) {
+      this.setState({overflowDetermined: true});
+      if (itemsMaxWidth >= itemsWidthSum) {
+        let multiToggleNode = filterNode.getElementsByClassName('multi-toggle')[0];
+        let expandToggleNode = filterNode.getElementsByClassName('expand-toggle')[0];
+        let expandToggleNodeStyles = getComputedStyle(expandToggleNode);
+        multiToggleNode.style.marginRight = (parseInt(expandToggleNodeStyles.marginLeft) + expandToggleNode.offsetWidth - 1) + 'px';    // 1 为修正值
+        expandToggleNode.style.display = 'none';
+      }
+    }
   },
   multiSelectToggle: function (event) {
     event && event.preventDefault();
@@ -282,6 +309,7 @@ let FilterGroup = React.createClass({
   componentWillReceiveProps: function (nextProps) {
     this.updateFilterValue(nextProps.filterValues);
   },
+
   updateFilterValue: function (values) {
     this.setState({filterValues: values});
   },
@@ -420,10 +448,23 @@ let FilterGroup = React.createClass({
   },
 
   render: function () {
-    let filterNodes = this.props.filterDefs.map(function (def, index) {
-      let options = this.state.filterValues[def.field] || [];
-      return (
-        <li key={index} style={{display: options.length > 0 ? 'block' : 'none'}}>
+    let filterDefs = this.props.filterDefs;
+    let filterValues = this.state.filterValues;
+    let filterNodes = [];
+    let haveFindlastField = false;
+
+    for (let i = filterDefs.length - 1; i >= 0; i--) {
+      let def = filterDefs[i];
+      let options = filterValues[def.field] || [];
+      // 为了消除最后一个过滤器多余的下边框
+      let isLastField = !haveFindlastField && options.length > 0;
+
+      filterNodes.unshift(
+        <li
+          key={i}
+          style={{display: options.length > 0 ? 'block' : 'none'}}
+          className={isLastField ? 'last' : null}
+        >
           <Filter
             name={def.name}
             field={def.field}
@@ -434,7 +475,9 @@ let FilterGroup = React.createClass({
           />
         </li>
       );
-    }.bind(this));
+
+      isLastField && (haveFindlastField = true);
+    }
 
     return (
       <div className="cu-filter-group">
