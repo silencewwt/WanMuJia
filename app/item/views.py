@@ -37,7 +37,7 @@ def item_filter():
         )
         query = query.filter(Item.vendor_id.in_(brands))
     else:
-        query = query.filter(Item.vendor_id.in_(statisitc.brands['total_set']))
+        query = query.filter(Item.vendor_id.in_(statisitc.brands['available_set']))
     if materials:
         materials = list(
             statisitc.materials['available_set'] - (statisitc.materials['available_set'] - set(materials))
@@ -98,11 +98,11 @@ def item_filter():
     if not brands:
         data['filters']['available']['brand'] = statisitc.brands['available']
     else:
-        data['filters']['selected']['brand'] = statisitc.selected(statisitc.brands['total'], brands)
+        data['filters']['selected']['brand'] = statisitc.selected(statisitc.brands['available'], brands)
     if not materials:
         data['filters']['available']['material'] = statisitc.materials['available']
     else:
-        data['filters']['selected']['material'] = statisitc.selected(statisitc.materials['total'], materials)
+        data['filters']['selected']['material'] = statisitc.selected(statisitc.materials['available'], materials)
     if category is None:
         first_categories = statisitc.categories['available']
         data['filters']['available']['category'] = \
@@ -146,11 +146,11 @@ def item_filter():
     if not scenes:
         data['filters']['available']['scene'] = statisitc.scenes['available']
     else:
-        data['filters']['selected']['scene'] = statisitc.selected(statisitc.scenes['total'], scenes)
+        data['filters']['selected']['scene'] = statisitc.selected(statisitc.scenes['available'], scenes)
     if not styles:
         data['filters']['available']['style'] = statisitc.styles['available']
     else:
-        data['filters']['selected']['style'] = statisitc.selected(statisitc.styles['total'], styles)
+        data['filters']['selected']['style'] = statisitc.selected(statisitc.styles['available'], styles)
     if price is not None:
         data['filters']['selected']['price'] = {price: {'price': price_text[price]}}
     else:
@@ -208,6 +208,7 @@ def detail(item_id):
                 'story': item.story,
                 'image_url': image_url,
                 'carve': item.carve,
+                'carve_type': item.carve_type,
                 'tenon': item.tenon,
                 'brand': item.vendor.brand
             }

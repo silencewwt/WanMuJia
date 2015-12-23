@@ -2,12 +2,13 @@
 import random
 import json
 
-from flask import render_template, current_app, Response, request, abort
+from flask import render_template, current_app, Response, request, abort, jsonify
 
 from app import statisitc
 from app.models import Item, Scene
 from app.utils import items_json
 from app.utils.redis import redis_set, redis_get
+from app.main.forms import FeedbackForm
 from .import main
 
 
@@ -43,7 +44,7 @@ def brand_list():
     if format == 'json':
         data = redis_get('BRAND', 'ITEMS')
         if data is None:
-            brands = statisitc.brands['total']
+            brands = statisitc.brands['available']
             data = {vendor_id: {'brand': brands[vendor_id]['brand']} for vendor_id in brands}
             for vendor_id in data:
                 if current_app.debug:
@@ -110,6 +111,15 @@ def furniture():
             redis_set('STYLE', 'ITEMS', data, expire=86400)
         return Response(data, mimetype='application/json')
     return render_template('user/furniture.html')
+
+
+@main.route('/feedback', methods=['POST'])
+def feedback():
+    form = FeedbackForm()
+    if form.validate():
+        form.add_feedback()
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'message': form.error2str()})
 
 
 @main.route('/about')
