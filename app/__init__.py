@@ -53,6 +53,9 @@ def create_app(config_name):
     from .distributor import distributor as distributor_blueprint
     app.register_blueprint(distributor_blueprint, url_prefix='/distributor')
 
+    from .operation import operation as operation_blueprint
+    app.register_blueprint(operation_blueprint, url_prefix='/operation')
+
     from .privilege import privilege as privilege_blueprint
     app.register_blueprint(privilege_blueprint, url_prefix='/privilege')
 

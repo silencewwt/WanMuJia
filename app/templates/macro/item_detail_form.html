@@ -305,8 +305,34 @@
         </div>
 
         <div class="form-group-separator"></div>
+    {% endif %}
 
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="carve_type_id">雕刻方式</label>
 
+        <div class="col-sm-9">
+            <script type="text/javascript">
+                jQuery(document).ready(function($)
+                {
+                    $("#carve_type_id").select2({
+                        placeholder: '选择雕刻方式...',
+                        allowClear: true
+                    }).on('select2-open', function()
+                    {
+                        // Adding Custom Scrollbar
+                        $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                    });
+
+                });
+            </script>
+
+            {{ form.carve_type_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择雕刻方式'}) }}
+        </div>
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    {% if not isSuite %}
         <div class="form-group required">
             <label class="col-sm-2 control-label" for="paint_id">涂饰工艺</label>
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from app import db
-from app.models import Category, Item, Vendor, SecondMaterial, Style, Scene, Distributor
+from app.models import Category, Item, Vendor, SecondMaterial, \
+    Style, Scene, Distributor, Stock, DistributorAddress, Area
 
 materials = None
 categories = None
@@ -9,17 +10,14 @@ brands = None
 scenes = None
 item_query = None
 items = None
+distributors = None
 
 
 def materials_statistic():
     global materials
-    materials = {'total': {}, 'available': {}, 'available_set': set()}
-    query = SecondMaterial.query
-    for second_material in query:
-        materials['total'][second_material.id] = {'material': second_material.second_material}
-
+    materials = {'available': {}, 'available_set': set()}
     second_material_ids = [item.second_material_id for item in item_query.group_by(Item.second_material_id)]
-    query = query.filter(SecondMaterial.id.in_(second_material_ids))
+    query = SecondMaterial.query.filter(SecondMaterial.id.in_(second_material_ids))
     for second_material in query:
         materials['available'][second_material.id] = {'material': second_material.second_material}
     materials['available_set'] = set(materials['available'].keys())
@@ -27,19 +25,8 @@ def materials_statistic():
 
 def categories_statistic():
     global categories
-    categories = {'total': {}, 'available': {}, 'available_list': {}}
+    categories = {'available': {}}
     category_list = Category.query.order_by(Category.id).all()
-    first_category = second_category = None
-    for category in category_list:
-        if category.level == 1:
-            categories['total'][category.id] = {'category': category.category, 'children': {}}
-            first_category = categories['total'][category.id]
-        elif category.level == 2:
-            first_category['children'][category.id] = {'category': category.category, 'children': {}}
-            second_category = first_category['children'][category.id]
-        else:
-            second_category['children'][category.id] = {'category': category.category}
-
     category_ids = [item.category_id for item in item_query.filter_by(is_suite=False).group_by(Item.category_id)]
 
     del_list = []
@@ -66,21 +53,10 @@ def categories_statistic():
         else:
             second_category['children'][category.id] = {'category': category.category}
 
-    for id_ in categories['available']:
-        second_category_ids = db.session.query(Category.id).filter(Category.father_id == id_)
-        third_category_ids = db.session.query(Category.id).filter(Category.father_id.in_(second_category_ids))
-        id_list = []
-        id_list.extend([_[0] for _ in second_category_ids])
-        id_list.extend([_[0] for _ in third_category_ids])
-        categories['available_list'][id_] = id_list
-
 
 def style_statistic():
     global styles
-    styles = {'total': {}, 'available': {}, 'available_set': set()}
-    for style in Style.query:
-        styles['total'][style.id] = {'style': style.style}
-
+    styles = {'available': {}, 'available_set': set()}
     style_ids = [item.style_id for item in item_query.group_by(Item.style_id)]
     query = db.session.query(Style).filter(Style.id.in_(style_ids))
     for style in query:
@@ -90,12 +66,8 @@ def style_statistic():
 
 def brands_statistic():
     global brands
-    brands = {'total': {}, 'total_set': set(), 'available': {}, 'available_set': set()}
+    brands = {'available': {}, 'available_set': set()}
     query = Vendor.query.filter(Vendor.confirmed == True)
-    for vendor in query:
-        brands['total'][vendor.id] = {'brand': vendor.brand}
-    brands['total_set'] = set([vendor.id for vendor in query])
-
     vendor_ids = db.session.query(Item.vendor_id).group_by(Item.vendor_id)
     query = query.filter(Vendor.id.in_(vendor_ids))
     for vendor in query:
@@ -105,9 +77,7 @@ def brands_statistic():
 
 def scenes_statistic():
     global scenes
-    scenes = {'total': {}, 'available': {}, 'available_set': set()}
-    for scene in Scene.query.filter_by(level=2):
-        scenes['total'][scene.id] = {'scene': scene.scene}
+    scenes = {'available': {}, 'available_set': set()}
     scene_ids = [item.scene_id for item in item_query.group_by(Item.scene_id)]
     query = db.session.query(Scene).filter(Scene.id.in_(scene_ids))
     for scene in query:
@@ -179,31 +149,55 @@ class DistributorAreaNode(DistributorAreaTree):
                     data[self.id]['children'][k] = dumps[k]
             return data
 
-        distributors = {}
+        distributor_dict = {}
         self.distributors = sorted(list(set(self.distributors)))
         if len(self.distributors) == 1:
-            distributor = Distributor.query.get(self.distributors[0])
-            distributors = {distributor.id: {'name': '%s体验馆' % self.area, 'ext_number': distributor.ext_number}}
+            distributor = distributors[self.distributors[0]]
+            distributor_dict = {distributor.id: {'name': '%s体验馆' % self.area, 'ext_number': distributor.ext_number}}
         else:
             for index, key in zip(range(1, len(self.distributors) + 1), self.distributors):
-                distributor = Distributor.query.get(key)
-                distributors[key] = {'name': '%s体验馆%d' % (self.area, index), 'ext_number': distributor.ext_number}
-        return {self.id: {'area': self.area, 'distributors': distributors}}
+                distributor = distributors[key]
+                distributor_dict[key] = {'name': '%s体验馆%d' % (self.area, index), 'ext_number': distributor.ext_number}
+        return {self.id: {'area': self.area, 'distributors': distributor_dict}}
 
 
 def distributors_statistic(item_id=None):
-    global items
+    global items, distributors
     items = {}
     if item_id is not None:
         query = [Item.query.get(item_id)]
+        stock_query = Stock.query.filter(Stock.stock > 0, Stock.item_id == item_id)
+        distributors = query[0].in_stock_distributors()
     else:
         query = item_query
+        stock_query = Stock.query.filter(Stock.stock > 0)
+        distributors = {distributor.id: distributor for distributor in Distributor.query.all()}
+    area_list = Area.query.all()
+    cn_areas = {area.cn_id: area for area in area_list}
+    areas = {area.id: area for area in area_list}
+    for address in DistributorAddress.query.all():
+        if address.distributor_id in distributors:
+            distributor = distributors[address.distributor_id]
+            distributor._address = address
+            area = distributor.address._area = cn_areas[distributor.address.cn_id]
+            while area.level > 1:
+                area._father = areas[area.father_id]
+                area = area.father
+    stocks = {}
+    for stock in stock_query.all():
+        try:
+            stocks[stock.item_id].add(stock.distributor_id)
+        except KeyError:
+            stocks[stock.item_id] = {stock.distributor_id}
     for item in query:
-        root = DistributorAreaTree()
-        for distributor in item.in_stock_distributors():
-            area = distributor.address.area
-            root.add_node(root, DistributorAreaNode.build_from_dict(area.experience_dict(distributor.id)))
-        items[item.id] = root.dumps()
+        if item.id in stocks:
+            root = DistributorAreaTree()
+            for distributor_id in stocks[item.id]:
+                distributor = distributors[distributor_id]
+                area = distributor.address.area
+                root.add_node(root, DistributorAreaNode.build_from_dict(area.experience_dict(distributor.id)))
+            items[item.id] = root.dumps()
+    distributors = None
 
 
 def init_statistic():

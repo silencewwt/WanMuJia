@@ -279,11 +279,11 @@
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
         ]
-    },
+    }
 }
 ```
 
-### brand dettail
+### brand detail
 + **URL**
   + /brands/\<int:brand_id\>
 + **method**
@@ -308,7 +308,7 @@
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
         ]
-    },
+    }
 }
 ```
 
@@ -337,9 +337,22 @@
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
             {"id": "", "item": "", "price": "", "image_url": "", "is_suite": false}
         ]
-    },
+    }
 }
 ```
+
+### feedback
++ **URL**
+  + /feedback
++ **method**
+  + POST
++ **postData**
+  + csrf_token
+  + feedback
+  + contact
++ **return**
+  + `{"success": true}`
+  + `{"success": false, "message": ""}`
 
 ## Item
 ### item list
@@ -424,11 +437,11 @@
 			},
 			"category": {
 				"id1": {"category": ""},
-				"id2": {"category": ""},
+				"id2": {"category": ""}
 			},
 			"material": {
 				"id1": {"material": ""},
-				"id2": {"material": ""},
+				"id2": {"material": ""}
 			},
 			"scene": {
 				"id1": {"scene": ""},
@@ -439,8 +452,8 @@
 				"id2": {"sty;e": ""}
 			},
 			"price": {
-				"price": {"price": ""},
-				"price": {"price": ""}
+				"price1": {"price": ""},
+				"price2": {"price": ""}
 			}
 		},
 		"selected": {
@@ -464,7 +477,7 @@
 		"order": "",
 		"query": [
 			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": false},
-			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": true},
+			{"id": "", "item": "", "price": "", "image_url": "", "is_suite": true}
 		]
 	}
 }
@@ -488,7 +501,7 @@
     + 若format == json && action != detail, 返回商品对比详情
 + **return**
   + format == json && action != detail
-    + `{"id": "", "item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": "", "brand": ""}`
+    + `{"id": "", "item": "", "price": "", "second_material": "", "category": "", "second_scene": "", "outside_sand": "", "inside_sand": "", "size": "", "area": "", "stove": "", "carve_type": "", "carve": [""], "tenon": [""], "paint": "", "decoration": "", "story": "", "image_url": "", "brand": ""}`
     + **id**
       + 商品id
     + **item**
@@ -517,6 +530,8 @@
       + 装饰工艺
     + **carve**
       + 雕刻工艺
+    + **carve_type**
+      + 雕刻方式
     + **tenon**
       + 榫卯结构
     + **story**
@@ -624,7 +639,7 @@
 {
     "item": {
         "collected": "",  // true or false
-        
+
         // 单件
         "id": "",
         "item": "",
@@ -643,6 +658,7 @@
         "paint": "",
         "decoration": "",
         "carve": ["", ""],
+        "carve_type": "",
         "tenon": ["", ""],  // 榫卯结构为选填, 可能为[]
         "images": ["", ""],
         "is_suite": false,
@@ -660,6 +676,7 @@
         "inside_sand": "",
         "area": "",
         "stove": "",
+        "carve_type": "",
         "amount": "",
         "images": ["", ""],
         "is_suite": true,
@@ -905,6 +922,10 @@
     + 雕刻工艺id
     + type = text
     + required
+  + **carve_type_id**
+    + 雕刻方式id
+    + type = text
+    + requid
   + **outside_sand_id**
     + 外表面打磨砂纸id
     + type = text
@@ -963,6 +984,10 @@
     + required
   + **carve_id**
     + 雕刻工艺id
+    + type = text
+    + required
+  + **carve_type_id**
+    + 雕刻方式id
     + type = text
     + required
   + **outside_sand_id**
@@ -1209,6 +1234,42 @@
   + distributor_revocation_id
   + revocation_confirm
 
+## Operation
+### login
++ **URL**
+  + /operation/login
++ **method**
+  + GET
+  + POST
++ **postData**
+  + csrf_token
+  + username
+  + password
+
+### index
++ **URL**
+  + /operation/
++ **method**
+  + GET
++ **template data**
+  + records
+  + pages
+```js
+records = [
+    {
+        "item": "",
+        "brand": "",
+        "distributor": "",
+        "distributor_address": "",
+        "distributor_telephone": "",
+        "distributor_mobile": "",
+        "mobile": "",
+        "created": "",
+        "item_url": ""
+    }
+]
+```
+
 ## Service
 ### mobile register sms
 + **URL**
@@ -1239,6 +1300,8 @@
       + required
   + type == USER_GUIDE
     + **csrf_token**
+    + **item_id**
+      + required
     + **distributor_id**
       + required
     + **mobile**
