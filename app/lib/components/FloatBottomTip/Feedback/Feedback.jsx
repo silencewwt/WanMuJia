@@ -145,7 +145,7 @@ var FeedbackForm = React.createClass({
           <input
             className="ipt-num"
             type="text"
-            placeholder="邮箱或手机号或微信号（选题）"
+            placeholder="邮箱或手机号或微信号（选填）"
             value={this.state.num}
             onChange={this.handleNum}/>
           <input
