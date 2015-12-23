@@ -44,7 +44,7 @@ def brand_list():
     if format == 'json':
         data = redis_get('BRAND', 'ITEMS')
         if data is None:
-            brands = statisitc.brands['total']
+            brands = statisitc.brands['available']
             data = {vendor_id: {'brand': brands[vendor_id]['brand']} for vendor_id in brands}
             for vendor_id in data:
                 if current_app.debug:
