@@ -1,0 +1,418 @@
+{% macro item_detail_form(form, isSuite=false) %}
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="item">
+            {% if isSuite -%}
+                商品(套件)名称
+            {%- else -%}
+                商品名称
+            {%- endif %}
+        </label>
+
+        <div class="col-sm-9">
+            {{ form.item(class='form-control', **{
+                'maxlength': '20',
+                'data-validate': 'required',
+                'data-message-required': '请填写商品名称',
+            }) }}
+        </div>
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    {% if not isSuite %}
+        <div class="form-group required">
+            <label class="col-sm-2 control-label" for="length">
+                商品尺寸
+            </label>
+
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <span class="input-group-addon">长</span>
+                    {{ form.length(class='form-control', **{
+                        'data-validate': 'number',
+                        'data-message-number': '请填写有效的数字',
+                    }) }}
+                    <span class="input-group-addon">cm</span>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <span class="input-group-addon">宽</span>
+                    {{ form.width(class='form-control', **{
+                        'data-validate': 'number',
+                        'data-message-number': '请填写有效的数字',
+                    }) }}
+                    <span class="input-group-addon">cm</span>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <span class="input-group-addon">高</span>
+                    {{ form.height(class='form-control', **{
+                        'data-validate': 'number',
+                        'data-message-number': '请填写有效的数字',
+                    }) }}
+                    <span class="input-group-addon">cm</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group-separator"></div>
+    {% endif %}
+
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="area">适用面积</label>
+
+        <div
+            {% if not isSuite -%}
+                class="col-sm-6"
+            {%- else -%}
+                class="col-sm-9"
+            {%- endif %}
+        >
+            <div class="input-group">
+                {{ form.area(class='form-control', **{
+                    'data-validate': 'number',
+                    'data-message-number': '请填写有效的数字',
+                }) }}
+                <span class="input-group-addon">平方米</span>
+            </div>
+        </div>
+
+        {% if not isSuite %}
+            <div class="col-sm-3">
+                <div class="text-success" style="height: 32px; line-height: 32px;">商品尺寸和适用面积至少填写一项</div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="price">指导价格</label>
+
+        <div class="col-sm-9">
+            <div class="input-group">
+                {{ form.price(class='form-control', **{
+                    'data-validate': 'required,number',
+                    'data-message-required': '请填写商品价格',
+                    'data-message-number': '请填写有效的数字',
+                }) }}
+                <span class="input-group-addon">元</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="style_id">商品风格</label>
+
+        <div class="col-sm-9">
+            <script type="text/javascript">
+                jQuery(document).ready(function($)
+                {
+                    $("#style_id").select2({
+                        placeholder: '选择商品风格...',
+                        allowClear: true
+                    }).on('select2-open', function()
+                    {
+                        // Adding Custom Scrollbar
+                        $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                    });
+
+                });
+            </script>
+            {{ form.style_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '请选择商品风格'}) }}
+        </div>
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="scene_id">场景分类</label>
+
+        <div class="col-sm-9">
+            <script type="text/javascript">
+                jQuery(document).ready(function($)
+                {
+                    $("#scene_id").select2({
+                        placeholder: '选择场景分类...',
+                        allowClear: true
+                    }).on('select2-open', function()
+                    {
+                        // Adding Custom Scrollbar
+                        $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                    });
+
+                });
+            </script>
+            {{ form.scene_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '请选择场景分类'}) }}
+        </div>
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    {% if not isSuite %}
+        <div class="form-group category-select required">
+            <label class="col-sm-2 control-label" for="first_category_id">商品种类</label>
+
+            <div class="col-sm-9">
+                <script type="text/javascript">
+                    jQuery(document).ready(function ($) {
+                        var defVal = {
+                            first_category_id: parseInt($('#first_category_id').data('first_category_id-default')),
+                            second_category_id: parseInt($('#second_category_id').data('second_category_id-default')),
+                            third_category_id: parseInt($('#third_category_id').data('third_category_id-default')),
+                        };
+                        var categoryIdSel = new LinkageSel({
+                            data: category,
+                            select: ['#first_category_id', '#second_category_id', '#third_category_id'],
+                            defVal: [defVal.first_category_id, defVal.second_category_id, defVal.third_category_id],
+                        });
+                    });
+                </script>
+
+                <select class="form-control" name="first_category_id" id="first_category_id" data-first_category_id-default="{{ form.first_category_id }}" data-validate="required" data-message-required="请选择一级种类"></select>
+                <select class="form-control" name="second_category_id" id="second_category_id" data-second_category_id-default="{{ form.second_category_id }}" data-validate="required" data-message-required="请选择二级种类"></select>
+                <select class="form-control" name="third_category_id" id="third_category_id" data-third_category_id-default="{{ form.third_category_id }}" data-validate="required" data-message-required="请选择三级种类"></select>
+            </div>
+        </div>
+        <div class="form-group-separator"></div>
+    {% endif %}
+
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="second_material_id">商品材料</label>
+
+        <div class="col-sm-9">
+            <script type="text/javascript">
+                jQuery(document).ready(function($)
+                {
+                    $("#second_material_id").select2({
+                        placeholder: '选择商品材料...',
+                        allowClear: true
+                    }).on('select2-open', function()
+                    {
+                        // Adding Custom Scrollbar
+                        $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                    });
+
+                });
+            </script>
+
+            {{ form.second_material_id(class='form-control', **{'data-validate': 'required', 'data-message': '请选择商品材料'}) }}
+        </div>
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="stove_id">烘干工艺</label>
+
+        <div class="col-sm-9">
+            <script type="text/javascript">
+                jQuery(document).ready(function($)
+                {
+                    $("#stove_id").select2({
+                        placeholder: '选择烘干工艺...',
+                        allowClear: true
+                    }).on('select2-open', function()
+                    {
+                        // Adding Custom Scrollbar
+                        $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                    });
+
+                });
+            </script>
+
+            {{ form.stove_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择烘干工艺'}) }}
+        </div>
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="outside_sand_id">打磨砂纸</label>
+
+        <div class="col-sm-4">
+            <script type="text/javascript">
+                jQuery(document).ready(function($)
+                {
+                    $("#outside_sand_id").select2({
+                        placeholder: '外: 选择打磨分类...',
+                        allowClear: true
+                    }).on('select2-open', function()
+                    {
+                        // Adding Custom Scrollbar
+                        $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                    });
+
+                });
+            </script>
+
+            <div class="input-group" style="display: block;">
+                {{ form.outside_sand_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择外打磨分类'}) }}
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <script type="text/javascript">
+                jQuery(document).ready(function($)
+                {
+                    $("#inside_sand_id").select2({
+                        placeholder: '内: 选择打磨分类...',
+                        allowClear: true
+                    }).on('select2-open', function()
+                    {
+                        // Adding Custom Scrollbar
+                        $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                    });
+
+                });
+            </script>
+
+            <div class="input-group" style="display: block;">
+                {{ form.inside_sand_id(class='form-control') }}
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    {% if not isSuite %}
+        <div class="form-group required">
+            <label class="col-sm-2 control-label" for="carve_id">雕刻工艺</label>
+
+            <div class="col-sm-9">
+                <script type="text/javascript">
+                    jQuery(document).ready(function($)
+                    {
+                        $("#carve_id").select2({
+                            placeholder: '选择雕刻工艺...',
+                            allowClear: true
+                        }).on('select2-open', function()
+                        {
+                            // Adding Custom Scrollbar
+                            $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                        });
+
+                    });
+                </script>
+
+                {{ form.carve_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择雕刻工艺'}) }}
+            </div>
+        </div>
+
+        <div class="form-group-separator"></div>
+    {% endif %}
+
+    <div class="form-group required">
+        <label class="col-sm-2 control-label" for="carve_type_id">雕刻方式</label>
+
+        <div class="col-sm-9">
+            <script type="text/javascript">
+                jQuery(document).ready(function($)
+                {
+                    $("#carve_type_id").select2({
+                        placeholder: '选择雕刻方式...',
+                        allowClear: true
+                    }).on('select2-open', function()
+                    {
+                        // Adding Custom Scrollbar
+                        $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                    });
+
+                });
+            </script>
+
+            {{ form.carve_type_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择雕刻方式'}) }}
+        </div>
+    </div>
+
+    <div class="form-group-separator"></div>
+
+    {% if not isSuite %}
+        <div class="form-group required">
+            <label class="col-sm-2 control-label" for="paint_id">涂饰工艺</label>
+
+            <div class="col-sm-9">
+                <script type="text/javascript">
+                    jQuery(document).ready(function($)
+                    {
+                        $("#paint_id").select2({
+                            placeholder: '选择涂饰工艺...',
+                            allowClear: true
+                        }).on('select2-open', function()
+                        {
+                            // Adding Custom Scrollbar
+                            $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                        });
+
+                    });
+                </script>
+
+                {{ form.paint_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择涂饰工艺'}) }}
+            </div>
+        </div>
+
+        <div class="form-group-separator"></div>
+
+        <div class="form-group required">
+            <label class="col-sm-2 control-label" for="decoration_id">装饰工艺</label>
+
+            <div class="col-sm-9">
+                <script type="text/javascript">
+                    jQuery(document).ready(function($)
+                    {
+                        $("#decoration_id").select2({
+                            placeholder: '选择装饰工艺...',
+                            allowClear: true
+                        }).on('select2-open', function()
+                        {
+                            // Adding Custom Scrollbar
+                            $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                        });
+
+                    });
+                </script>
+
+                {{ form.decoration_id(class='form-control', **{'data-validate': 'required', 'data-message-required': '选择装饰工艺'}) }}
+            </div>
+        </div>
+
+        <div class="form-group-separator"></div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="tenon_id">榫卯结构</label>
+
+            <div class="col-sm-9">
+                <script type="text/javascript">
+                    jQuery(document).ready(function($)
+                    {
+                        $("#tenon_id").select2({
+                            placeholder: '选择榫卯结构...',
+                            allowClear: true
+                        }).on('select2-open', function()
+                        {
+                            // Adding Custom Scrollbar
+                            $(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+                        });
+
+                    });
+                </script>
+
+                {{ form.tenon_id(class='form-control', **{'multiple': 'multiple'}) }}
+            </div>
+        </div>
+
+        <div class="form-group-separator"></div>
+    {% endif %}
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="story">商品寓意</label>
+        <div class="col-sm-9">
+            {{ form.story(class='form-control autogrow', rows='3', maxlength='500') }}
+        </div>
+    </div>
+{% endmacro %}
