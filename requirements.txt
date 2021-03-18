@@ -28,7 +28,7 @@ kombu==3.0.26
 language-selector==0.1
 Mako==1.0.2
 MarkupSafe==0.23
-Pillow==3.0.0
+Pillow==8.1.1
 pycurl==7.19.3
 pygobject==3.12.0
 PyMySQL==0.6.7
